@@ -1,0 +1,1571 @@
+\documentclass[a4paper,landscape]{article}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\usepackage[inner=1in,textwidth=5in,textheight=6in,
+            marginparsep=0.5in,
+            marginparwidth=4.2in]{geometry}
+\usepackage{sectsty}
+\usepackage{fancyvrb}\fvset{fontsize=\small}
+\DefineVerbatimEnvironment{code}{Verbatim}{xleftmargin=\parindent}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{mflogo}
+\allsectionsfont{\normalfont\sffamily\bfseries}
+\title{Drawing with Metapost}
+\author{Toby Thurston}
+\date{January 2015}
+\usepackage{shortvrb}\MakeShortVerb{"}
+\def\kw#1{\begingroup\def\_{\kern.04em
+    \vbox{\hrule width.3em height .6pt}\kern.08em}%
+\ifmmode\mathop{\textbf{#1}}\else\hbox{\bf#1\/}\fi\endgroup}
+\def\op#1{\begingroup\def\_{\kern.04em
+    \vbox{\hrule width.3em height .6pt}\kern.08em}%
+\ifmmode\mathop{\textrm{#1}}\else\hbox{\rm#1\/}\fi\endgroup}
+\def\id#1{\begingroup\def\_{\kern.04em
+    \vbox{\hrule width.3em height .6pt}\kern.08em}%
+\ifmmode\mathop{\textit{#1}}\else\hbox{\it#1\/}\fi\endgroup}
+\def\cycle{{\rm cycle}}
+\def\vpic#1#2{\moveright5.5in\vbox to 0pt{\vskip#1\includegraphics{#2}\vss}}
+\def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\vskip#1\includegraphics{#2}\vss}}}
+\def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
+\def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
+\begin{document}
+\pagestyle{empty}
+% title & toc in the margin
+\makeatletter
+\moveright 6in\vbox to
+0pt{\vskip23pt\noindent\sffamily{\Large\bfseries\@title}\par\bigskip
+    \noindent\@author --- \@date\par
+    \bigskip
+    \halign{\hfil#\hfil\ &\hfil#\hfil\cr
+    \includegraphics{archimedes1}&
+    \includegraphics{archimedes2}\cr
+    $(4,6,12)$ & $(4,8^2)$\cr
+    \noalign{\medskip}
+    \includegraphics{archimedes3}&
+    \includegraphics{archimedes5}\cr
+$(3,12^2)$ & $(3,4,6,4)$\cr}
+\vss}
+\makeatother
+\section{Start here}
+
+This document contains a collection of ideas and techniques for producing attractive
+technical drawings with John Hobby’s \MP\ language.  I’m assuming that you already
+know the basics of the language, that you have it installed as part of your up to
+date \TeX\ ecosystem, and that you have established a reasonable work-flow that
+let’s you write a Metapost program, compile it, and include the results in your
+\TeX\ document.  If not, you might like to start at the \MP\ page on CTAN, and read
+some of the excellent tutorials, including "mpintro.pdf".  If you have already done
+this, please read on.
+
+These notes are based on the many examples I have developed as answers
+to questions about technical drawing on the wonderful \TeX\ StackExchange site.  In
+accordance with their terms and conditions, I’ve only included material here that
+I’ve written myself --- if you want other people’s ideas then visit the site.
+While the main focus of the site is writing \LaTeX\ documents, there are a great
+many questions about drawing, and some of the answers are very illuminating.  
+
+My approach here will be to explore plain \MP, with examples grouped
+into themes.  One approach to using this document would be to read it end to end.
+Another would be to flick through until you see something that looks like it might
+be useful and then see how it’s done. 
+
+And when I say \textit{plain} \MP\ I mean \MP\ with the default format (as defined
+in the file "plain.mp") loaded and no other external packages (apart from "boxes.mp"
+very occasionally).  Nearly all of the examples here are supposed to be self
+contained, and any macros are defined locally so you can get to grips with what’s
+going on.  \MP\ is a very subtle language, and it’s possible to do some
+very clever and completely inscrutable things with it;  in contrast I’ve tried to be
+as clear as possible in my examples.
+
+\newpage
+\section{Some features of the syntax}
+
+\begin{itemize}
+    \item Assignment or equation:  the equation "a=3;" means "a" is the same as "3" throughout the
+        current scope; the assignment "a:=3;" means update the value of "a" to the value "3"
+        immediately.  The difference becomes apparent when you try to update a
+        variable in the same scope.  This difference also lets you write equations
+        like "a=-b;".  After this, as soon as you give  a value to "a", \MP\ immediately works
+        out the value of "b".
+
+    \item Variable types:  
+       \begin{itemize}
+           \item numeric
+           \item pair
+           \item path
+           \item transform
+           \item color
+           \item string
+           \item picture
+       \end{itemize}
+
+       If you don’t declare a variable, it’s assumed that it’s a "numeric".
+       When you do declare a variable --- "numeric" or otherwise, any value that it
+       already had in the current scope is removed.
+            
+    \item Implicit multiplication: \MP\ inherits a rich set of rules about numerical
+        expressions from \MF, and of special interest is the scalar multiplication
+        operator.  Any simple number, like "42", "3.1415", or ".6931", or any simple
+        fraction like "1/2" or "355/113" standing on it’s own (technically at the
+        primary level) and not followed by "+" or "-" becomes a scalar
+        multiplication operator that applies to the next token (which should be variable 
+        of some appropriate type).
+        So you can write things like "3a", or even "1/2 a".
+        The space between the number and the variable name is optional. This 
+        lets you write very readable mathematical expressions. It’s quite
+        additictive after a while.
+
+
+\end{itemize}
+    
+    
+
+\newpage
+\section{Making and using closed paths}
+\label{plain-shapes}
+
+In \MP\ there are two sorts of paths: open and closed.  
+\mpic{-12pt}{closed0}
+A closed path is called a cycle, and is created with the "cycle" primitive like this:
+$$\hbox{\ttfamily path t; t = origin -- (55,0) -- (55,34) -- cycle;}$$
+You can think of "cycle" as meaning ‘connect back to the start and close the path’.
+You can use "draw" with either sort of path, but you can only use "fill" with a
+cycle.  This concept is common to most drawing languages but it’s often hidden:  an
+open path might be automatically closed for you when you try to fill it.  \MP\ takes
+a more cautious approach; if you pass an open path to "fill" you will get an error
+that says ‘Not a cycle’.  You can also use "cycle" in a boolean context to test
+whether a path "p" is cyclic: 
+$\hbox{\ttfamily if cycle p: ... fi}$.
+
+\medskip\noindent
+There are several closed paths defined for you in plain \MP. 
+\mpic{1cm}{closed7}
+\begin{itemize}
+    \item "unitsquare" which you can use to draw any rectangle with appropriate
+        use of "xscaled" and "yscaled" --- it’s defined so that the bottom left
+        corner is point 0 of the shape.  This point is also defined as "(0,0)", 
+        so the "unitsquare" is centred on point "(1/2,1/2)".  If you want a square
+        centered on the origin, then shift it by "-(1/2,1/2)" before you scale it.
+
+    \item "fullcircle" which you can use to draw any circle or ellipse with
+        appropriate use of "xscaled" and "yscaled".  Defined so that it is centered
+        at the origin and has unit \textit{diameter} and point 0 is "(1/2,0)".
+
+    \item "superellipse()" which creates the shape beloved of the Danish designer Piet Hein.  Unlike the
+        other two, this one is a function rather than a path, so you need to call it
+        like this:
+        $$\hbox{\ttfamily path s; s = superellipse(right,up,left,down,.8);}$$
+        to create a ‘unit’ shape.  The fifth parameter is the ‘superness’: the value
+        1 makes it look almost square, 0.8 is about right, 0.5 gives you a diamond,
+        and values outside the range $(0.5,1)$ give you rather weird propeller
+        shapes.
+\end{itemize}
+
+\newpage\subsection{Points on the standard closed paths}\noindent\mpic{-10pt}{closed1}%
+Here are the three shapes centered on the origin and labelled to show the points
+along them.  \textbf{Note} that the \textit{unitsquare} shape has been shifted so that it is
+centered on the origin in all of these examples.  The small red circle marks the
+\textit{origin}, and the labelled red dots are the points of each path.  The
+\textit{unitsquare} has four points, while the other two shapes both have eight.
+The small
+arrows between point~0 and point~1 of each shape indicate the direction of the path
+that makes up the shape.  
+
+\vfill\noindent
+If you want to highlight a segment of your shape, there’s a neat way to define it
+using "subpath".  Assuming "p" is the path of your shape, then this:
+$$\hbox{\ttfamily center p -- subpath(1,2) of p -- cycle}$$
+creates a useful wedge shape which looks like this in our three ‘standard’
+shapes.
+
+\vfill\noindent
+Better still, you are not limited to integer points along the path of your closed shape.
+So if you wanted a wedge that was exactly $1/5$ of the area of your shape, you
+could try
+$$\hbox{\ttfamily center p -- subpath(0,1/5 length p) of p -- cycle}$$
+
+Clearly this works rather better with more circular shapes.  Indeed for a circle you
+can convert directly between circumference angle and points along the path.  So
+you have defined path "c" to be a circle, then
+"point 1 of c" is $45^\circ$ round and 1~radian is "point 1.27324 of c".
+
+\vfill\noindent
+In a cyclic path, the point numbering in \MP\ wraps round: so in a
+circle, point $n$ is the same as point $n+8$; and in general point $n$ is the same as
+point $n+\hbox{\bf length }p$.  This works with negative numbers too, so we could use 
+$$\hbox{\ttfamily center p -- subpath(-1,1) of p -- cycle}$$
+to get wedge centered on point 0.
+
+\newpage\subsection{Building cycles from parts of other paths}
+
+Plain \MP\ has a built-in function to compute the intersection points of two paths, and
+there’s a handy high level function called "buildcycle" that uses this function to
+create an arbitrary closed path.  
+\mpic{0pt}{area-under-graph1}
+The arguments to the function are just a list of paths, and providing the paths all
+intersect sensibly, it
+returns a cyclic path that can be filled or drawn.  This is often used for colouring an
+area under a function in a graph.
+Here is an example. The red line has been defined
+as path "f" and the two axes as paths "xx", and "yy".  The blue area was defined
+with
+$$\hbox{\ttfamily 
+buildcycle(yy shifted (1u,0), f, yy shifted (2.71828u,0), xx)
+}$$
+Note the use of the $y$-axis shifted along by different amounts.
+
+\bigskip\noindent
+There are similar examples in the \MP\ manual, but "buildcycle" can also
+be useful in more creative graphics.
+Here’s a second example that uses closed paths to give an illlusion of depth to a simple
+graphic of the planet Saturn.
+\mpic{0pt}{saturn1}
+\marginpar{\hbox{}\vskip1.3in\raggedright\noindent\textbf{Notes}\begin{itemize}
+    \item The first five paths are just circles and ellipses based on "fullcircle".
+    \item The drawing is done inside an "image" simply so that the final result can
+        be drawn at an angle
+    \item "unfill gap" is shorthand for "fill gap withcolor background"
+    \item The subpaths passed to "buildcycle" are chosen carefully to make sure we
+        get the intersections at the right points and so that the component paths
+        all run in the same direction.  Note that "subpath (8,4) of globe" runs
+        clockwise (that is backwards) from point 8 to point 4.
+\end{itemize}}
+\VerbatimInput[frame=lines]{saturn.mp}
+
+\newpage\subsection{The implementation of \texttt{buildcycle}}
+\textsc{The implementation} of "buildcycle" in plain \MP\ is interesting for a number of
+reasons.  Here it is copied from "plain.mp" (with minor simplifications) $\longrightarrow$
+\vadjust{\moveright5.5in\vbox to 0pt{\kern-1cm%
+\begin{verbatim}
+vardef buildcycle(text input_path_list) =
+  save ta, tb, k, j, pp; path pp[];
+  k=0;
+  for p=input_path_list: pp[incr k]=p; endfor
+  j=k;
+  for i=1 upto k:
+    (ta[i], length pp[j]-tb[j]) 
+      = pp[i] intersectiontimes reverse pp[j];
+    if ta[i]<0:
+      errmessage("Paths " & decimal i &
+                  " and " & decimal j & " don't intersect");
+    fi
+    j := i;
+  endfor
+  for i=1 upto k: subpath (ta[i],tb[i]) of pp[i] .. endfor cycle
+enddef;
+\end{verbatim}
+\vss}}
+
+\noindent
+Notice how freely the indentation can vary; this is both a blessing 
+(because you can line up things clearly) and a curse (because the syntax may not
+be very obvious at first glance).  Notice also the different ways we can use a
+$\kw{for}$-loop.  The first two are used at the ‘outer’ level to repeat complete
+statements (that end with semi-colons); the third one is used at the ‘inner’ level
+to build up a single statement.
+
+The use of a "text" parameter allows us to pass a comma-separated list as an
+argument; in this case the list is supposed to be a list of path expressions that
+(we hope) will make up a cycle.  The first "for" loop provides us with a standard
+idiom to split a list; in this case the comma-separated value of "input_path_list"
+is separated into into a more convenient array of paths called "pp" indexed by "k".
+Note that the declaration of the array as "path" forces the argument to be a list of
+paths.
+
+The second "for" loop steps through this array of paths looking for intersections.
+The index "j" is set to be "k" when "i=1", and then set to the previous value of "i"
+at the end of the loop;   in this way
+"pp[j]" is the path before "pp[i]" in what is supposed to be a cycle.
+The macro uses the primitive operator "intersectiontimes" to find the intersection
+points, if any. Note that we are looking for two path times: the time to start a
+subpath of the current path and the time to end a subpath of the previous path; the
+macro does this neatly 
+by reversing the previous path and setting the $b$-point indirectly by subtracting
+the time returned from the length of the path. 
+
+If all has gone well, then "ta" will hold all the start points of the desired
+subpaths, and "tb" all the corresponding end
+points.
+The third and final "for" loop assumes that this is indeed the case, and tries to 
+connect them all together.  Note that it uses ".." rather than "&" just in case the
+points are not quite co-incident; finally it finishes with a
+"cycle" to close the path even though point "tb" of path "k" should be identical (or
+at least very close) to 
+point "ta" of path "0".
+
+This implementation of "buildcycle" works well in most cases, provided that there
+are enough components to the cycle of paths.  If you only have two paths, then the
+two paths need to be running the same direction, and the start of each path must not
+be contains within the other.  This is explored in the next section.
+
+\newpage
+\subsection{Strange behaviour of \texttt{buildcycle} with two cyclic paths}
+
+The implementation of "buildcycle" in plain \MP\ can get confused if you use it with
+just two paths.  Consider the following example: \mpic{0pt}{overlaps2}
+\begin{code}
+beginfig(1);
+  path A, B;  
+  A = fullcircle scaled 2.5cm; 
+  B = fullcircle scaled 1.8cm shifted (1cm,0);
+  fill buildcycle(A,B) withcolor .8[blue,white]; 
+  drawarrow A; drawarrow B;
+endfig;
+\end{code}
+When we compile this example, we get no error message from "buildcycle", but there 
+is no fill colour visible in the output.  The problem is that the points found by
+"buildcycle" are the same both times that it steps through the middle loop, so
+the cyclic path it returns consists of two identical (or very close) points and the 
+so the fill has zero area.  
+
+Now observe what happens when we rotate and reverse each of the paths in
+turn.\mpic{-24pt}{overlaps3}
+Number 1 corresponds to the example shown above; point~0 of~$A$ is inside the closed
+path $B$.  In~2 we have rotated path $A$ by 180° so that the start of path~$A$ is no
+longer inside $B$, and now "buildcycle" works ‘properly’ --- but this is the only
+time it does so.  In~3, we've rotated $B$ by 180° as well, so that $B$ starts inside
+$A$ and as expected "buildcycle" fails.  In 4 we've rotated $A$ back to it's
+original position, so that both paths start inside each other; and we get the
+union of the two shapes.  In 5--8, we've repeated the exercise with path $A$
+reversed, and "buildcycle" fails in yet more interesting ways.  
+
+You could use this behaviour as a feature if you need to treat $A$ and $B$ as sets
+and you wanted to fill the intersection, union, or set differences, but if you just
+wanted the overlap, then you need to ensure that both paths are running in the same
+direction and that neither of them starts inside the other.
+\marginpar{\small \nb To rotate a circular path, use: \texttt{p rotatedabout(center p,
+180)}}
+
+\newpage
+\subsection{Find the overlap of two cyclic paths}
+
+As we have seen, in order to get the overlap of two cyclic paths from "buildcycle",
+we need both paths to be running in the same direction, and neither path should
+start inside the other one.  It's not hard to create an "overlap" macro that does
+this automatically for us.  The first element we need is a macro to determine if a
+given point is inside a given closed path.  Following Robert Sedgwick's
+\textit{Algorithms in C} we can write a generic "inside" function that works with any
+simple closed path.  The approach is to extend a horizontal ray from
+the point towards the right margin and to count how many times it crosses the cyclic
+path; if the number is odd, the point must be inside.\vadjust{\moveright5.5in\vbox
+    to 0pt{\kern-4.05cm
+\begin{verbatim}
+vardef inside(expr p, ring) = 
+  save t, count, test_line;
+  count := 0;
+  path test_line;
+  test_line = p -- (infinity, ypart p);
+  for i = 1 upto length ring:
+     t := xpart(subpath(i-1,i) of ring 
+                  intersectiontimes test_line);
+     if ((0<=t) and (t<1)): count := count + 1; fi
+  endfor
+  odd(count)
+enddef;
+\end{verbatim}
+\vss}}\label{function:inside}
+
+Equipped with this function we can create an "overlap" function that first uses the
+handy "counterclockwise" function to ensure the given paths are running in the
+same direction, and then uses "inside" to determine where the start points are.
+\begin{verbatim}
+vardef front_half primary p = subpath(0, 1/2 length p) of p enddef;
+vardef back_half  primary p = subpath(1/2 length p, length p) of p enddef;
+% a and b should be cyclic paths...
+vardef overlap(expr a, b) = 
+  save A, B, p, q;
+  path A, B; boolean p, q;
+  A = counterclockwise a;
+  B = counterclockwise b;
+  p = not inside(point 0 of A, B);
+  q = not inside(point 0 of B, A);
+  if (p and q): 
+    buildcycle(A,B)
+  elseif p: 
+    buildcycle(front_half B, A, back_half B)
+  elseif q: 
+    buildcycle(front_half A, B, back_half A)
+  else: 
+    buildcycle(front_half A, back_half B, front_half B, back_half A)
+  fi
+enddef;
+\end{verbatim}
+Using this "overlap" macro in place of "buildcycle" produces less surprising
+results.\mpic{-2in}{overlaps4}
+
+\newpage \section{Cycloid and other spiral graphs}
+
+This section examines cycloids; the curves made by points on the circumference of a
+rolling wheel.  In the first diagram the cycloid is drawn in red and the
+corresponding rolling wheel in blue.  The main idea in this diagram is to make the
+whole drawing depend on just a few parameters;  here there are two: the radius $r$
+and the amount of rotation $θ$.  If we make $r$ bigger, the drawing will be
+scaled up; if we change $θ$, the wheel will appear to have rolled along.
+\mpic{-66pt}{cycloids1}
+
+\marginpar{\par\kern1in
+\begin{itemize}
+    \item Near the beginning we define $\pi=3.14159265$, as there’s no such constant
+        built in, but it makes the source more understandable to write "pi/180"
+        instead of "0.017453".  It would be nice to use the Greek letters themselves
+        in the source, but \MP\ only lets you use plain ASCII characters, to you
+        have to write "pi" instead.  Later on "t" is used instead of $\theta$.
+
+    \item The cycloid path "c" is defined using an inline "for" loop.  There’s a
+        slight awkwardness to doing this as you have to repeat yourself either at
+        the beginning or the end, because you can’t have a dangling "--" or ".." at
+        the end of the path.  With a cyclic path it’s easier because you can just
+        put "--cycle" after the "endfor".  The strange numbers here are because
+        we are going from a rotation of $-100°$ to $+460°$; $360°$ corresponds to
+        one hop of the cycloid. 
+
+    \item The axes are done in the usual way, except that we use "xpart" and the
+        "point .. of .." notation to make the $x$-axis neatly line up with the ends
+        of the cycloid path.
+
+    \item To label points with dots but no text it’s convenient just to fill a
+        circle scaled to "dotlabeldiam"; this internal parameter is the current size
+        to be used for the dots in "dotlabel".  
+    
+\end{itemize}}
+
+\VerbatimInput[frame=lines]{cycloids.mp}
+
+\noindent
+You can generalize the picture to make cycloids where the point tracing the
+cycloid is not on the circumference doing the rolling; the classic example is the
+wheel of the train with a flange.  Here I have added $R$ to define the radius of an
+outer rim, while the wheel still rolls along a circle of radius $r$.
+\mpic{-40pt}{cycloids-extra1}
+You might like to experiment with making $R<r$. Note also that variable names are
+case sensitive in \MP.
+
+\VerbatimInput[frame=lines]{cycloids-extra.mp}
+
+\newpage
+\section{Mathematics, trigonometry and transformations}
+
+This section discusses plain \MP 's concepts of numeric variables, pair variables,
+and path variables; and what you can do with them. 
+
+First \textbf{numerics}: \MP\ inherits
+it's
+unusual native system of scaled numbers from \MF;  like many of Knuth's creations it is
+slightly quirky, but works very well once you get the hang of it.  The original
+objective was to make \MF\ produce identical results on a wide variety of computers.
+By default all arithmetic is carried out using 28-bit integers in units of
+$1/65536$.  This is done automatically for you, so you don’t need to worry about 
+it but you should be aware of a couple of practical implications
+\begin{itemize}
+    \item All fractions are rounded to the nearest multiple of $1\over65536$, so
+         negative powers of 2 ($1\over2$,
+        $1\over4$, $1\over8$, $\dots$) are exact, but other common ones are not:  
+        for example $1\over3$ is represented as 
+        ${21845\over65536} \simeq 0.333328$, and $1\over10$ as 
+        ${6554\over65536} \simeq 0.100006$.  
+        You should bear this in mind particularly when you
+ are chosing fractional step-values in a "for" loop, where the errors can accumulate so that
+ you may miss your expected terminal value.\vadjust{\moveright5.5in\vbox to
+ 0pt{\kern-2in\hsize4in\noindent
+     Compare the following two snippets:
+     $$\vbox{\halign{&#\hfil\qquad\cr
+     Code&Output\cr\noalign{\smallskip\hrule\medskip}
+     \vtop{\parindent0pt\hsize2.2in
+     \bgroup\obeylines 
+     $\kw{for}$ $i=0$ \kw{step} $1/10$ \kw{until} $1$: 
+     \quad$\kw{show}$ $i$; 
+     $\kw{endfor}$
+     \egroup
+}     
+     &
+     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize1.5in\tt
+>> 0
+>> 0.1
+>> 0.20001
+>> 0.30002
+>> 0.40002
+>> 0.50003
+>> 0.60004
+>> 0.70004
+>> 0.80005
+>> 0.90005
+}
+\cr\noalign{\bigskip}
+     \vtop{\parindent0pt\hsize2.2in
+     \bgroup\obeylines 
+     $\kw{for}$ $i=0$ \kw{step} $1$ \kw{until} $10$: 
+     \quad$\kw{show}$ $i/10$; 
+     $\kw{endfor}$
+     \egroup
+}     
+     &
+     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize1.5in\tt
+>> 0
+>> 0.1
+>> 0.2
+>> 0.3
+>> 0.4
+>> 0.5
+>> 0.6
+>> 0.7
+>> 0.8
+>> 0.9
+>> 1
+}\cr}}$$
+You get 11 iterations in the second but only 10 with the first.
+\vss}} 
+        
+    \item The system limits you to numbers that are less than 4096 in absolute value.
+        This can be an irritation if you are trying to plot data with large values,
+        but the solution is simple:  scale your values to a reasonable range first.
+
+    \item Intermediate calculations are allowed to be upto 32768 in absolute value
+        before an error occurs.  You can sometimes avoid problems by using the
+        special Pythagorean addition and subtraction operators, but the general
+        approach should be to do your calculations before you scale a path for
+        for filling or drawing.
+
+    \item You can turn a number upto 32768 into a string using the "decimal"
+        command, and then you could append zeros to it using string concatenation.
+
+\end{itemize}
+
+If you are using a recent version of \MP\ you can avoid all these issues by choosing one of
+the three new number systems: double, binary, or decimal, with the "numbersystem"
+command line switch.  But beware that if you write programs that depend on these new
+systems, they might not be so portable as others.  It's nice to have these new
+approaches just in case, but you will not need to use them very often.
+
+\newpage\subsection{Numeric constants}
+Plain \MP\ inherits three numeric constants from \MF: \id{infinity}, \id{epsilon},
+and \id{eps}:
+\begin{itemize}
+    
+    \item $\id{eps}$ is defined to be a
+small amount that is noticeable to \MF’s rounding algorithms, namely
+${32\over65536}={1\over2048}\simeq 0.00049$.  As a distance on the page or screen it's invisible at
+any resolution less that 150,000 dots per square inch.  If you are designing fonts
+in \MF\ it's useful to help avoid bad choices of pixels at low resolutions, but in
+\MP\ it's only really useful in comparisons that might suffer from rounding errors.
+\id{eps} is tiny, but it's bigger than any rounding error you may encounter, so
+you can safely test for equality with: $\kw{abs}(\id{a}-\id{b})<\id{eps}$.
+
+\item $\id{epsilon}$ is defined to be $1\over65536$, the smallest postive scaled
+    number.
+
+\item $\id{infinity}$ is defined to be $4096-\id{epsilon}$, which is the largest
+    number you will normally deal with. This is useful when you just want a quantity
+    larger than any other in the immediate vicinity.  For an example, look at the
+    definition of the "inside" function in
+    section~\ref{function:inside}.
+\end{itemize}
+These three quantities retain (approximately) the same value even if you choose one of the
+alternative, higher precision, number systems.   This is probably the most sane
+approach, but the constants lose their status as the smallest and largest numbers you can
+have.  
+\vadjust{\moveright5.5in\vbox to 0pt{\kern-221pt\hsize 4.25in
+\noindent
+Running the toy program: 
+\par\bigskip
+$\kw{show} \id{numbersystem}, \id{eps}, \id{epsilon}, \id{infinity}; \kw{end}\!.$ 
+\par\bigskip\noindent
+gives the following results with the different 
+number systems:
+
+\begin{code}
+>> "scaled" 
+>> 0.00049
+>> 0.00002
+>> 4095.99998
+
+>> "double"
+>> 0.00048999999999999998
+>> 1.52587890625e-05
+>> 4095.9999800000001
+
+>> "binary"
+>> 0.00048999999999999999999999999999999993
+>> 0.0000152587890625
+>> 4095.9999800000000000000000000000001
+
+>> "decimal"
+>> 0.00049
+>> 0.0000152587890625
+>> 4095.99998
+\end{code}
+\vss}}
+
+The messy set of results shown on the right arises because "plain.mp" defines these constants
+like this (in version 1.005, which is current at the time of writing):
+\begin{code}
+eps := .00049;    % this is a pretty small positive number
+epsilon := 1/256/256;   % but this is the smallest
+infinity := 4095.99998;    % and this is the largest
+\end{code}
+If you want cleaner constants, feel free to redefine the two decimals as:
+\begin{code}
+eps := 1/2048;
+infinity := 64*64-epsilon;
+\end{code}
+These definitions are equivalent with "scaled" numbers, but more consistent at
+higher precision.  In particular they ensure that we always have
+$4096 = \id{infinity} +\id{epsilon}$ whichever number system is in use.
+
+\newpage\subsection{Units of measure}
+In addition to the very small and very large numeric variables, plain \MP\ inherits
+eight more that provide a system of units of measure compatible with \TeX.
+The definitions in "plain.mp" are very simple: $\longrightarrow$
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
+\begin{code}
+mm=2.83464;      pt=0.99626;        dd=1.06601;      bp:=1;
+cm=28.34645;     pc=11.95517;       cc=12.79213;     in:=72;
+\end{code}
+\vss}}
+
+When the output of \MP\ is set to be PostScript, then the basic unit of measure is
+the PostScript point.  This is what \TeX\ calls a "bp" (for `big point'), and it is
+defined so that $1\unit{inch}=72\unit{bp}$.  The traditional printers' point, which \TeX\
+calls a~"pt", is slightly smaller so that $1\unit{inch}=72.27\unit{pt}$.
+
+Using the units relies on \MP's implicit multiplication feature.  If you write
+`$\id{w}=10\,\id{cm};$' in a program, then the variable \id{w} will be set to the value 283.4645.
+The advantage is that your lengths should be more intuitively understandable, but if
+you are comfortable thinking in PostScript points (72 to the inch, 28.35 to the
+centimetre) then there is no real need to use any of the units.\marginpar{Bizarrely, 28.35
+is also the number of grammes to the ounce.}
+
+It is sometimes useful to define your own units; in particular many \MP\ programs
+define something like `$\id{u}=1\,\unit{cm};$' near the start, and then define all
+other lengths in terms of \id{u}.  If you later wish to make a smaller or larger
+version of the drawing then you can adjust the definition of \id{u} accordingly.
+Two points to note:
+\begin{itemize}
+    \item If you want different vertical units, you can define something like 
+        `$\id{v}=8\,{mm}$' and specify horizontal lengths in terms of \id{u}, but
+        verticals in terms of \id{v}.
+    \item If you want to change the definition of \id{u} or \id{v} from one figure
+        to the next, you will either have to use `$\kw{numeric} \id{u},\id{v};$' at
+        the start of the your program in order to reset them, or 
+         use the assignment operator instead of the
+        equality operator to overwrite the previous values.
+\end{itemize}
+
+The unit definitions in "plain.mp" are designed for use with the default scaled
+number system; if you want higher precision definitions, then you can update them by
+including something like this at the top of your program: $\longrightarrow$
+\vadjust{\moveright 5.5in \vbox to 0pt{\kern-24pt
+%\begin{code}
+%numeric bp, in, mm, cm, pt, pc, dd, cc;
+%72 = 72 bp = 1 in; 
+%800 = 803 pt = 803/12 pc;
+%3600 = 1270 mm = 127 cm;
+%1238 pt = 1157 dd = 1157/12 cc;
+%\end{code}
+\bgroup\obeylines\parindent0pt
+$\kw{numeric} \id{bp}, \id{in}, \id{mm}, \id{cm}, \id{pt}, \id{pc}, \id{dd}, \id{cc};$
+$72 = 72\id{bp} = 1\id{in}$; 
+$800 = 803 \id{pt} = 803/12 \id{pc};$
+$3600 = 1270 \id{mm} = 127 \id{cm};$
+$1238 \id{pt} = 1157 \id{dd} = 1157/12 \id{cc};$
+\egroup
+\vss}}
+
+The effect of the $\kw{numeric}$ keyword is to remove the previous definitions; the
+four equation lines then re-establish the units with more accurate definitions.
+You can safely use these definitions with "scaled", as they are equivalent to the
+decimals currently given in "plain.mp" (with the exception of "cc" which is 0.00003
+smaller!).
+
+
+\newpage\subsection{Pairs and coordinates}
+Now \textbf{pairs}:  if you enclose two numerics in parentheses, you get a pair.  A
+pair generally represents a particular position in your drawing with normal, orthogonal
+Cartesian $x$- and $y$-coordinates, but you can use a pair variable for other
+purposes if you wish.  As far as \MP\ is concerned it's just a pair of numerics.
+
+Unlike numerics, pair variables are not automatically declared for you.  So if you
+want to define points $A$ and $B$ you need to explicitly write `$\kw{pair}
+\id{A},\id{B};$' before you assign values to them.  Once you have declared one, you
+can equate it to a pair value using $=$ as normal, and overwrite it using
+the assignment operator $\mathrel{:}=$.
+
+\MP\ provides a simple, but slightly cumbersome, way to refer to each half of a
+pair.  The syntax `$\kw{xpart} \id{A}$' returns a numeric equal to the first number in
+the pair, while `$\kw{ypart} \id{A}$' returns the second.  The names refer to the
+intended usage of pair variable to represent pairs of $x$ and $y$-coordinates.
+Note that they are read-only; you can't
+assign a value to an $\kw{xpart}$ or a $\kw{ypart}$.  So if you want to update only one
+part of a pair, you have to do something like this: `$\id{A} \mathrel{:}= (42,
+\kw{ypart}\id{A});$'.
+
+In addition there is a neat macro defintion in plain \MP\ that allows you do deal
+with the $x$- and $y$-parts of pairs rather more succintly.    
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
+\begin{code}
+vardef z@#=(x@#,y@#) enddef;
+\end{code}
+\vss}}%
+The deceptivly simple definition of $\id{z}$ as a subscripted macro allows you to
+write "z1 = (10,20);" and have it automatically expanded into the equivalent of
+"x1=10;" and "y1=20;".  You can then use "x1" and "y1" as independent numerics or
+refer to them as a pair with "z1".
+
+Plain \MP\ defines five useful pair variables: \id{origin}, \id{right}, \id{up},
+\id{left}, and \id{down}.  As so often, the Knuthian definitions in "plain.mp" are
+quite illuminating
+$\longrightarrow$
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
+\begin{code}
+% pair constants
+pair right,left,up,down,origin;
+origin=(0,0); up=-down=(0,1); right=-left=(1,0);
+\end{code}
+\vss}}%
+As you can see, pair variables can be used in implicit equations.
+They can also be scaled using implicit multiplication, so writing 
+`$144 \id{right}$' is equivalent to writing `$(144,0)$' but possibly a bit more
+readable.  In particular the idiom `$\kw{shifted} 200 \id{up};$' applied to a path
+or an image works well.
+
+Unfortunately this convenient notation does not work well with units of
+measure, because implicit multiplication only works between a numeric constant and a
+variable.  So `$2 \id{in}\, \id{right}$' does not work as you might expect; you can
+write `$2\id{in} \mathrel{\ast}\id{right}$' but by that stage it's probably simpler to 
+write `$(2\id{in},0)$' or even just `$(144,0)$'.
+
+\newpage
+\subsection{Coordinate geometry example}
+
+\kern-\baselineskip
+\vpic{1in}{projections1}
+\begin{code}[commandchars=\\\{\}]
+beginfig(1);
+\textcolor{red}{% define the end points of the three rays}
+z1 = right scaled 200 rotated 10;
+z2 = right scaled 100 rotated 135;
+z3 = right scaled 225 rotated -17.5;
+\textcolor{red}{% define the other points, relative to Q}
+pair A, B, P, Q, R;
+Q = 0.8125 z3;
+A = whatever[origin, z1]; A-Q = whatever * z1 rotated 90;
+P = whatever[origin, z2]; P-Q = whatever * z2 rotated 90;
+B = whatever[origin, z1]; B-P = whatever * z1 rotated 90;
+R = whatever[A,Q];        R-P = whatever * (B-P) rotated 90;
+\textcolor{red}{% mark the angles}
+drawoptions(withcolor .67 blue);
+draw fullcircle scaled 30 rotated angle (Q-P) shifted P cutafter (P--B);
+draw fullcircle scaled 30 rotated angle (P-Q) shifted Q cutafter (Q--R);
+draw fullcircle scaled 30 rotated angle P               cutafter (origin--z1);
+drawoptions();
+\textcolor{red}{% draw the rays and A--Q}
+drawarrow origin -- z1; label(btex $r_1$ etex, z1 scaled 1.05);
+drawarrow origin -- z2; label(btex $r_2$ etex, z2 scaled 1.08);
+drawarrow origin -- z3; label(btex $r_3$ etex, z3 scaled 1.05);
+draw A--Q;
+\textcolor{red}{% draw the dashed lines}
+draw B--P--R--Q--P dashed evenly;
+drawarrow origin -- P scaled 4/3 dashed evenly;
+\textcolor{red}{% label the points}
+dotlabel.urt(btex $Q$ etex, Q);
+dotlabel.top(btex $A$ etex, A);
+dotlabel.lrt(btex $R$ etex, R) withcolor .67 blue;
+label.top (btex $B$ etex, B);
+label.llft(btex $P$ etex, P);
+label.llft(btex $O$ etex, origin);
+endfig;
+\end{code}
+
+\newpage
+\subsection{Trigonometry functions}
+
+\MP\ provides only two basic trigonometry functions, "sind" and "cosd";  this lack
+appears to be a deliberate design.  In general it's much easier to use the "rotated"
+and "angle" functions than to work out all the sine, cosines and arc-tangents
+involved in rotating parts of your picture.  But if you really want the `missing'
+functions they are not hard to implement.
+
+First you might want versions that accept arguments in radians instead of degrees.
+For this you need to know the value of $\pi$, but this is not built into plain \MP.
+If you are using the default number system then it's enough to define to five
+decimal digits,%
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-108pt
+\begin{code}
+numeric pi;
+% approximate value
+pi := 3.14159; 
+\end{code}
+\begin{code}
+% up to 34 digits of precision 
+pi := 3.141592653589793238462643383279503;
+\end{code}
+\begin{code}
+% as many digits as are needed...
+vardef getpi =
+  numeric lasts, t, s, n, na, d, da;
+  lasts=0; s=t=3; n=1; na=0; d=0; da=24;
+  forever:
+    exitif lasts=s;
+    lasts := s;
+    n := n+na; na := na+8;
+    d := d+da; da := da+32; 
+    t := t*n/d;
+    s := s+t;
+  endfor
+  s
+enddef;
+pi := getpi;
+
+% conversions
+vardef degrees(expr theta) = 180 / pi * theta enddef;
+vardef radians(expr theta) = pi / 180 * theta enddef;
+
+% trig functions that expect radians
+vardef sin(expr theta) = sind(degrees(theta)) enddef;
+vardef cos(expr theta) = cosd(degrees(theta)) enddef;
+% inverse trig functions
+vardef acosd(expr a) = angle (a,1+-+a) enddef;
+vardef asind(expr a) = angle (1+-+a,a) enddef;
+vardef acos(expr a) = radians(acosd(a)) enddef;
+vardef asin(expr a) = radians(asind(a)) enddef;
+
+% tangents
+vardef tand(expr theta) = save x,y; (x,y)=dir theta; y/x enddef;
+vardef atand(expr a) = angle (1,a) enddef;
+\end{code}
+}}
+but if you are using one of the new number systems you might want more digits of
+precision.  In fact there's no harm in always defining these extra digits; even when
+you are using the default "scaled" number system, \MP\ will happily read as many
+extra digits of $\pi$ as you supply, before it rounds the value to the nearest
+multiple of $1\over65536$ (which turns out to be $3.14159$). The same applies to the
+"double" and "binary" number systems, but the "decimal" number system will give you
+an error if you supply more digits that the default precision (which is 34).  So
+it's best to use no more that 34 digits.  It's also possible, but not really worth
+the trouble, to define a routine to calculate $\pi$ for you to the current
+precision.  However you define it, once you are armed with a value for $\pi$ you can
+then define functions to convert between degrees and radians and some more `normal'
+versions of sine and cosine.
+
+There's no built-in $\arccos$ or $\arcsin$ function but each is very easy to
+implement using a combination of the "angle" function and the Pythagorean difference
+operator.
+
+\MP\ does have built in functions for tangents; but they are called "angle" and
+"dir" and they are designed for pairs. So $\kw{angle}\,(x,y)=\arctan(y/x)$ while
+$\kw{dir}\,30$ gives you the point $(x,y)$ on the unit circle such that $\tan
+30^{\circ} = y/x$.  You can use these ideas to define tangent and arctan functions
+if you really need them, but often "angle" and "dir" are more directly useful
+for drawing.  You should also be aware that the tangent function shown here does not
+check whether $x=0$; if this is an issue you can say something like
+`$\kw{if}\,x=0\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$' at the appropriate
+point.
+
+\newpage
+\subsection{Integer arithmetic, clocks, and rounding}
+
+Native \MP\ provides nothing but a "floor" function, but "plain.mp" provides several
+more useful functions based on this.
+\begin{itemize}
+      \item `$\mathop{\kw{floor}} x$' returns $\lfloor x\rfloor$, $\hbox{the
+          largest integer} \le x$.  You can use "x=floor x" to check that $x$ is an
+          integer.
+    \item `$\mathop{\kw{ceiling}} x$' returns $\lceil  x\rceil$,  $\hbox{the
+        smallest integer} \ge x$.
+
+    \item `$x \mathbin{\kw{div}} y$' returns          $\lfloor x/y \rfloor$, integer
+        division.
+    \item `$x \mathbin{\kw{mod}} y$' returns $x-y\times\lfloor x/y \rfloor$,
+        integer remainder.
+    
+\end{itemize}
+
+\parshape=3 0pt 5in 0pt 5in 0pt 3.4in
+Note that $\kw{mod}$ preserves any fractional part, so
+$355/113 \mathrel{\kw{mod}} 3 = 0.14159$.  This behaviour is usually what you want.  
+For example we can use it to turn the time of day into an appropriate rotation for
+the hands of a clock.%
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-160pt
+\begin{code}
+path hand[]; 
+hand1 = origin .. (.257,1/50) .. (.377,1/60) 
+          & (.377,1/60) {up} .. (.40,3/50) 
+         .. (.60, 1/40) .. {right} (.75,0);
+hand1 := (hand1 .. reverse hand1 reflectedabout(left,right) 
+          .. cycle) scaled 50;
+
+hand2 = origin  .. (.60, 1/64) .. {right} (.925,0);
+hand2 := (hand2 .. reverse hand2 reflectedabout(left,right) 
+         .. cycle) scaled 50;
+
+
+% hour of the day to degrees
+vardef htod(expr hours)   = 30*((15-hours)   mod 12) enddef;
+vardef mtod(expr minutes) =  6*((75-minutes) mod 60) enddef;
+
+vardef clock(expr hours, minutes) = image(
+  % face and outer ring
+  fill fullcircle scaled 100 withcolor (240/255, 240/255, 230/255);
+  draw fullcircle scaled  99 withcolor .8 white;
+  draw fullcircle scaled 100 withpen pencircle scaled 7/8;
+  % numerals
+  for h=1 upto 12:
+    label( decimal h infont "bchr8r", (40,0) rotated htod(h)); 
+  endfor
+  % hour and minute marks
+  for t=0 step  6 until 359: draw ((48,0)--(49,0)) rotated t; endfor
+  drawoptions(withpen pencircle scaled 7/8);
+  for t=0 step 30 until 359: draw ((47,0)--(49,0)) rotated t; endfor
+  % hands rotated to the given time
+  filldraw hand1 rotated htod(hours+minutes/60);
+  filldraw hand2 rotated mtod(minutes);
+  % draw the center on top
+  fill fullcircle scaled 5;
+  fill fullcircle scaled 3 withcolor .4 white;
+) enddef;
+\end{code}
+}}
+In the program given on the right, this idea
+is used to define functions that convert from hours and minutes
+to degrees of rotation on the clock.
+\MP\ provides two internal variables
+\id{hour} and \id{minute} that tell you the time of day when the
+current job started.  The clock face shown here was generated using
+$$\kw{beginfig}(1);{}\mathbin{\kw{draw}}\id{clock}(\id{hour},\id{minute}); \kw{endfig};$$
+to give a sort of graphical time stamp.
+\vadjust{\moveright 3.4in\vbox to 0pt{\vss\includegraphics[scale=1]{clocks1}\bigskip}}
+
+\vfill
+
+There is also a "round" function that rounds a number to the nearest integer.  It is
+essentially defined as $\mathop{\kw{floor}}(x+0.5)$ except that it is enhanced to
+deal with $\kw{pair}$ variables as well.  If you round a pair the $x$-part and
+the $y$-part are rounded separately, so that $\mathop{\kw{round}}(3.14159, 2.71828)
+= (3,3)$.
+
+The "round" function only takes a single argument, but you can use it to round to a
+given number of places by multiplying by the precision you want, rounding, and then
+dividing the result. So to round to the nearest eighth you might use
+`$\kw{round}(x\times8)/8$', and to round to two decimal places
+`$\kw{round}(x\times100)/100$'.  The only restriction is that the intermediate value
+must remain less than 32767 if you are using the default number system.
+
+
+\newpage
+\section{Random numbers}
+
+\MP\ provides us with two built-in functions to generate random numbers.
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
+\begin{code}
+vardef dice(expr pip_count, pip_color) = 
+  save d,r,p, ul, ur, lr, ll; 
+  r=1/8; path d; picture p;
+  d = (for i=0 upto 3: 
+         subpath (r+i,1+i-r) of unitsquare .. 
+       endfor cycle) scaled 30;
+  p = image(draw fullcircle scaled 6; 
+            fill fullcircle scaled 6 withcolor pip_color);
+  pair ul, ur, ll, lr;
+  ul = 1/5[ulcorner d, lrcorner d];
+  lr = 4/5[ulcorner d, lrcorner d];
+  ur = 1/5[urcorner d, llcorner d];
+  ll = 4/5[urcorner d, llcorner d];
+  image(fill d withcolor background; draw d;
+  if odd(pip_count):
+     draw p shifted center d;
+  fi;
+  if pip_count > 1:
+     draw p shifted ul; draw p shifted lr;
+  fi;
+  if pip_count > 3:
+     draw p shifted ur; draw p shifted ll;
+  fi;
+  if pip_count = 6:
+     draw p shifted 1/2[ul,ur];
+     draw p shifted 1/2[ll,lr];
+  fi)
+enddef;
+
+beginfig(1);
+for i=0 upto 4:
+  draw dice(1+floor uniformdeviate 6, red) 
+       rotated (2 normaldeviate) 
+       shifted (36i,0);
+endfor
+endfig;
+\end{code}
+        $$\includegraphics{dice1}$$
+\vss}}
+\begin{itemize}
+    \item `$\kw{uniformdeviate}\,n$' generates a random real number between $0$ and
+        $n$.  
+        
+        Note that the $n$ is required.  It can be negative, in which case you get negative random
+        numbers; or it can be zero, but then you just get $0$ every time. In other words the
+        implementation generates a number $r$ such that $0\le r<1$ and then
+        multiplies $r$ by
+        $n$. 
+
+        If you want a random whole number, use `$\kw{floor}$' on the result.
+        So to simulate six-sided dice, you can use `$1+\kw{floor}\,\kw{uniformdeviate}6$'.
+
+        If you use the new number systems, you should beware that the numbers
+        generated will all be multiples of $1\over4096$, so $\kw{uniformdeviate}
+        8092$ (for example) will generate even integers instead of random real
+        numbers.  This `feature' is an accident of the way that the original rather
+        complicated arithmetic routines have been adapted.
+
+    \item `\kw{normaldeviate}' generates a random real number that follows the
+        familiar normal distribution. The algorithm used is discussed in \textsl{The
+        Art of Computer Programming}, section~3.4.1.  
+        If you generate enough samples, the mean should
+        be approximately zero, and the variance about 1. 
+        The chance of getting a number between $-1$ and 1 is
+        about 68\%; between $-2$ and 2, about 95\%.
+        $$\includegraphics{gauss3}$$
+        To relocate the mean, just add a constant.  To rescale the distribution, 
+        multiply by the desired standard deviation (the square root of the
+        desired variance).
+
+    
+\end{itemize}
+
+
+\newpage\subsection{Random numbers from other distributions}
+
+The \kw{normaldeviate} function is provided as a primitive \MP\ operation. The
+implementation is based on the `Ratio method' presented in \textsl{The Art of
+Computer Programming}, section~3.4.1.   It turns out to be very straightforward to
+implement the algorithm for this method as a user-level program $\to$
+\vadjust{\moveright5.5in\vbox to 0pt{\kern -60pt
+\begin{code}
+vardef normaldeviate = 
+    save u, v, xa; 
+    forever:
+        forever:
+            u := uniformdeviate 1;
+            exitif (u>1/64); 
+        endfor
+        v := sqrt(8/mexp(256)) * ( -1/2 + uniformdeviate 1 );
+        xa := v/u; 
+        exitif ( xa**2 <= -mlog(u)/64 );
+    endfor
+    xa
+enddef;
+
+vardef exponentialdeviate = 
+  save u;
+  forever: 
+    u := uniformdeviate 1; 
+    exitif (u>0); 
+  endfor
+  -mlog(u)/256
+enddef;
+
+vardef gammadeviate(expr a,b) = 
+  save y, x, v, s, accept; boolean accept;
+  s = sqrt(2a-1);
+  forever:
+    forever:
+      y := tand(uniformdeviate 180);
+      exitif y<64;
+    endfor
+    x := s * y + a - 1;
+    accept := false;
+    if x>0:
+       v := uniformdeviate 1;
+       if (v <= (1+y**2)*mexp((a-1)*mlog(x/(a-1))-(256*s*y))):
+         accept := true;
+       fi
+    fi
+    exitif accept;
+  endfor
+  x/b
+ enddef;
+\end{code}
+\vss}}%
+
+There are a couple points here.  First, the inner loop around the assignment to $u$ is
+designed to avoid very small values that would cause $v/u$ to be larger than 64, and
+hence make "xa**2" overflow. This is a useful general technique, and justified in
+terms of the algorithm since large values of $v/u$ are rejected anyway.  Secondly,
+the expression "sqrt(8/mexp(256))" is a constant ($ \sqrt{8/e} \simeq 1.71553 $) and could be
+replaced by it's value, but this does not make an appreciable improvement to the
+speed of the routine.  On a modern machine, this routine is only very slightly
+slower than using the primitive function.
+
+It is also fairly straightforward to implement random number generators that follow other statistical
+distributions.  The mathematical details are in the section of \textsl{TOACP}
+referenced above. Two examples, for the exponential distribution and the gamma
+distribution, are shown on the right.  In both cases note the care required to avoid
+arithmetic overflow.  
+
+\medskip\noindent
+You can also see the special nature of \MP's \kw{mexp} and \kw{mlog}
+functions. They are defined so that $\kw{mexp} x = \exp(x/256)$ and $\kw{mlog} x =256\log(x)$.
+This is another artefact of the scaled number system.  \MP\ computes $x^y$ using the
+formula "mexp(y*mlog(x))", and the adjusted log values give more accurate results.
+
+\medskip\noindent
+At the start of each job, \MP\ automatically sets a new seed for the random number
+generator, so that the sequence of numbers is different each time.  But you can set
+this yourself if you need the same sequence each time.  At the start of your program
+you should put "randomseed:=3.14;" (or whatever value you prefer). According to
+\textsl{The Metafont Book}, the default value is
+$\id{day}+\id{time}\ast\id{epsilon}$.
+
+
+
+\newpage\subsection{Random walks}
+
+You can use the random number generation routines to produce visualizations of
+random walks, with various levels of analysis.
+\vadjust{\moveright5.5in\vbox to 0pt{\kern -2\baselineskip
+\begin{code}
+beginfig(1);
+w = 377; h = 233; n = 500;
+pair zenith, nadir; zenith = nadir = origin;
+path walk[];
+for i=1 upto 16:
+  y := 0;
+  walk[i] = origin for x=0 step w/n until w: 
+     hide(
+       d := floor uniformdeviate 2 * 2 - 1;
+       y := y + d;
+       if y > ypart zenith: zenith := (x,y) ; fi
+       if y < ypart nadir:  nadir  := (x,y) ; fi
+     ) 
+     -- (x,y) 
+  endfor;
+  draw walk[i] withcolor ((y+h/4)/(h/2))[red,blue];
+  endfor
+
+draw (origin--right) scaled w;
+draw (origin--right) scaled w shifted (0,+h/4) withcolor .8 white;
+draw (origin--right) scaled w shifted (0,-h/4) withcolor .8 white;
+
+drawarrow (12 up   -- 2 up  ) shifted zenith withcolor blue;
+drawarrow (12 down -- 2 down) shifted nadir  withcolor red;
+
+endfig;
+\end{code}
+\vss}}
+$$\includegraphics[width=\textwidth]{brown2}$$
+In this example the random walk lines are coloured according to the final $y$-value,
+and the global maximum and minimum points are marked.
+
+Each walk is created with an `inline' for-loop; the loop is effectively expanded
+before the assignment, so that each \id{walk} variable becomes a chain of connected $(x,y)$
+pairs.  Inside the loop you can conceal yet more instructions in a `\kw{hide}' block.
+These instructions contribute nothing to the assignment, but can change the values
+of variables outside the block.
+
+Note the first line of the \kw{hide} block sets "d" to $-1$ or $+1$. 
+You can (of course) create different kinds of random walks, by changing the way you
+set this delta value, for example by removing the \kw{floor} instruction, or scaling
+the value, or changing the odds in favour of one direction or the other.  For
+example:
+$$d\gets\null\kw{if}\ p > \kw{uniformdeviate}\ 1: +1 \:\kw{else}: -1 \kw{fi};$$
+will set $d$ positive with probability $p$ and negative with probability $1-p$.
+
+\newpage\subsection{Brownian motion}
+
+A random walk is normally constrained to move one unit at a time, but if you relax
+that constraint and use `\kw{normaldeviate}' in place of `\kw{uniformdeviate}' you
+can get rather more interesting patterns.\vadjust{\moveright5.5in\vbox to 0pt{
+\hsize4in\kern -20pt
+\begin{code}
+beginfig(2);
+for n=1 upto 4:
+  x:=y:=0;
+  draw (x,y) for i=1 upto 2000: 
+    hide(x:=x+4normaldeviate; y:=y+4normaldeviate;) 
+    .. (x,y) 
+  endfor withcolor ((n+2)/9)[blue,white];
+  fill fullcircle scaled 3 shifted(x,y) withcolor red;
+endfor
+% mark the origin
+fill fullcircle scaled 3 withcolor green;
+endfig;
+\end{code}
+
+\kern 120pt
+\noindent
+One of the features of using these random number generators is that the output is
+different each time because \MP\ produces a different sequence of numbers.  You may
+find yourself running the program a few times until you find one you like. At this
+point you will wish that you knew what "randomseed" had been used, so that you can
+re-create picture.  Unfortunately \MP\ does not log the value unless you set it
+manually.  So here's a trick to use in this situation: set your own random seed
+using a random number at the top of your program.
+\begin{code}
+    randomseed := uniformdeviate infinity;
+\end{code}
+Now you will find \MP\ writes the value it used in the log.
+\vss}}
+If you also allow the $x$-coordinates to
+wander at random as well as the $y$-coordinates you get two-dimensional random
+patterns.  And if you replace the straight line segments "--" with ".." so that \MP\
+draws a smooth curve through the points, as well as vary the colour each time
+you draw a new curve, then the result is almost artistic.
+$$\includegraphics[width=1.2\textwidth]{brown3a}$$
+
+\newpage\subsection{Drawing freehand}
+
+This idea is shamelessly stolen from the wonderful collection of \MP\ examples
+available at "http://melusine.eu.org/syracuse/metapost/".  But since the
+examples there are all in French (including all the names of the custom macros), 
+perhaps it would be better to say `translated' rather than `stolen';  moreover my
+implementations are easier to use with plain \MP.\vadjust{\moveright5.5in\vbox to 0pt{
+\hsize4in\kern -5.5\baselineskip
+\begin{code}
+defaultfont := "eurm10";
+
+def freehand_segment(expr p) =
+  point 0 of p {direction 0 of p rotated (4+normaldeviate)} .. 
+  point 1 of p {direction 1 of p rotated (4+normaldeviate)}
+enddef;
+
+def freehand_path(expr p) = 
+  freehand_segment(subpath(0,1) of p)
+  for i=1 upto length(p)-1:
+    & freehand_segment(subpath(i,i+1) of p)
+  endfor
+  if cycle p: & cycle fi
+enddef;
+
+picture mark[];
+mark1 = image(draw (left--right) scaled 2 rotated 60);
+mark2 = image(draw mark1 shifted left; draw mark1 shifted right);
+
+def moved_along expr x of p = rotated angle direction x of p 
+                              shifted point x of p enddef;
+
+z0 = (0,-1cm); z1 = (6cm,0);  z2 = (4cm,3cm); 
+path t, c; 
+t = freehand_path(z0--z1--z2--cycle);
+c = freehand_path(z0..z1..z2..cycle);
+
+z3 = point 1/2 + 1/20 normaldeviate of subpath (0,1) of t;
+
+beginfig(1);
+draw c withcolor .67 red;
+draw t;
+draw freehand_segment(point 2 of t--z3);
+draw mark2 moved_along 1/4 of t;
+draw mark2 moved_along 3/4 of t;
+
+label.lft("A", z0);
+label.rt ("B", z1);
+label.top("C", z2);
+label.bot("D", z3);
+endfig;
+\end{code}
+\vss}}
+
+\subsubsection{Making curves and straight lines look hand drawn}
+
+$$\includegraphics{freehand1}$$
+A small amount of random wiggle makes the drawing come out charmingly wonky.  Notice
+that the "freehand_path" macro will transform a path whether it is straight or curved,
+and open or cyclic.  Notice also that to find the mid-point of a line, you find the
+point along the freehand path; if you simply put "1/2[a,b]" there's no guarantee
+that the point would actually be on the free hand path between "a" and "b".  In this
+case a little extra randomness has been added, and the 
+two segments $AD$ and $DB$ have been marked with traditional
+markers to show that they are equal.  The "moved_along" macro combines shifted and
+rotating to make the markers fit the wonky lines properly.
+The Euler font complements the hand-drawn look;
+you might find that a little of this type of decoration goes a long way.
+
+\newpage\subsubsection{Extending straight lines slightly}
+
+This second freehand figure uses the same macros as the one on the previous page,
+but now the ink colour is set to sepia, and the lines are given a slightly more hand
+drawn look at the corners.\vadjust{\moveright5.5in\vbox to 0pt{
+\hsize4in\kern -3\baselineskip
+\begin{code}
+color sepia; sepia = (0.44, 0.26, 0.08);
+
+def draw_out(expr p, o) = 
+  draw p;
+  for i=1 upto length(p):
+     draw (unitvector(direction i-eps of p) scaled +o 
+           -- origin --
+           unitvector(direction i+eps of p) scaled -o) 
+           shifted point i of p;
+  endfor
+enddef;
+
+def angle_label_pos(expr p, i, s) = 
+  ( unitvector(point i-1 of p-point i of p)
+  + unitvector(point i+1 of p-point i of p)
+  ) scaled s shifted point i of p
+enddef;
+
+beginfig(2);
+  drawoptions(withcolor sepia);
+  draw_out(t,6);
+  drawoptions(withcolor .78 blue);
+  label.lrt ("a", point 1/2 of t);
+  label.urt ("b", point 3/2 of t);
+  label.ulft("c", point 5/2 of t);
+
+  drawoptions(withcolor .67 red);
+  label(char 11, angle_label_pos(t,2,10));
+  label(char 12, angle_label_pos(t,0,14));
+  label(char 13, angle_label_pos(t,1,10));
+endfig;
+\end{code}
+\vss}}
+
+$$\includegraphics{freehand2}$$
+
+\vfill
+\nb
+The AMS Euler font available to \MP\ as "eurm10" is encoded as a subset of the \TeX\
+math italic layout --- essentially it has all the Greek letters but none of the
+arrows.
+$$\includegraphics{freehand3}$$
+
+\newpage\subsection{Increasingly random shapes of the same size}
+
+If you want a random-looking shape, the general approach is to find a method to make
+a path that allows you to inject some random noise at each point of the path.
+$$\includegraphics{random-simple2}$$
+For these shapes the objective was to make them increasingly random, but to keep
+them all the same length.\vadjust{\moveright5.5in\vbox to 0pt{
+\hsize4in
+\begin{code}
+beginfig(1);
+desired_length := 180; n := 30; s := 80;
+path shape;
+for r=0 upto 8:
+  shape := for i=0 upto n-1: 
+             (s + r * normaldeviate, 0) rotated (360/n*i) ..
+           endfor cycle;
+  shape := shape scaled (desired_length/arclength shape);
+  shape := shape shifted (r*s,0);
+  draw shape withcolor (r/8)[black,red];
+  label(decimal r, center shape);
+endfor
+endfig;
+\end{code}
+\vss}}
+The basic path was a circle with radius "s" drawn by a loop with "n" steps like
+this:
+\begin{code}
+for i=0 upto n-1: (s,0) rotated (360/n*i) .. endfor cycle
+\end{code}
+The random noise is then added to the $x$-coordinate at each step: when the noise is
+zero ($\id{r}=0$) you get a circle; as the noise increases the circle is
+increasingly distorted.  
+
+The scaling is done using the "arclength" operator.  This works like "length" but
+instead of telling you the number of points in a path, it returns the actual length
+as a dimension.  Dividing the desired length by this dimension gives the required
+scaling factor for the random shape just defined.
+
+Note that since we assign to "shape" each time round the loop, we have to use ":="
+to update the value instead of "=".
+
+\newpage\subsection{Explosions and splashes}
+
+Random numbers are also useful to make eye catching banners for posters,
+presentations, and infographics.  Here are two simple example shapes: $\to$
+\mpic{36pt}{explode1}
+
+\begin{code}
+string heavy_font; 
+heavy_font = "PlayfairDisplay-Black-osf-t1--base";
+
+randomseed:=2128.5073;
+
+beginfig(1);
+
+n = 40; r = 10; s = 50;
+
+path explosion, splash;
+explosion = for i=1 upto n:
+  (s if odd(i): - else: + fi r + uniformdeviate r,0) rotated (i*360/n) --
+endfor cycle; 
+
+splash = for i=1 upto n:
+  (s if odd(i): - else: + fi r + uniformdeviate r,0) rotated (i*360/n) ..
+endfor cycle; 
+splash := splash shifted (3s,0);
+
+fill explosion withcolor 1/2 green + red;
+draw explosion withpen pencircle scaled 2 withcolor 2/3 red;
+label("BOOM!" infont heavy_font scaled 2, center explosion) withcolor red;
+
+fill splash withcolor 1/2 green + blue;
+draw splash withpen pencircle scaled 2 withcolor 2/3 blue;
+label("SPLAT!" infont heavy_font scaled 2, center splash) withcolor blue;
+
+endfig;
+\end{code}
+
+\noindent
+In this figure "n" is the number of points in the shape, "r" is the amount of
+randomness, and :"s" is the radius used.
+In order to get a clear zig-zag outline, the loop alternately adds or subtracts "r";
+and then adds a random amount on top to make it look random.
+Notice that the only difference between the "explosion" and "splash" is that how
+the connecting lines are constrained to be straight or allowed to make smooth
+curves.\vadjust{\moveright5.5in\vtop to -2pt{\hsize 4in\vss\noindent 
+The display font used here is one of the gems hidden away in "psfonts.map".
+If you run \MP\ with the "-recorder" option, it will create a list of all the files
+used, with the current job name and an extension of ".fls".  This file will include
+a line which tells you exactly which version of "psfonts.map" is being used.  
+
+The DVIPS documentation explains the format of the file, but for \MP's purposes the
+first word of each non-comment line defines a font name you can try.  However beware
+that just because a name is defined in your map file, does not necessarily mean that
+you actually have the required PostScript font files installed as well.  But if you have a
+full TexLive installation you will find that very many of them are already
+installed.\strut
+}}
+
+
+\newpage\subsection{Simulating rough edges or rough surfaces}
+
+In this adjacent
+
+- drawing jagged edges
+
+\newpage
+\section{Labels and annotations}
+
+- dealing with text - plain, psfonts, stacks, latex, OTF fonts, 
+
+- dynamic labels, rotating labels
+
+- annotations - overbrace, underbrace, length arrows etc, ahangle trick
+
+- paragraphs of text
+
+\newpage
+\section{Line caps and line joins}
+
+The PostScript language defines parameters that affect how the ends of each line are
+drawn and how lines are joined together.  Plain \MP\ provides access to these
+parameters through internal variables called "linecap" and "linejoin"; it sets both
+of them to the value "rounded" at the start of each job. 
+\mpic{0pt}{basic_drawing1}
+
+The figure on the right shows the affect of the different settings, using an
+exaggerated line width of 2 points (instead of the usual 0.5 points).  Some
+observations
+to note:
+\begin{itemize}
+    \item When $\id{linecap}=\id{squared}$ then \kw{drawdot} produces diamond-shaped
+        dots, even when you are drawing with the default circular pen. 
+
+    \item When $\id{linecap}=\id{butt}$ then \kw{drawdot} produces invisible dots.
+        They still count towards the bounding box of the picture but there's no mark
+        on the page.
+
+    \item \MP's arrow head routines don't work very well when $\id{linecap}=\id{squared}$;
+        even when $\id{linejoin}=\id{mitered}$, you can still see small jaggies on
+        the slopes of the arrows.
+
+    \item The arrows are nice and sharp when 
+        $\id{linejoin}=\id{mitered}$, but they over shoot the mark slightly.
+
+    \item If you zoom in, you can see the effect of $\id{linejoin}$ on the corners of the grey box
+        as well as on the arrow heads, but you might not notice the difference when
+        the picture is printed unless you have a very high resolution printer.
+
+    \item The default mode, with rounded caps and rounded joins, looks rather
+        sharper with the normal pen ("pencircle scaled 1/2").  But the dots drawn
+        with the default pen are easy to miss.  
+        This drawing was done with "pencircle scaled 2".  
+
+\end{itemize}
+
+There is one more PostScript parameter affecting line joins. \MP\ makes it available as "miterlimit" 
+and it affects how much a mitered join is allowed to stick out at each corner.  Plain \MP\ sets
+"miterlimit=10;" which is correct for nearly all drawings.  If you set
+"miterlimit:=0;" then the mitered line join mode becomes more or less the same as the
+beveled mode.
+
+\newpage
+\section{To do...}
+
+
+filling shapes
+gradients
+- faking transparency, overlaying colours, clipping to shapes, filling with patterns
+- making waves
+
+- paths, points, directions, subpaths, reversed paths
+
+- boxen, fitting, corners and centres, cutbefore cutafter
+
+- inline if and for and range, loops exitif upto downto
+
+- dots, dotlabeldiam, coloured dots, hollow dots
+
+
+- graphs, axes, grids, number labels, jitter, sketch graphs
+
+
+- geometry - constructions, perpendiculars, bisection, tangents, segments and lines,
+  incircle, circumcircle
+
+- angle marks, including curved angle marks
+
+- intersections, buildcycle, eggs, ellipses
+
+
+- drawing knots, double lines, ropes
+
+
+- HSV colours, brewer colours, rainbows, 50\% white etc
+
+- decorating lines, Meccano
+
+
+- finding supremum
+
+- decorated tables
+
+- numberlines
+
+
+- a pulse
+
+- reuleaux polygons
+
+- the eye
+
+- feynman diagrams the easy way
+
+- physics diagrams, light rays, pendulum, indicating movement and vibration
+
+- parametric equations, folium of Descartes
+
+- examining a glyph
+
+- tesellations and tiling (reference title page)
+
+- all sorts of arrow, arrows between arrows, arrows next to a path (handles)
+
+- faking 3d
+
+
+- recursive drawings, trees
+
+- four box model charts - Tufte charts - venn diagrams
+
+- my workflow 
+- tex process flow diagrams
+
+- triangle of polygons
+
+\newpage
+\section{A tour of the plain format}
+\newpage
+\tableofcontents
+\end{document}
