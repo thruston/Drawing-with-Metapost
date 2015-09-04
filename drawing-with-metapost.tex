@@ -61,8 +61,8 @@ this, please read on.
 These notes are based on the many examples I have developed as answers
 to questions about technical drawing on the wonderful \TeX\ StackExchange site.  In
 accordance with their terms and conditions, I’ve only included material here that
-I’ve written myself --- if you want other people’s ideas then visit the site.
-While the main focus of the site is writing \LaTeX\ documents, there are a great
+I’ve written myself --- if you want other people’s code then visit the site;
+while most answers there focus on writing \LaTeX\ documents, there are a great
 many questions about drawing, and some of the answers are very illuminating.  
 
 My approach here will be to explore plain \MP, with examples grouped
@@ -1428,11 +1428,109 @@ installed.\strut
 }}
 
 
-\newpage\subsection{Simulating rough edges or rough surfaces}
+\newpage\subsection{Simulating jagged edges or rough surfaces}
 
-In this adjacent
+You can use the idea of adding a little bit of noise to simulate a rough surface.
+$$\includegraphics{qed1}\quad
+  \includegraphics{qed2}$$
+These diagrams are supposed to represent light rays reflecting from a surface: on
+the left the surface is smooth ($r=0$) and on the right it's rough ($r=0.42$).  
+The parameter $r$ is used in the \MP\ program as a scaling factor for the random
+noise added to each point along the rough surface; the only difference in the code
+to produce the two figures was the value of $r$.%
+\vadjust{\moveright5.5in\vbox to
+    0pt{\hsize 4in\vss
+\begin{code}
+def perpendicular expr t of p = 
+  direction t of p rotated 90 shifted point t of p
+  enddef;
 
-- drawing jagged edges
+beginfig(1);
+u = 5mm;  r = 0.42; n = 32; s = 8u; theta = -45;
+
+path base;
+base = origin 
+       for i=1 upto n-1: -- (i/n*s,r*normaldeviate) endfor 
+       -- (s,0) -- (s,-u) -- (0,-u) -- cycle;
+fill base withcolor .8[blue,white];
+draw base withcolor .67 blue;
+
+path ray[];
+for i=2 upto 6:
+  ray[i] = (left--right) scaled 2/3 s rotated theta shifted (i*u,0);
+  b := ypart (ray[i] intersectiontimes base);
+  ray[i] := point 0 of ray[i] 
+         -- point b of base 
+         -- point 0 of ray[i] 
+            reflectedabout(point b of base, perpendicular b of base);
+  drawarrow ray[i];
+endfor   
+
+label("r=" & decimal r, center base);
+endfig;
+\end{code}
+\vss}}
+First the base block is created with some noise on the upper side.  Then five rays
+are created.  Applying "ypart" to the pair of times returned by "intersectiontimes"
+gives us the point of the base where the incident ray hits it.  This point and the
+perpendicular at that point are then used to get the angle for the reflected ray.
+The diagrams are effective because the rays are reflected at realistic looking
+angles.
+
+The simple approach to adding noise along a path works well in most cases provided
+there's not too much noise,  but it is always possible that you'll get two consecutive
+values at opposite extremes that will show up as an obtrusive jag in your line.  To
+fix this you can simply run your program again to use a different random seed value;
+or you could try using ".." instead of "--" to connect each point, but beware that
+sometimes this can create unexpected loops.  
+
+\newpage\subsubsection{Walking along a torn edge}
+
+It's also possible to use a random
+walk approach so that each random step takes account of the previous one to avoid
+any big jumps.  Here's one way to do that.
+\begin{code}
+vardef signr suffix $ = 
+   if $<0: - else: + fi uniformdeviate 1 
+   enddef;
+vardef walkr suffix $ = 
+   $ := $ if uniformdeviate 1 < (2**-abs($)): + else: - fi signr $; 
+   $ 
+   enddef;
+\end{code}
+The "walkr" routine works like the "incr" and "decr" commands; it updates the value of the
+argument.  The idea is that the further away from zero you are, the more likely is
+that the next value will take you back towards zero.  You can use this to produce
+more realistic torn edges.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vss
+\begin{code}
+beginfig(1);
+  y=0;
+  path e; 
+  e = (0,y) for i=1 upto 288: -- (i,walkr y) endfor ;
+  draw e;
+endfig;  
+\end{code}
+$$\includegraphics{torn-edge1}$$
+\vskip2cm
+\begin{code}
+beginfig(2);
+path c; c = fullcircle scaled 200;
+draw c withcolor .8 white;
+
+y=0; n = 600;
+path t; t = for i=0 upto n-1:
+  point i/n*length(c) of c 
+  + (0, walkr y) rotated angle direction i/n*length(c) of c
+  -- 
+endfor cycle;
+draw t withcolor .67 red;
+endfig;
+end.
+\end{code}
+\vss}}
+You can also apply this as a form of jitter to a curved path, by adding a suitably
+rotated vector to enough points along the path.
+$$\includegraphics{torn-edge2}$$
 
 \newpage
 \section{Labels and annotations}
