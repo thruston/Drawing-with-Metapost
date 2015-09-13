@@ -13,7 +13,7 @@ beginfig(1);
 y=0;
 path e; 
 e = (0,y) for i=1 upto 288: -- (i,walkr y) endfor ;
-draw e;
+draw e; 
 
 %%path c; 
 %%c = fullcircle scaled 200;

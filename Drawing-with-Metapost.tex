@@ -1,5 +1,7 @@
 \documentclass[a4paper,landscape]{article}
 \usepackage{fontspec}
+\newfontfamily{\demo}{TeX Gyre Pagella}
+\DeclareTextFontCommand{\textdemo}{\demo}
 \usepackage{unicode-math}
 \usepackage[inner=1in,textwidth=5in,textheight=6in,
             marginparsep=0.5in,
@@ -26,7 +28,7 @@
 \ifmmode\mathop{\textit{#1}}\else\hbox{\it#1\/}\fi\endgroup}
 \def\cycle{{\rm cycle}}
 \def\vpic#1#2{\moveright5.5in\vbox to 0pt{\vskip#1\includegraphics{#2}\vss}}
-\def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\vskip#1\includegraphics{#2}\vss}}}
+\def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
 \def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \begin{document}
@@ -777,7 +779,7 @@ endfig;
 \end{code}
 
 \newpage
-\subsection{Trigonometry functions}
+\subsection{Trigonometry functions}\label{trig}
 
 \MP\ provides only two basic trigonometry functions, "sind" and "cosd";  this lack
 appears to be a deliberate design.  In general it's much easier to use the "rotated"
@@ -1098,7 +1100,7 @@ It is also fairly straightforward to implement random number generators that fol
 distributions.  The mathematical details are in the section of \textsl{TOACP}
 referenced above. Two examples, for the exponential distribution and the gamma
 distribution, are shown on the right.  In both cases note the care required to avoid
-arithmetic overflow.  
+arithmetic overflow (and see section~\ref{trig} for the "tand" function). 
 
 \medskip\noindent
 You can also see the special nature of \MP's \kw{mexp} and \kw{mlog}
@@ -1112,8 +1114,8 @@ generator, so that the sequence of numbers is different each time.  But you can 
 this yourself if you need the same sequence each time.  At the start of your program
 you should put "randomseed:=3.14;" (or whatever value you prefer). According to
 \textsl{The Metafont Book}, the default value is
-$\id{day}+\id{time}\ast\id{epsilon}$.
-
+$\id{day}+\id{time}\ast\id{epsilon}$, but in \MP\ the exact value used depends on
+the resolution of the timers available on your system.  
 
 
 \newpage\subsection{Random walks}
@@ -1322,7 +1324,7 @@ endfig;
 $$\includegraphics{freehand2}$$
 
 \vfill
-\nb
+\nb\label{eulertable}
 The AMS Euler font available to \MP\ as "eurm10" is encoded as a subset of the \TeX\
 math italic layout --- essentially it has all the Greek letters but none of the
 arrows.
@@ -1535,6 +1537,232 @@ $$\includegraphics{torn-edge2}$$
 \newpage
 \section{Labels and annotations}
 
+\MP\ does not draw text directly; instead it provides two different mechanisms to
+turn a text label into a picture, which can then be treated like any other.  It can
+be saved as a picture variable, drawn directly, or transformed in some way with a
+scaling, a reflection, or a rotation.
+
+\subsection{Simple strings in PostScript fonts with \texttt{infont}}
+
+The first mechanism is the primitive binary operation "infont".  As explained in
+section~8.3 of the \MP\ manual, it takes two strings as arguments.  The left hand
+argument is the string of text to be printed; the right hand argument is the name of
+the font to use.\vadjust{
+\moveright5.5in\vbox to 0pt{\kern -124.5 bp
+    \hsize 4in\noindent
+To find the name of a suitable font, you have to consult your local "psfonts.map"
+file, and probably the PSNFSS documentation.
+Here are a few of the many fonts available on my local \TeX\ installation; the name
+to use with "infont" is in the first column.  
+$$\includegraphics{font-sampler2}$$
+The text example in the first line
+of this table was produced with
+\begin{code}
+    draw "Grey fox 42" infont "pagk8r" shifted (124,144);
+\end{code}
+Note that in PostScript terms each of these font names refers to a combination of
+three files: an encoding that maps the characters you type to the glyphs in the
+font; a font metrics file that defines the sizes of the virtual boxes surrounding
+these glyphs; and a set of PostScript routines that actually draw them.  In a \TeX\
+installation 
+these combinations are defined in a font map file, usually called "psfonts.map".
+If you run "mpost" with the "-recorder" switch it will write an extra log file (with
+a ".fls" extension) that lists the names of all the files used in a job.
+The actual font map file in use will be one of these.  You can then browse it to
+find a definitive list of the font names you can use with your local \MP.
+\vss}}
+
+To make a suitable string to print, the obvious method is to enclose your text
+in double quotes to make a string token, or to refer to a string variable.  But in
+addition you can do one of these:
+\begin{itemize}
+    \item Concatenate two other strings with "&".
+
+    \item Use "substr (a,b) of s" to get a substring of string "s".
+
+    \item Use "min(a,b,...)" or "max(a,b,..)" to find the lexicographically smallest
+        (or largest) string in the list "a,b,...".  The list must have at least two
+        entries, and they must all be strings. 
+
+    \item Use "char" to convert a numeric expression to the corresponding an ASCII
+        code;
+          the numeric expression is rounded to the nearest integer modulo
+          256.
+    
+    \item Use "decimal" to get
+        the value (as a decimal) of a numeric expression.
+
+    \item Apply "str" to any suffix (and hence to any variable).  You get back a
+        string representation of the suffix or variable name.
+
+    \item Use "readfrom" to read one line from a file as a string.
+
+    \item Use "fontpart" to extract the name of the font used in a picture created
+        with "infont" --- the string will be empty if there's no text element in the
+        picture.
+
+    \item Use "textpart" to get the text used in a picture created by "infont" ---
+        the string will be empty if there's no text element in the picture.
+
+\end{itemize}
+
+\newpage
+\subsubsection{Character sets used by \texttt{infont} to set text} 
+    
+\MP\ input is strictly 7-bit ASCII only, but you can use 8-bit characters, including
+UTF-8, as the payload of a string.  As noted above, the PostScript font names used
+by "infont" are defined to be a combination of encoding and font glyphs, so each
+different font name implies a particular encoding.  All of these encodings are 8-bit
+encodings, so the maximum number of characters available in each font is 256, and there is no
+support for Unicode.\mpic{-81pt}{font-sampler-ugmr8r.pdf}  This means that although
+you can put UTF-8 characters in a string, they will be printed as a mess, so you
+need to stick to regular 8-bit characters or use the "char" mechanism.
+
+If you want to use "infont" with Computer Modern, you might choose "cmr10" as used
+by plain \TeX, however as soon as you set a label with more than one word, you will
+find this font has an acute accent instead of a space in postion 32 To fix this use
+the Latin Modern versions of the fonts, with a more standard encoding. For "cmr10"
+use "texnansi-lmr10", for "cmss10" use "texnansi-lmss10" and so on.  
+
+The "texnansi" encoding is almost the same as ISO Latin~1, which was the widely used
+Windows standard before Unicode.  For the standard Adobe fonts like Helvetica and
+Times New Roman it's best to stick to the "8r" encoding, which is even closer to ISO
+Latin~1.  
+
+\subsubsection{Bounding boxes and clipping with \texttt{infont}}
+
+Once the encoding is fixed, the other two parts of a PostScript font are the font
+metrics and the programs that draw the actual glyphs.  The font metrics define the
+width of each character and provide a kerning table to adjust the space between
+particular pairs.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
+$$\includegraphics{infont-example1} \qquad \includegraphics{infont-example2} $$
+\vss}} This means that certain characters will overlap each other or stick out
+beyond the bounding box of the picture produced by "infont".  This is not normally a
+problem unless the picture happens to be at the edge of your figure.  In the first
+example observe how the first and last letters have been clipped; in the second a
+wider baseline has been added to prevent this.  
+If you want this effect, but you
+don't want to see the baseline, then draw it 
+using the colour "background".
+
+\subsubsection{But what about the \texttt{label} command?}
+
+As a convenience, the plain \MP\ format provides a "label" macro that automatically
+turns strings into pictures for you using whatever font name is the current value of
+"defaultfont" and scaled to the current value of "defaultscale".\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
+\noindent
+The "label" macro is defined (essentially) to do this:
+\begin{code}
+    def *label(expr s, z) = 
+      draw s if string s: infont defaulfont 
+                          scaled defaultscale fi shifted z
+    enddef;
+\end{code}
+plus some slightly-too-clever code to align the label for you.
+\vss}}
+
+\newpage
+\subsubsection{Bounding boxes and alignment with \texttt{infont}}
+
+In order to allow you to align a text label on a specific point, \MP\ provides five
+unary operators 
+to measure the bounding box of a picture;
+they are shown in \textcolor{red!67!black}{red} in the diagram, and you can use them
+to measure the width, depth, and height of a textual picture.  Unfortunately there
+are
+no operators to tell us the location of the baseline of the text or the x-height;
+but you can work these out provided you know how much your picture has been shifted.
+The easiest way to do this is to 
+measure the picture \textit{before} you shift it.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
+$$\includegraphics{infont-example3}  $$
+\vss}}
+If you create a textual picture like this:
+\begin{code}
+    picture pp; pp = "proof" infont "pplri8r";
+\end{code}
+it will be created with the origin of the text sitting at coordinates $(0,0)$;
+then you can get the dimensions like this
+\begin{code}
+    wd = xpart urcorner pp;
+    ht = ypart urcorner pp;
+    dp = ypart lrcorner pp;
+\end{code}
+In this particular case you will find that you have $wd=20.47292$, $ht=7.19798$, and 
+$dp=-2.60017$.  The depth is negative because the descenders on the
+\textdemo{\textit{p}} and the \textdemo{\textit{f}}
+in the chosen font stick down below the base line.  The height is greater than the
+x-height, because the \textdemo{\textit{f}} also sticks up, so you need to make another measurement:
+\begin{code}
+    numeric xheight; xheight = ypart urcorner ("x" infont "pplri8r");
+\end{code}
+Armed with these measurements you can align your text neatly so that it is
+vertically centered on the lower case letters regardless of any ascenders or
+descenders.
+
+
+\newpage
+\subsubsection{Setting greek letters with \texttt{infont}}
+
+\leavevmode\hbox{}
+$$\includegraphics[width=0.5\textwidth]{greek-homer.pdf}$$
+While it's technically possible to set the whole of Homer's \textsl{Iliad} using the Greek
+fonts available to \MP, it's probably not a great use of time; on the other hand you
+might want to label parts of a diagram with Greek letters, and for single Greek
+letters "infont" is more than adequate.
+
+The Greek letters for Computer Modern are in the maths-italic font "cmmi10", which
+uses the encoding shown on p.\ 430 of \textsl{The \TeX{}book}.  For historical
+reasons there's no omicron available, so you are supposed to use the o character
+instead.  Fortunately you are unlikely to need more than the first few, and it's
+quite easy to remember that $"char 11"=\alpha$, $"char 12"=\beta$, and so on.
+Producing the upper case letters is a bit more of a fiddle with this encoding as you
+need to know which ones use a Roman letter form; for details examine the program on
+the right, or check the table on p.~\pageref{eulertable}.
+Herman Zapf's elegant Euler font, available as "eurm10" uses the same encoding and
+makes a refreshing change for some diagrams.\vadjust{\moveright5.5in\vbox to
+0pt{\hsize4in\kern-164pt
+\begin{code}
+beginfig(1);
+string ab, AB;
+ab = ("" for i=11 upto 23: & char i endfor 
+   & "o" for i=24 upto 33: & char i endfor);
+AB = ("AB" & char 0 & char 1 & "EZH" & char 2 & "IK" 
+          & char 3 & "MNO" & char 4 & char 5 & "P"
+          & char 6 & "T"   & char 7 & char 8 & "X"
+          & char 9 & char 10);
+
+draw ab infont "cmmi10";
+draw AB infont "cmmi10" shifted 12 down;
+draw ab infont "eurm10" shifted 32 down;
+draw AB infont "eurm10" shifted 44 down;
+endfig;
+\end{code}
+\centerline{\includegraphics{greek1}}
+
+\begin{code}
+string ab, AB;
+ab = "abgdezhjiklmnoxprstufqyw";
+AB = "ABGDEZHJIKLMNOXPRSTUFQYW";
+\end{code}
+\centerline{\includegraphics{greek2}}
+\vss}}
+
+\medskip\noindent
+If you have fonts installed from the Greek Font Society, then you get a wider
+choice, and a slightly more modern encoding.  All of the letters are available in the
+normal ASCII positions, so you do not have to muck about with "char xx".  
+
+\vbox to 0pt{\centerline{\includegraphics{gfs-encoding.pdf}}\vss}
+
+
+
+\newpage
+
+
+
+
+explain how label macros work - only primitive is draw! 
+
 - dealing with text - plain, psfonts, stacks, latex, OTF fonts, 
 
 - dynamic labels, rotating labels
@@ -1551,6 +1779,10 @@ drawn and how lines are joined together.  Plain \MP\ provides access to these
 parameters through internal variables called "linecap" and "linejoin"; it sets both
 of them to the value "rounded" at the start of each job. 
 \mpic{0pt}{basic_drawing1}
+
+
+
+
 
 The figure on the right shows the affect of the different settings, using an
 exaggerated line width of 2 points (instead of the usual 0.5 points).  Some
