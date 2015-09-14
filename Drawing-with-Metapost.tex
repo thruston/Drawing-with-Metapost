@@ -1663,6 +1663,7 @@ plus some slightly-too-clever code to align the label for you.
 
 \newpage
 \subsubsection{Bounding boxes and alignment with \texttt{infont}}
+\label{infontbbox}
 
 In order to allow you to align a text label on a specific point, \MP\ provides five
 unary operators 
@@ -1695,10 +1696,27 @@ x-height, because the \textdemo{\textit{f}} also sticks up, so you need to make 
 \begin{code}
     numeric xheight; xheight = ypart urcorner ("x" infont "pplri8r");
 \end{code}
-Armed with these measurements you can align your text neatly so that it is
-vertically centered on the lower case letters regardless of any ascenders or
-descenders.
+Armed with these measurements you can align your text labels neatly so that they are
+all positioned on the base line or vertically centered on the lower case letters
+regardless of any ascenders or descenders.  To draw your label left-aligned with its
+origin at position $(x,y)$ you just need to use: \kw{draw} \id{pp} \kw{shifted} $(x,y)$.  
+To draw it right-aligned, you subtract
+\id{wd} from the $x$-coordinate: \kw{draw} \id{pp} \kw{shifted} $(x-wd,y)$.  Or to
+centre it, subtract $1/2wd$.  To center it vertically on the lowercase letters,
+subtract $1/2\id{xheight}$ from the $y$-coordinate.  You might of course like to
+wrap these adjustments up in your own convenient macro to help you maintain
+consistency in a diagram with many labels.
 
+Alternatively you can adjust the bounding box of your textual picture and then use
+it with "label" as normal.  Assuming \id{wd} is set to the width of your picture
+and \id{xheight} is set correctly for the current font, then 
+\begin{code}
+    setbounds pp to unitsquare xscaled wd yscaled xheight;
+\end{code}
+will make the "label" alignment routines ignore any ascenders or descenders.  
+%Beware
+%that if the resulting label is right at the edge of your drawing then any parts of
+%the text that stick out of the adjusted bounding box will be clipped.
 
 \newpage
 \subsubsection{Setting greek letters with \texttt{infont}}
@@ -1712,7 +1730,7 @@ letters "infont" is more than adequate.
 
 The Greek letters for Computer Modern are in the maths-italic font "cmmi10", which
 uses the encoding shown on p.\ 430 of \textsl{The \TeX{}book}.  For historical
-reasons there's no omicron available, so you are supposed to use the o character
+reasons there's no omicron available, so you are supposed to use the $o$~character
 instead.  Fortunately you are unlikely to need more than the first few, and it's
 quite easy to remember that $"char 11"=\alpha$, $"char 12"=\beta$, and so on.
 Producing the upper case letters is a bit more of a fiddle with this encoding as you
@@ -1757,19 +1775,96 @@ normal ASCII positions, so you do not have to muck about with "char xx".
 
 
 \newpage
+\subsection{Setting text with \texttt{btex} and \texttt{etex}}
+
+As soon as you need anything complicated in a label, like multiple fonts, multiple
+lines, or mathematics, you will find it easier to switch from "infont" to the
+"btex ... etex" mechanism that calls \TeX\ to create your textual picture.  In fact
+you might prefer to use \TeX\ for all your labels, even simple strings, for the sake
+of consistency.  The only downside is that this mechanism is a little bit slower.
+
+The "btex" mechanism produces a textual picture just as "infont" does with a height,
+width, and depth that you can measure, and adjust, as discussed in
+section~\ref{infontbbox}.  And again, just like "infont" you can either use "draw"
+to place the resulting picture directly, or pass it to the "label" macro.
+
+What you need to be aware of is that \MP\ places everything you put between the "btex" and
+"etex" into an "\hbox{...}" and processes it with plain \TeX.  This has several
+implications, especially if you need to make your diagrams match the formatting of a
+particular \LaTeX\ format.
+
+\subsubsection{Matching the fonts}
+
+Despite the apparent restriction of using plain \TeX\ it is almost always possible
+to match the font and format of an enclosing \LaTeX\ document. 
+The simple approach is to use the plain
+\TeX\ font mechanism with the names from "psfonts.map".  
+\begin{code}
+verbatimtex
+\font\rm=ptmr8r\rm
+etex
+\end{code}
+Adding this at the top of your \MP\ program will set your text in Times New Roman,
+althought any maths will still be set using Computer Modern.  
+To fix this, all you
+have to do is to redefine all the maths fonts in all sizes you need; this not really
+that hard but it is a fiddle to get all the details right.  Fortunately it's been
+done for you in the wonderful "font-change" package; with this installed you can use
+\begin{code}
+verbatimtex
+\input font_times
+etex
+\end{code}
+instead, and all of your \TeX\ labels, including bold letters, italics, small caps,
+and mathematics will be set in Times New Roman.\vadjust{\moveright5.5in\vbox to
+0pt{\hsize 4in\vss\noindent
+Here are some samples of the fonts available in the "font-change" package.  For full
+details, and especially details about using AMS symbols, see the package
+documentation.
+$$\includegraphics{font-sampler3}$$
+}}
+
+If you still can't get your labels to match, you can force \MP\ to use \LaTeX\
+instead of plain \TeX\ and load whatever packages you need in a "verbatimtex" block:
+\begin{code}
+verbatimtex
+\documentclass{article}
+\usepackage{mathpazo}
+\usepackage{xcolor}
+\begin{document}
+etex
+\end{code}
+Note that the "\documentclass" and the "\begin{document}" lines are required, but
+\MP\ is smart enough to add an "\end{document}" for you; on the other hand to force
+it to use \LaTeX\ you need to use a command line switch: "mpost -tex=latex".
+
+Note that you can use "latex" or "elatex", but not any of the the more modern
+engines.  If you want full access to all of your system fonts you can
+approach the problem the other way round and use one of the various means to include
+\MP\ graphics as part of your \LaTeX\ source code.  These include "gmp" for
+pdf\LaTeX, "luamplib" for lua\LaTeX, and the whole Context system.  The great
+advantage of these systems is that all of your \MP\ labels directly inherit the
+environment of the parent document -- the big disadvantage is that you have to
+compile every graphic everytime you compile the document.  It is of course always possible to
+use these systems to produce standalone PDF graphics that you can then include in a
+more conventional \TeX\ document, but this may or may not fit well into your
+workflow.
+
+
+\subsubsection{Producing display maths}
+
+\subsubsection{Multiline text labels}
+
+- paragraphs of text
+
+\subsubsection{Dynamic labels}
 
 
 
-
-explain how label macros work - only primitive is draw! 
-
-- dealing with text - plain, psfonts, stacks, latex, OTF fonts, 
-
-- dynamic labels, rotating labels
+\subsection{Markers for annotations}
 
 - annotations - overbrace, underbrace, length arrows etc, ahangle trick
 
-- paragraphs of text
 
 \newpage
 \section{Line caps and line joins}

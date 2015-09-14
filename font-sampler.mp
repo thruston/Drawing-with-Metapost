@@ -34,14 +34,24 @@
 % pzcmi ZapfChancery-MediumItalic 
 % pzdr ZapfDingbats
 % for $="ugmr8r", "ugmri8r":
+%md-chr8t MathDesign-CH-Regular-T1-10 <md-chr8t.pfb
+%md-chr8y CharterBT-Roman " TeXnANSIEncoding ReEncodeFont " <texnansi.enc <bchr8a.pfb
+%md-chrc8y CharterBT-SmallCap " TeXnANSIEncoding ReEncodeFont " <texnansi.enc <bchrc8a.pfb
+%md-chri7m MathDesign-CH-Regular-Italic-MathItalic-10 <md-chri7m.pfb
+%md-chri7t MathDesign-CH-Regular-Italic-OT1-10 <md-chri7t.pfb
+%md-chri8c MathDesign-CH-Regular-Italic-TS1-10 <md-chri8c.pfb
+%md-chri8t MathDesign-CH-Regular-Italic-T1-10 <md-chri8t.pfb
+%md-chri8y CharterBT-Italic " TeXnANSIEncoding ReEncodeFont " <texnansi.enc <bchri8a.pfb
+%md-chrma MathDesign-CH-Regular-MathDesignSymbolA-10 <md-chrma.pfb
+%md-chrmb MathDesign-CH-Regular-MathDesignSymbolB-10 <md-chrmb.pfb
 prologues := 3;
 outputtemplate := "%j%c.eps";
 beginfig(1);
 ypos = 0;
 picture glyph;
 %for $="eurm10", "cmmi10", "grmn1000", "gporsonrg6r", "gneohellenicrg6r", 
-for $="gneohellenicrg6r": 
-  %draw ("Font: " & $) infont "texnansi-lmss10" scaled .7 shifted (-20,ypos) withcolor .67 red;
+for $="texnansi-lmss10":
+  draw ("Font: " & $) infont "texnansi-lmss10" scaled .7 shifted (-20,ypos) withcolor .67 red;
   for m=0 upto 15:
     ypos := ypos - 12;
     if (m mod 4)=0:
@@ -102,6 +112,19 @@ set_symbol_line("pzdr","Zapf Dingbats");
 set_symbol_line("psyr","Symbol"); 
 set_symbol_line("eurm10","Euler");
 
+
+endfig;
+
+
+beginfig(3);
+yy := 120; 
+forsuffixes $ = font_times, font_charter, font_utopia, font_century, font_palatino, font_bookman, font_arev, font_cmbright, font_concrete:
+   draw ("\input " & str $) infont "texnansi-lmtt10" shifted (-42,yy) withcolor .67 red;
+   write "draw btex \input " & str $ & " {\bf NB}. Learn $v=at+v_0$ right {\it now\/}! etex shifted (80," & decimal yy & ");" to ".mplabels";
+   yy := yy - 16;
+endfor
+  write EOF to ".mplabels";
+  input .mplabels;
 
 endfig;
 
