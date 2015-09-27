@@ -49,7 +49,7 @@ outputtemplate := "%j%c.eps";
 beginfig(1);
 ypos = 0;
 picture glyph;
-%for $="eurm10", "cmmi10", "grmn1000", "gporsonrg6r", "gneohellenicrg6r", 
+%for $="eurm10", "cmmi10", "grmn1000", "gporsonrg6r", "gneohellenicrg6r":
 for $="texnansi-lmss10":
   draw ("Font: " & $) infont "texnansi-lmss10" scaled .7 shifted (-20,ypos) withcolor .67 red;
   for m=0 upto 15:
