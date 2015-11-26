@@ -48,9 +48,9 @@ prologues := 3;
 outputtemplate := "%j%c.eps";
 beginfig(1);
 ypos = 0;
-picture glyph;
+picture glyph; 
 %for $="eurm10", "cmmi10", "grmn1000", "gporsonrg6r", "gneohellenicrg6r":
-for $="texnansi-lmss10":
+for $="texnansi-lmr10", "pplr8r":
   draw ("Font: " & $) infont "texnansi-lmss10" scaled .7 shifted (-20,ypos) withcolor .67 red;
   for m=0 upto 15:
     ypos := ypos - 12;
@@ -59,13 +59,19 @@ for $="texnansi-lmss10":
     fi
     draw decimal 16m infont "texnansi-lmss10" scaled .7 shifted (-20,ypos) withcolor .67 red;
     for c=0 upto 15:
-      glyph := char (16m+c) infont $;
-      draw glyph shifted (c*14,ypos) shifted 1/2(llcorner glyph - lrcorner glyph);
+      xx := 16m+c;
+      if (xx<>0) and (xx<>10) and (xx<>13) and (xx<>160):
+        glyph := char (16m+c) infont $;
+        draw glyph shifted (c*14,ypos) shifted 1/2(llcorner glyph - lrcorner glyph) 
+          withcolor if ((32<xx) and (xx<127)) or (160<xx): black else: .67 blue fi;
+      else:
+        draw unitsquare shifted 1/2 left scaled 3 shifted (c*14,ypos) withcolor .67 red;
+      fi
     endfor
   endfor
+  for i=0 upto 4: draw (-7+56i,ypos-4) -- (-7+56i,ypos+17*12-4) withcolor .67 red; endfor
+  ypos := ypos - 24;
 endfor
-path rule; rule = origin -- (0,ypos);
-for i=0 upto 4: draw rule shifted(-7+56i,-4) withcolor .67 red; endfor
 
 endfig;
 

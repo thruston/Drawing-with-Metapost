@@ -1538,16 +1538,17 @@ $$\includegraphics{torn-edge2}$$
 \section{Labels and annotations}
 
 \MP\ does not draw text directly; instead it provides two different mechanisms to
-turn a text label into a picture, which can then be treated like any other.  It can
+turn a text string into a picture, which can then be treated like any other; in
+other words, it can
 be saved as a picture variable, drawn directly, or transformed in some way with a
 scaling, a reflection, or a rotation.
 
 \subsection{Simple strings in PostScript fonts with \texttt{infont}}
 
 The first mechanism is the primitive binary operation "infont".  As explained in
-section~8.3 of the \MP\ manual, it takes two strings as arguments.  The left hand
+section~8.3 of the \MP\ manual, it takes two strings as arguments: the left hand
 argument is the string of text to be printed; the right hand argument is the name of
-the font to use.\vadjust{
+the font to use; and the result is a "picture" primary.\vadjust{
 \moveright5.5in\vbox to 0pt{\kern -124.5 bp
     \hsize 4in\noindent
 To find the name of a suitable font, you have to consult your local "psfonts.map"
@@ -1608,27 +1609,96 @@ addition you can do one of these:
 
 \newpage
 \subsubsection{Character sets used by \texttt{infont} to set text} 
-    
-\MP\ input is strictly 7-bit ASCII only, but you can use 8-bit characters, including
-UTF-8, as the payload of a string.  As noted above, the PostScript font names used
-by "infont" are defined to be a combination of encoding and font glyphs, so each
-different font name implies a particular encoding.  All of these encodings are 8-bit
-encodings, so the maximum number of characters available in each font is 256, and there is no
-support for Unicode.\mpic{-81pt}{font-sampler-ugmr8r.pdf}  This means that although
-you can put UTF-8 characters in a string, they will be printed as a mess, so you
-need to stick to regular 8-bit characters or use the "char" mechanism.
 
-If you want to use "infont" with Computer Modern, you might choose "cmr10" as used
-by plain \TeX, however as soon as you set a label with more than one word, you will
-find this font has an acute accent instead of a space in postion 32 To fix this use
-the Latin Modern versions of the fonts, with a more standard encoding. For "cmr10"
-use "texnansi-lmr10", for "cmss10" use "texnansi-lmss10" and so on.  
+Standard \MP\ is configured to accept as input only space and the usual 94 visible
+ASCII characters (that is the characters numbered 32 to 126 in the tables at the
+right), but you can use any 8-bit characters as the payload of a string. 
+However, plain \MP\ is set by default to use "cmr10", the familiar Computer Modern typeface
+developed by Knuth for \TeX, and unfortunately, this is encoded using the \TeX\ text
+font encoding (also known as `OT1', and as shown in the first table in Appendix~F of the {\sl \TeX book}).  
+\mpic{-72pt}{font-sampler1.pdf}  
+From the point of
+view of using "infont" to make simple labels, this means that the characters for
+space and seven other characters ("< > \ _ { | }") are in the wrong place.  
+You are likely to notice this first if you try to set a label with two words; the
+space will come out as a small diagonal stroke accent that is used in plain \TeX\
+to make the characters Ł and ł, used in Polish and other Slavic languages.
 
-The "texnansi" encoding is almost the same as ISO Latin~1, which was the widely used
-Windows standard before Unicode.  For the standard Adobe fonts like Helvetica and
-Times New Roman it's best to stick to the "8r" encoding, which is even closer to ISO
-Latin~1.  
+To fix this you should change the default font at the start of your program:
+\begin{code}
+defaultfont := "texnansi-lmr10";  % for Computer Modern Roman
+\end{code}
+If you want "cmss10", use "texnansi-lmss10" and so on.  The encoding is shown on the
+right.  The characters printed in black correspond to the widely used ISO Latin~1
+encoding.  If you want to use one of the standard PostScript fonts listed on the
+previous page, then the encoding to use is "8r".  As you can see from the lower
+table, this is nearly the
+same; for most users the main difference is the location of the Euro currency
+symbol.
+   
+Choosing a font with one of these encodings means that if you use Windows code page
+1252 or ISO Latin 1 as the encoding for your text editor, you can create labels with
+accented characters using "infont" and without resorting to "btex" \dots\ "etex".
+But if you are using UTF-8 characters (as many of us are now), then you have to do
+some extra work to get them printed correctly with "infont".  A solution is shown on
+the next page.  
 
+In the normal course of labelling a drawing, it is always possible to
+use "btex" \dots\ "etex" to produce your accented characters as discussed in section
+\ref{btex} below; but it may be that you are using \MP\ to represent data and labels
+supplied from some other program or a website.  In this case it can be useful to be
+able to work with at least a subset of UTF-8 input.
+
+\newpage
+\subsubsection{Mapping a subset of UTF-8 for \texttt{infont}}
+
+UTF-8 is a way of
+representing 16-bit Unicode character with sequences of 8-bit characters. So your
+UTF-8 aware editor may show you an é but \MP, knowing nothing about UTF-8,
+will see this as Ã©.  But since UTF-8 is designed to be compatible with ISO Latin 1,
+we can write a fairly simple routine to decode a subset of UTF-8.
+\begin{code}
+vardef decode(expr given) = 
+  save a,b,i,s,out; string s, out; numeric a, b, i;
+  out = ""; i=0;
+  forever:
+    i := i+1; s := substring (i-1,i) of given; a := ASCII s;
+    if a < 128: 
+    elseif a = 194: 
+      i := i+1; s := substring (i-1,i) of given;
+    elseif a = 195: 
+      i := i+1; s := char (64 + ASCII substring (i-1,i) of given);
+    else: 
+      s := "?";
+    fi
+    out := out & s;
+    exitif i >= length given;
+  endfor
+  out
+enddef;
+\end{code}
+Use it with "infont" like this: \verb|decode("café") infont "ptmr8r"| to produce a
+normal "picture" that can be passed to "draw" or saved as
+usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt
+        \noindent
+        The fragment on the left produces:
+$$\includegraphics{utf82}$$
+The \texttt{label} macro automatically calls \texttt{infont}; notice how it also adds some extra space.
+\vss}} 
+\begin{code}
+  draw "café noir £2.50" infont "pncr8r";
+  draw decode("café noir £2.50") infont "pncr8r" shifted 12 down;
+  defaultfont := "pncr8r";
+  label.rt("café noir £2.50", 24 down);
+  label.rt(decode("café noir £2.50"), 36 down);
+\end{code}
+Note that you cannot just use "draw" with a string variable; you have to use
+"infont" to turn the string into a picture.
+With "label" you must explicitly set the default font to one with an encoding that 
+is compatible with ISO Latin~1.
+
+
+\newpage
 \subsubsection{Bounding boxes and clipping with \texttt{infont}}
 
 Once the encoding is fixed, the other two parts of a PostScript font are the font
@@ -1775,7 +1845,7 @@ normal ASCII positions, so you do not have to muck about with "char xx".
 
 
 \newpage
-\subsection{Setting text with \texttt{btex} and \texttt{etex}}
+\subsection{Setting text with \texttt{btex} and \texttt{etex}}\label{btex}
 
 As soon as you need anything complicated in a label, like multiple fonts, multiple
 lines, or mathematics, you will find it easier to switch from "infont" to the
