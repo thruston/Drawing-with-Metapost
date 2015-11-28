@@ -1,0 +1,23 @@
+\documentclass[margin=5mm]{standalone}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Heros}
+\usepackage{luamplib}
+\begin{document}
+\begin{mplibcode}
+beginfig(1);
+color lemon, midnight;
+lemon = (1,1,1/2);
+midnight = (0,0,1/2);
+
+fill unitsquare shifted -(1/2,1/2) scaled 4cm withcolor lemon;
+fill fullcircle scaled 3cm withcolor midnight;
+draw fullcircle scaled 3.7cm dashed evenly scaled 2 withcolor .5 white;
+
+fill fullcircle scaled 8mm shifted (0.7cm,0.7cm) withcolor white;
+fill fullcircle scaled 8mm shifted (1.4cm,1.4cm) withcolor midnight;
+
+label.bot(btex Luã etex scaled 2.8,origin) withcolor white;
+endfig;
+\end{mplibcode}
+\end{document}
+

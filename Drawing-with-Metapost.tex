@@ -15,7 +15,7 @@
 \allsectionsfont{\normalfont\sffamily\bfseries}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{September 2015}
+\date{December 2015}
 \usepackage{shortvrb}\MakeShortVerb{"}
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
@@ -1886,11 +1886,11 @@ What you need to be aware of is that \MP\ places everything you put between the 
 implications, especially if you need to make your diagrams match the formatting of a
 particular \LaTeX\ format.
 
-\subsubsection{Matching the fonts}
+\subsubsection{Matching the fonts with plain \TeX}
 
 Despite the apparent restriction of using plain \TeX\ it is almost always possible
 to match the font and format of an enclosing \LaTeX\ document. 
-The simple approach is to use the plain
+The simplest approach is to use the plain
 \TeX\ font mechanism with the names from "psfonts.map".  
 \begin{code}
 verbatimtex
@@ -1898,11 +1898,12 @@ verbatimtex
 etex
 \end{code}
 Adding this at the top of your \MP\ program will set your text in Times New Roman,
-althought any maths will still be set using Computer Modern.  
+although any maths will still be set using Computer Modern.  
 To fix this, all you
-have to do is to redefine all the maths fonts in all sizes you need; this not really
-that hard but it is a fiddle to get all the details right.  Fortunately it's been
-done for you in the wonderful "font-change" package; with this installed you can use
+have to do is to redefine all the maths fonts in all sizes you need; this is not really
+that hard but it is a fiddle to get all the details right.  Fortunately
+the wonderful "font-change" package has done it all for you for a large range of
+fonts; with this package installed you can use
 \begin{code}
 verbatimtex
 \input font_times
@@ -1917,8 +1918,15 @@ documentation.
 $$\includegraphics{font-sampler3}$$
 }}
 
+\newpage
+\subsubsection{Matching fonts using \LaTeX}
 If you still can't get your labels to match, you can force \MP\ to use \LaTeX\
-instead of plain \TeX\ and load whatever packages you need in a "verbatimtex" block:
+instead of plain \TeX\.  You need to use the "-tex" command line switch:
+\begin{code}
+    mpost -tex=latex
+\end{code}
+and also load whatever packages you need in a "verbatimtex" block at the top of your
+\MP\ file.
 \begin{code}
 verbatimtex
 \documentclass{article}
@@ -1928,27 +1936,84 @@ verbatimtex
 etex
 \end{code}
 Note that the "\documentclass" and the "\begin{document}" lines are required, but
-\MP\ is smart enough to add an "\end{document}" for you; on the other hand to force
-it to use \LaTeX\ you need to use a command line switch: "mpost -tex=latex".
+\MP\ is smart enough to add an "\end{document}" for you.
 
-Note that you can use "latex" or "elatex", but not any of the the more modern
-engines.  If you want full access to all of your system fonts you can
+\MP\ needs a ".dvi" file to work with, so you can only use "latex" or "elatex", and
+not any of the more modern engines, like "pdflatex".  Generating the labels takes a
+little bit longer because you have to load rather more `infrastructure' for \LaTeX,
+and you are limited to whatever font packages you have that work with the
+traditional \LaTeX\ engine. 
+
+\subsubsection{Getting full access to your system fonts}
+
+If you want full access to all of your system fonts you can
 approach the problem the other way round and use one of the various means to include
 \MP\ graphics as part of your \LaTeX\ source code.  These include "gmp" for
 pdf\LaTeX, "luamplib" for lua\LaTeX, and the whole Context system.  The great
 advantage of these systems is that all of your \MP\ labels directly inherit the
-environment of the parent document -- the big disadvantage is that you have to
-compile every graphic everytime you compile the document.  It is of course always possible to
+environment of the parent document, and give you access to all your system fonts and
+full Unicode support -- the only disadvantages are that it's not so fast or simple as plain \MP\
+and you have to compile every graphic everytime you compile the document.  It is of course always possible to
 use these systems to produce standalone PDF graphics that you can then include in a
-more conventional \TeX\ document, but this may or may not fit well into your
-workflow.
+more conventional \TeX\ document.  The example on the right shows how;  in this case
+the text uses the fonts set in the \LaTeX\ preamble.\vadjust{\moveright5.5in\vbox to
+0pt{\hsize 4in\vss\noindent
+Here is a version of the Lua logo, with a Unicode accent for show.
+$$\includegraphics[scale=0.7]{lulu.pdf}$$
+produced with "luamplib":
+\begin{code}
+\documentclass[margin=5mm]{standalone}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Heros}
+\usepackage{luamplib}
+\begin{document}
+\begin{mplibcode}
+beginfig(1);
+color lemon, midnight; lemon = (1,1,1/2); midnight = (0,0,1/2);
 
+fill unitsquare shifted -(1/2,1/2) scaled 4cm withcolor lemon;
+fill fullcircle scaled 3cm withcolor midnight;
+draw fullcircle scaled 3.7cm dashed evenly scaled 2 withcolor .5 white;
 
+fill fullcircle scaled 8mm shifted (0.7cm,0.7cm) withcolor white;
+fill fullcircle scaled 8mm shifted (1.4cm,1.4cm) withcolor midnight;
+
+label.bot(btex Luã etex scaled 2.8,origin) withcolor white;
+endfig;
+\end{mplibcode}
+\end{document}
+\end{code}
+}}
+
+% new page
 \subsubsection{Producing display maths}
+
+As noted above, \MP\ places everything you put between "btex" and "etex" into an
+"hbox" and typesets it in restricted horizontal mode.  One of the restrictions in
+this mode is that you can't use "$$ ... $$" to produce display maths. This means that  
+the various mode-sensitive constructs like $\sum$ and $\int$ will come out in their
+smaller forms.  If you want them big, then the solution is simple: just add
+"\displaystyle" at the beginning of your formula.
+\begin{code}
+    label(btex $\displaystyle \int_0_t 3x^2\, dx$ etex, (x,y));
+\end{code}
 
 \subsubsection{Multiline text labels}
 
-- paragraphs of text
+Another consequence of the "hbox" feature is that there is no automatic text
+wrapping done for you, but again you can work round this easily because \TeX\ lets
+you nest a "\vbox" inside an "\hbox".  This gives you proper paragraph-like wrapping
+but you will almost certainly need to adjust the line length, justification, and paragraph
+indentation.\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+\begin{code}
+    ...
+    label(btex \vbox{\hsize 2in\parindent 0pt\raggedright
+        An extended caption or label that will be set as a 
+        small paragraph with automatic hyphenation and line-wrapping.
+    } etex, (x,y));
+    ...
+\end{code}
+}}
 
 \subsubsection{Dynamic labels}
 
