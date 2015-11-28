@@ -1653,13 +1653,35 @@ able to work with at least a subset of UTF-8 input.
 \subsubsection{Mapping a subset of UTF-8 for \texttt{infont}}
 
 UTF-8 is a way of
-representing 16-bit Unicode character with sequences of 8-bit characters. So your
+representing 16-bit Unicode characters with sequences of 8-bit characters. So your
 UTF-8 aware editor may show you an é but \MP, knowing nothing about UTF-8,
 will see this as Ã©.  But since UTF-8 is designed to be compatible with ISO Latin 1,
-we can write a fairly simple routine to decode a subset of UTF-8.
+we can write a fairly simple routine to decode a subset of
+UTF-8.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\parindent 0pt
+    \def\item{\leavevmode\llap{•~}}
+    \item You can extend this idea to cope with other UTF-8 characters, including 
+        those that use three bytes.  The UTF-8 page on Wikipedia shows you how it
+        works.  Essentially you look at the values of the next 2 or 3 characters and
+        then pick the appropriate character in your encoding with "char".  But your
+        output is still, of course, limited to the 256 characters in your font.
+
+    \item If you get tired of writing "decode", you could define a short cut with a
+        shorter name.  You could even write it as a primary without parentheses like
+        this:
+        \begin{code}
+        def U primary s = if string s: decode(s) fi enddef;
+        \end{code}
+        which would let you write:
+        \begin{code}
+        label.rt(U"café à la möde", (x,y));
+        \end{code}
+
+    \item However, there's no point in making any of this too elaborate.  If you
+         really want proper Unicode support you should use \MP\ with Lua\TeX.
+}}
 \begin{code}
 vardef decode(expr given) = 
-  save a,b,i,s,out; string s, out; numeric a, b, i;
+  save a,i,s,out; string s, out; numeric a, i;
   out = ""; i=0;
   forever:
     i := i+1; s := substring (i-1,i) of given; a := ASCII s;
@@ -1680,10 +1702,10 @@ enddef;
 Use it with "infont" like this: \verb|decode("café") infont "ptmr8r"| to produce a
 normal "picture" that can be passed to "draw" or saved as
 usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt
-        \noindent
-        The fragment on the left produces:
+\noindent The fragment on the left produces:
 $$\includegraphics{utf82}$$
-The \texttt{label} macro automatically calls \texttt{infont}; notice how it also adds some extra space.
+The \texttt{label} macro automatically calls \texttt{infont} with the current value
+of \texttt{defaultfont}; notice how it also adds some extra space.
 \vss}} 
 \begin{code}
   draw "café noir £2.50" infont "pncr8r";
@@ -1692,9 +1714,10 @@ The \texttt{label} macro automatically calls \texttt{infont}; notice how it also
   label.rt("café noir £2.50", 24 down);
   label.rt(decode("café noir £2.50"), 36 down);
 \end{code}
-Note that you cannot just use "draw" with a string variable; you have to use
+Note that you can't just use "draw" with a string variable; you have to use
 "infont" to turn the string into a picture.
-With "label" you must explicitly set the default font to one with an encoding that 
+On the other hand, "label" calls "infont" automatically, but you must explicitly set
+the default font, preferably to one with an encoding that 
 is compatible with ISO Latin~1.
 
 

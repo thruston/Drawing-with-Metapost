@@ -1,5 +1,7 @@
 prologues:=3;outputtemplate:="%j%c.eps";
 
+def U primary s = if string s: decode(s) fi enddef;
+
 vardef decode(expr given) = 
   save a,b,i,s,out; string s, out; numeric a, b, i;
   out = ""; i=0;
@@ -409,6 +411,7 @@ beginfig(2);
   defaultfont := "pncr8r";
   label.rt("café noir £2.50", 24 down);
   label.rt(decode("café noir £2.50"), 36 down);
+
 
 endfig;
 
