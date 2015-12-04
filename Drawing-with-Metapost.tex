@@ -1722,6 +1722,33 @@ is compatible with ISO Latin~1.
 
 
 \newpage
+\subsubsection{Typographical minus signs with \texttt{infont}}
+
+If you are producing labels for a numeric reference scale, like the axis of a chart,
+it is convenient to be able to write a loop like this (assuming "u" is a horizontal
+unit):
+\begin{code}
+    for x=1 upto 10: label(decimal x, (x*u,-5)); endfor
+\end{code}
+to produce your labels, however if "x" is negative this does not come out so well,
+because the first character of the string produced by "decimal -1" is an ASCII 45,
+which is the hyphen character.  What we need is the mathematical minus sign instead;
+this is what you get with "btex $-1$ etex" of course, but that's hard to put in a
+loop.  Instead you can do this:\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
+$$\includegraphics{minus1}$$
+\vss}} 
+\begin{code}
+    string minus_sign;
+    minus_sign := char 143; % if you are using the texnansi encoding
+    minus_sign := char 12;  % if you are using the 8r encoding
+    for x=-10 upto 10: 
+        label(if x<0: minus_sign & fi decimal abs(x), (x*u,-5)); 
+    endfor
+\end{code}
+Note that this does not work with the default encoding using in "cmr10" because
+there is no minus sign available in that font.  Plain TeX uses "char 0" from
+"cmsy10".
+
 \subsubsection{Bounding boxes and clipping with \texttt{infont}}
 
 Once the encoding is fixed, the other two parts of a PostScript font are the font
@@ -1729,7 +1756,7 @@ metrics and the programs that draw the actual glyphs.  The font metrics define t
 width of each character and provide a kerning table to adjust the space between
 particular pairs.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
 $$\includegraphics{infont-example1} \qquad \includegraphics{infont-example2} $$
-\vss}} This means that certain characters will overlap each other or stick out
+}} This means that certain characters will overlap each other or stick out
 beyond the bounding box of the picture produced by "infont".  This is not normally a
 problem unless the picture happens to be at the edge of your figure.  In the first
 example observe how the first and last letters have been clipped; in the second a
@@ -1752,7 +1779,7 @@ The "label" macro is defined (essentially) to do this:
     enddef;
 \end{code}
 plus some slightly-too-clever code to align the label for you.
-\vss}}
+}}
 
 \newpage
 \subsubsection{Bounding boxes and alignment with \texttt{infont}}
@@ -1993,10 +2020,13 @@ As noted above, \MP\ places everything you put between "btex" and "etex" into an
 this mode is that you can't use "$$ ... $$" to produce display maths. This means that  
 the various mode-sensitive constructs like $\sum$ and $\int$ will come out in their
 smaller forms.  If you want them big, then the solution is simple: just add
-"\displaystyle" at the beginning of your formula.
+"\displaystyle" at the beginning of your formula.\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 \begin{code}
-    label(btex $\displaystyle \int_0_t 3x^2\, dx$ etex, (x,y));
+...
+label(btex $\displaystyle \int_0_t 3x^2\, dx$ etex, (x,y));
+...
 \end{code}
+}}
 
 \subsubsection{Multiline text labels}
 
@@ -2006,20 +2036,121 @@ you nest a "\vbox" inside an "\hbox".  This gives you proper paragraph-like wrap
 but you will almost certainly need to adjust the line length, justification, and paragraph
 indentation.\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 \begin{code}
-    ...
-    label(btex \vbox{\hsize 2in\parindent 0pt\raggedright
-        An extended caption or label that will be set as a 
-        small paragraph with automatic hyphenation and line-wrapping.
-    } etex, (x,y));
-    ...
+...
+label(btex \vbox{\hsize 2in\parindent 0pt\raggedright
+    An extended caption or label that will be set as a 
+    small paragraph with automatic hyphenation and line-wrapping.
+} etex, (x,y));
+...
 \end{code}
 }}
 
+You will only need the full power of \TeX's paragraph making system occasionally
+though: more usually you will just have one or two lines in each label, and you
+might be quite happy to control the line breaks manually.  In this case it's helpful
+to wrap a little tabular structure around your text.  Here's how to define something
+suitable in plain \TeX.  First you need to define a suitable macro at the start of
+your figure
+\begin{code}
+verbatimtex
+\def\s#1{\let\\\cr\vbox{\halign{\hfil\strut ##\hfil\cr#1\crcr}}}
+etex
+\end{code}
+then you can write labels like this:
+\begin{code}
+...
+label(btex \s{Single line} etex, z1);
+label(btex \s{Longer text split\\onto a new line} etex, z2);
+...
+\end{code}
+Notice how you can still use the macro with single lines, you just get a one-line
+table as it were. 
+Note also that the definition of "\s" as given will centre each line of the text under
+the one above.  If you want them left aligned or right aligned omit one of the
+"\hfil" commands.
+
+You can of course acheive the same effects using \LaTeX\ tabular structures, but
+then you have to use the "-tex=latex" option to run
+\MP.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in\noindent
+        \textbf{Note}: In case it's not obvious, if you want text wrapping or
+        tabular arrangements as discussed here, you need to use \texttt{btex ... etex}
+        to set your labels.  There's no text wrapping with "infont".  On the other
+        hand if all of your labels are in "infont" but you just want one extra that
+        has two lines, you can split the text into two separate labels and position
+them independently.}}
+
 \subsubsection{Dynamic labels}
 
+If you are a maven of programming language syntax you may have noticed that 
+"btex ... etex" fits into the type system that \MP\ inherits from \MF\ as a "picture" and
+not as a "string".  Effectively "btex" and "etex" act as a special pair of quotation
+marks that deal with pictures, but the contents are taken verbatim, so that the
+whole contruction is a syntactical atom.  This means that you \textbf{cannot} write
+this sort of thing: 
+\begin{code} 
+for i=0 upto 4: 
+  label(btex "$p_" & decimal i & "$" etex, (10i,0)); % this won't work
+endfor 
+\end{code} 
+Given this input \MP\ would attempt to get \TeX\
+to typeset 
+\begin{code}
+\hbox{"$p_" & decimal i & "$"}
+\end{code}
+which would probably result in a
+`Misplaced alignment tab character' error.
+To get round this sort of problem, \MP\ provides a general mechanism to write out a
+string to a file, and then read the file back in.  This is the mechanism used by the
+"TEX()" macro that is provided alongside "plain.mp".  This allows you to write:
+\begin{code}
+input TEX
+...
+for i=0 upto 4:
+  label(TEX("$p_" & decimal i & "$"), (10i,0));
+endfor
+\end{code}
+This works because the TEX macro is expecting a "string" so the normal string
+concatenation rules are applied.  The macro wraps the result with "btex" and "etex",
+writes them out to a file, and then reads the file in again so that \MP\ gets the
+correct contents to pass to \TeX.  The trouble with this is that it makes \MP\ open a file,
+write to it, close it, and then read it in again for each label one at a time; this
+means that it's very slow.  
 
+The example on the right shows how to speed things up, by using the same file for
+all the labels and only writing it once.
+The "write" command is a \MP\ primitive, and "EOF" is defined in "plain.mp".%
+\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in\noindent
+\begin{code}
+path c; c = fullcircle scaled 100; draw c withcolor .67 red;
+for i=0 upto 7:
+  fill fullcircle scaled 3 shifted point i of c;
+  z[i] = point i of c scaled 1.15;
+  write "label(btex $p_" & decimal i & "$ etex,(" 
+        & decimal x[i] & "," & decimal y[i]
+        & "));" to ".mplabels";
+endfor
+write EOF to ".mplabels";
+input ".mplabels";
+\end{code}
+$$
+\includegraphics{dynamic-labels2}
+$$
+Note that you can't use "decimal" on a "pair" variable, but you can save the pair
+as a "z"-variable and then use the "x" and "y" syntax.  The scaling trick used here
+only works because "c" is centered on the origin.  If "c" were drawn elsewhere, you
+would have to write:
+\begin{code}
+... point i of c shifted -center c 
+                 scaled 1.15 
+                 shifted center c ...
+\end{code}
+}}
 
+\newpage
 \subsection{Markers for annotations}
+
+\subsubsection{Call outs}
+
 
 - annotations - overbrace, underbrace, length arrows etc, ahangle trick
 
