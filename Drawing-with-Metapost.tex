@@ -2066,10 +2066,10 @@ label(btex \s{Longer text split\\onto a new line} etex, z2);
 Notice how you can still use the macro with single lines, you just get a one-line
 table as it were. 
 Note also that the definition of "\s" as given will centre each line of the text under
-the one above.  If you want them left aligned or right aligned omit one of the
+the one above.  If you want them left aligned or right aligned, omit one of the
 "\hfil" commands.
 
-You can of course acheive the same effects using \LaTeX\ tabular structures, but
+You can of course achieve the same effects using \LaTeX\ tabular structures, but
 then you have to use the "-tex=latex" option to run
 \MP.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in\noindent
         \textbf{Note}: In case it's not obvious, if you want text wrapping or
@@ -2084,7 +2084,7 @@ them independently.}}
 If you are a maven of programming language syntax you may have noticed that 
 "btex ... etex" fits into the type system that \MP\ inherits from \MF\ as a "picture" and
 not as a "string".  Effectively "btex" and "etex" act as a special pair of quotation
-marks that deal with pictures, but the contents are taken verbatim, so that the
+marks that create a picture; however the contents are used verbatim, so that the
 whole contruction is a syntactical atom.  This means that you \textbf{cannot} write
 this sort of thing: 
 \begin{code} 
@@ -2099,7 +2099,7 @@ to typeset
 \end{code}
 which would probably result in a
 `Misplaced alignment tab character' error.
-To get round this sort of problem, \MP\ provides a general mechanism to write out a
+To get round this problem, \MP\ provides a general mechanism to write out a
 string to a file, and then read the file back in.  This is the mechanism used by the
 "TEX()" macro that is provided alongside "plain.mp".  This allows you to write:
 \begin{code}
@@ -2112,10 +2112,11 @@ endfor
 This works because the TEX macro is expecting a "string" so the normal string
 concatenation rules are applied.  The macro wraps the result with "btex" and "etex",
 writes them out to a file, and then reads the file in again so that \MP\ gets the
-correct contents to pass to \TeX.  The trouble with this is that it makes \MP\ open a file,
+correct contents to pass to \TeX.  
+
+The only trouble with this is that it makes \MP\ open a file,
 write to it, close it, and then read it in again for each label one at a time; this
 means that it's very slow.  
-
 The example on the right shows how to speed things up, by using the same file for
 all the labels and only writing it once.
 The "write" command is a \MP\ primitive, and "EOF" is defined in "plain.mp".%
