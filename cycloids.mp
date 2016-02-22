@@ -2,14 +2,12 @@ prologues := 3; outputtemplate := "%j%c.eps";
 beginfig(1);
 r = 1.25cm; % radius of the wheel
 pi = 3.14159265; % constant
-
 % define the cycloid
 path c; 
 c = (0,-r) rotated 100 shifted (r*-100/180*pi,r) 
     for t=-99 upto 460: 
       -- (0,-r) rotated -t shifted (r*t/180*pi,r) 
     endfor;
-
 % axes
 drawoptions(withcolor .5 white);
 path xx, yy;
@@ -19,10 +17,8 @@ draw fullcircle scaled 1/4r; drawarrow xx; drawarrow yy;
 drawoptions();
 label.rt (btex $x$ etex, point 1 of xx);
 label.top(btex $y$ etex, point 1 of yy);
-
 % draw the cycloid on top of the axes
 draw c withcolor .67 red;
-
 % define a couple of related points: 
 % z1 center of the blue wheel
 % z2 intersection of rim and cycloid

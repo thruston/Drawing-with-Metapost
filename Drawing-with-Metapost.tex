@@ -7,16 +7,16 @@
             marginparsep=0.5in,
             marginparwidth=4.2in]{geometry}
 \usepackage{sectsty}
+\allsectionsfont{\normalfont\sffamily\bfseries}
 \usepackage{fancyvrb}\fvset{fontsize=\small}
-\DefineVerbatimEnvironment{code}{Verbatim}{xleftmargin=\parindent}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{mflogo}
-\allsectionsfont{\normalfont\sffamily\bfseries}
+\usepackage{shortvrb}\MakeShortVerb{"}
+\usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
 \date{December 2015}
-\usepackage{shortvrb}\MakeShortVerb{"}
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\hbox{\bf#1\/}\fi\endgroup}
@@ -31,6 +31,27 @@
 \def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
 \def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
+%
+\definecolor{textblue}{rgb}{.2,.2,.7}
+\definecolor{textred}{rgb}{0.54,0,0}
+\definecolor{textgreen}{rgb}{0,0.43,0}
+\usepackage{listings}
+% style for highlighting
+\newcommand\mpstyle{\lstset{
+language=Metapost,
+basicstyle=\ttfamily,
+keywordstyle=\color{textblue},
+commentstyle=\color{textred},    % Custom highlighting style
+stringstyle=\color{textgreen},
+frame=none,                      % Any extra options here
+columns=fullflexible,
+xleftmargin=\parindent,
+showstringspaces=false           % 
+}}
+\lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily}}{}
+\lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
+\newcommand\mpexternal[2][]{{\mpstyle\lstinputlisting[#1]{#2}}}
+\newcommand\mpinline[1]{{\pythonstyle\lstinline!#1!}}
 \begin{document}
 \pagestyle{empty}
 % title & toc in the margin
@@ -130,7 +151,9 @@ as clear as possible in my examples.
 In \MP\ there are two sorts of paths: open and closed.  
 \mpic{-12pt}{closed0}
 A closed path is called a cycle, and is created with the "cycle" primitive like this:
-$$\hbox{\ttfamily path t; t = origin -- (55,0) -- (55,34) -- cycle;}$$
+\begin{code}
+path t; t = origin -- (55,0) -- (55,34) -- cycle;
+\end{code}
 You can think of "cycle" as meaning ‘connect back to the start and close the path’.
 You can use "draw" with either sort of path, but you can only use "fill" with a
 cycle.  This concept is common to most drawing languages but it’s often hidden:  an
@@ -157,7 +180,9 @@ There are several closed paths defined for you in plain \MP.
     \item "superellipse()" which creates the shape beloved of the Danish designer Piet Hein.  Unlike the
         other two, this one is a function rather than a path, so you need to call it
         like this:
-        $$\hbox{\ttfamily path s; s = superellipse(right,up,left,down,.8);}$$
+        \begin{code}
+        path s; s = superellipse(right,up,left,down,.8);
+        \end{code}
         to create a ‘unit’ shape.  The fifth parameter is the ‘superness’: the value
         1 makes it look almost square, 0.8 is about right, 0.5 gives you a diamond,
         and values outside the range $(0.5,1)$ give you rather weird propeller
@@ -212,12 +237,12 @@ area under a function in a graph.
 Here is an example. The red line has been defined
 as path "f" and the two axes as paths "xx", and "yy".  The blue area was defined
 with
-$$\hbox{\ttfamily 
+\begin{code}
 buildcycle(yy shifted (1u,0), f, yy shifted (2.71828u,0), xx)
-}$$
+\end{code}
 Note the use of the $y$-axis shifted along by different amounts.
 
-\bigskip\noindent
+\smallskip\noindent
 There are similar examples in the \MP\ manual, but "buildcycle" can also
 be useful in more creative graphics.
 Here’s a second example that uses closed paths to give an illlusion of depth to a simple
@@ -233,13 +258,13 @@ graphic of the planet Saturn.
         all run in the same direction.  Note that "subpath (8,4) of globe" runs
         clockwise (that is backwards) from point 8 to point 4.
 \end{itemize}}
-\VerbatimInput[frame=lines]{saturn.mp}
+\mpexternal{saturn.mp}
 
 \newpage\subsection{The implementation of \texttt{buildcycle}}
 \textsc{The implementation} of "buildcycle" in plain \MP\ is interesting for a number of
 reasons.  Here it is copied from "plain.mp" (with minor simplifications) $\longrightarrow$
 \vadjust{\moveright5.5in\vbox to 0pt{\kern-1cm%
-\begin{verbatim}
+\begin{code}
 vardef buildcycle(text input_path_list) =
   save ta, tb, k, j, pp; path pp[];
   k=0;
@@ -254,9 +279,11 @@ vardef buildcycle(text input_path_list) =
     fi
     j := i;
   endfor
-  for i=1 upto k: subpath (ta[i],tb[i]) of pp[i] .. endfor cycle
+  for i=1 upto k: 
+    subpath (ta[i],tb[i]) of pp[i] .. 
+  endfor cycle
 enddef;
-\end{verbatim}
+\end{code}
 \vss}}
 
 \noindent
@@ -352,7 +379,7 @@ simple closed path.  The approach is to extend a horizontal ray from
 the point towards the right margin and to count how many times it crosses the cyclic
 path; if the number is odd, the point must be inside.\vadjust{\moveright5.5in\vbox
     to 0pt{\kern-4.05cm
-\begin{verbatim}
+\begin{code}
 vardef inside(expr p, ring) = 
   save t, count, test_line;
   count := 0;
@@ -365,13 +392,13 @@ vardef inside(expr p, ring) =
   endfor
   odd(count)
 enddef;
-\end{verbatim}
+\end{code}
 \vss}}\label{function:inside}
 
 Equipped with this function we can create an "overlap" function that first uses the
 handy "counterclockwise" function to ensure the given paths are running in the
 same direction, and then uses "inside" to determine where the start points are.
-\begin{verbatim}
+\begin{smallcode}
 vardef front_half primary p = subpath(0, 1/2 length p) of p enddef;
 vardef back_half  primary p = subpath(1/2 length p, length p) of p enddef;
 % a and b should be cyclic paths...
@@ -392,7 +419,7 @@ vardef overlap(expr a, b) =
     buildcycle(front_half A, back_half B, front_half B, back_half A)
   fi
 enddef;
-\end{verbatim}
+\end{smallcode}
 Using this "overlap" macro in place of "buildcycle" produces less surprising
 results.\mpic{-2in}{overlaps4}
 
@@ -432,7 +459,7 @@ scaled up; if we change $θ$, the wheel will appear to have rolled along.
     
 \end{itemize}}
 
-\VerbatimInput[frame=lines]{cycloids.mp}
+\mpexternal{cycloids.mp}
 
 \noindent
 You can generalize the picture to make cycloids where the point tracing the
@@ -443,10 +470,10 @@ outer rim, while the wheel still rolls along a circle of radius $r$.
 You might like to experiment with making $R<r$. Note also that variable names are
 case sensitive in \MP.
 
-\VerbatimInput[frame=lines]{cycloids-extra.mp}
+\mpexternal{cycloids-extra.mp}
 
 \newpage
-\section{Mathematics, trigonometry and transformations}
+\section{Numbers, pairs, and colours}
 
 This section discusses plain \MP 's concepts of numeric variables, pair variables,
 and path variables; and what you can do with them. 
@@ -735,133 +762,6 @@ measure, because implicit multiplication only works between a numeric constant a
 variable.  So `$2 \id{in}\, \id{right}$' does not work as you might expect; you can
 write `$2\id{in} \mathrel{\ast}\id{right}$' but by that stage it's probably simpler to 
 write `$(2\id{in},0)$' or even just `$(144,0)$'.
-
-\newpage
-\subsection{Coordinate geometry example}
-
-\kern-\baselineskip
-\vpic{1in}{projections1}
-\begin{code}[commandchars=\\\{\}]
-beginfig(1);
-\textcolor{red}{% define the end points of the three rays}
-z1 = right scaled 200 rotated 10;
-z2 = right scaled 100 rotated 135;
-z3 = right scaled 225 rotated -17.5;
-\textcolor{red}{% define the other points, relative to Q}
-pair A, B, P, Q, R;
-Q = 0.8125 z3;
-A = whatever[origin, z1]; A-Q = whatever * z1 rotated 90;
-P = whatever[origin, z2]; P-Q = whatever * z2 rotated 90;
-B = whatever[origin, z1]; B-P = whatever * z1 rotated 90;
-R = whatever[A,Q];        R-P = whatever * (B-P) rotated 90;
-\textcolor{red}{% mark the angles}
-drawoptions(withcolor .67 blue);
-draw fullcircle scaled 30 rotated angle (Q-P) shifted P cutafter (P--B);
-draw fullcircle scaled 30 rotated angle (P-Q) shifted Q cutafter (Q--R);
-draw fullcircle scaled 30 rotated angle P               cutafter (origin--z1);
-drawoptions();
-\textcolor{red}{% draw the rays and A--Q}
-drawarrow origin -- z1; label(btex $r_1$ etex, z1 scaled 1.05);
-drawarrow origin -- z2; label(btex $r_2$ etex, z2 scaled 1.08);
-drawarrow origin -- z3; label(btex $r_3$ etex, z3 scaled 1.05);
-draw A--Q;
-\textcolor{red}{% draw the dashed lines}
-draw B--P--R--Q--P dashed evenly;
-drawarrow origin -- P scaled 4/3 dashed evenly;
-\textcolor{red}{% label the points}
-dotlabel.urt(btex $Q$ etex, Q);
-dotlabel.top(btex $A$ etex, A);
-dotlabel.lrt(btex $R$ etex, R) withcolor .67 blue;
-label.top (btex $B$ etex, B);
-label.llft(btex $P$ etex, P);
-label.llft(btex $O$ etex, origin);
-endfig;
-\end{code}
-
-\newpage
-\subsection{Trigonometry functions}\label{trig}
-
-\MP\ provides only two basic trigonometry functions, "sind" and "cosd";  this lack
-appears to be a deliberate design.  In general it's much easier to use the "rotated"
-and "angle" functions than to work out all the sine, cosines and arc-tangents
-involved in rotating parts of your picture.  But if you really want the `missing'
-functions they are not hard to implement.
-
-First you might want versions that accept arguments in radians instead of degrees.
-For this you need to know the value of $\pi$, but this is not built into plain \MP.
-If you are using the default number system then it's enough to define to five
-decimal digits,%
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-108pt
-\begin{code}
-numeric pi;
-% approximate value
-pi := 3.14159; 
-\end{code}
-\begin{code}
-% up to 34 digits of precision 
-pi := 3.141592653589793238462643383279503;
-\end{code}
-\begin{code}
-% as many digits as are needed...
-vardef getpi =
-  numeric lasts, t, s, n, na, d, da;
-  lasts=0; s=t=3; n=1; na=0; d=0; da=24;
-  forever:
-    exitif lasts=s;
-    lasts := s;
-    n := n+na; na := na+8;
-    d := d+da; da := da+32; 
-    t := t*n/d;
-    s := s+t;
-  endfor
-  s
-enddef;
-pi := getpi;
-
-% conversions
-vardef degrees(expr theta) = 180 / pi * theta enddef;
-vardef radians(expr theta) = pi / 180 * theta enddef;
-
-% trig functions that expect radians
-vardef sin(expr theta) = sind(degrees(theta)) enddef;
-vardef cos(expr theta) = cosd(degrees(theta)) enddef;
-% inverse trig functions
-vardef acosd(expr a) = angle (a,1+-+a) enddef;
-vardef asind(expr a) = angle (1+-+a,a) enddef;
-vardef acos(expr a) = radians(acosd(a)) enddef;
-vardef asin(expr a) = radians(asind(a)) enddef;
-
-% tangents
-vardef tand(expr theta) = save x,y; (x,y)=dir theta; y/x enddef;
-vardef atand(expr a) = angle (1,a) enddef;
-\end{code}
-}}
-but if you are using one of the new number systems you might want more digits of
-precision.  In fact there's no harm in always defining these extra digits; even when
-you are using the default "scaled" number system, \MP\ will happily read as many
-extra digits of $\pi$ as you supply, before it rounds the value to the nearest
-multiple of $1\over65536$ (which turns out to be $3.14159$). The same applies to the
-"double" and "binary" number systems, but the "decimal" number system will give you
-an error if you supply more digits that the default precision (which is 34).  So
-it's best to use no more that 34 digits.  It's also possible, but not really worth
-the trouble, to define a routine to calculate $\pi$ for you to the current
-precision.  However you define it, once you are armed with a value for $\pi$ you can
-then define functions to convert between degrees and radians and some more `normal'
-versions of sine and cosine.
-
-There's no built-in $\arccos$ or $\arcsin$ function but each is very easy to
-implement using a combination of the "angle" function and the Pythagorean difference
-operator.
-
-\MP\ does have built in functions for tangents; but they are called "angle" and
-"dir" and they are designed for pairs. So $\kw{angle}\,(x,y)=\arctan(y/x)$ while
-$\kw{dir}\,30$ gives you the point $(x,y)$ on the unit circle such that $\tan
-30^{\circ} = y/x$.  You can use these ideas to define tangent and arctan functions
-if you really need them, but often "angle" and "dir" are more directly useful
-for drawing.  You should also be aware that the tangent function shown here does not
-check whether $x=0$; if this is an issue you can say something like
-`$\kw{if}\,x=0\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$' at the appropriate
-point.
 
 \newpage
 \subsection{Integer arithmetic, clocks, and rounding}
@@ -1533,6 +1433,145 @@ end.
 You can also apply this as a form of jitter to a curved path, by adding a suitably
 rotated vector to enough points along the path.
 $$\includegraphics{torn-edge2}$$
+
+
+\newpage
+\section{Plane geometry and trignonometry}
+
+
+
+\newpage
+\subsection{Coordinate geometry example}
+
+\kern-\baselineskip
+\vpic{1in}{projections1}
+\begin{code}
+beginfig(1);
+% define the end points of the three rays
+z1 = right scaled 200 rotated 10;
+z2 = right scaled 100 rotated 135;
+z3 = right scaled 225 rotated -17.5;
+% define the other points, relative to Q
+pair A, B, P, Q, R;
+Q = 0.8125 z3;
+A = whatever[origin, z1]; A-Q = whatever * z1 rotated 90;
+P = whatever[origin, z2]; P-Q = whatever * z2 rotated 90;
+B = whatever[origin, z1]; B-P = whatever * z1 rotated 90;
+R = whatever[A,Q];        R-P = whatever * (B-P) rotated 90;
+% mark the angles
+drawoptions(withcolor .67 blue);
+draw fullcircle scaled 30 rotated angle (Q-P) shifted P cutafter (P--B);
+draw fullcircle scaled 30 rotated angle (P-Q) shifted Q cutafter (Q--R);
+draw fullcircle scaled 30 rotated angle P               cutafter (origin--z1);
+drawoptions();
+% draw the rays and A--Q
+drawarrow origin -- z1; label(btex $r_1$ etex, z1 scaled 1.05);
+drawarrow origin -- z2; label(btex $r_2$ etex, z2 scaled 1.08);
+drawarrow origin -- z3; label(btex $r_3$ etex, z3 scaled 1.05);
+draw A--Q;
+% draw the dashed lines
+draw B--P--R--Q--P dashed evenly;
+drawarrow origin -- P scaled 4/3 dashed evenly;
+% label the points
+dotlabel.urt(btex $Q$ etex, Q);
+dotlabel.top(btex $A$ etex, A);
+dotlabel.lrt(btex $R$ etex, R) withcolor .67 blue;
+label.top (btex $B$ etex, B);
+label.llft(btex $P$ etex, P);
+label.llft(btex $O$ etex, origin);
+endfig;
+\end{code}
+
+\newpage
+\subsection{Trigonometry functions}\label{trig}
+
+\MP\ provides only two basic trigonometry functions, "sind" and "cosd";  this lack
+appears to be a deliberate design.  In general it's much easier to use the "rotated"
+and "angle" functions than to work out all the sine, cosines and arc-tangents
+involved in rotating parts of your picture.  But if you really want the `missing'
+functions they are not hard to implement.
+
+First you might want versions that accept arguments in radians instead of degrees.
+For this you need to know the value of $\pi$, but this is not built into plain \MP.
+If you are using the default number system then it's enough to define to five
+decimal digits,%
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-108pt
+        \begin{code}
+numeric pi;
+% approximate value
+pi := 3.14159; 
+\end{code}
+\begin{code}
+numeric pi;
+% approximate value
+pi := 3.14159; 
+\end{code}
+\begin{code}
+% up to 34 digits of precision 
+pi := 3.141592653589793238462643383279503;
+\end{code}
+\begin{code}
+% as many digits as are needed...
+vardef getpi =
+  numeric lasts, t, s, n, na, d, da;
+  lasts=0; s=t=3; n=1; na=0; d=0; da=24;
+  forever:
+    exitif lasts=s;
+    lasts := s;
+    n := n+na; na := na+8;
+    d := d+da; da := da+32; 
+    t := t*n/d;
+    s := s+t;
+  endfor
+  s
+enddef;
+pi := getpi;
+
+% conversions
+vardef degrees(expr theta) = 180 / pi * theta enddef;
+vardef radians(expr theta) = pi / 180 * theta enddef;
+
+% trig functions that expect radians
+vardef sin(expr theta) = sind(degrees(theta)) enddef;
+vardef cos(expr theta) = cosd(degrees(theta)) enddef;
+% inverse trig functions
+vardef acosd(expr a) = angle (a,1+-+a) enddef;
+vardef asind(expr a) = angle (1+-+a,a) enddef;
+vardef acos(expr a) = radians(acosd(a)) enddef;
+vardef asin(expr a) = radians(asind(a)) enddef;
+
+% tangents
+vardef tand(expr theta) = save x,y; (x,y)=dir theta; y/x enddef;
+vardef atand(expr a) = angle (1,a) enddef;
+\end{code}
+}}
+but if you are using one of the new number systems you might want more digits of
+precision.  In fact there's no harm in always defining these extra digits; even when
+you are using the default "scaled" number system, \MP\ will happily read as many
+extra digits of $\pi$ as you supply, before it rounds the value to the nearest
+multiple of $1\over65536$ (which turns out to be $3.14159$). The same applies to the
+"double" and "binary" number systems, but the "decimal" number system will give you
+an error if you supply more digits that the default precision (which is 34).  So
+it's best to use no more that 34 digits.  It's also possible, but not really worth
+the trouble, to define a routine to calculate $\pi$ for you to the current
+precision.  However you define it, once you are armed with a value for $\pi$ you can
+then define functions to convert between degrees and radians and some more `normal'
+versions of sine and cosine.
+
+There's no built-in $\arccos$ or $\arcsin$ function but each is very easy to
+implement using a combination of the "angle" function and the Pythagorean difference
+operator.
+
+\MP\ does have built in functions for tangents; but they are called "angle" and
+"dir" and they are designed for pairs. So $\kw{angle}\,(x,y)=\arctan(y/x)$ while
+$\kw{dir}\,30$ gives you the point $(x,y)$ on the unit circle such that $\tan
+30^{\circ} = y/x$.  You can use these ideas to define tangent and arctan functions
+if you really need them, but often "angle" and "dir" are more directly useful
+for drawing.  You should also be aware that the tangent function shown here does not
+check whether $x=0$; if this is an issue you can say something like
+`$\kw{if}\,x=0\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$' at the appropriate
+point.
+
 
 \newpage
 \section{Labels and annotations}
@@ -2227,7 +2266,7 @@ gradients
 
 
 - geometry - constructions, perpendiculars, bisection, tangents, segments and lines,
-  incircle, circumcircle
+  incircle, circumcircle, inversion
 
 - angle marks, including curved angle marks
 
