@@ -16,7 +16,7 @@
 \usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{December 2015}
+\date{June 2016}
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\hbox{\bf#1\/}\fi\endgroup}
@@ -51,7 +51,7 @@ showstringspaces=false           %
 \lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily}}{}
 \lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
 \newcommand\mpexternal[2][]{{\mpstyle\lstinputlisting[#1]{#2}}}
-\newcommand\mpinline[1]{{\pythonstyle\lstinline!#1!}}
+\newcommand\mpinline[1]{{\mpstyle\lstinline!#1!}}
 \begin{document}
 \pagestyle{empty}
 % title & toc in the margin
@@ -939,8 +939,8 @@ The \kw{normaldeviate} function is provided as a primitive \MP\ operation. The
 implementation is based on the `Ratio method' presented in \textsl{The Art of
 Computer Programming}, section~3.4.1.   It turns out to be very straightforward to
 implement the algorithm for this method as a user-level program $\to$
-\vadjust{\moveright5.5in\vbox to 0pt{\kern -60pt
-\begin{code}
+\vadjust{\moveright5.5in\vbox to 0pt{\kern -64pt
+\begin{smallcode}
 vardef normaldeviate = 
     save u, v, xa; 
     forever:
@@ -984,7 +984,7 @@ vardef gammadeviate(expr a,b) =
   endfor
   x/b
  enddef;
-\end{code}
+\end{smallcode}
 \vss}}%
 
 There are a couple points here.  First, the inner loop around the assignment to $u$ is
@@ -1120,7 +1120,7 @@ examples there are all in French (including all the names of the custom macros),
 perhaps it would be better to say `translated' rather than `stolen';  moreover my
 implementations are easier to use with plain \MP.\vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in\kern -5.5\baselineskip
-\begin{code}
+\begin{smallcode}
 defaultfont := "eurm10";
 
 def freehand_segment(expr p) =
@@ -1162,7 +1162,7 @@ label.rt ("B", z1);
 label.top("C", z2);
 label.bot("D", z3);
 endfig;
-\end{code}
+\end{smallcode}
 \vss}}
 
 \subsubsection{Making curves and straight lines look hand drawn}
@@ -1277,13 +1277,13 @@ Random numbers are also useful to make eye catching banners for posters,
 presentations, and infographics.  Here are two simple example shapes: $\to$
 \mpic{36pt}{explode1}
 
-\begin{code}
+\begin{smallcode}
 string heavy_font; 
 heavy_font = "PlayfairDisplay-Black-osf-t1--base";
 
 randomseed:=2128.5073;
 
-beginfig(1);
+beginfig(1);  
 
 n = 40; r = 10; s = 50;
 
@@ -1306,7 +1306,7 @@ draw splash withpen pencircle scaled 2 withcolor 2/3 blue;
 label("SPLAT!" infont heavy_font scaled 2, center splash) withcolor blue;
 
 endfig;
-\end{code}
+\end{smallcode}
 
 \noindent
 In this figure "n" is the number of points in the shape, "r" is the amount of
@@ -1342,7 +1342,7 @@ noise added to each point along the rough surface; the only difference in the co
 to produce the two figures was the value of $r$.%
 \vadjust{\moveright5.5in\vbox to
     0pt{\hsize 4in\vss
-\begin{code}
+\begin{smallcode}
 def perpendicular expr t of p = 
   direction t of p rotated 90 shifted point t of p
   enddef;
@@ -1370,7 +1370,7 @@ endfor
 
 label("r=" & decimal r, center base);
 endfig;
-\end{code}
+\end{smallcode}
 \vss}}
 First the base block is created with some noise on the upper side.  Then five rays
 are created.  Applying "ypart" to the pair of times returned by "intersectiontimes"
@@ -1412,6 +1412,7 @@ beginfig(1);
   draw e;
 endfig;  
 \end{code}
+\bigskip
 $$\includegraphics{torn-edge1}$$
 \vskip2cm
 \begin{code}
@@ -1438,6 +1439,132 @@ $$\includegraphics{torn-edge2}$$
 \newpage
 \section{Plane geometry and trignonometry}
 
+\noindent\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\noindent
+Here is the equilateral triangle point macro in action.
+
+\begin{code}
+beginfig(1);
+path c; c = fullcircle scaled 144;
+pair a,b,p,q;
+for i=0 upto 7:
+  a := point i   of c;
+  b := point i+1 of c;
+  p := equilateral_triangle_point(a,b);
+  q := equilateral_triangle_point(b,a);
+  draw a -- p -- b withcolor .67 green;
+  draw a -- q -- b withcolor .67 red;
+endfor
+draw c withcolor .53 blue;
+endfig;
+\end{code}
+
+$$\includegraphics{geometry3}$$
+}}%
+This section deals with drawing geometrical figures typically involving lines,
+angles, polygons, and circles.  Plain \MP\ provides very few tools that are
+explicitly designed to help draw geometric figures, but it is usually possible to
+find an elegant construction using these tools and the relevant primitive commands.
+It is tempting to build up your own library of special purpose macros, but
+experience suggests that it is often better to adapt a general technique to the task
+in hand, and to create a specific solution to your current problem.  One of the main
+issues is catching exceptions; since it is hard to write completely general macros,
+the techniques presented here should be adapted as required rather than blindly
+copied.
+
+The classical constructions from Euclid's \textsl{Elements} are often useful 
+sources of inspiration for macros, but they do not always point in the right 
+direction.  For example consider the first proposition: \textit{given two points
+find a third point, so that the three points make an equilateral triangle}.
+Euclid's construction is to draw an arc, with radius equal to the length of the
+segment between the two points, at each point and find the intersection.  This might 
+lead us to a function like this:
+\begin{code}
+vardef equilateral_triangle_point(expr a, b) =
+  save c; path c; c = fullcircle scaled 2 abs(b-a); 
+  (c shifted a intersectionpoint c shifted b)
+enddef;
+\end{code}
+This works but has a couple of issues.  First "intersectionpoint" is a bit slow and
+not very accurate (although this might not matter to us); secondly and more
+seriously, the point returned depends on the orientation of the points "a" and 
+"b".  In some configurations the first intersection found will be on the left, in
+others on the right.  We could fix this by rotating the circle "c" by "angle (b-a)",
+but  we can do better with a simple rotation of the second point about the first:
+\begin{code}
+vardef equilateral_triangle_point(expr a, b) =
+  b rotatedabout(a,60)
+enddef;
+\end{code}
+And if you want to get right back to primitives you could even write that as:
+\begin{code}
+vardef equilateral_triangle_point(expr a, b) =
+  b shifted -a rotated 60 shifted a
+enddef;
+\end{code}
+
+\newpage
+\subsection{Bisecting lines, paths, and angles}
+
+\noindent\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\noindent
+        $$\includegraphics{mediation1}$$
+        \vskip 50pt
+        $$\includegraphics{mediation2}$$
+}}%
+The best way to bisect a line, depends on how it is defined.  
+If you have two points $a$ and $b$, then the simplest way to find 
+the point that bisects them is to write "1/2[a,b]".  This mediation 
+mechanism is entirely general, so you can write \mpinline{1/3[a,b]}, "1/4[a,b]", and
+so on to define other points that are part of the way from $a$ to $b$.
+The point "0[a,b]" is equal to point $a$, point "1[a,b]" is equal to $b$;
+but the number before the left bracket does not have to 
+be confined to the range $(0,1)$.  If you write "3/2[a,b]" you will get a point on
+the extension of the line from $a$ to $b$ beyond $b$.  To get a point going the
+other way you can either reverse $a$ and $b$, or use a negative number.  But don't
+get caught out by the \MP\ precendence rules;  "-1/2[a,b]" is interpreted as
+"-(1/2[a,b])" and not as "(-1/2)[a,b]",   so usually you need parentheses round
+negative mediation numbers.
+
+If you have a path to bisect then you can use the ``$\kw{point} t \kw{of} p$''
+notation to do mediation along the path.  For a simple straight path $p$ of length 1
+then "point 1/2 of p" will give you the midpoint.  More generally, 
+"point 1/2 length p of p" will give you the midpoint of a path of any length. 
+This works fine for simple paths, in which \MP's time moves evenly along the path, 
+but for more complicated paths you have to use this rather cumbersome notation:
+\begin{code}
+    point arctime 1/2 arclength p of p of p
+\end{code}
+If your path is cyclic, and makes a triangle or a regular polygon,
+then you can bisect it with the line 
+\begin{code}
+    point t of p -- point t + 1/2 length p of p
+\end{code}
+\textbf{NB}: if the polygon has an odd number of sides, then $2t$ must be a whole number.
+As the illustration at the right shows, 
+
+
+
+Euclid's second proposition builds on the first: it uses the construction of an
+equilateral triangle on two points to bisect a given angle.  You can do the same 
+in \MP\ but it might not be the simplest or most effective solution in any
+particular situation.
+
+
+In order to
+draw an angle, we must already have defined three points; so bisection should start
+with three points.
+
+
+
+unitvector
+dotprod
+abs
+++ and +-+
+
+
+transformations
+
+- reflectedabout
+- rotatedaround
 
 
 \newpage
