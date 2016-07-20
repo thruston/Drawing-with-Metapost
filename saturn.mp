@@ -6,8 +6,8 @@ gap   = fullcircle xscaled 3cm yscaled .8cm;
 ring1 = fullcircle xscaled 4cm yscaled 1.2cm;
 ring2 = ring1 scaled 0.93;
 ring3 = ring1 scaled 0.89;
-limb1 = buildcycle(subpath (5,7) of ring1, subpath (8,4) of globe);
-limb2 = buildcycle(subpath (5,7) of gap, subpath (-2,6) of globe);
+limb1 = buildcycle(subpath(5,7) of ring1, subpath(8,4) of globe);
+limb2 = buildcycle(subpath(5,7) of gap, subpath(-2,6) of globe);
 picture saturn; saturn = image(
   fill ring1 withcolor .1 red + .1 green + .4 white;
   fill ring2 withcolor .2 white;
