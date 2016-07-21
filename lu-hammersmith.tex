@@ -1,0 +1,29 @@
+\documentclass[margin=2mm]{standalone}
+\usepackage{fontspec}
+\setmainfont{Gill Sans}
+\usepackage{luamplib}
+\begin{document}
+\begin{mplibcode}
+beginfig(1);
+color Blue, Red;  Blue = (0,25/255,168/255); Red = (220/255,36/255,31/255);
+
+%picture name; name = btex HAMMERSMITH etex;
+picture name; name = btex MORNINGTON CRESCENT etex;
+
+w = abs(urcorner name - ulcorner name);
+h = abs(urcorner name - lrcorner name);
+
+name := name shifted -1/2(w,h);
+
+fill fullcircle scaled 0.8w withcolor Red;
+draw fullcircle scaled 0.8w;
+fill fullcircle scaled 0.52w withcolor white;
+draw fullcircle scaled 0.52w;
+fill bbox name withcolor Blue;
+draw bbox name;
+draw name withcolor white;
+
+endfig;
+\end{mplibcode}
+\end{document}
+
