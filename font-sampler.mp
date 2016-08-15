@@ -45,7 +45,7 @@
 %md-chrma MathDesign-CH-Regular-MathDesignSymbolA-10 <md-chrma.pfb
 %md-chrmb MathDesign-CH-Regular-MathDesignSymbolB-10 <md-chrmb.pfb
 prologues := 3;
-outputtemplate := "%j%c.eps";
+outputtemplate := "%j%c.mps";
 beginfig(1);
 ypos = 0;
 picture glyph; 

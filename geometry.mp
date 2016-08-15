@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 
 vardef equilateral_triangle_point(expr a, b) =
   b shifted -a rotated 60 shifted a

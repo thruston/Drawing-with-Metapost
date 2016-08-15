@@ -1,5 +1,5 @@
 prologues := 3;
-outputtemplate := "%j%c.eps";
+outputtemplate := "%j%c.mps";
 
 vardef dice(expr pip_count, pip_color) = 
   save d,r,p, ul, ur, lr, ll; 

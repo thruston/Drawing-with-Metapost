@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 
 vardef clock_roman primary h = 
    if     h<5: ""  for i=1 upto h: & "I" endfor

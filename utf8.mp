@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 
 def U primary s = if string s: decode(s) fi enddef;
 

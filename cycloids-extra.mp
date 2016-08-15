@@ -1,4 +1,4 @@
-prologues := 3; outputtemplate := "%j%c.eps"; 
+prologues := 3; outputtemplate := "%j%c.mps"; 
 beginfig(1);
 R = 1.8cm; % radius of the outer part 
 r = 1.3cm; % radius of the inner part

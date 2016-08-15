@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 
 primarydef p enlarged s = 
   p shifted (-center p)

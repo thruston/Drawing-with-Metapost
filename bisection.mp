@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 vardef equilateral_triangle_point(expr a, b) =
   b shifted -a rotated 60 shifted a
 enddef;
@@ -25,11 +25,9 @@ vardef vector_bisector(expr a,b,c,r) =
 enddef;
 
 vardef interior_bisector(expr a,b,c) = 
-  save p,q; numeric p,q;
-  p = length (a-b);
-  q = length (c-b);
-  (p/(p+q))[a,c]
+  (1/(1+abs(c-b)/abs(a-b)))[a,c]
 enddef;
+
 
 pair A,B,C;
 
@@ -42,12 +40,13 @@ beginfig(1);
 
 z0 = euclidean_bisector(A,B,C,100);
 
-draw B -- 1.2[B,z0];
+draw B -- 1.2[B,z0] withcolor .67 red;
 draw A--B--C;
 dotlabel.top(btex $A$ etex, A);
 dotlabel.lft(btex $B$ etex, B);
 dotlabel.lrt(btex $C$ etex, C);
 dotlabel.lrt(btex $E$ etex, z0);
+undraw bbox currentpicture;
 
 endfig;
 
@@ -56,11 +55,13 @@ beginfig(2);
 z0 = vector_bisector(A,B,C,50);
 drawarrow B--A  cutafter fullcircle scaled 5 shifted A;
 drawarrow B--C  cutafter fullcircle scaled 5 shifted C;
-drawarrow B--z0 cutafter fullcircle scaled 5 shifted z0;
+drawarrow B--z0 cutafter fullcircle scaled 5 shifted z0 
+withcolor .67 red;
 dotlabel.top(btex $A$ etex, A);
 dotlabel.lft(btex $B$ etex, B);
 dotlabel.lrt(btex $C$ etex, C);
 dotlabel.lrt(btex $E$ etex, z0);
+undraw bbox currentpicture;
 
 endfig;
 beginfig(3);
@@ -68,13 +69,14 @@ beginfig(3);
 z0 = interior_bisector(A,B,C);
 
 draw A--B--C--cycle;
-draw B -- 1.2[B,z0];
+draw B -- 1.2[B,z0] withcolor .67 red;
 dotlabel.top(btex $A$ etex, A);
 dotlabel.lft(btex $B$ etex, B);
 dotlabel.lrt(btex $C$ etex, C);
 fill fullcircle scaled dotlabeldiam shifted z0;
 label(btex $E$ etex, z0 + (3,9));
 
+undraw bbox currentpicture;
 endfig;
 end
 

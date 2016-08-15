@@ -1,5 +1,5 @@
 prologues := 3;
-outputtemplate := "%j%c.eps";
+outputtemplate := "%j%c.mps";
 
 def freehand_segment(expr p) =
   point 0 of p {direction 0 of p rotated (4+normaldeviate)} .. 

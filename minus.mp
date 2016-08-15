@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 beginfig(1);
 
 show ASCII substring (0,1) of decimal -1;

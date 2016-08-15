@@ -32,7 +32,7 @@ vardef do_brace(expr a,b,m,r) =
    point 3 of bb
 enddef;
 
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 beginfig(1);
 
 z1 = origin;

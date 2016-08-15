@@ -1,5 +1,5 @@
 prologues := 3;
-outputtemplate := "%j%c.eps";
+outputtemplate := "%j%c.mps";
 
 string heavy_font; 
 heavy_font = "PlayfairDisplay-Black-osf-t1--base";

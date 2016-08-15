@@ -1,5 +1,5 @@
 prologues := 3;
-outputtemplate := "%j%c.eps";
+outputtemplate := "%j%c.mps";
 
 picture p, pp;
 p  = "proof" infont "pplri8r" scaled 4;

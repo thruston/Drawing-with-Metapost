@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 
 vardef interior_bisector(expr A,O,B) = 
   save a,b; numeric a,b;

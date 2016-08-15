@@ -1522,7 +1522,7 @@ enddef;
         \centerline{Lee Sallow's theorem of median triangles}
 }
 \noindent
-The best way to bisect a line, depends on how it is defined.
+The best way to bisect a line, depends on how you have defined it.
 If you have two points $a$ and $b$, then the simplest way to find 
 the point that bisects them is to write "1/2[a,b]".  This mediation 
 mechanism is entirely general, so you can write \mpinline{1/3[a,b]}, "1/4[a,b]", and
@@ -1567,7 +1567,6 @@ The median is the basis for several beautiful theorems about the geometry of the
 triangle. The theorem shown here was first published in 2014.
 \newpage
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
-$$\includegraphics{bisection1}$$
 \begin{code}
 vardef euclidean_bisector(expr a,b,c,r) = 
   save arc,p,q,e; 
@@ -1579,17 +1578,17 @@ vardef euclidean_bisector(expr a,b,c,r) =
   e
 enddef;
 \end{code}
-$$\includegraphics{bisection2}$$
+$$\includegraphics{bisection1}$$
 \begin{code}
 vardef vector_bisector(expr a,b,c,r) = 
    b + unitvector (a-b) scaled r 
      + unitvector (c-b) scaled r
 enddef;
 \end{code}
-
+$$\includegraphics{bisection2}$$
 }
 \noindent
-In an equilateral triangle the medians also bisect the angles at each vertexs; this
+In an equilateral triangle the medians also bisect the angles at each vertex; this
 is the basis of Euclid's method of bisecting an angle set out in the Second
 Proposition.  You can do the same in \MP, but it might not always be the best way.
 Whatever approach you take, an angle is defined by three points; one that defines
@@ -1608,9 +1607,20 @@ calls to "intersectionpoint".  If you wanted to eliminate this you could use the
 useful plain \MP\ macro "unitvector" to produce a solution based on adding two equal
 length vectors from the corner to the two other points.  Another approach is to
 exploit another geometric theorem that states that the bisector of an angle in a
-triangle divides the opposite side in the ratio of the two other sides. This idea
-gives us:
+triangle divides the opposite side in the ratio of the two other sides. 
+So if sides $AB$ and $BC$ have lengths $p$ and $q$ then the bisector will 
+be ${p\over p+q}={1\over1+q/p}$ from $A$ to $C$, and you can express this
+simply using \MP's mediation syntax:
 
+\vfill
+
+\begin{code}
+vardef interior_bisector(expr a,b,c) = 
+  (1/(1+abs(c-b)/abs(a-b)))[a,c]
+enddef;
+\end{code}
+$$\includegraphics{bisection3}$$
+\newpage
 
 unitvector
 dotprod

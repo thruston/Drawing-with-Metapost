@@ -1,4 +1,4 @@
-prologues:=3; outputtemplate := "%j%c.eps";
+prologues:=3; outputtemplate := "%j%c.mps";
 beginfig(1);
 path globe, gap, ring[], limb[];
 globe = fullcircle scaled 2cm;

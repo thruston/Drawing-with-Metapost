@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 % don't edit figure 1 ! it is used in DwMP like this.
 pair a,b;
 a = 42 up; b = 72 right;
@@ -85,6 +85,21 @@ draw a;
 draw b shifted 222 right;
 endfig;
 
+beginfig(4);
+ 
+ vardef median_triangle(expr p) = 
+     point 0 of p -- point 3/2 of p --
+     point 5/2 of p shifted (point 3/2 of p - point 1 of p)
+     -- cycle
+ enddef;    
+
+ t := reverse t;
+ for i=0 upto 124:
+   draw t withcolor (i/4)[blue,red];
+   %for j=1 upto 2: label.top(decimal i & "." & decimal j, point j of t); endfor
+   t := median_triangle(t);
+  endfor
+
+endfig;
+
 end
-
-

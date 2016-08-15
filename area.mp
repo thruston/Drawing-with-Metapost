@@ -1,4 +1,4 @@
-prologues:=3;outputtemplate:="%j%c.eps";
+prologues:=3;outputtemplate:="%j%c.mps";
 vardef area(expr a,b,c) = 
    1/2 abs(xpart a * (ypart b - ypart c)
          + xpart b * (ypart c - ypart a)

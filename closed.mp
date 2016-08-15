@@ -1,5 +1,5 @@
 prologues := 3;
-outputtemplate := "%j%c.eps";
+outputtemplate := "%j%c.mps";
 
 primarydef p enlarged s = p shifted -(center p) scaled s shifted center p enddef;
 
