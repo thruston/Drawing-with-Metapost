@@ -110,23 +110,40 @@ as clear as possible in my examples.
     \item Assignment or equation:  the equation "a=3;" means "a" is the same as "3" throughout the
         current scope; the assignment "a:=3;" means update the value of "a" to the value "3"
         immediately.  The difference becomes apparent when you try to update a
-        variable in the same scope.  This difference also lets you write equations
+        variable in the same scope.  
+        
+        This difference also lets you write linear equations
         like "a=-b;".  After this, as soon as you give  a value to "a", \MP\ immediately works
-        out the value of "b".
+        out the value of "b".  
+        This is clever but has its limitations.  As the following snippet reveals:
+\begin{code}
+  % if you run this       you will get this in the log
+  a + b = 0; show (a,b);  % >> (a,-a)
+  a=42;      show (a,b);  % >> (42,-42)
+  a:=43;     show (a,b);  % >> (43,-42)
+\end{code}
+        As soon as you assign to variable with ":=" \MP\ breaks any previously
+        established equations.
 
-    \item Variable types:  
-       \begin{itemize}
-           \item numeric
-           \item pair
-           \item path
-           \item transform
-           \item color
-           \item string
-           \item picture
-       \end{itemize}
+    \item Variable types: 
+        
+        —
+        \mpinline{numeric} "a", 
+        \mpinline{pair} "(a,b)"
 
-       If you don’t declare a variable, it’s assumed that it’s a "numeric".
-       When you do declare a variable --- "numeric" or otherwise, any value that it
+        —
+        \mpinline{color} "(r,g,b)",
+        \mpinline{color} "(c,m,y,k)"
+        \mpinline{transform} "(x,y,xx,xy,yx,yy)"
+
+        —
+        \mpinline{string},
+        \mpinline{path},
+        \mpinline{picture}
+
+
+        If you don’t declare a variable, it’s assumed that it’s a \mpinline{numeric}.
+        When you do declare a variable --- \mpinline{numeric} or otherwise — any value that it
        already had in the current scope is removed.
             
     \item Implicit multiplication: \MP\ inherits a rich set of rules about numerical
@@ -136,8 +153,8 @@ as clear as possible in my examples.
         primary level) and not followed by "+" or "-" becomes a scalar
         multiplication operator that applies to the next token (which should be variable 
         of some appropriate type).
-        So you can write things like "3a", or even "1/2 a".
-        The space between the number and the variable name is optional. This 
+        So you can write things like "3a", or even "1/2 a"
+        (the space between the number and the variable name is optional). This 
         lets you write very readable mathematical expressions. It’s quite
         additictive after a while.
 
@@ -184,7 +201,7 @@ There are several closed paths defined for you in plain \MP.
         like this:
         \begin{code}
         path s; s = superellipse(right,up,left,down,.8);
-        \end{code}
+\end{code}
         to create a ‘unit’ shape.  The fifth parameter is the ‘superness’: the value
         1 makes it look almost square, 0.8 is about right, 0.5 gives you a diamond,
         and values outside the range $(0.5,1)$ give you rather weird propeller
@@ -221,7 +238,8 @@ center p -- subpath(0,1/5 length p) of p -- cycle
 Clearly this works rather better with more circular shapes.  Indeed for a circle you
 can convert directly between circumference angle and points along the path.  So
 you have defined path "c" to be a circle, then
-"point 1 of c" is $45^\circ$ round and 1~radian is "point 1.27324 of c".
+"point 1 of c" is $45^\circ$ round and 1~radian is "point 1.27324 of c", (because
+$4/\pi \simeq 1.27324$).
 
 \vfill\noindent
 In a cyclic path, the point numbering in \MP\ wraps round: so in a
@@ -481,23 +499,20 @@ case sensitive in \MP.
 \mpexternal{cycloids-extra.mp}
 
 \newpage
-\section{Numbers, pairs, and colours}
+\section{Numbers}
 
-This section discusses plain \MP 's concepts of numeric variables, pair variables,
-and path variables; and what you can do with them. 
-
-First \textbf{numerics}: \MP\ inherits
-it's
-unusual native system of scaled numbers from \MF;  like many of Knuth's creations it is
-slightly quirky, but works very well once you get the hang of it.  The original
-objective was to make \MF\ produce identical results on a wide variety of computers.
-By default all arithmetic is carried out using 28-bit integers in units of
-$1/65536$.  This is done automatically for you, so you don’t need to worry about 
-it but you should be aware of a couple of practical implications
+This section discusses plain \MP 's scalar numeric variables
+and what you can do with them. 
+\MP\ inherits its unusual native system of scaled numbers from \MF;  like many of
+Knuth's creations it is slightly quirky, but works very well once you get the hang
+of it.  The original objective was to make \MF\ produce identical results on a wide
+variety of computers.  By default all arithmetic is carried out using 28-bit
+integers in units of $1/65536$.  This is done automatically for you, so you don’t
+need to worry about it but you should be aware of a couple of practical implications
 \begin{itemize}
     \item All fractions are rounded to the nearest multiple of $1\over65536$, so
          negative powers of 2 ($1\over2$,
-        $1\over4$, $1\over8$, $\dots$) are exact, but other common ones are not:  
+        $1\over4$, $1\over8$, $\dots$) are exact, but other common fractions are not:  
         for example $1\over3$ is represented as 
         ${21845\over65536} \simeq 0.333328$, and $1\over10$ as 
         ${6554\over65536} \simeq 0.100006$.  
@@ -560,7 +575,7 @@ You get 11 iterations in the second but only 10 with the first.
     \item Intermediate calculations are allowed to be upto 32768 in absolute value
         before an error occurs.  You can sometimes avoid problems by using the
         special Pythagorean addition and subtraction operators, but the general
-        approach should be to do your calculations before you scale a path for
+        approach should be to do your calculations before you scale a path 
         for filling or drawing.
 
     \item You can turn a number upto 32768 into a string using the "decimal"
@@ -575,20 +590,21 @@ systems, they might not be so portable as others.  It's nice to have these new
 approaches just in case, but you will not need to use them very often.
 
 \newpage\subsection{Numeric constants}
-Plain \MP\ inherits three numeric constants from \MF: \id{infinity}, \id{epsilon},
+
+Alongside the quirky number system, 
+plain \MP\ also inherits three numeric constants from \MF: \id{infinity}, \id{epsilon},
 and \id{eps}:
 \begin{itemize}
-    
     \item $\id{eps}$ is defined to be a
 small amount that is noticeable to \MF’s rounding algorithms, namely
 ${32\over65536}={1\over2048}\simeq 0.00049$.  As a distance on the page or screen it's invisible at
-any resolution less that 150,000 dots per square inch.  If you are designing fonts
-in \MF\ it's useful to help avoid bad choices of pixels at low resolutions, but in
+any resolution less that 150,000 dots per square inch.  If you were designing fonts
+        in \MF, $\id{eps}$ could help you avoid bad choices of pixels at low resolutions, but in
 \MP\ it's only really useful in comparisons that might suffer from rounding errors.
 \id{eps} is tiny, but it's bigger than any rounding error you may encounter, so
 you can safely test for equality with: $\kw{abs}(\id{a}-\id{b})<\id{eps}$.
 
-\item $\id{epsilon}$ is defined to be $1\over65536$, the smallest postive scaled
+\item $\id{epsilon}$ is defined to be $1\over65536$, the smallest positive scaled
     number.
 
 \item $\id{infinity}$ is defined to be $4096-\id{epsilon}$, which is the largest
@@ -692,20 +708,20 @@ The unit definitions in "plain.mp" are designed for use with the default scaled
 number system; if you want higher precision definitions, then you can update them by
 including something like this at the top of your program: $\longrightarrow$
 \vadjust{\moveright 5.5in \vbox to 0pt{\kern-24pt
-%\begin{code}
-%numeric bp, in, mm, cm, pt, pc, dd, cc;
-%72 = 72 bp = 1 in; 
-%800 = 803 pt = 803/12 pc;
-%3600 = 1270 mm = 127 cm;
-%1238 pt = 1157 dd = 1157/12 cc;
-%\end{code}
-\bgroup\obeylines\parindent0pt
-$\kw{numeric} \id{bp}, \id{in}, \id{mm}, \id{cm}, \id{pt}, \id{pc}, \id{dd}, \id{cc};$
-$72 = 72\id{bp} = 1\id{in}$; 
-$800 = 803 \id{pt} = 803/12 \id{pc};$
-$3600 = 1270 \id{mm} = 127 \id{cm};$
-$1238 \id{pt} = 1157 \id{dd} = 1157/12 \id{cc};$
-\egroup
+\begin{code}
+numeric bp, in, mm, cm, pt, pc, dd, cc;
+72 = 72 bp = 1 in; 
+800 = 803 pt = 803/12 pc;
+3600 = 1270 mm = 127 cm;
+1238 pt = 1157 dd = 1157/12 cc;
+\end{code}
+%\bgroup\obeylines\parindent0pt
+%$\kw{numeric} \id{bp}, \id{in}, \id{mm}, \id{cm}, \id{pt}, \id{pc}, \id{dd}, \id{cc};$
+%$72 = 72\id{bp} = 1\id{in}$; 
+%$800 = 803 \id{pt} = 803/12 \id{pc};$
+%$3600 = 1270 \id{mm} = 127 \id{cm};$
+%$1238 \id{pt} = 1157 \id{dd} = 1157/12 \id{cc};$
+%\egroup
 \vss}}
 
 The effect of the $\kw{numeric}$ keyword is to remove the previous definitions; the
@@ -714,62 +730,6 @@ You can safely use these definitions with "scaled", as they are equivalent to th
 decimals currently given in "plain.mp" (with the exception of "cc" which is 0.00003
 smaller!).
 
-
-\newpage\subsection{Pairs and coordinates}
-Now \textbf{pairs}:  if you enclose two numerics in parentheses, you get a pair.  A
-pair generally represents a particular position in your drawing with normal, orthogonal
-Cartesian $x$- and $y$-coordinates, but you can use a pair variable for other
-purposes if you wish.  As far as \MP\ is concerned it's just a pair of numerics.
-
-Unlike numerics, pair variables are not automatically declared for you.  So if you
-want to define points $A$ and $B$ you need to explicitly write `$\kw{pair}
-\id{A},\id{B};$' before you assign values to them.  Once you have declared one, you
-can equate it to a pair value using $=$ as normal, and overwrite it using
-the assignment operator $\mathrel{:}=$.
-
-\MP\ provides a simple, but slightly cumbersome, way to refer to each half of a
-pair.  The syntax `$\kw{xpart} \id{A}$' returns a numeric equal to the first number in
-the pair, while `$\kw{ypart} \id{A}$' returns the second.  The names refer to the
-intended usage of pair variable to represent pairs of $x$ and $y$-coordinates.
-Note that they are read-only; you can't
-assign a value to an $\kw{xpart}$ or a $\kw{ypart}$.  So if you want to update only one
-part of a pair, you have to do something like this: `$\id{A} \mathrel{:}= (42,
-\kw{ypart}\id{A});$'.
-
-In addition there is a neat macro defintion in plain \MP\ that allows you do deal
-with the $x$- and $y$-parts of pairs rather more succintly.    
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
-\begin{code}
-vardef z@#=(x@#,y@#) enddef;
-\end{code}
-\vss}}%
-The deceptivly simple definition of $\id{z}$ as a subscripted macro allows you to
-write "z1 = (10,20);" and have it automatically expanded into the equivalent of
-"x1=10;" and "y1=20;".  You can then use "x1" and "y1" as independent numerics or
-refer to them as a pair with "z1".
-
-Plain \MP\ defines five useful pair variables: \id{origin}, \id{right}, \id{up},
-\id{left}, and \id{down}.  As so often, the Knuthian definitions in "plain.mp" are
-quite illuminating
-$\longrightarrow$
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
-\begin{code}
-% pair constants
-pair right,left,up,down,origin;
-origin=(0,0); up=-down=(0,1); right=-left=(1,0);
-\end{code}
-\vss}}%
-As you can see, pair variables can be used in implicit equations.
-They can also be scaled using implicit multiplication, so writing 
-`$144 \id{right}$' is equivalent to writing `$(144,0)$' but possibly a bit more
-readable.  In particular the idiom `$\kw{shifted} 200 \id{up};$' applied to a path
-or an image works well.
-
-Unfortunately this convenient notation does not work well with units of
-measure, because implicit multiplication only works between a numeric constant and a
-variable.  So `$2 \id{in}\, \id{right}$' does not work as you might expect; you can
-write `$2\id{in} \mathrel{\ast}\id{right}$' but by that stage it's probably simpler to 
-write `$(2\id{in},0)$' or even just `$(144,0)$'.
 
 \newpage
 \subsection{Integer arithmetic, clocks, and rounding}
@@ -860,6 +820,64 @@ dividing the result. So to round to the nearest eighth you might use
 `$\kw{round}(x\times100)/100$'.  The only restriction is that the intermediate value
 must remain less than 32767 if you are using the default number system.
 
+\newpage
+\section{Pairs, colours, and transformations}
+
+\newpage\subsection{Pairs and coordinates}
+Now \textbf{pairs}:  if you enclose two numerics in parentheses, you get a pair.  A
+pair generally represents a particular position in your drawing with normal, orthogonal
+Cartesian $x$- and $y$-coordinates, but you can use a pair variable for other
+purposes if you wish.  As far as \MP\ is concerned it's just a pair of numerics.
+
+Unlike numerics, pair variables are not automatically declared for you.  So if you
+want to define points $A$ and $B$ you need to explicitly write `$\kw{pair}
+\id{A},\id{B};$' before you assign values to them.  Once you have declared one, you
+can equate it to a pair value using $=$ as normal, and overwrite it using
+the assignment operator $\mathrel{:}=$.
+
+\MP\ provides a simple, but slightly cumbersome, way to refer to each half of a
+pair.  The syntax `$\kw{xpart} \id{A}$' returns a numeric equal to the first number in
+the pair, while `$\kw{ypart} \id{A}$' returns the second.  The names refer to the
+intended usage of pair variable to represent pairs of $x$ and $y$-coordinates.
+Note that they are read-only; you can't
+assign a value to an $\kw{xpart}$ or a $\kw{ypart}$.  So if you want to update only one
+part of a pair, you have to do something like this: `$\id{A} \mathrel{:}= (42,
+\kw{ypart}\id{A});$'.
+
+In addition there is a neat macro defintion in plain \MP\ that allows you do deal
+with the $x$- and $y$-parts of pairs rather more succintly.    
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
+\begin{code}
+vardef z@#=(x@#,y@#) enddef;
+\end{code}
+\vss}}%
+The deceptivly simple definition of $\id{z}$ as a subscripted macro allows you to
+write "z1 = (10,20);" and have it automatically expanded into the equivalent of
+"x1=10;" and "y1=20;".  You can then use "x1" and "y1" as independent numerics or
+refer to them as a pair with "z1".
+
+Plain \MP\ defines five useful pair variables: \id{origin}, \id{right}, \id{up},
+\id{left}, and \id{down}.  As so often, the Knuthian definitions in "plain.mp" are
+quite illuminating
+$\longrightarrow$
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
+\begin{code}
+% pair constants
+pair right,left,up,down,origin;
+origin=(0,0); up=-down=(0,1); right=-left=(1,0);
+\end{code}
+\vss}}%
+As you can see, pair variables can be used in implicit equations.
+They can also be scaled using implicit multiplication, so writing 
+`$144 \id{right}$' is equivalent to writing `$(144,0)$' but possibly a bit more
+readable.  In particular the idiom `$\kw{shifted} 200 \id{up};$' applied to a path
+or an image works well.
+
+Unfortunately this convenient notation does not work well with units of
+measure, because implicit multiplication only works between a numeric constant and a
+variable.  So `$2 \id{in}\, \id{right}$' does not work as you might expect; you can
+write `$2\id{in} \mathrel{\ast}\id{right}$' but by that stage it's probably simpler to 
+write `$(2\id{in},0)$' or even just `$(144,0)$'.
 
 \newpage
 \section{Random numbers}
