@@ -823,17 +823,45 @@ must remain less than 32767 if you are using the default number system.
 \newpage
 \section{Pairs, colours, and transformations}
 
+\MP\ generalizes its concept of number to include ordered tuples of numbers which are used for
+a variety of purposes.  The primary use of pairs is for Cartesian coordinates, but
+they can also be used as complex numbers, since complex multiplication is built in;
+as far as \MP\ is concerned it's just a pair of numeric variables.
+
+Triples and quads are used for colours (RGB colours and CMYK colours); usually the
+values of each element vary from 0 to 1, so that $\id{red} = (1,0,0)$ for example, 
+but \MP\ does not force you to stick to this range.  The elements can take any value
+that is allowed for a \kw{numeric}.  It is therefore possible
+to use triples for three dimensional coordinates, but there are no
+built in facilties in plain \MP\ that support this, so at best it is rather
+cumbersome.  
+
+Finally there are sextuples used for transforms.  A transform is how \MP\ represents
+an affine transformation such as "rotated 45 shifted (10,20)".  The gory details of
+these are in the \MF book.
+
+Unlike simple numerics, these extended tuple variables are not automatically
+declared for you, 
+So if you
+want to define points $A$ and $B$ you need to explicitly write `$\kw{pair}
+\id{A},\id{B};$' before you assign values to them.  Once you have declared them, you
+can equate to an appropriate tuple using $=$ as normal.
+\begin{code}
+    pair A,B; A = B = (3,4);
+    color R;  R = (1,2,3);
+    cmykcolor C; C = (1,2,3,4);
+    transform T; T = (1,2,3,4,5,6);
+\end{code}
+Triples are type \kw{color}, quads are type
+\kw{cmykcolor}, sextuples are type \kw{transform}.  You can't have tuples of any
+other length, not even as constants.
+
 \newpage\subsection{Pairs and coordinates}
 Now \textbf{pairs}:  if you enclose two numerics in parentheses, you get a pair.  A
 pair generally represents a particular position in your drawing with normal, orthogonal
 Cartesian $x$- and $y$-coordinates, but you can use a pair variable for other
 purposes if you wish.  As far as \MP\ is concerned it's just a pair of numerics.
 
-Unlike numerics, pair variables are not automatically declared for you.  So if you
-want to define points $A$ and $B$ you need to explicitly write `$\kw{pair}
-\id{A},\id{B};$' before you assign values to them.  Once you have declared one, you
-can equate it to a pair value using $=$ as normal, and overwrite it using
-the assignment operator $\mathrel{:}=$.
 
 \MP\ provides a simple, but slightly cumbersome, way to refer to each half of a
 pair.  The syntax `$\kw{xpart} \id{A}$' returns a numeric equal to the first number in
@@ -870,11 +898,12 @@ origin=(0,0); up=-down=(0,1); right=-left=(1,0);
 As you can see, pair variables can be used in implicit equations.
 They can also be scaled using implicit multiplication, so writing 
 `$144 \id{right}$' is equivalent to writing `$(144,0)$' but possibly a bit more
-readable.  In particular the idiom `$\kw{shifted} 200 \id{up};$' applied to a path
-or an image works well.
+readable.  In particular the idiom `$\kw{shifted} 200 \id{up};$'
+works well when applied to a path
+or an image.
 
-Unfortunately this convenient notation does not work well with units of
-measure, because implicit multiplication only works between a numeric constant and a
+Unfortunately, this convenient notation does not work well with units of
+measure.  This is because implicit multiplication only works between a numeric constant and a
 variable.  So `$2 \id{in}\, \id{right}$' does not work as you might expect; you can
 write `$2\id{in} \mathrel{\ast}\id{right}$' but by that stage it's probably simpler to 
 write `$(2\id{in},0)$' or even just `$(144,0)$'.
@@ -1551,8 +1580,8 @@ be confined to the range $(0,1)$.  If you write "3/2[a,b]" you will get a point 
 the extension of the line from $a$ to $b$ beyond $b$.  To get a point going the
 other way you can either reverse $a$ and $b$, or use a negative number.  But don't
 get caught out by the \MP\ precendence rules;  "-1/2[a,b]" is interpreted as
-"-(1/2[a,b])" and not as "(-1/2)[a,b]", so usually you need parentheses round
-negative mediation numbers.
+"-(1/2[a,b])" and not as "(-1/2)[a,b]", so either put in the parentheses or swap
+the order of the points: "(3/2)[b,a]".
 
 If you have a path to bisect then you can use the ``$\kw{point} t \kw{of} p$''
 notation to do mediation along the path.  For a simple straight path $p$ of length 1
@@ -1786,11 +1815,16 @@ point.
 
 
 \newpage
-\section{Labels and annotations}
+\section{Traditional labels and annotations}
+
+\textit{This section describes labels and annotations in what can be called the traditional
+\MP\ environment, where your figures are compiled with "mpost".  The following
+section describes labels and annotations in the new-fangled world of "lualatex" and
+the "luamplib" package.}
 
 \MP\ does not draw text directly; instead it provides two different mechanisms to
 turn a text string into a picture, which can then be treated like any other; in
-other words, it can
+other words, the text picture can
 be saved as a picture variable, drawn directly, or transformed in some way with a
 scaling, a reflection, or a rotation.
 
