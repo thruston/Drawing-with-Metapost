@@ -825,7 +825,7 @@ must remain less than 32767 if you are using the default number system.
 
 \MP\ generalizes its concept of number to include ordered tuples of numbers which are used for
 a variety of purposes.  The primary use of pairs is for Cartesian coordinates, but
-they can also be used as complex numbers, since complex multiplication is built in;
+they can also be used as complex numbers, since 
 as far as \MP\ is concerned it's just a pair of numeric variables.
 
 Triples and quads are used for colours (RGB colours and CMYK colours); usually the
@@ -833,7 +833,7 @@ values of each element vary from 0 to 1, so that $\id{red} = (1,0,0)$ for exampl
 but \MP\ does not force you to stick to this range.  The elements can take any value
 that is allowed for a \kw{numeric}.  It is therefore possible
 to use triples for three dimensional coordinates, but there are no
-built in facilties in plain \MP\ that support this, so at best it is rather
+built-in facilties in plain \MP\ that support this, so at best it is rather
 cumbersome.  
 
 Finally there are sextuples used for transforms.  A transform is how \MP\ represents
@@ -907,6 +907,75 @@ measure.  This is because implicit multiplication only works between a numeric c
 variable.  So `$2 \id{in}\, \id{right}$' does not work as you might expect; you can
 write `$2\id{in} \mathrel{\ast}\id{right}$' but by that stage it's probably simpler to 
 write `$(2\id{in},0)$' or even just `$(144,0)$'.
+
+
+\newpage
+\section{Complex numbers}
+
+\MP\ pair variables work rather well as complex numbers, as you might expect in a
+language designed by a mathematician.  To represent $3+4i$ you can write "(3,4)".
+To get the modulus you write "abs (3,4)" (which gives $5$ in this case), and to get
+the argument you write "angle (3,4)" (which gives $53.1301$).  Note that "angle"
+returns the argument in degrees rather than radians, and that the result is normalized so
+that $-180 < \kw{angle} (x,y) \le 180$.
+
+The standard notation for points supports this.  You can write "z0=(3,4);" and then
+extract or set the real part with "x0" and the imaginary part with "y0".  If you
+want to use other letters for your variable names, you can use "xpart" and "ypart"
+to do the same thing. So after `\mpinline{pair w; w=(3,4);}' you can get the real part with
+"xpart w" and the imaginary part with "ypart w".
+
+There is also a neat way to write complex numbers using a polar notation.  For
+$re^{i\theta}$ you can write `\mpinline{r dir theta}' where "r" is the modulus and
+"theta" is the argument in degrees. So another way to get the point "(3,4)" is to
+write `\mpinline{5 dir 53.1301}'. For points on the unit circle you can omit the
+"r", so `\mpinline{dir 45}' gives you the point "(0.7071,0.7071)" and so on. 
+And if that's not compact enough for you could write `\mpinline{def ^=dir enddef;}'
+which would let you write `\mpinline{5^53.1301}'.
+
+The predfined constants \mpinline{up}, 
+\mpinline{down}, 
+\mpinline{left}, and  
+\mpinline{right} also provide points on the unit circle corresponding to $i$, $-i$,
+$-1$, and $+1$ respectively.  It's tempting to define \mpinline{pair i; i=(0,1);}, so that
+you can write constants like "4i" directly, but this is not very helpful, because
+"3+4i" will give you an error since \MP\ does not let you add a "numeric" to a "pair".
+
+However \MP\ does let you add (and subtract) two pairs, so complex addition and
+subtraction are just done with the 
+normal operators.
+To get the complex conjugate you
+could use "reflectedabout(left,right)", but it's probably easier just to write
+"(x0,-y0)" or define a simple function:
+\begin{code}
+    def conj(expr z) = (xpart z, -ypart z) enddef;
+\end{code}
+Complex multiplication is provided as part of the core language by the "zscaled"
+operator.  This is defined with the same precedence as "scaled" or normal scalar
+multiplication (which is what you usually want).  So "(3,4) zscaled (1,2)" gives
+"(-5,10)" because $(3+4i)\times(1+2i) = 3+6i+4i-8 = -5+10i$. 
+"zscaled" is only defined to work on two "pair" variables, so you can't write
+\mpinline{(3,4) zscaled 4}.  To get that effect with "zscaled" you would have to write 
+\mpinline{(3,4) zscaled (4,0)}, but this is the same as 
+\mpinline{(3,4) scaled 4}, which is usually simpler to write.  If your pair is
+stored as a variable you can write (for example) \mpinline{4 z0} to get the same
+effect.  
+
+Or \mpinline{1/4 z0} or \mpinline{z0/4} for scalar division.
+
+There are no other complex operators available, but it is not hard to implement the
+usual operations when they are required.
+
+For complex division you need a function to inverse 
+divisor.  
+Inversion
+Complex sqrt
+
+\newpage
+\section{Colours}
+
+\newpage
+\section{Transformations}
 
 \newpage
 \section{Random numbers}
@@ -1803,7 +1872,7 @@ There's no built-in $\arccos$ or $\arcsin$ function but each is very easy to
 implement using a combination of the "angle" function and the Pythagorean difference
 operator.
 
-\MP\ does have built in functions for tangents; but they are called "angle" and
+\MP\ does have built-in functions for tangents; but they are called "angle" and
 "dir" and they are designed for pairs. So $\kw{angle}\,(x,y)=\arctan(y/x)$ while
 $\kw{dir}\,30$ gives you the point $(x,y)$ on the unit circle such that $\tan
 30^{\circ} = y/x$.  You can use these ideas to define tangent and arctan functions
