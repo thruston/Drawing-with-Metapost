@@ -16,7 +16,7 @@
 \usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{June 2016}
+\date{March 2017}
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\hbox{\bf#1\/}\fi\endgroup}
@@ -60,7 +60,7 @@ showstringspaces=false           %
 \makeatletter
 \moveright 6in\vbox to
 0pt{\vskip23pt\noindent\sffamily{\Large\bfseries\@title}\par\bigskip
-    \noindent\@author --- \@date\par
+    \noindent\@author\ --- \@date\par
     \bigskip
     \halign{\hfil#\hfil\ &\hfil#\hfil\cr
     \includegraphics{archimedes1}&
@@ -1409,7 +1409,7 @@ to update the value instead of "=".
 
 Random numbers are also useful to make eye catching banners for posters,
 presentations, and infographics.  Here are two simple example shapes: $\to$
-\mpic{36pt}{explode1}
+\mpic{18pt}{explode1}
 
 \begin{smallcode}
 string heavy_font; 
@@ -1418,9 +1418,7 @@ heavy_font = "PlayfairDisplay-Black-osf-t1--base";
 randomseed:=2128.5073;
 
 beginfig(1);  
-
 n = 40; r = 10; s = 50;
-
 path explosion, splash;
 explosion = for i=1 upto n:
   (s if odd(i): - else: + fi r + uniformdeviate r,0) rotated (i*360/n) --
@@ -1433,12 +1431,12 @@ splash := splash shifted (3s,0);
 
 fill explosion withcolor 1/2 green + red;
 draw explosion withpen pencircle scaled 2 withcolor 2/3 red;
-label("BOOM!" infont heavy_font scaled 2, center explosion) withcolor red;
-
+label("BOOM!" infont heavy_font scaled 2, center explosion)
+                                                     withcolor red;
 fill splash withcolor 1/2 green + blue;
 draw splash withpen pencircle scaled 2 withcolor 2/3 blue;
-label("SPLAT!" infont heavy_font scaled 2, center splash) withcolor blue;
-
+label("SPLAT!" infont heavy_font scaled 2, center splash) 
+                                                     withcolor blue;
 endfig;
 \end{smallcode}
 
@@ -2019,8 +2017,8 @@ able to work with at least a subset of UTF-8 input.
 UTF-8 is a way of
 representing 16-bit Unicode characters with sequences of 8-bit characters. So your
 UTF-8 aware editor may show you an é but \MP, knowing nothing about UTF-8,
-will see this as Ã©.  But since UTF-8 is designed to be compatible with ISO Latin 1,
-we can write a fairly simple routine to decode a subset of
+will see this as Ã©.  But you can write a fairly simple routine to decode the
+commonly used subset of
 UTF-8.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\parindent 0pt
     \def\item{\leavevmode\llap{•~}}
     \item You can extend this idea to cope with other UTF-8 characters, including 
@@ -2149,23 +2147,21 @@ plus some slightly-too-clever code to align the label for you.
 \subsubsection{Bounding boxes and alignment with \texttt{infont}}
 \label{infontbbox}
 
-In order to allow you to align a text label on a specific point, \MP\ provides five
-unary operators 
-to measure the bounding box of a picture;
-they are shown in \textcolor{red!67!black}{red} in the diagram, and you can use them
-to measure the width, depth, and height of a textual picture.  Unfortunately there
-are
-no operators to tell us the location of the baseline of the text or the x-height;
-but you can work these out provided you know how much your picture has been shifted.
+To allow you to align a text label on a specific point, \MP\ provides five unary
+operators to measure the bounding box of a picture; they are shown in
+\textcolor{red!67!black}{red} in the diagram, and you can use them to measure the
+width, depth, and height of a textual picture.  You can also work out the location
+of the baseline of the text or the x-height, provided you know how much your picture
+has been shifted.
 The easiest way to do this is to 
 measure the picture \textit{before} you shift it.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
 $$\includegraphics{infont-example3}  $$
 \vss}}
-If you create a textual picture like this:
 \begin{code}
     picture pp; pp = "proof" infont "pplri8r";
 \end{code}
-it will be created with the origin of the text sitting at coordinates $(0,0)$;
+Here the picture \id{pp}
+is created with the origin of the text sitting at coordinates $(0,0)$;
 then you can get the dimensions like this
 \begin{code}
     wd = xpart urcorner pp;
@@ -2213,13 +2209,13 @@ might want to label parts of a diagram with Greek letters, and for single Greek
 letters "infont" is more than adequate.
 
 The Greek letters for Computer Modern are in the maths-italic font "cmmi10", which
-uses the encoding shown on p.\ 430 of \textsl{The \TeX{}book}.  For historical
+uses the encoding shown on p.\thinspace 430 of \textsl{The \TeX{}book}.  For historical
 reasons there's no omicron available, so you are supposed to use the $o$~character
 instead.  Fortunately you are unlikely to need more than the first few, and it's
 quite easy to remember that $"char 11"=\alpha$, $"char 12"=\beta$, and so on.
 Producing the upper case letters is a bit more of a fiddle with this encoding as you
 need to know which ones use a Roman letter form; for details examine the program on
-the right, or check the table on p.~\pageref{eulertable}.
+the right, or check the table on p.\thinspace\pageref{eulertable}.
 Herman Zapf's elegant Euler font, available as "eurm10" uses the same encoding and
 makes a refreshing change for some diagrams.\vadjust{\moveright5.5in\vbox to
 0pt{\hsize4in\kern-164pt
