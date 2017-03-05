@@ -884,6 +884,16 @@ write "z1 = (10,20);" and have it automatically expanded into the equivalent of
 "x1=10;" and "y1=20;".  You can then use "x1" and "y1" as independent numerics or
 refer to them as a pair with "z1".
 
+There is also a simple way to write coordinates using a polar notation.  For the
+point $(r,\theta)$, where $r$ is the radius and $\theta$ is the angle in degrees
+counter-clockwise from the positive $x$-axis, you can write `\mpinline{r dir
+theta}'.  For example `\mpinline{2 dir 30}' provides another way to get the
+point "(sqrt(3),1)".   
+And if that's not compact
+enough for you could define a suitable shorthand using a character that's otherwise
+unused.  For example `\mpinline{def ^=dir enddef;}', which would let you write
+`\mpinline{2^30}'.
+
 Plain \MP\ defines five useful pair variables: \id{origin}, \id{right}, \id{up},
 \id{left}, and \id{down}.  As so often, the Knuthian definitions in "plain.mp" are
 quite illuminating
