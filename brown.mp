@@ -37,8 +37,8 @@ endfor
 
 %draw (down--up) scaled 1/2 h;
 draw (origin--right) scaled w;
-draw (origin--right) scaled w shifted (0,+h/4) withcolor .8 white;
-draw (origin--right) scaled w shifted (0,-h/4) withcolor .8 white;
+draw (origin--right) scaled w shifted (0,+h/4) withcolor 3/4;
+draw (origin--right) scaled w shifted (0,-h/4) withcolor 3/4;
 
 drawarrow (12 up   -- 2 up  ) shifted zenith withcolor blue;
 drawarrow (12 down -- 2 down) shifted nadir  withcolor red;

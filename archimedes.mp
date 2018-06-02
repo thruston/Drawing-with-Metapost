@@ -26,7 +26,6 @@ endfor
 
 path box; box = unitsquare shifted -(1/2,1/2) scaled 12u;
 clip currentpicture to box; draw box dashed evenly;
-
 endfig;
 
 beginfig(2); % (4,8^2)

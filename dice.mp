@@ -4,7 +4,8 @@ outputtemplate := "%j%c.mps";
 vardef dice(expr pip_count, pip_color) = 
   save d,r,p, ul, ur, lr, ll; 
   r=1/8; path d; picture p;
-  d = (for i=0 upto 3: subpath (r+i,1+i-r) of unitsquare .. endfor cycle) scaled 30;
+  %d = (for i=0 upto 3: subpath (r+i,1+i-r) of unitsquare .. endfor cycle) scaled 30;
+  d = for i=0 upto 3: quartercircle scaled 3 shifted (15,15) rotated 90i -- endfor cycle;
   p = image(draw fullcircle scaled 6; fill fullcircle scaled 6 withcolor pip_color);
   pair ul, ur, ll, lr;
   ul = 1/5[ulcorner d, lrcorner d];

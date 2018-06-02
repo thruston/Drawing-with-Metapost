@@ -21,7 +21,7 @@ vardef mtod(expr minutes) =  6*((75-minutes) mod 60) enddef;
 
 vardef clock(expr hours, minutes) = image(
   % face and outer ring
-  fill fullcircle scaled 100 withcolor (240/255, 240/255, 230/255);
+  fill fullcircle scaled 100 withcolor 1/256(240, 240, 230);
   draw fullcircle scaled  99 withcolor .8 white;
   draw fullcircle scaled 100 withpen pencircle scaled 7/8;
   % hour and minute marks

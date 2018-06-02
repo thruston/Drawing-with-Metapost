@@ -1,4 +1,4 @@
-prologues := 3; outputtemplate := "%j%c.eps"; 
+prologues := 3; outputtemplate := "%j%c.mps"; 
 beginfig(1);
 r = 1.25cm; % radius of the wheel
 pi = 3.14159265; % constant
@@ -30,8 +30,9 @@ z2 = (0,-r) rotated -t shifted z1;
 draw (0,y2) -- z2 -- (x2,0) dashed withdots scaled .6;
 draw z2 -- z1 -- (x1,0);
 
-% draw the rolling circle and mark the centre and intersection with cycloid
-draw fullcircle scaled 2r           shifted z1 withcolor .67 blue;
+% draw the rolling circle 
+draw fullcircle scaled 2r shifted z1 withcolor .67 blue;
+% mark the centre and intersection with cycloid
 fill fullcircle scaled dotlabeldiam shifted z1; 
 fill fullcircle scaled dotlabeldiam shifted z2;
 
@@ -59,6 +60,5 @@ dotlabel.top(btex $(\pi r,2r)$ etex, (pi*r,2r));
 label(btex $\vcenter{\halign{&$#$\hfil\cr 
 x=r(\theta-\sin\theta)\cr 
 y=r(1-\cos\theta)\cr}}$ etex,(4.2r,r));
-
 endfig;
 end.

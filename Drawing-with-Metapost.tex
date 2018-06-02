@@ -3,9 +3,7 @@
 \newfontfamily{\demo}{TeX Gyre Pagella}
 \DeclareTextFontCommand{\textdemo}{\demo}
 \usepackage{unicode-math}
-\usepackage[inner=1in,textwidth=5in,textheight=6in,
-            marginparsep=0.5in,
-            marginparwidth=4.2in]{geometry}
+\usepackage[inner=1in,textwidth=5in,textheight=6in, marginparsep=0.5in, marginparwidth=4.2in]{geometry}
 \usepackage{sectsty}
 \allsectionsfont{\normalfont\sffamily\bfseries}
 \usepackage{fancyvrb}\fvset{fontsize=\small}
@@ -17,6 +15,7 @@
 \title{Drawing with Metapost}
 \author{Toby Thurston}
 \date{March 2017}
+\overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\hbox{\bf#1\/}\fi\endgroup}
@@ -35,7 +34,6 @@
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
 \definecolor{textgreen}{rgb}{0,0.43,0}
-\usepackage{listings}
 % style for highlighting
 \newcommand\mpstyle{\lstset{
 language=Metapost,
@@ -52,7 +50,7 @@ showstringspaces=false           %
 \lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily}}{}
 \lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
 \newcommand\mpexternal[2][]{{\mpstyle\lstinputlisting[#1]{#2}}}
-\newcommand\mpinline[1]{{\mpstyle\lstinline!#1!}}
+\newcommand\mpl[1]{{\mpstyle\lstinline!#1!}}
 \begin{document}
 \pagestyle{empty}
 \raggedbottom
@@ -128,22 +126,22 @@ as clear as possible in my examples.
     \item Variable types: 
         
         —
-        \mpinline{numeric} "a", 
-        \mpinline{pair} "(a,b)"
+        \mpl{numeric} "a", 
+        \mpl{pair} "(a,b)"
 
         —
-        \mpinline{color} "(r,g,b)",
-        \mpinline{color} "(c,m,y,k)"
-        \mpinline{transform} "(x,y,xx,xy,yx,yy)"
+        \mpl{color} "(r,g,b)",
+        \mpl{color} "(c,m,y,k)"
+        \mpl{transform} "(x,y,xx,xy,yx,yy)"
 
         —
-        \mpinline{string},
-        \mpinline{path},
-        \mpinline{picture}
+        \mpl{string},
+        \mpl{path},
+        \mpl{picture}
 
 
-        If you don’t declare a variable, it’s assumed that it’s a \mpinline{numeric}.
-        When you do declare a variable --- \mpinline{numeric} or otherwise — any value that it
+        If you don’t declare a variable, it’s assumed that it’s a \mpl{numeric}.
+        When you do declare a variable --- \mpl{numeric} or otherwise — any value that it
        already had in the current scope is removed.
             
     \item Implicit multiplication: \MP\ inherits a rich set of rules about numerical
@@ -426,7 +424,7 @@ handy "counterclockwise" function to ensure the given paths are running in the
 same direction, and then uses "inside" to determine where the start points are.
 \begin{smallcode}
 vardef front_half primary p = subpath(0, 1/2 length p) of p enddef;
-vardef back_half  primary p = subpath(1/2 length p, length p) of p enddef;
+vardef back_half primary p = subpath(1/2 length p, length p) of p enddef;
 % a and b should be cyclic paths...
 vardef overlap(expr a, b) = 
   save A, B, p, q;
@@ -459,6 +457,7 @@ and the amount of rotation $θ$.  If we make $r$ bigger, the drawing will be
 scaled up; if we change $θ$, the wheel will appear to have rolled along.
 \mpic{-66pt}{cycloids1}
 
+
 \marginpar{\par\kern1in
 \begin{itemize}
     \item Near the beginning we define $\pi=3.14159265$, as there’s no such constant
@@ -485,7 +484,7 @@ scaled up; if we change $θ$, the wheel will appear to have rolled along.
     
 \end{itemize}}
 
-\mpexternal{cycloids.mp}
+\mpexternal[xleftmargin=0pt]{cycloids.mp}
 
 \noindent
 You can generalize the picture to make cycloids where the point tracing the
@@ -496,7 +495,9 @@ outer rim, while the wheel still rolls along a circle of radius $r$.
 You might like to experiment with making $R<r$. Note also that variable names are
 case sensitive in \MP.
 
-\mpexternal{cycloids-extra.mp}
+\mpexternal[xleftmargin=0pt]{cycloids-extra.mp}
+
+\noindent The output\mpic{-122pt}{cycloids-extra1} is repeated at the right to save you flicking pages.
 
 \newpage
 \section{Numbers}
@@ -508,7 +509,8 @@ Knuth's creations it is slightly quirky, but works very well once you get the ha
 of it.  The original objective was to make \MF\ produce identical results on a wide
 variety of computers.  By default all arithmetic is carried out using 28-bit
 integers in units of $1/65536$.  This is done automatically for you, so you don’t
-need to worry about it but you should be aware of a couple of practical implications
+need to worry about it, but you should be aware of a couple of practical
+implications:
 \begin{itemize}
     \item All fractions are rounded to the nearest multiple of $1\over65536$, so
          negative powers of 2 ($1\over2$,
@@ -521,17 +523,18 @@ need to worry about it but you should be aware of a couple of practical implicat
  you may miss your expected terminal value.\vadjust{\moveright5.5in\vbox to
  0pt{\kern-2in\hsize4in\noindent
      Compare the following two snippets:
-     $$\vbox{\halign{&#\hfil\qquad\cr
-     Code&Output\cr\noalign{\smallskip\hrule\medskip}
+     $$\vbox{\halign{#\hfil\quad&#\hfil\cr
+     Code&Output\cr\noalign{\smallskip\hrule\bigskip}
      \vtop{\parindent0pt\hsize2.2in
      \bgroup\obeylines 
      $\kw{for}$ $i=0$ \kw{step} $1/10$ \kw{until} $1$: 
      \quad$\kw{show}$ $i$; 
      $\kw{endfor}$
      \egroup
+
 }     
      &
-     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize1.5in\tt
+     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize60pt\tt
 >> 0
 >> 0.1
 >> 0.20001
@@ -552,7 +555,7 @@ need to worry about it but you should be aware of a couple of practical implicat
      \egroup
 }     
      &
-     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize1.5in\tt
+     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize60pt\tt
 >> 0
 >> 0.1
 >> 0.2
@@ -564,7 +567,8 @@ need to worry about it but you should be aware of a couple of practical implicat
 >> 0.8
 >> 0.9
 >> 1
-}\cr}}$$
+}\cr\noalign{\bigskip\hrule}\cr
+}}$$
 You get 11 iterations in the second but only 10 with the first.
 \vss}} 
         
@@ -598,7 +602,7 @@ and \id{eps}:
     \item $\id{eps}$ is defined to be a
 small amount that is noticeable to \MF’s rounding algorithms, namely
 ${32\over65536}={1\over2048}\simeq 0.00049$.  As a distance on the page or screen it's invisible at
-any resolution less that 150,000 dots per square inch.  If you were designing fonts
+any resolution less than 150,000 dots per square inch.  If you were designing fonts
         in \MF, $\id{eps}$ could help you avoid bad choices of pixels at low resolutions, but in
 \MP\ it's only really useful in comparisons that might suffer from rounding errors.
 \id{eps} is tiny, but it's bigger than any rounding error you may encounter, so
@@ -681,7 +685,7 @@ the PostScript point.  This is what \TeX\ calls a "bp" (for `big point'), and it
 defined so that $1\unit{inch}=72\unit{bp}$.  The traditional printers' point, which \TeX\
 calls a~"pt", is slightly smaller so that $1\unit{inch}=72.27\unit{pt}$.
 
-Using the units relies on \MP's implicit multiplication feature.  If you write
+Normal use of these units relies on \MP's implicit multiplication feature.  If you write
 `$\id{w}=10\,\id{cm};$' in a program, then the variable \id{w} will be set to the value 283.4645.
 The advantage is that your lengths should be more intuitively understandable, but if
 you are comfortable thinking in PostScript points (72 to the inch, 28.35 to the
@@ -749,13 +753,15 @@ more useful functions based on this.
         integer remainder.
     
 \end{itemize}
+Note that $\kw{mod}$ preserves any fractional part, so $355/113 \mathrel{\kw{mod}} 3 = 0.14159$.  
 
-\parshape=3 0pt 5in 0pt 5in 0pt 3.4in
-Note that $\kw{mod}$ preserves any fractional part, so
-$355/113 \mathrel{\kw{mod}} 3 = 0.14159$.  This behaviour is usually what you want.  
+\smallskip
+\parshape=1 0pt 3.4in
+This behaviour is usually what you want.  
+\vadjust{\moveright 3.4in\vbox to 0pt{\includegraphics[scale=0.8]{clocks1}\vss}}
 For example we can use it to turn the time of day into an appropriate rotation for
 the hands of a clock.%
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-160pt
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-196pt
 \begin{code}
 path hand[]; 
 hand1 = origin .. (.257,1/50) .. (.377,1/60) 
@@ -763,11 +769,9 @@ hand1 = origin .. (.257,1/50) .. (.377,1/60)
          .. (.60, 1/40) .. {right} (.75,0);
 hand1 := (hand1 .. reverse hand1 reflectedabout(left,right) 
           .. cycle) scaled 50;
-
 hand2 = origin  .. (.60, 1/64) .. {right} (.925,0);
 hand2 := (hand2 .. reverse hand2 reflectedabout(left,right) 
          .. cycle) scaled 50;
-
 
 % hour of the day to degrees
 vardef htod(expr hours)   = 30*((15-hours)   mod 12) enddef;
@@ -775,7 +779,7 @@ vardef mtod(expr minutes) =  6*((75-minutes) mod 60) enddef;
 
 vardef clock(expr hours, minutes) = image(
   % face and outer ring
-  fill fullcircle scaled 100 withcolor (240/255, 240/255, 230/255);
+  fill fullcircle scaled 100 withcolor 1/256(240, 240, 230);
   draw fullcircle scaled  99 withcolor .8 white;
   draw fullcircle scaled 100 withpen pencircle scaled 7/8;
   % numerals
@@ -783,9 +787,13 @@ vardef clock(expr hours, minutes) = image(
     label( decimal h infont "bchr8r", (40,0) rotated htod(h)); 
   endfor
   % hour and minute marks
-  for t=0 step  6 until 359: draw ((48,0)--(49,0)) rotated t; endfor
+  for t=0 step  6 until 359: 
+    draw ((48,0)--(49,0)) rotated t; 
+  endfor
   drawoptions(withpen pencircle scaled 7/8);
-  for t=0 step 30 until 359: draw ((47,0)--(49,0)) rotated t; endfor
+  for t=0 step 30 until 359: 
+    draw ((47,0)--(49,0)) rotated t; 
+  endfor
   % hands rotated to the given time
   filldraw hand1 rotated htod(hours+minutes/60);
   filldraw hand2 rotated mtod(minutes);
@@ -794,7 +802,7 @@ vardef clock(expr hours, minutes) = image(
   fill fullcircle scaled 3 withcolor .4 white;
 ) enddef;
 \end{code}
-}}
+\vss}}
 In the program given on the right, this idea
 is used to define functions that convert from hours and minutes
 to degrees of rotation on the clock.
@@ -803,7 +811,6 @@ to degrees of rotation on the clock.
 current job started.  The clock face shown here was generated using
 $$\kw{beginfig}(1);{}\mathbin{\kw{draw}}\id{clock}(\id{hour},\id{minute}); \kw{endfig};$$
 to give a sort of graphical time stamp.
-\vadjust{\moveright 3.4in\vbox to 0pt{\vss\includegraphics[scale=1]{clocks1}\bigskip}}
 
 \vfill
 
@@ -823,45 +830,52 @@ must remain less than 32767 if you are using the default number system.
 \newpage
 \section{Pairs, colours, and transformations}
 
+\vpic{7pt}{random-selection1}
+
+\noindent
 \MP\ generalizes its concept of number to include ordered tuples of numbers which are used for
 a variety of purposes.  The primary use of pairs is for Cartesian coordinates, but
 they can also be used as complex numbers, since 
 as far as \MP\ is concerned it's just a pair of numeric variables.
 
 Triples and quads are used for colours (RGB colours and CMYK colours); usually the
-values of each element vary from 0 to 1, so that $\id{red} = (1,0,0)$ for example, 
-but \MP\ does not force you to stick to this range.  The elements can take any value
-that is allowed for a \kw{numeric}.  It is therefore possible
-to use triples for three dimensional coordinates, but there are no
-built-in facilties in plain \MP\ that support this, so at best it is rather
-cumbersome.  
-
-Finally there are sextuples used for transforms.  A transform is how \MP\ represents
-an affine transformation such as "rotated 45 shifted (10,20)".  The gory details of
-these are in the \MF book.
+values of each element vary from 0 to 1, so that $\id{red} = (1,0,0)$ for example,
+but \MP\ does not force you to stick to this range;  the elements can take any value
+that is allowed for a \kw{numeric}.  It is therefore possible to use triples for
+three dimensional coordinates, but it is not very easy or elegant, as
+there are no built-in facilties (such as "draw3d") in plain \MP\
+to support it.
 
 Unlike simple numerics, these extended tuple variables are not automatically
 declared for you, 
-So if you
+so if you
 want to define points $A$ and $B$ you need to explicitly write `$\kw{pair}
 \id{A},\id{B};$' before you assign values to them.  Once you have declared them, you
 can equate to an appropriate tuple using $=$ as normal.
 \begin{code}
-    pair A,B; A = B = (3,4);
+    pair A,B; A = B = (1,2);
     color R;  R = (1,2,3);
     cmykcolor C; C = (1,2,3,4);
-    transform T; T = (1,2,3,4,5,6);
 \end{code}
-Triples are type \kw{color}, quads are type
-\kw{cmykcolor}, sextuples are type \kw{transform}.  You can't have tuples of any
-other length, not even as constants.
+Triples are type \kw{color}, quads are type \kw{cmykcolor}.
+Except for \kw{transform} variables, you can't have tuples of any other length, not even as constants.
+
+A transform is how \MP\ represents
+an affine transformation such as "rotated 45 shifted (10,20)".  
+They are represented as sextuples, but if you try to write:
+\begin{code}
+    transform T; T = (1,2,3,4,5,6); % <-- doesn't work
+\end{code}
+you will get a parsing error (that complains about a missing parenthesis after the 4).
+You can examine and assign the individual parts using `$\kw{xpart} \id{T}$' etc.
+More details below, and full details in the \MF\ book.
+
 
 \newpage\subsection{Pairs and coordinates}
 Now \textbf{pairs}:  if you enclose two numerics in parentheses, you get a pair.  A
 pair generally represents a particular position in your drawing with normal, orthogonal
 Cartesian $x$- and $y$-coordinates, but you can use a pair variable for other
 purposes if you wish.  As far as \MP\ is concerned it's just a pair of numerics.
-
 
 \MP\ provides a simple, but slightly cumbersome, way to refer to each half of a
 pair.  The syntax `$\kw{xpart} \id{A}$' returns a numeric equal to the first number in
@@ -874,31 +888,35 @@ part of a pair, you have to do something like this: `$\id{A} \mathrel{:}= (42,
 
 In addition there is a neat macro defintion in plain \MP\ that allows you do deal
 with the $x$- and $y$-parts of pairs rather more succintly.    
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-140pt
+\includegraphics{somewhat-random-function1}
 \begin{code}
 vardef z@#=(x@#,y@#) enddef;
 \end{code}
 \vss}}%
-The deceptivly simple definition of $\id{z}$ as a subscripted macro allows you to
+The deceptively simple definition of $\id{z}$ as a subscripted macro allows you to
 write "z1 = (10,20);" and have it automatically expanded into the equivalent of
 "x1=10;" and "y1=20;".  You can then use "x1" and "y1" as independent numerics or
-refer to them as a pair with "z1".
+refer to them as a pair with "z1".  A common usage is to find the orthogonal points 
+on the axes in graphs, like so $\longrightarrow$
 
+\smallskip
 There is also a simple way to write coordinates using a polar notation.  For the
 point $(r,\theta)$, where $r$ is the radius and $\theta$ is the angle in degrees
-counter-clockwise from the positive $x$-axis, you can write `\mpinline{r dir
-theta}'.  For example `\mpinline{2 dir 30}' provides another way to get the
+counter-clockwise from the positive $x$-axis, you can write `\mpl{r dir
+theta}'.  For example `\mpl{2 dir 30}' provides another way to get the
 point "(sqrt(3),1)".   
 And if that's not compact
 enough for you could define a suitable shorthand using a character that's otherwise
-unused.  For example `\mpinline{def ^=dir enddef;}', which would let you write
-`\mpinline{2^30}'.
+unused.  For example `\mpl{def ^=dir enddef;}', which would let you write
+`\mpl{2^30}'.
 
+\smallskip
 Plain \MP\ defines five useful pair variables: \id{origin}, \id{right}, \id{up},
 \id{left}, and \id{down}.  As so often, the Knuthian definitions in "plain.mp" are
 quite illuminating
 $\longrightarrow$
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-36pt
 \begin{code}
 % pair constants
 pair right,left,up,down,origin;
@@ -906,12 +924,12 @@ origin=(0,0); up=-down=(0,1); right=-left=(1,0);
 \end{code}
 \vss}}%
 As you can see, pair variables can be used in implicit equations.
+
 They can also be scaled using implicit multiplication, so writing 
 `$144 \id{right}$' is equivalent to writing `$(144,0)$' but possibly a bit more
 readable.  In particular the idiom `$\kw{shifted} 200 \id{up};$'
-works well when applied to a path
+works well when applied to a point, a path,
 or an image.
-
 Unfortunately, this convenient notation does not work well with units of
 measure.  This is because implicit multiplication only works between a numeric constant and a
 variable.  So `$2 \id{in}\, \id{right}$' does not work as you might expect; you can
@@ -920,40 +938,68 @@ write `$(2\id{in},0)$' or even just `$(144,0)$'.
 
 
 \newpage
-\section{Complex numbers}
+\subsection{Complex numbers}
 
-\MP\ pair variables work rather well as complex numbers, as you might expect in a
-language designed by a mathematician.  To represent $3+4i$ you can write "(3,4)".
-To get the modulus you write "abs (3,4)" (which gives $5$ in this case), and to get
-the argument you write "angle (3,4)" (which gives $53.1301$).  Note that "angle"
-returns the argument in degrees rather than radians, and that the result is normalized so
-that $-180 < \kw{angle} (x,y) \le 180$.
+As you might expect in a language designed by mathematicians, \MP's pair variables
+work rather well as complex numbers.  To represent the number $3+4i$ you can write
+"(3,4)".  To get its modulus, you write "abs (3,4)" (which gives $5$ in this case),
+and to get its argument, you write "angle (3,4)" (which gives $53.1301$).  Note that
+"angle" returns the argument in degrees rather than radians, and that the result is
+normalized so that $-180 < \kw{angle} (x,y) \le 180$.
 
-The standard notation for points supports this.  You can write "z0=(3,4);" and then
+The standard notation for points supports this usage.  You can write "z0=(3,4);" and then
 extract or set the real part with "x0" and the imaginary part with "y0".  If you
 want to use other letters for your variable names, you can use "xpart" and "ypart"
-to do the same thing. So after `\mpinline{pair w; w=(3,4);}' you can get the real part with
+to do the same thing. So after `\mpl{pair w; w=(3,4);}' you can get the real part with
 "xpart w" and the imaginary part with "ypart w".
+You can also use the polar notation shown above to write complex numbers.  For
+$re^{i\theta}$ you can write `\mpl{r dir theta}' where "r" is the modulus and
+"theta" is the argument in degrees. 
 
-There is also a neat way to write complex numbers using a polar notation.  For
-$re^{i\theta}$ you can write `\mpinline{r dir theta}' where "r" is the modulus and
-"theta" is the argument in degrees. So another way to get the point "(3,4)" is to
-write `\mpinline{5 dir 53.1301}'. For points on the unit circle you can omit the
-"r", so `\mpinline{dir 45}' gives you the point "(0.7071,0.7071)" and so on. 
-And if that's not compact enough for you could write `\mpinline{def ^=dir enddef;}'
-which would let you write `\mpinline{5^53.1301}'.
-
-The predfined constants \mpinline{up}, 
-\mpinline{down}, 
-\mpinline{left}, and  
-\mpinline{right} also provide points on the unit circle corresponding to $i$, $-i$,
-$-1$, and $+1$ respectively.  It's tempting to define \mpinline{pair i; i=(0,1);}, so that
+The predfined constants \mpl{up}, 
+\mpl{down}, 
+\mpl{left}, and  
+\mpl{right} also provide points on the unit circle corresponding to $i$, $-i$,
+$-1$, and $+1$ respectively.  It's tempting to define `\mpl{pair i; i=(0,1);}', so that
 you can write constants like "4i" directly, but this is not very helpful, because
 "3+4i" will give you an error since \MP\ does not let you add a "numeric" to a "pair".
 
 However \MP\ does let you add (and subtract) two pairs, so complex addition and
 subtraction are just done with the 
 normal operators.
+\vadjust{\moveright 384pt\vbox to 0pt{\vss
+\begin{code}
+beginfig(1);
+    numeric u; u = 1cm;
+    z1 = 2 dir 15; z2 = 1.2 dir 60;
+    z3 = z1+z2; z4 = z1 zscaled z2; z5 = (x1,-y1);
+    drawoptions(withcolor 2/3 white);
+    draw (1/2 left -- 3 right) scaled u ;
+    draw (1/2 down -- 3 up   ) scaled u ;
+    draw subpath (0,3) of fullcircle scaled 2u rotated -22.5;
+    drawoptions();
+    dotlabel.lrt (btex $\scriptstyle 1$ etex, (u,0));
+    dotlabel.ulft(btex $\scriptstyle i$ etex, (0,u));
+    interim ahangle := 30;
+    forsuffixes @=1,2,3,4,5:
+        x@ := x@ * u; y@ := y@ * u;
+        drawarrow origin -- z@  
+                  cutafter fullcircle scaled 5 shifted z@
+                  withcolor 2/3 if @ < 3: blue else: red fi;
+    endfor
+    fill fullcircle scaled dotlabeldiam;
+    dotlabel.rt (btex $A$ etex, z1);
+    dotlabel.urt(btex $B$ etex, z2);
+    dotlabel.top(btex $A+B$ etex, z3);
+    dotlabel.top(btex $A \times B$ etex, z4);
+    dotlabel.rt (btex $\bar{A}$ etex, z5);
+endfig;
+\end{code}
+\smallskip
+$$\includegraphics{complex1.mps}$$
+
+\kern 2cm
+\vss}}%
 To get the complex conjugate you
 could use "reflectedabout(left,right)", but it's probably easier just to write
 "(x0,-y0)" or define a simple function:
@@ -965,27 +1011,302 @@ operator.  This is defined with the same precedence as "scaled" or normal scalar
 multiplication (which is what you usually want).  So "(3,4) zscaled (1,2)" gives
 "(-5,10)" because $(3+4i)\times(1+2i) = 3+6i+4i-8 = -5+10i$. 
 "zscaled" is only defined to work on two "pair" variables, so you can't write
-\mpinline{(3,4) zscaled 4}.  To get that effect with "zscaled" you would have to write 
-\mpinline{(3,4) zscaled (4,0)}, but this is the same as 
-\mpinline{(3,4) scaled 4}, which is usually simpler to write.  If your pair is
-stored as a variable you can write (for example) \mpinline{4 z0} to get the same
-effect.  
-
-Or \mpinline{1/4 z0} or \mpinline{z0/4} for scalar division.
+\mpl{(3,4) zscaled 4}.  To get that effect with "zscaled" you would have to write 
+\mpl{(3,4) zscaled (4,0)}, but this is the same as 
+\mpl{(3,4) scaled 4}, which is usually simpler to write.  If your pair is
+stored as a variable you can write (for example) \mpl{4 z0} to get the same
+effect.  Or \mpl{1/4 z0} or \mpl{z0/4} for scalar division.
 
 There are no other complex operators available, but it is not hard to implement the
-usual operations when they are required.
-
-For complex division you need a function to inverse 
-divisor.  
-Inversion
-Complex sqrt
+usual operations when they are required\dots
 
 \newpage
-\section{Colours}
+\subsubsection{Extra operators for complex arithmetic}
+
+Since multiplication by $z$ can be thought of as a transformation consisting of
+rotation by the argument of $z$ and scaling by $|z|$, you can define the complex
+inverse and complex square root simply using \mpl{angle} and \mpl{abs}.
+
+First an inverse function.  The idea here is to find a function that is the opposite
+of complex multiplication, so we want something that gives 
+\begin{code}
+z zscaled zinverse(z) = (1,0)
+\end{code}
+In other words you need to find a complex number with an argument that is the
+negative of the argument of $z$ and a modulus that will scale $|z|$ to 1.  
+You can use the polar notation with "dir" to write this directly:
+\begin{code}
+def zinverse(expr z) = 1/abs z * dir - angle z enddef; 
+\end{code}
+The complex division, $z/w$, can now be done as: \mpl{z zscaled zinverse(w)}.
+The only difficulty with this function is how it deals with zero, or rather with
+the point $(0,0)$.  Since `\mpl{abs (0,0)}' gives $0$, the function will give you
+a `divide by zero' error if it's called with $(0,0)$.  But this is probably what you want
+it to do, since there is no easy way to represent the point at infinity in the
+extended complex plane on paper.  
+
+\medskip\noindent
+For square root, you want a function `\mpl{zsqrt(z)}' that returns 
+a complex number with half
+the argument of $z$ and a modulus that is the square root of the modulus of $z$, so that
+`\mpl{zsqrt(z) zscaled zsqrt(z) = z}'.  This does the trick:
+\begin{code}
+def zsqrt(expr z) = sqrt(abs z) * dir 1/2 angle z enddef;
+\end{code}
+This function also has a difficulty with the point $(0,0)$, because "angle (0,0)" is
+not well defined, and so \MP\ throws an error.  If you want a function that
+correctly returns $(0,0)$ as its own square root, then try something like this:
+\begin{code}
+def zsqrt(expr z) = 
+    if abs z > 0: sqrt(abs z) * dir 1/2 angle fi z 
+enddef;
+\end{code}
 
 \newpage
-\section{Transformations}
+\subsection{Colours}
+
+\MP\ implements colours as tuples of three or four numeric values.
+Three-tuples (which are type \mpl{color}) represent RGB colours; four-tuples
+(which are type \mpl{cmykcolor} represent CMYK colours.  The numeric values 
+can take any legal numeric value, but \MP\ only considers the range 0 to 1.  Values
+less than zero are treated as zero, values greater than 1 are treated as 1.  So to
+encode a color, such as British Racing Green with RGB code "(1, 66, 37)" you should
+write:
+\begin{code}
+    color brg;
+    brg = (0.00390625, 0.2578125, 0.14453125);
+\end{code}
+or, slightly more idiomatically:
+\begin{code}
+    brg = 1/256 (1, 66, 37);
+\end{code}
+As you can see, you can apply implicit multiplication to a \mpl{color}, so after 
+the declaration above "2 brg" would be a valid colour, although you have to think 
+a bit to know what that means in terms of colour in your drawings.  
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-72pt
+To use RGB hex strings, you'll need to write a function:
+\begin{code}
+vardef hexrgb(expr Spec) = 
+    save r, g, b;
+    numeric r, g, b;
+    r = hex(substring (1,3) of Spec);
+    g = hex(substring (3,5) of Spec);
+    b = hex(substring (5,7) of Spec);
+    1/256(r,g,b)
+enddef;
+brg = hexrgb("#014225");
+\end{code}
+\vss}}%
+
+Plain \MP\ defines five basic colour constants: \mpl{red}, \mpl{green},
+\mpl{blue}, \mpl{white}, \mpl{black}.  These are quite useful with leading
+fractions: \mpl{2/3 red} gives a nice dark red, that's good for drawing lines you
+want to emphasize; \mpl{1/2 white} gives you a shade of grey; and so on.  But since 
+\mpl{black} is defined as \mpl{(0,0,0)}, \mpl{1/2 black} just gives you \mpl{black}.
+
+You can also add up \mpl{colors}.  So \mpl{red + 1/2 green} gives you a shade of
+orange;  this is more long-winded than writing \mpl{(1, 0.5, 0)} but maybe slightly 
+easier to read.  Much more usefully, you can use the mediation notation to get a
+colour that is part way between two others.  So \mpl{1/2[red, white]} gives you a
+shade of pink, and \mpl{2/3[blue, white]} a sort of sky blue.  You can also use this
+idea to vary colour with data, as in \mpl{(r)[red, blue]} where \mpl{r} is some
+calculated value.  \vadjust{\moveright 384pt\vbox to 0pt{\kern-12pt
+\begin{code}
+N = 5; n = 0;
+for y=1 upto N:
+  for x=1 upto N:
+    fill fullcircle scaled 16 shifted 20(x,y)
+      withpen pencircle scaled 2
+      withcolor (n/N/N)[red, blue];
+    label(decimal incr n infont "phvr8r", 20(x,y)) 
+      withcolor white;
+  endfor
+endfor
+\end{code}\vss}}
+Here's a toy example:
+
+\vbox to 0pt{\centerline{\includegraphics{scatter-color1}}\vss}
+
+\newpage
+\subsubsection{CMYK colours}
+
+\MP\ also implements a CMYK colour model, using tuples of four numerics.  
+This is more or less a direct mapping onto the PostScript "cmykcolor" functions.
+In this model the four components represent cyan, magenta, yellow, and black.
+White is \mpl{(0,0,0,0)} and black is anything where the last component is 1.
+Beware however that the constants, \mpl{white} and \mpl{black} are defined in
+"plain.mp" as RGB colours, and you can't mix the two models, so anything like 
+\mpl{1/2[(1,1,0,0), white]} will not work.  If you want to do lots of work with CMYK colours
+you might like to redefine the color constants.
+$$\includegraphics[width=0.7\textwidth]{color-wheel1}$$
+Note that the apparent blending of colours here is done by calculating the overlaps
+and filling them in order.  There is no support for transparency in any of the
+colour models; this is because they are inherited directly from PostScript.  
+
+\moveright 384pt\vbox to 0pt{\vss
+\begin{code}
+% the illusion of blended colours is helped by buildcycle
+
+path C[], B[];
+
+% arrange each circle so that point 0 is outside the others
+C1 = fullcircle scaled 120 rotated 90 shifted 40 up;
+C2 = C1 rotated 120;
+C3 = C2 rotated 120;
+
+B0 = buildcycle(C1, C2, C3);
+B1 = buildcycle(C1, C2);
+B2 = buildcycle(C2, C3);
+B3 = buildcycle(C3, C1);
+
+picture P;
+for x=0 upto 1:
+  for y=0 upto 1:
+      P := image(
+          s := 1/4 + x/2;
+          k := 0 + y/4;
+          fill C1 withcolor s*(1,0,0,k);
+          fill C2 withcolor s*(0,1,0,k);
+          fill C3 withcolor s*(0,0,1,k);
+          fill B3 withcolor s*(1,0,1,k);
+          fill B2 withcolor s*(0,1,1,k);
+          fill B1 withcolor s*(1,1,0,k);
+          fill B0 withcolor s*(1,1,1,k);
+          undraw C1; undraw C2; undraw C3;
+      ) shifted -(200x, 200y);
+      draw P;
+      label.bot(("shade: " & decimal s & ", k: " & decimal k)
+                 infont "phvr8r", point 1/2 of bbox P); 
+  endfor
+endfor
+\end{code}}
+
+\newpage
+\subsubsection{HSV colours}
+
+HSV colours are colours defined by a triple of hue, saturation, and value.
+Unlike RGB and CMYK colours there is no native support in \MP\ but it is possible to 
+write a routine that maps HSV triples into RGB colours:
+\begin{code}
+vardef hsv_color(expr h,s,v) =
+    save chroma, hh, x, m;
+    chroma = v*s;
+    hh = h/60;
+    x  = chroma * (1-abs(hh mod 2 - 1));
+    m  = v - chroma;
+    if     hh < 1: (chroma,x,0)+(m,m,m)
+    elseif hh < 2: (x,chroma,0)+(m,m,m)
+    elseif hh < 3: (0,chroma,x)+(m,m,m)
+    elseif hh < 4: (0,x,chroma)+(m,m,m)
+    elseif hh < 5: (x,0,chroma)+(m,m,m)
+    else:          (chroma,0,x)+(m,m,m)
+    fi
+enddef;
+\end{code}
+This is based on information from the Wikipedia article on 
+on “HSL and HSV”.  
+
+\medskip\noindent
+The hue values in HSV colours map nicely to the familiar spectrum
+of the rainbow.  In the model used here 0 is red, 120 green, and 240 blue:
+$$\includegraphics[width=0.85\textwidth]{hsv-samples1.pdf}$$
+With less saturation the colours look faded; if you lower the value they get
+darker.  Once you get the hang of them, they make choosing colours rather easier.
+You can produce ranges of colour by changing hue, or make gradations of a single
+colour by changing the saturation or value.
+
+\moveright 384pt\vbox to 0pt{\vss
+\begin{code}
+defaultfont := "phvr8r";
+
+numeric s[], v[];
+s0 = 1/2; v0 = 7/8;
+s1 = 7/8; v1 = 7/8;
+s2 = 7/8; v2 = 1/2;
+for y=0 upto 2:
+  for h=0 step 15 until 360:
+    fill fullcircle scaled 24 shifted (h, -32y) 
+          withcolor hsv_color(h, s[y], v[y]);
+    draw fullcircle scaled 24 shifted (h, -32y)
+          withcolor white;
+    if y=1: 
+      label(decimal h infont defaultfont scaled 1/2, (h,-16)); 
+    fi
+  endfor
+endfor
+
+label.urt("Less saturation", (-20,12));
+label.lrt("Lower value", (-20,-76));
+
+drawarrow (-15, -12) -- (-15,12);
+drawarrow (-15, -52) -- (-15,-76);
+\end{code}}
+
+\newpage
+\subsubsection{An HSV example of a graduated scale}
+
+\noindent
+This example requires the \mpl{hsv_color} routine from the previous page.
+\mpic{12pt}{hsv-samples2}
+\begin{code}[xleftmargin=0pt]
+defaultfont := "phvr8r"; defaultscale := 3/4;
+path h,d,b; numeric n; n = 10;
+h = ((-2,0)--(0,0)--(-1,3)--(-2,3)--cycle) scaled 60;
+d = h rotated 180;
+b = subpath (0,1) of h -- point 1+1/n of d -- 
+    (xpart point 0 of h, ypart point 1+1/n of d) -- cycle;
+fill b withcolor hsv_color(123, 1/8, 7/8);
+draw subpath (2.13,4) of b;
+for i=1 upto n:
+    fill point 4-(i-1)/n of h -- point 1+(i-1)/n of h 
+         -- point 1+i/n of h -- point 4-i/n of h -- cycle
+         withcolor hsv_color(42, 1/4 + 3/4 * i/n, 1 - i/3n);
+    fill point 4-(i-1)/n of d -- point 1+(i-1)/n of d 
+         -- point 1+i/n of d -- point 4-i/n of d -- cycle
+         withcolor hsv_color(200, i/n - 1/n, 1 - i/3n);
+endfor
+string s;
+for i=1 upto n-1: 
+    draw point 4-i/n of h -- point 1+i/n of h; 
+    draw point 4-i/n of d -- point 1+i/n of d; 
+    s := decimal if i < 4: (i**2+1) else: (10 + (i-3)*10) fi & "00";
+    label.rt(s, point 1+i/n of h);
+    label.lft(s, point 1+i/n of d);
+endfor
+label.rt("Metres", point 2 of h);
+label.lft("Metres", point 2 of d);
+label.lft("Hypsometric tints" infont defaultfont 
+        scaled defaultscale rotated 90, point 7/2 of h);
+label.rt("Bathymetric tints" infont defaultfont
+        scaled defaultscale rotated -90, point 7/2 of d);
+label.lft("sea level", point 0 of h);
+label("areas below sea level", center b);
+draw h; draw d;
+\end{code}
+
+
+
+\newpage
+\subsubsection{Grey scale}
+
+While we are on the topic of colour models, here is a short digression on the use of grey
+scale (or gray scale if you prefer the Webster spellings) in \MP.
+
+
+\newpage
+\subsubsection{Colorbrewer palettes}
+
+The well-known Colorbrewer website ("http://colorbrewer2.org") provides a wide range
+of useful colour palettes that are suitable for a wide range of applications.
+
+%Hex triplet	#004225
+%sRGBB  (r, g, b)	(1, 66, 37)
+%CMYKH   (c, m, y, k)	(90, 44, 92, 54)
+%HSV       (h, s, v)	(153.2°°, 98.5%, 25.9%)
+%Source	Approximations, no single hue.
+
+\newpage
+\subsection{Transformations}
 
 \newpage
 \section{Random numbers}
@@ -996,9 +1317,9 @@ Complex sqrt
 vardef dice(expr pip_count, pip_color) = 
   save d,r,p, ul, ur, lr, ll; 
   r=1/8; path d; picture p;
-  d = (for i=0 upto 3: 
-         subpath (r+i,1+i-r) of unitsquare .. 
-       endfor cycle) scaled 30;
+  d = for i=0 upto 3: 
+        quartercircle scaled 3 shifted (15,15) rotated 90i -- 
+      endfor cycle;
   p = image(draw fullcircle scaled 6; 
             fill fullcircle scaled 6 withcolor pip_color);
   pair ul, ur, ll, lr;
@@ -1177,8 +1498,8 @@ for i=1 upto 16:
   endfor
 
 draw (origin--right) scaled w;
-draw (origin--right) scaled w shifted (0,+h/4) withcolor .8 white;
-draw (origin--right) scaled w shifted (0,-h/4) withcolor .8 white;
+draw (origin--right) scaled w shifted (0,+h/4) withcolor 3/4;
+draw (origin--right) scaled w shifted (0,-h/4) withcolor 3/4;
 
 drawarrow (12 up   -- 2 up  ) shifted zenith withcolor blue;
 drawarrow (12 down -- 2 down) shifted nadir  withcolor red;
@@ -1244,7 +1565,9 @@ wander at random as well as the $y$-coordinates you get two-dimensional random
 patterns.  And if you replace the straight line segments "--" with ".." so that \MP\
 draws a smooth curve through the points, as well as vary the colour each time
 you draw a new curve, then the result is almost artistic.
-$$\includegraphics[width=1.2\textwidth]{brown3a}$$
+
+\medskip\noindent
+\hbox to \textwidth{\includegraphics[width=1.2\textwidth]{brown3a}\hss}
 
 \newpage\subsection{Drawing freehand}
 
@@ -1368,7 +1691,7 @@ $$\includegraphics{freehand3}$$
 
 If you want a random-looking shape, the general approach is to find a method to make
 a path that allows you to inject some random noise at each point of the path.
-$$\includegraphics{random-simple2}$$
+$$\hbox to \textwidth{\includegraphics{random-simple2}\hss}$$
 For these shapes the objective was to make them increasingly random, but to keep
 them all the same length.\vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in
@@ -1524,19 +1847,6 @@ It's also possible to use a random
 walk approach so that each random step takes account of the previous one to avoid
 any big jumps.  Here's one way to do that.
 \begin{code}
-vardef signr suffix $ = 
-   if $<0: - else: + fi uniformdeviate 1 
-   enddef;
-vardef walkr suffix $ = 
-   $ := $ if uniformdeviate 1 < (2**-abs($)): + else: - fi signr $; 
-   $ 
-   enddef;
-\end{code}
-The "walkr" routine works like the "incr" and "decr" commands; it updates the value of the
-argument.  The idea is that the further away from zero you are, the more likely is
-that the next value will take you back towards zero.  You can use this to produce
-more realistic torn edges.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vss
-\begin{code}
 beginfig(1);
   y=0;
   path e; 
@@ -1544,9 +1854,24 @@ beginfig(1);
   draw e;
 endfig;  
 \end{code}
-\bigskip
 $$\includegraphics{torn-edge1}$$
-\vskip2cm
+The "walkr" routine works like the "incr" and "decr" commands; it updates the value of the
+argument.  The idea is that the further away from zero you are, the more likely is
+that the next value will take you back towards zero.  
+\begin{code}
+vardef walkr suffix $ = 
+  $ := $ if uniformdeviate 1 < (2**-abs($)): + else: - fi 
+    signr $; $ 
+  enddef;
+vardef signr suffix $ = 
+  if $<0: - else: + fi uniformdeviate 1 
+  enddef;
+\end{code}
+You can use this to produce more realistic torn edges.  You can also apply this as a
+form of jitter to a curved path, by adding a suitably rotated vector to enough
+points along the path.
+
+\moveright5.5in\vbox to 0pt{\kern-4in
 \begin{code}
 beginfig(2);
 path c; c = fullcircle scaled 200;
@@ -1562,16 +1887,14 @@ draw t withcolor .67 red;
 endfig;
 end.
 \end{code}
-\vss}}
-You can also apply this as a form of jitter to a curved path, by adding a suitably
-rotated vector to enough points along the path.
 $$\includegraphics{torn-edge2}$$
+\vss}
 
 
 \newpage
 \section{Plane geometry and trignonometry}
 
-\noindent\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\noindent
+\noindent\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\kern-9pt\noindent
 Here is the equilateral triangle point macro in action.
 
 \begin{code}
@@ -1591,7 +1914,7 @@ endfig;
 \end{code}
 
 $$\includegraphics{geometry3}$$
-}}%
+\vss}}%
 This section deals with drawing geometrical figures typically involving lines,
 angles, polygons, and circles.  Plain \MP\ provides very few tools that are
 explicitly designed to help draw geometric figures, but it is usually possible to
@@ -1644,28 +1967,30 @@ enddef;
         \bigskip
         $$\includegraphics[width=4in]{mediation3}$$
         \centerline{Lee Sallow's theorem of median triangles}
-}
+\vss}
 \noindent
 The best way to bisect a line, depends on how you have defined it.
-If you have two points $a$ and $b$, then the simplest way to find 
-the point that bisects them is to write "1/2[a,b]".  This mediation 
-mechanism is entirely general, so you can write \mpinline{1/3[a,b]}, "1/4[a,b]", and
-so on to define other points that are part of the way from $a$ to $b$.
-The point "0[a,b]" is equal to point $a$, point "1[a,b]" is equal to $b$;
+If you have two pairs $a$ and $b$, then the simplest way to find 
+the pair that bisects them is to write "1/2[a,b]".  This mediation 
+mechanism is entirely general, so you can write \mpl{1/3[a,b]}, "1/4[a,b]", and
+so on to define other pairs that are part of the way from $a$ to $b$.
+The expression "0[a,b]" is equal to $a$, and "1[a,b]" is equal to $b$;
 but the number before the left bracket does not have to 
-be confined to the range $(0,1)$.  If you write "3/2[a,b]" you will get a point on
-the extension of the line from $a$ to $b$ beyond $b$.  To get a point going the
-other way you can either reverse $a$ and $b$, or use a negative number.  But don't
-get caught out by the \MP\ precendence rules;  "-1/2[a,b]" is interpreted as
+be confined to the range $(0,1)$.  If you write "3/2[a,b]" you will get a pair on
+the extension of the line from $a$ to $b$ beyond $b$.  To get a pair going the
+other way you can either reverse $a$ and $b$, or use a negative number; but don't
+get caught out by the \MP\ precendence rules:  "-1/2[a,b]" is interpreted as
 "-(1/2[a,b])" and not as "(-1/2)[a,b]", so either put in the parentheses or swap
-the order of the points: "(3/2)[b,a]".
+the order of the pairs: "(3/2)[b,a]". See $\longrightarrow$.
 
-If you have a path to bisect then you can use the ``$\kw{point} t \kw{of} p$''
+If you want to work with a \kw{path} variable, rather than separate \kw{pair}
+variables, you can 
+use the \mpl{point t of p}
 notation to do mediation along the path.  For a simple straight path $p$ of length 1
-then "point 1/2 of p" will give you the midpoint.  More generally, 
-"point 1/2 length p of p" will give you the midpoint of a path of any length. 
-This works fine for simple paths, in which \MP's time moves evenly along the path, 
-but for more complicated paths you have to use this rather cumbersome notation:
+then \mpl{point 1/2 of p} will give you the midpoint.  More generally, 
+\mpl{point 1/2 length p of p} will give you the midpoint of a path of any length. 
+This works fine for simple paths, along which \MP's time moves evenly, 
+but for more complicated, curved paths you have to use this rather cumbersome notation:
 \begin{code}
     point arctime 1/2 arclength p of p of p
 \end{code}
@@ -1710,7 +2035,7 @@ vardef vector_bisector(expr a,b,c,r) =
 enddef;
 \end{code}
 $$\includegraphics{bisection2}$$
-}
+\vss}
 \noindent
 In an equilateral triangle the medians also bisect the angles at each vertex; this
 is the basis of Euclid's method of bisecting an angle set out in the Second
@@ -1763,7 +2088,8 @@ transformations
 
 \kern-\baselineskip
 \vpic{1in}{projections1}
-\begin{code}
+
+\begin{code}[xleftmargin=0pt, xrightmargin=-72pt]
 beginfig(1);
 % define the end points of the three rays
 z1 = right scaled 200 rotated 10;
@@ -1814,21 +2140,12 @@ For this you need to know the value of $\pi$, but this is not built into plain \
 If you are using the default number system then it's enough to define to five
 decimal digits,%
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-108pt
-        \begin{code}
-numeric pi;
-% approximate value
-pi := 3.14159; 
-\end{code}
 \begin{code}
 numeric pi;
 % approximate value
 pi := 3.14159; 
-\end{code}
-\begin{code}
 % up to 34 digits of precision 
 pi := 3.141592653589793238462643383279503;
-\end{code}
-\begin{code}
 % as many digits as are needed...
 vardef getpi =
   numeric lasts, t, s, n, na, d, da;
@@ -1848,7 +2165,6 @@ pi := getpi;
 % conversions
 vardef degrees(expr theta) = 180 / pi * theta enddef;
 vardef radians(expr theta) = pi / 180 * theta enddef;
-
 % trig functions that expect radians
 vardef sin(expr theta) = sind(degrees(theta)) enddef;
 vardef cos(expr theta) = cosd(degrees(theta)) enddef;
@@ -1857,12 +2173,11 @@ vardef acosd(expr a) = angle (a,1+-+a) enddef;
 vardef asind(expr a) = angle (1+-+a,a) enddef;
 vardef acos(expr a) = radians(acosd(a)) enddef;
 vardef asin(expr a) = radians(asind(a)) enddef;
-
 % tangents
 vardef tand(expr theta) = save x,y; (x,y)=dir theta; y/x enddef;
 vardef atand(expr a) = angle (1,a) enddef;
 \end{code}
-}}
+\vss}}
 but if you are using one of the new number systems you might want more digits of
 precision.  In fact there's no harm in always defining these extra digits; even when
 you are using the default "scaled" number system, \MP\ will happily read as many
@@ -1894,11 +2209,13 @@ point.
 \newpage
 \section{Traditional labels and annotations}
 
-\textit{This section describes labels and annotations in what can be called the traditional
-\MP\ environment, where your figures are compiled with "mpost".  The following
-section describes labels and annotations in the new-fangled world of "lualatex" and
-the "luamplib" package.}
+\moveright384pt\vbox to 0pt{\hsize 4.2in\vss\textcolor{blue}{\itshape This section describes labels and
+annotations in what can be called the traditional \MP\ environment, where your
+figures are compiled with "mpost".  The following section describes labels and
+annotations in the new-fangled (but rather better) world of "lualatex" and the
+"luamplib" package.}\par\kern 16pt}
 
+\noindent
 \MP\ does not draw text directly; instead it provides two different mechanisms to
 turn a text string into a picture, which can then be treated like any other; in
 other words, the text picture can
@@ -1911,8 +2228,8 @@ The first mechanism is the primitive binary operation "infont".  As explained in
 section~8.3 of the \MP\ manual, it takes two strings as arguments: the left hand
 argument is the string of text to be printed; the right hand argument is the name of
 the font to use; and the result is a "picture" primary.\vadjust{
-\moveright5.5in\vbox to 0pt{\kern -124.5 bp
-    \hsize 4in\noindent
+\moveright384pt\vbox to 0pt{\kern -126.5 bp
+    \hsize 4.2in\noindent
 To find the name of a suitable font, you have to consult your local "psfonts.map"
 file, and probably the PSNFSS documentation.
 Here are a few of the many fonts available on my local \TeX\ installation; the name
@@ -1935,9 +2252,9 @@ The actual font map file in use will be one of these.  You can then browse it to
 find a definitive list of the font names you can use with your local \MP.
 \vss}}
 
-To make a suitable string to print, the obvious method is to enclose your text
-in double quotes to make a string token, or to refer to a string variable.  But in
-addition you can do one of these:
+To make a suitable string you can enclose your text
+in double quotes to make a string token, or to refer to a string variable, or do 
+one of these:
 \begin{itemize}
     \item Concatenate two other strings with "&".
 
@@ -2020,28 +2337,28 @@ UTF-8 aware editor may show you an é but \MP, knowing nothing about UTF-8,
 will see this as Ã©.  But you can write a fairly simple routine to decode the
 commonly used subset of
 UTF-8.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\parindent 0pt
-    \def\item{\leavevmode\llap{•~}}
-    \item You can extend this idea to cope with other UTF-8 characters, including 
-        those that use three bytes.  The UTF-8 page on Wikipedia shows you how it
-        works.  Essentially you look at the values of the next 2 or 3 characters and
-        then pick the appropriate character in your encoding with "char".  But your
-        output is still, of course, limited to the 256 characters in your font.
+\def\item{\leavevmode\llap{•~}}
+\item You can extend this idea to cope with other UTF-8 characters, including 
+  those that use three bytes.  The UTF-8 page on Wikipedia shows you how it
+  works.  Essentially you look at the values of the next 2 or 3 characters and
+  then pick the appropriate character in your encoding with "char".  But your
+  output is still, of course, limited to the 256 characters in your font.
 
-    \item If you get tired of writing "decode", you could define a short cut with a
-        shorter name.  You could even write it as a primary without parentheses like
-        this:
-        \begin{code}
-        def U primary s = if string s: decode(s) fi enddef;
-        \end{code}
-        which would let you write:
-        \begin{code}
-        label.rt(U"café à la möde", (x,y));
-        \end{code}
-
-    \item However, there's no point in making any of this too elaborate.  If you
-         really want proper Unicode support you should use \MP\ with Lua\TeX.
-}}
+\item If you get tired of writing "decode", you could define a short cut with a
+  shorter name.  You could even write it as a primary without parentheses like
+  this:
 \begin{code}
+def U primary s = if string s: decode(s) fi enddef;
+\end{code}
+which would let you write:
+\begin{code}
+label.rt(U"café à la möde", (x,y));
+\end{code}
+
+\item However, there's no point in making any of this too elaborate.  If you
+  really want proper Unicode support you should use \MP\ with Lua\TeX.
+\vss}}
+\begin{code}[xrightmargin=-10pt]
 vardef decode(expr given) = 
   save a,i,s,out; string s, out; numeric a, i;
   out = ""; i=0;
@@ -2070,11 +2387,11 @@ The \texttt{label} macro automatically calls \texttt{infont} with the current va
 of \texttt{defaultfont}; notice how it also adds some extra space.
 \vss}} 
 \begin{code}
-  draw "café noir £2.50" infont "pncr8r";
-  draw decode("café noir £2.50") infont "pncr8r" shifted 12 down;
-  defaultfont := "pncr8r";
-  label.rt("café noir £2.50", 24 down);
-  label.rt(decode("café noir £2.50"), 36 down);
+draw "café noir £2.50" infont "pncr8r";
+draw decode("café noir £2.50") infont "pncr8r" shifted 12 down;
+defaultfont := "pncr8r";
+label.rt("café noir £2.50", 24 down);
+label.rt(decode("café noir £2.50"), 36 down);
 \end{code}
 Note that you can't just use "draw" with a string variable; you have to use
 "infont" to turn the string into a picture.
@@ -2090,7 +2407,7 @@ If you are producing labels for a numeric reference scale, like the axis of a ch
 it is convenient to be able to write a loop like this (assuming "u" is a horizontal
 unit):
 \begin{code}
-    for x=1 upto 10: label(decimal x, (x*u,-5)); endfor
+for x=1 upto 10: label(decimal x, (x*u,-5)); endfor
 \end{code}
 to produce your labels, however if "x" is negative this does not come out so well,
 because the first character of the string produced by "decimal -1" is an ASCII 45,
@@ -2100,12 +2417,12 @@ loop.  Instead you can do this:\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4i
 $$\includegraphics{minus1}$$
 \vss}} 
 \begin{code}
-    string minus_sign;
-    minus_sign := char 143; % if you are using the texnansi encoding
-    minus_sign := char 12;  % if you are using the 8r encoding
-    for x=-10 upto 10: 
-        label(if x<0: minus_sign & fi decimal abs(x), (x*u,-5)); 
-    endfor
+string minus_sign;
+minus_sign := char 143; % if you are using the texnansi encoding
+minus_sign := char 12;  % if you are using the 8r encoding
+for x=-10 upto 10: 
+   label(if x<0: minus_sign & fi decimal abs(x), (x*u,-5)); 
+endfor
 \end{code}
 Note that this does not work with the default encoding using in "cmr10" because
 there is no minus sign available in that font.  Plain TeX uses "char 0" from
@@ -2174,7 +2491,7 @@ $dp=-2.60017$.  The depth is negative because the descenders on the
 in the chosen font stick down below the base line.  The height is greater than the
 x-height, because the \textdemo{\textit{f}} also sticks up, so you need to make another measurement:
 \begin{code}
-    numeric xheight; xheight = ypart urcorner ("x" infont "pplri8r");
+numeric xheight; xheight = ypart urcorner ("x" infont "pplri8r");
 \end{code}
 Armed with these measurements you can align your text labels neatly so that they are
 all positioned on the base line or vertically centered on the lower case letters
@@ -2348,7 +2665,7 @@ the text uses the fonts set in the \LaTeX\ preamble.\vadjust{\moveright5.5in\vbo
 Here is a version of the Lua logo, with a Unicode accent for show.
 $$\includegraphics[scale=0.7]{lulu.pdf}$$
 produced with "luamplib":
-\begin{code}
+\begin{smallcode}
 \documentclass[margin=5mm]{standalone}
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Heros}
@@ -2369,7 +2686,7 @@ label.bot(btex Luã etex scaled 2.8,origin) withcolor white;
 endfig;
 \end{mplibcode}
 \end{document}
-\end{code}
+\end{smallcode}
 }}
 
 % new page
@@ -2448,8 +2765,8 @@ marks that create a picture; however the contents are used verbatim, so that the
 whole contruction is a syntactical atom.  This means that you \textbf{cannot} write
 this sort of thing: 
 \begin{code} 
-for i=0 upto 4: 
-  label(btex "$p_" & decimal i & "$" etex, (10i,0)); % this won't work
+for i=0 upto 4: % this won't work
+  label(btex "$p_" & decimal i & "$" etex, (10i,0)); 
 endfor 
 \end{code} 
 Given this input \MP\ would attempt to get \TeX\
@@ -2515,6 +2832,12 @@ would have to write:
 
 - annotations - overbrace, underbrace, length arrows etc, ahangle trick
 
+\newpage
+\section{Modern labels and annotations}
+
+This section is a re-working of the previous section, that attempts to show how much
+nicer it is to handle labels in the new world of `luamplib`.
+
 
 \newpage
 \section{Line caps and line joins}
@@ -2541,9 +2864,9 @@ to note:
         They still count towards the bounding box of the picture but there's no mark
         on the page.
 
-    \item \MP's arrow head routines don't work very well when $\id{linecap}=\id{squared}$;
-        even when $\id{linejoin}=\id{mitered}$, you can still see small jaggies on
-        the slopes of the arrows.
+    \item When $\id{linecap}=\id{squared}$ then \kw{drawarrow} produces some
+        unpleasant results; even when $\id{linejoin}=\id{mitered}$, you can still
+        see small jaggies on the slopes of the arrows.
 
     \item The arrows are nice and sharp when 
         $\id{linejoin}=\id{mitered}$, but they over shoot the mark slightly.
@@ -2552,10 +2875,11 @@ to note:
         as well as on the arrow heads, but you might not notice the difference when
         the picture is printed unless you have a very high resolution printer.
 
-    \item The default mode, with rounded caps and rounded joins, looks rather
-        sharper with the normal pen ("pencircle scaled 1/2").  But the dots drawn
-        with the default pen are easy to miss.  
-        This drawing was done with "pencircle scaled 2".  
+    \item 
+        This drawing was done with \mpl{pencircle scaled 2}, so that the dots 
+        would be easy to see. This does make the arrows drawn with the 
+        default line modes (rounded caps and rounded joins) looks a bit fat;
+        they look better with the usual \mpl{pencircle scaled .5}.
 
 \end{itemize}
 
