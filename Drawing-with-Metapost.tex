@@ -828,41 +828,39 @@ dividing the result. So to round to the nearest eighth you might use
 must remain less than 32767 if you are using the default number system.
 
 \newpage
-\section{Pairs, colours, and transformations}
+\section{Pairs, triples, and other tuples}
 
 \vpic{7pt}{random-selection1}
 
 \noindent
-\MP\ generalizes its concept of number to include ordered tuples of numbers which are used for
-a variety of purposes.  The primary use of pairs is for Cartesian coordinates, but
-they can also be used as complex numbers, since 
-as far as \MP\ is concerned it's just a pair of numeric variables.
-
-Triples and quads are used for colours (RGB colours and CMYK colours); usually the
-values of each element vary from 0 to 1, so that $\id{red} = (1,0,0)$ for example,
-but \MP\ does not force you to stick to this range;  the elements can take any value
-that is allowed for a \kw{numeric}.  It is therefore possible to use triples for
-three dimensional coordinates, but it is not very easy or elegant, as
-there are no built-in facilties (such as "draw3d") in plain \MP\
-to support it.
+\MP\ inherits from \MF a generalized concept of number that includes ordered pairs
+which are primarily used as Cartesian coordinates, but can also be used as complex
+numbers, as discussed below.
+\MP\ extends the this generalization with 3-tuples and 4-tuples.  Just like pairs, the
+elements in these tuples can take any numeric value, so in theory it would be
+possible to use them for three- and four-dimensional coordinates, but there are no
+built-in facilities for this in plain \MP, so some external library is needed. None
+of those available is very easy to use, and they are not discussed in this document.   
 
 Unlike simple numerics, these extended tuple variables are not automatically
-declared for you, 
-so if you
-want to define points $A$ and $B$ you need to explicitly write `$\kw{pair}
-\id{A},\id{B};$' before you assign values to them.  Once you have declared them, you
-can equate to an appropriate tuple using $=$ as normal.
+declared for you, so if you want to define points $A$ and $B$ you need to explicitly
+write `$\kw{pair} \id{A},\id{B};$' before you assign values to them.  Once you have
+declared them, you can equate them to an appropriate tuple using $=$ as normal.
+
 \begin{code}
     pair A,B; A = B = (1,2);
     color R;  R = (1,2,3);
     cmykcolor C; C = (1,2,3,4);
 \end{code}
+
+The normal use of triples and quads is for colours (RGB colours and CMYK colours); 
 Triples are type \kw{color}, quads are type \kw{cmykcolor}.
-Except for \kw{transform} variables, you can't have tuples of any other length, not even as constants.
+You can't have tuples of any other length, not even as constants, except for
+transforms.  
 
 A transform is how \MP\ represents
 an affine transformation such as "rotated 45 shifted (10,20)".  
-They are represented as sextuples, but if you try to write:
+They are represented as 6-tuples, but if you try to write:
 \begin{code}
     transform T; T = (1,2,3,4,5,6); % <-- doesn't work
 \end{code}
@@ -1063,22 +1061,27 @@ enddef;
 \end{code}
 
 \newpage
-\subsection{Colours}
+\section{Colours}
 
-\MP\ implements colours as tuples of three or four numeric values.
+\MP\ implements colours as simple numerics, or tuples of three or four numeric values.
 Three-tuples (which are type \mpl{color}) represent RGB colours; four-tuples
-(which are type \mpl{cmykcolor} represent CMYK colours.  The numeric values 
-can take any legal numeric value, but \MP\ only considers the range 0 to 1.  Values
-less than zero are treated as zero, values greater than 1 are treated as 1.  So to
-encode a color, such as British Racing Green with RGB code "(1, 66, 37)" you should
-write:
+(which are type \mpl{cmykcolor} represent CMYK colours.  Simple numerics are used to
+represent grey scale colours.
+
+The numeric values can take any \kw{numeric} value, but \MP\ only considers the
+range 0 to 1.  Values less than zero are treated as zero, values greater than 1 are
+treated as 1.  
+So to encode colors, such as British Racing Green with RGB code "(1,66,37)" 
+or Pillar Box Red with code "(223,52,57)", you should write:
 \begin{code}
-    color brg;
+    color brg, pbr;
     brg = (0.00390625, 0.2578125, 0.14453125);
+    pbr = (0.87109375, 0.203125, 0.22265625);
 \end{code}
 or, slightly more idiomatically:
 \begin{code}
     brg = 1/256 (1, 66, 37);
+    pbr = 1/256 (223, 52, 57);
 \end{code}
 As you can see, you can apply implicit multiplication to a \mpl{color}, so after 
 the declaration above "2 brg" would be a valid colour, although you have to think 
@@ -1095,6 +1098,7 @@ vardef hexrgb(expr Spec) =
     1/256(r,g,b)
 enddef;
 brg = hexrgb("#014225");
+pbr = hexrgb("#df3439");
 \end{code}
 \vss}}%
 
@@ -1110,14 +1114,16 @@ easier to read.  Much more usefully, you can use the mediation notation to get a
 colour that is part way between two others.  So \mpl{1/2[red, white]} gives you a
 shade of pink, and \mpl{2/3[blue, white]} a sort of sky blue.  You can also use this
 idea to vary colour with data, as in \mpl{(r)[red, blue]} where \mpl{r} is some
-calculated value.  \vadjust{\moveright 384pt\vbox to 0pt{\kern-12pt
+calculated value.  \vadjust{\moveright 384pt\vbox to 0pt{\kern-36pt
 \begin{code}
+color brg; brg = 1/256 (1, 66, 37);
+color pbr; pbr = 1/256 (223, 52, 57);
 N = 5; n = 0;
 for y=1 upto N:
   for x=1 upto N:
     fill fullcircle scaled 16 shifted 20(x,y)
       withpen pencircle scaled 2
-      withcolor (n/N/N)[red, blue];
+      withcolor (n/N/N)[pbr, brg;
     label(decimal incr n infont "phvr8r", 20(x,y)) 
       withcolor white;
   endfor
@@ -1125,10 +1131,10 @@ endfor
 \end{code}\vss}}
 Here's a toy example:
 
-\vbox to 0pt{\centerline{\includegraphics{scatter-color1}}\vss}
+\vbox to 0pt{\centerline{\includegraphics[scale=0.8]{scatter-color1}}\vss}
 
 \newpage
-\subsubsection{CMYK colours}
+\subsection{CMYK colours}
 
 \MP\ also implements a CMYK colour model, using tuples of four numerics.  
 This is more or less a direct mapping onto the PostScript "cmykcolor" functions.
@@ -1182,7 +1188,7 @@ endfor
 \end{code}}
 
 \newpage
-\subsubsection{HSV colours}
+\subsection{HSV colours}
 
 HSV colours are colours defined by a triple of hue, saturation, and value.
 Unlike RGB and CMYK colours there is no native support in \MP\ but it is possible to 
@@ -1243,7 +1249,7 @@ drawarrow (-15, -52) -- (-15,-76);
 \end{code}}
 
 \newpage
-\subsubsection{An HSV example of a graduated scale}
+\subsection{An HSV example of a graduated scale}
 
 \noindent
 This example requires the \mpl{hsv_color} routine from the previous page.
@@ -1287,26 +1293,119 @@ draw h; draw d;
 
 
 \newpage
-\subsubsection{Grey scale}
+\subsection{Grey scale}
 
-While we are on the topic of colour models, here is a short digression on the use of grey
-scale (or gray scale if you prefer the Webster spellings) in \MP.
+\moveright5.5in\vbox to 0pt{\vskip6pt
+\begin{code}[xleftmargin=0pt]
+numeric s; s = 13;
+path atom; 
+atom = origin 
+   -- (2s,0) rotated -30 -- (2s,0) rotated -30 + (0,s)
+   -- ( s,0) rotated  30 -- ( s,0) rotated  30 + (0,s)
+   -- (0,2s) -- cycle;
+
+picture p[];
+for i=0 upto 2:
+    p[i] = image(
+        fill atom rotated -120i withcolor (7/8 - 1/8i) ;
+        draw atom rotated -120i;
+    );
+endfor
+
+n = 13;
+for i=-n upto n:
+    for j=-n upto n:
+        forsuffixes $=0,1,2:
+            draw p$ shifted ((3i*s,0) rotated -30 
+                           + (0,floor(1/2i)*3s + 3j*s));
+        endfor
+    endfor
+endfor
+        
+clip currentpicture to (unitsquare shifted -(1/2,1/2) 
+                        xscaled 55.425s  yscaled 30s);   
+\end{code}
+\vss}
+\noindent
+The \mpl{withcolor} command will also take a single numeric instead of a 3-tuple or
+a 4-tuple.  This produces a colour in grey scale (or gray scale if you prefer the
+Webster spellings).  Just as for the other colour types, values below 0 count as
+zero and values above 1 count as one.  And since the smallest possible positive
+number in \MP\ is: $\id{epsilon} = 1/256/256;$ you can have at most 65,536 shades in
+between.
+
+Grey scale is appropriate for some printed media, and can make effective textures
+and patterns.
+The code on the right was used to produce this:
+$$\includegraphics[width=\textwidth]{escher1}$$
+First a basic path (named $\id{atom}$) is defined, then in the first loop three 
+picture variables, $p_1$, $p_2$, and $p_3$, are defined, each one rotated
+120° from the previous and filled with a slightly darker shade of grey.
+The double loop then draws the three versions of the shape on an up-and-down grid.
+Finally the picture is clipped to a neat rectangle.
+
+\newpage
+\subsubsection{Drawing algorithmic shadows}
+\moveright5.5in\vbox to 0pt{\vskip6pt
+\begin{code}[xleftmargin=0pt]
+path b, w; 
+b = ((-3,-4)--(3,-2)--(3,+2)--(-3,4)--cycle) scaled 5;
+w = b reflectedabout(up, down);
+
+numeric n;
+n = 128;
+
+picture B, W;
+B = image(for i=0 step 1/n until 1: 
+              draw point 4-i of b -- point 1+i**2 of b 
+                  withcolor 1-i**8; 
+          endfor);
+
+    W = image(for i=0 step 1/n until 1: 
+              draw point 4-i of w -- point 1+i**2 of w 
+                  withcolor 3/4-i**8; 
+          endfor);
+
+for i=-9 upto 9:
+    for j=-4 upto 4:
+        draw if odd (i+j): W else: B fi shifted (i*30,j*30);
+    endfor
+endfor
+
+clip currentpicture to bbox currentpicture yscaled 7/8; 
+\end{code}
+\vss}
+\noindent
+Here is a more complex pattern, showing one way to create an 
+illusion of shadows with multiple fine lines.
+$$\includegraphics[width=\textwidth]{more-grey2}$$
+The first part defines two wedge-shaped closed paths, $\id{w}$ being 
+the mirror image of $\id{b}$.  Like the standard \id{unitsquare} path, the 
+path $\id{b}$ is defined so that point 0 is the bottom left corner. 
+
+The two $\kw{picture}$ variables are produced
+by drawing lines across the shapes from bottom to top.  By setting $n$ high enough,
+these multiple lines blend smoothly to give an even colour.  And by using higher
+powers of the index variable, an effective shadow can be drawn ‘bunched up’ into the 
+top of each shape.  
+
+By repeating them alternately in a grid, we get an effective texture, which is
+clipped at the end to a neat rectangle again.
 
 
 \newpage
-\subsubsection{Colorbrewer palettes}
+\subsection{Colorbrewer palettes}
 
-The well-known Colorbrewer website ("http://colorbrewer2.org") provides a wide range
-of useful colour palettes that are suitable for a wide range of applications.
+The well-known Colorbrewer website ("http://colorbrewer2.org") provides a 
+useful set of colour palettes that are suitable for a wide range of applications.  They 
+were originally written for maps.  You can get my implementation of these palettes
+for \MP\ from my Github page: "http://github/thruston/metapost-colorbrewer".
+This package provides two files that define all the colour ranges; one for CMYK and
+another for RGB.  To use them you have to put them into your local TeX tree so that
+\MP\ will find them.  On my Mac this means putting the files into
+"~/Library/texmf/metapost".
 
-%Hex triplet	#004225
-%sRGBB  (r, g, b)	(1, 66, 37)
-%CMYKH   (c, m, y, k)	(90, 44, 92, 54)
-%HSV       (h, s, v)	(153.2°°, 98.5%, 25.9%)
-%Source	Approximations, no single hue.
 
-\newpage
-\subsection{Transformations}
 
 \newpage
 \section{Random numbers}
@@ -1958,7 +2057,7 @@ enddef;
 \end{code}
 
 \newpage
-\subsection{Bisecting lines, paths, and angles}
+\subsection{Bisecting lines and paths}
 
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
         $$\includegraphics{mediation1}$$
@@ -2014,7 +2113,9 @@ $p$ most simply with:
 \end{code}
 The median is the basis for several beautiful theorems about the geometry of the
 triangle. The theorem shown here was first published in 2014.
+
 \newpage
+\subsection{Bisecting angles}
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
 \begin{code}
 vardef euclidean_bisector(expr a,b,c,r) = 
@@ -2060,16 +2161,20 @@ triangle divides the opposite side in the ratio of the two other sides.
 So if sides $AB$ and $BC$ have lengths $p$ and $q$ then the bisector will 
 be ${p\over p+q}={1\over1+q/p}$ from $A$ to $C$, and you can express this
 simply using \MP's mediation syntax:
-
-\vfill
-
 \begin{code}
 vardef interior_bisector(expr a,b,c) = 
   (1/(1+abs(c-b)/abs(a-b)))[a,c]
 enddef;
 \end{code}
+
+\vbox to 0pt{
 $$\includegraphics{bisection3}$$
-\newpage
+\vss}
+\newpage 
+\subsection{Parallel and orthogonal}
+
+
+
 
 unitvector
 dotprod
@@ -2081,6 +2186,19 @@ transformations
 
 - reflectedabout
 - rotatedaround
+
+\newpage 
+\subsection{Circle through three points}
+
+\begin{code}
+vardef circle_through(expr A, B, C) = 
+    save m, n, o; pair m, n, o;
+    m = 1/2[A,B]; n = 1/2[B,C];
+    o = whatever[A rotatedabout(m, 90), B rotatedabout(m, 90)]
+      = whatever[B rotatedabout(n, 90), C rotatedabout(n, 90)];
+    fullcircle scaled 2 abs(A-o) shifted o
+enddef;
+\end{code}
 
 
 \newpage
@@ -2185,8 +2303,8 @@ extra digits of $\pi$ as you supply, before it rounds the value to the nearest
 multiple of $1\over65536$ (which turns out to be $3.14159$). The same applies to the
 "double" and "binary" number systems, but the "decimal" number system will give you
 an error if you supply more digits that the default precision (which is 34).  So
-it's best to use no more that 34 digits.  It's also possible, but not really worth
-the trouble, to define a routine to calculate $\pi$ for you to the current
+it's best to use no more than 34 digits.  It's also possible, but not really worth
+the trouble, to define a routine to calculate $\pi$ to the current
 precision.  However you define it, once you are armed with a value for $\pi$ you can
 then define functions to convert between degrees and radians and some more `normal'
 versions of sine and cosine.
@@ -2424,7 +2542,7 @@ for x=-10 upto 10:
    label(if x<0: minus_sign & fi decimal abs(x), (x*u,-5)); 
 endfor
 \end{code}
-Note that this does not work with the default encoding using in "cmr10" because
+Note that this does not work with the default encoding used in "cmr10" because
 there is no minus sign available in that font.  Plain TeX uses "char 0" from
 "cmsy10".
 
