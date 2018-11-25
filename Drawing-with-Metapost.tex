@@ -21,7 +21,7 @@
 \ifmmode\mathop{\textbf{#1}}\else\hbox{\bf#1\/}\fi\endgroup}
 \def\op#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
-\ifmmode\mathop{\textrm{#1}}\else\hbox{\rm#1\/}\fi\endgroup}
+\ifmmode\mathop{\textrm{#1}}\else\hbox{\rm#1\/}\fi/color\endgroup}
 \def\id#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textit{#1}}\else\hbox{\it#1\/}\fi\endgroup}
@@ -446,58 +446,6 @@ enddef;
 \end{smallcode}
 Using this "overlap" macro in place of "buildcycle" produces less surprising
 results.\mpic{-2in}{overlaps4}
-
-\newpage \section{Cycloid and other spiral graphs}
-
-This section examines cycloids; the curves made by points on the circumference of a
-rolling wheel.  In the first diagram the cycloid is drawn in red and the
-corresponding rolling wheel in blue.  The main idea in this diagram is to make the
-whole drawing depend on just a few parameters;  here there are two: the radius $r$
-and the amount of rotation $θ$.  If we make $r$ bigger, the drawing will be
-scaled up; if we change $θ$, the wheel will appear to have rolled along.
-\mpic{-66pt}{cycloids1}
-
-
-\marginpar{\par\kern1in
-\begin{itemize}
-    \item Near the beginning we define $\pi=3.14159265$, as there’s no such constant
-        built in, but it makes the source more understandable to write "pi/180"
-        instead of "0.017453".  It would be nice to use the Greek letters themselves
-        in the source, but \MP\ only lets you use plain ASCII characters, to you
-        have to write "pi" instead.  Later on "t" is used instead of $\theta$.
-
-    \item The cycloid path "c" is defined using an inline "for" loop.  There’s a
-        slight awkwardness to doing this as you have to repeat yourself either at
-        the beginning or the end, because you can’t have a dangling "--" or ".." at
-        the end of the path.  With a cyclic path it’s easier because you can just
-        put "--cycle" after the "endfor".  The strange numbers here are because
-        we are going from a rotation of $-100°$ to $+460°$; $360°$ corresponds to
-        one hop of the cycloid. 
-
-    \item The axes are done in the usual way, except that we use "xpart" and the
-        "point .. of .." notation to make the $x$-axis neatly line up with the ends
-        of the cycloid path.
-
-    \item To label points with dots but no text it’s convenient just to fill a
-        circle scaled to "dotlabeldiam"; this internal parameter is the current size
-        to be used for the dots in "dotlabel".  
-    
-\end{itemize}}
-
-\mpexternal[xleftmargin=0pt]{cycloids.mp}
-
-\noindent
-You can generalize the picture to make cycloids where the point tracing the
-cycloid is not on the circumference doing the rolling; the classic example is the
-wheel of the train with a flange.  Here I have added $R$ to define the radius of an
-outer rim, while the wheel still rolls along a circle of radius $r$.
-\mpic{-40pt}{cycloids-extra1}
-You might like to experiment with making $R<r$. Note also that variable names are
-case sensitive in \MP.
-
-\mpexternal[xleftmargin=0pt]{cycloids-extra.mp}
-
-\noindent The output\mpic{-122pt}{cycloids-extra1} is repeated at the right to save you flicking pages.
 
 \newpage
 \section{Numbers}
@@ -1327,11 +1275,11 @@ clip currentpicture to (unitsquare shifted -(1/2,1/2)
 \end{code}
 \vss}
 \noindent
-The \mpl{withcolor} command will also take a single numeric instead of a 3-tuple or
+The \mpl{withcolor} command will also take a single \mpl{numeric} instead of a 3-tuple or
 a 4-tuple.  This produces a colour in grey scale (or gray scale if you prefer the
 Webster spellings).  Just as for the other colour types, values below 0 count as
 zero and values above 1 count as one.  And since the smallest possible positive
-number in \MP\ is: $\id{epsilon} = 1/256/256;$ you can have at most 65,536 shades in
+number in plain \MP\ is: $\id{epsilon} = 1/256/256;$ then you can have at most 65,536 shades in
 between.
 
 Grey scale is appropriate for some printed media, and can make effective textures
@@ -1399,12 +1347,23 @@ clipped at the end to a neat rectangle again.
 The well-known Colorbrewer website ("http://colorbrewer2.org") provides a 
 useful set of colour palettes that are suitable for a wide range of applications.  They 
 were originally written for maps.  You can get my implementation of these palettes
-for \MP\ from my Github page: "http://github/thruston/metapost-colorbrewer".
-This package provides two files that define all the colour ranges; one for CMYK and
+for \MP\ from 
+\begin{itemize}
+    \item CTAN – "https://ctan.org/pkg/metapost-colorbrewer"
+    \item Github – "http://github/thruston/metapost-colorbrewer"
+\end{itemize}
+The package provides two files that define all the colour ranges; one for CMYK and
 another for RGB.  To use them you have to put them into your local TeX tree so that
 \MP\ will find them.  On my Mac this means putting the files into
 "~/Library/texmf/metapost".
-
+\vadjust{\moveright 384pt\vbox to 0pt{\raggedright\hsize4in\vskip1in\noindent
+The map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
+London.  The size of the circles represents the votes in each area, and the 
+colours show how we voted.  The data is from publically-available UK
+government sources.  The map was created with a small Python script to 
+read the CSV files and write simple lines of \MP\ input.  You \textit{can} read
+CSV files with \MP\ but it's much quicker with Python.\par\vss}}
+$$\includegraphics[width=\textwidth]{brexit-map.pdf}$$
 
 
 \newpage
@@ -3006,6 +2965,60 @@ and it affects how much a mitered join is allowed to stick out at each corner.  
 "miterlimit=10;" which is correct for nearly all drawings.  If you set
 "miterlimit:=0;" then the mitered line join mode becomes more or less the same as the
 beveled mode.
+
+\newpage 
+\section{Cycloid and other spiral graphs}
+
+This section examines cycloids; the curves made by points on the circumference of a
+rolling wheel.  In the first diagram the cycloid is drawn in red and the
+corresponding rolling wheel in blue.  The main idea in this diagram is to make the
+whole drawing depend on just a few parameters;  here there are two: the radius $r$
+and the amount of rotation $θ$.  If we make $r$ bigger, the drawing will be
+scaled up; if we change $θ$, the wheel will appear to have rolled along.
+\mpic{-66pt}{cycloids1}
+
+
+\marginpar{\par\kern1in
+\begin{itemize}
+    \item Near the beginning we define $\pi=3.14159265$, as there’s no such constant
+        built in, but it makes the source more understandable to write "pi/180"
+        instead of "0.017453".  It would be nice to use the Greek letters themselves
+        in the source, but \MP\ only lets you use plain ASCII characters, to you
+        have to write "pi" instead.  Later on "t" is used instead of $\theta$.
+
+    \item The cycloid path "c" is defined using an inline "for" loop.  There’s a
+        slight awkwardness to doing this as you have to repeat yourself either at
+        the beginning or the end, because you can’t have a dangling "--" or ".." at
+        the end of the path.  With a cyclic path it’s easier because you can just
+        put "--cycle" after the "endfor".  The strange numbers here are because
+        we are going from a rotation of $-100°$ to $+460°$; $360°$ corresponds to
+        one hop of the cycloid. 
+
+    \item The axes are done in the usual way, except that we use "xpart" and the
+        "point .. of .." notation to make the $x$-axis neatly line up with the ends
+        of the cycloid path.
+
+    \item To label points with dots but no text it’s convenient just to fill a
+        circle scaled to "dotlabeldiam"; this internal parameter is the current size
+        to be used for the dots in "dotlabel".  
+    
+\end{itemize}}
+
+\mpexternal[xleftmargin=0pt]{cycloids.mp}
+
+\noindent
+You can generalize the picture to make cycloids where the point tracing the
+cycloid is not on the circumference doing the rolling; the classic example is the
+wheel of the train with a flange.  Here I have added $R$ to define the radius of an
+outer rim, while the wheel still rolls along a circle of radius $r$.
+\mpic{-40pt}{cycloids-extra1}
+You might like to experiment with making $R<r$. Note also that variable names are
+case sensitive in \MP.
+
+\mpexternal[xleftmargin=0pt]{cycloids-extra.mp}
+
+\noindent The output\mpic{-122pt}{cycloids-extra1} is repeated at the right to save you flicking pages.
+
 
 \newpage
 \section{To do...}
