@@ -28,6 +28,7 @@
 \def\cycle{{\rm cycle}}
 \def\vpic#1#2{\moveright5.5in\vbox to 0pt{\vskip#1\includegraphics{#2}\vss}}
 \def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
+\def\mwpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=4in]{#2}}\vss}}}
 \def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 %
@@ -109,6 +110,7 @@ as clear as possible in my examples.
         current scope; the assignment "a:=3;" means update the value of "a" to the value "3"
         immediately.  The difference becomes apparent when you try to update a
         variable in the same scope.  
+        \mwpic{0pt}{tiling}
         
         This difference also lets you write linear equations
         like "a=-b;".  After this, as soon as you give  a value to "a", \MP\ immediately works
@@ -1362,7 +1364,14 @@ London.  The size of the circles represents the votes in each area, and the
 colours show how we voted.  The data is from publically-available UK
 government sources.  The map was created with a small Python script to 
 read the CSV files and write simple lines of \MP\ input.  You \textit{can} read
-CSV files with \MP\ but it's much quicker with Python.\par\vss}}
+CSV files with \MP\ but it's much quicker with Python.
+
+\begin{code}
+
+    
+\end{code}
+
+\par\vss}}
 $$\includegraphics[width=\textwidth]{brexit-map.pdf}$$
 
 
@@ -2082,7 +2091,7 @@ vardef euclidean_bisector(expr a,b,c,r) =
   path arc; pair p,q,e;
   arc = fullcircle scaled r shifted b;
   p = (a--b) intersectionpoint arc;
-  q = (b--c) intersectiontimes arc ;
+  q = (b--c) intersectionpoint arc ;
   e = equilateral_triangle_point(p,q);
   e
 enddef;
@@ -2130,7 +2139,36 @@ enddef;
 $$\includegraphics{bisection3}$$
 \vss}
 \newpage 
-\subsection{Parallel and orthogonal}
+\subsection{Intersections}
+
+The canonical way to find the intersection between two straight lines, is to use
+the mediation syntax with \id{whatever} twice:
+$$\includegraphics[width=0.9\textwidth]{whatever.pdf}$$
+The generality of the mediation syntax means that this works even if the two line
+segments don't intersect.  The intersection will be the point where the 
+two (infinite) lines through the pairs of points meet.  If the two lines
+are parallel, you'll get an `inconsistent equation' error.
+If you want to capture the calculated values, then use 
+undefined numeric variables instead of \id{whatever}:
+\begin{code}
+    z0 = alpha [z1, z2] = beta [z3, z4];
+\end{code}
+In this example you would find $\alpha=0.286$ and $\beta=0.5$.
+If one of your straight lines is horizontal or vertical, then you only need one
+mediation and a simple equation for the relevant $x$ or $y$ coordinate:
+\begin{code}
+    z0 = alpha [z1, z2]; x0 = 0;  % for example
+\end{code}
+
+\smallskip\noindent
+For paths that are more complicated than straight lines, you 
+need to use the \mpl{intersectiontimes} primitive or the \mpl{intersectionpoint}
+macro.
+
+
+\subsection{Parallel and orthogonal lines}
+
+T
 
 
 
