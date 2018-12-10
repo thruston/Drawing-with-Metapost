@@ -2141,11 +2141,13 @@ $$\includegraphics{bisection3}$$
 \newpage 
 \subsection{Intersections}
 
-The canonical way to find the intersection between two straight lines, is to use
+If you have line segments defined by their endpoints, then the
+canonical way to find their intersection, is to use
 the mediation syntax with \id{whatever} twice:
 $$\includegraphics[width=0.9\textwidth]{whatever.pdf}$$
-The generality of the mediation syntax means that this works even if the two line
-segments don't intersect.  The intersection will be the point where the 
+The generality of the mediation syntax means that this works even if the 
+interection point does not actually lie on either of the two line
+segments.  The intersection will be the point where the 
 two (infinite) lines through the pairs of points meet.  If the two lines
 are parallel, you'll get an `inconsistent equation' error.
 If you want to capture the calculated values, then use 
@@ -2154,16 +2156,16 @@ undefined numeric variables instead of \id{whatever}:
     z0 = alpha [z1, z2] = beta [z3, z4];
 \end{code}
 In this example you would find $\alpha=0.286$ and $\beta=0.5$.
-If one of your straight lines is horizontal or vertical, then you only need one
+If you are trying to find where the line through your points intersects a horizontal or vertical, then you only need one
 mediation and a simple equation for the relevant $x$ or $y$ coordinate:
 \begin{code}
     z0 = alpha [z1, z2]; x0 = 0;  % for example
 \end{code}
 
 \smallskip\noindent
-For paths that are more complicated than straight lines, you 
-need to use the \mpl{intersectiontimes} primitive or the \mpl{intersectionpoint}
-macro.
+If you have defined your lines as paths, and especially if they are more complicated
+than straight lines, you need to use the \mpl{intersectiontimes} primitive or the
+\mpl{intersectionpoint} macro.  
 
 
 \subsection{Parallel and orthogonal lines}
