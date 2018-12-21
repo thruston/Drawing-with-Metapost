@@ -10,6 +10,8 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{mflogo}
+\def\mfbook{\textsl{The \MF\kern1pt book}}
+\def\texbook{\textsl{The \TeX\kern1pt book}}
 \usepackage{shortvrb}\MakeShortVerb{"}
 \usepackage{listings}
 \title{Drawing with Metapost}
@@ -2033,7 +2035,7 @@ enddef;
         $$\includegraphics{mediation2}$$
         \bigskip
         $$\includegraphics[width=4in]{mediation3}$$
-        \centerline{Lee Sallow's theorem of median triangles}
+        \centerline{Lee Sallows' theorem of median triangles}
 \vss}
 \noindent
 The best way to bisect a line, depends on how you have defined it.
@@ -2186,17 +2188,34 @@ angles is rather easier.
 \newpage 
 \subsection{Intersections}
 
+\moveright5.5in\vbox to 0pt{\hsize4in\noindent
+\centerline{A puzzle square featuring some intersections}
+$$\includegraphics[width=3in]{magic-square-14}$$
+The points were defined like this (the order was important).
+\begin{code}
+z1 = (10,10);
+z4 = 144 right rotated 12;
+z5 = z4 shifted (2, 78);
+z7 = z4 reflectedabout(origin, (1,1));
+
+z2 = 1/2 [z5, z7];
+z9 = whatever [z1, z4];
+z2-z9 = whatever * (z7-z1); 
+z8 = whatever [z1, z5] = whatever [z2, z4];
+z3 = whatever [z2, z9] = whatever [z4, z7];
+z6 = whatever [z1, z7] = whatever [z3, z5];
+\end{code}
+\vss}
+\noindent
 If you have line segments defined by their endpoints, then the
 canonical way to find their intersection, is to use
 the mediation syntax with \id{whatever} twice:
 $$\includegraphics[width=0.9\textwidth]{whatever.pdf}$$
-The generality of the mediation syntax means that this works even if the 
-interection point does not actually lie on either of the two line
-segments.  The intersection will be the point where the 
-two (infinite) lines through the pairs of points meet.  If the two lines
-are parallel, you'll get an `inconsistent equation' error.
-If you want to capture the calculated values, then use 
-undefined numeric variables instead of \id{whatever}:
+The mediation syntax works even if the interection point does not actually lie on
+either of the two line segments.  The intersection will be the point where the two
+(infinite) lines through the pairs of points meet.  If the two lines are parallel,
+you'll get an `inconsistent equation' error.  If you want to capture the calculated
+values, then use undefined numeric variables instead of \id{whatever}:
 \begin{code}
     z0 = alpha [z1, z2] = beta [z3, z4];
 \end{code}
@@ -2206,12 +2225,12 @@ mediation and a simple equation for the relevant $x$ or $y$ coordinate:
 \begin{code}
     z0 = alpha [z1, z2]; x0 = 0;  % for example
 \end{code}
-
-\smallskip\noindent
 If you have defined your lines as paths, and especially if they are more complicated
 than straight lines, you need to use the \mpl{intersectiontimes} primitive or the
-\mpl{intersectionpoint} macro.  
+\mpl{intersectionpoint} macro, as explained on pp.136–137 of \mfbook.
 
+\newpage
+\subsubsection{Finding all intersection points}
 
 \subsection{Parallel and orthogonal lines}
 
