@@ -2230,6 +2230,39 @@ than straight lines, you need to use the \mpl{intersectiontimes} primitive or th
 \mpl{intersectionpoint} macro, as explained on pp.136–137 of \mfbook.
 
 \newpage
+\subsubsection{The intersection algorithm}
+
+\MP\ inherits a fast algorithm for finding the intersection between two paths from
+\MF.  It is explained rather more gnomically than usual at the end of Chapter 14 of
+\mfbook, with more detail given in the web source for \MF.  The core algorithm works
+on paths of length 1. If you have longer paths, \MP\ works its way along the paths
+applying the core algorithm to successive pairs of unit subpaths.  It does this is
+lexographic order; this means that, if you have two circles $A$ and $B$, and you do this:
+\begin{code}
+    (t, u) = A intersectiontimes B;
+\end{code}
+then \MP\ will first look for an intersection between subpath $(0,1)$ of $A$ and
+subpath $(0,1)$ of $B$, then subpath $(0,1)$ of $A$ and subpath $(1,2)$ of $B$, and
+so on, with $B$ varying faster, until you get to subpath $(7,8)$ of $A$ and subpath
+$(7,8)$ of $B$.  But you may never get that far, as the process stops as soon as the
+first intersection is found.  The upshot of this is that the intersection point
+found will always be as early as possible on $A$.  Note that after the call above
+point $t$ of $A$ will be very close to point $u$ of $B$, as they both refer to the
+same intersection point.  If there is an alternative point that is earlier on $B$,
+then use `$B \mathbin{\textrm{intersectiontimes}} A$' instead.\mpic{-222pt}{intersectme1} 
+$$\vbox{\halign{$\vcenter{\hbox{#}}$&&\quad$\to\vcenter{\hbox{#}}$\cr
+\includegraphics{intersectme0}&\includegraphics{intersectme2}&\includegraphics{intersectme3}\cr
+}}$$
+When we get down to paths of length 1, the core algorithm works as shown above.  The
+two paths are represented as rectangles that enclose the end points and the control
+points for each path.  If these rectangles don't overlap then there is certainly no
+intersection. Otherwise \MP\ bisects each path and considers four smaller rectangles,
+in the order $(1,2)$, $(1,4)$, $(3,2)$, $(3,4)$ (as shown above on the right).
+It carries on doing this recursively (well actually using a stack to back track)
+until it finds sufficiently small overlapping rectangles.  The two times returned by
+\mpl{intersectiontimes} are the midpoints of these two tiny rectangles.
+
+
 \subsubsection{Finding all intersection points}
 
 \subsection{Parallel and orthogonal lines}
@@ -2265,8 +2298,108 @@ enddef;
 
 
 \newpage
-\subsection{Coordinate geometry example}
+\subsection{Coordinate geometry examples}
 
+\kern-\baselineskip
+\vpic{-24pt}{desargues}
+\kern-.5\baselineskip
+\begin{code}[xleftmargin=0pt, xrightmargin=-72pt]
+beginfig(1);
+    z.P = 200 up rotated 21; z.A = 100 left rotated -21; 
+    z.B = origin; z.C = 90 right rotated 42;
+
+    z.A' = 3/8[z.P, z.A];
+    z.B' = 1/2[z.P, z.B];
+    z.C' = 5/8[z.P, z.C];
+
+    z.R = whatever [z.A, z.B] = whatever [z.A', z.B'];
+    z.S = whatever [z.B, z.C] = whatever [z.B', z.C'];
+    z.T = whatever [z.C, z.A] = whatever [z.C', z.A'];
+
+    path t[];
+    t1 = z.A--z.B--z.C--cycle;
+    t2 = z.A'--z.B'--z.C'--cycle;
+
+    fill t1 withcolor 7/8[red, white];
+    fill t2 withcolor 7/8[blue, white];
+    draw t1 withcolor 1/2 white;
+    draw t2 withcolor 1/2 white;
+
+    drawoptions(dashed withdots scaled 1/2);
+    draw z.P--z.A;
+    draw z.P--z.B;
+    draw z.P--z.C;
+
+    drawoptions(dashed evenly scaled 1/2);
+    draw z.B--z.R--z.B';
+    draw z.C--z.S--z.C';
+    undraw subpath (1/4, 3/4) of (z.C'--z.T) withpen 
+        pencircle scaled 5;
+    draw z.C--z.T--z.C';
+\end{code}
+\moveright 384pt \vbox to 0pt{\vss
+\begin{code}[xleftmargin=0pt, xrightmargin=-72pt]
+
+    drawoptions(withcolor 2/3 red);
+    draw 9/8[z.S,z.R] -- 9/8[z.R,z.S];
+    picture pp; pp = thelabel("perspectrix", origin);
+    draw pp shifted 7 down rotated angle (z.S-z.R) 
+         shifted 1/2[z.R, z.T];
+    dotlabel.urt("perspector", z.P);
+
+    drawoptions();
+    dotlabel.lft (btex $A$ etex, z.A);
+    dotlabel.llft(btex $B$ etex, z.B);
+    dotlabel.lrt (btex $C$ etex, z.C);
+    dotlabel.lft (btex $A'$ etex, z.A');
+    dotlabel.llft(btex $B'$ etex, z.B');
+    dotlabel.bot (btex $C'$ etex, z.C');
+    label.rt(btex Desargues' Theorem etex, (x.C', 1/2(y.P+y.C')));
+endfig;
+\end{code}
+\vskip -42pt}
+
+\newpage
+\moveright5.5in\vbox to 0pt{\vskip10pt\includegraphics[width=4.2in]{trisection-triangles}\vss}
+\vskip-\baselineskip
+\begin{code}[xleftmargin=0pt, xrightmargin=-80pt]
+randomseed := 2485.81543;
+vardef measured_angle(expr p, o, q) = 
+   (angle (p-o) - angle (q-o)) mod 360
+enddef;
+beginfig(1);
+picture T;
+for i=0 upto 1:
+  for j=0 upto 1:
+    clearxy;
+    T := image(
+      z1 = (120 + uniformdeviate 21, 0);
+      z2 = (120 + uniformdeviate 21, 0) rotated 120 rotated 21 normaldeviate;
+      z3 = (120 + uniformdeviate 21, 0) rotated 240 rotated 21 normaldeviate;
+      numeric a, b, c;
+      a = measured_angle(z3, z1, z2);
+      b = measured_angle(z1, z2, z3);
+      c = measured_angle(z2, z3, z1);
+      z4 = whatever [z1, z2 rotatedabout(z1, 1/3 a)] 
+         = whatever [z2, z3 rotatedabout(z2, 2/3 b)];
+      z5 = whatever [z2, z3 rotatedabout(z2, 1/3 b)] 
+         = whatever [z3, z1 rotatedabout(z3, 2/3 c)];
+      z6 = whatever [z3, z1 rotatedabout(z3, 1/3 c)] 
+         = whatever [z1, z2 rotatedabout(z1, 2/3 a)];
+      fill z4--z5--z6--cycle withcolor 3/4[red + 1/2 green, white];
+      draw z4--z5--z6--cycle;
+      draw z1 -- z4 -- z2 -- z5 -- z3 -- z6 -- cycle
+           dashed withdots scaled 1/4;
+      draw z1 -- z2 -- z3 -- cycle;
+    );
+    draw T shifted (200i, 240j);
+  endfor
+endfor
+label.rt(btex \vbox{\halign{#\hfil\cr The trisectors of each angle\cr 
+in any given triangle form a\cr central equilateral triangle.\cr}} etex, (24, 128));
+endfig;
+\end{code}
+\newpage
 \kern-\baselineskip
 \vpic{1in}{projections1}
 
@@ -2325,6 +2458,8 @@ decimal digits,%
 numeric pi;
 % approximate value
 pi := 3.14159; 
+% meaure round a circular arc...
+pi := 1/4 arclength (quartercircle scaled 16);
 % up to 34 digits of precision 
 pi := 3.141592653589793238462643383279503;
 % as many digits as are needed...
