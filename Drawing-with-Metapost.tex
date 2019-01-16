@@ -2262,8 +2262,37 @@ It carries on doing this recursively (well actually using a stack to back track)
 until it finds sufficiently small overlapping rectangles.  The two times returned by
 \mpl{intersectiontimes} are the midpoints of these two tiny rectangles.
 
-
 \subsubsection{Finding all intersection points}
+
+As noted above, the \mpl{intersectiontimes} algorithm will stop at the first
+intersection of the two paths, but it is possible that the two paths will intersect 
+again further along.  If you want to find all the intersection points then the
+simplest technique is just to unwrap the algorithm slightly, and loop through all
+the unit subpaths applying \mpl{intersectiontimes} to each pair.  Using an array to
+hold the points and a counter,, you can get them with something like this
+\begin{code}
+pair P[]; numeric n; n = 0;
+for i = 1 upto length(A):
+  for j = 1 upto length(B):
+    numeric t, u;
+    (t, u) = subpath (i-1, i) of A intersectiontimes 
+                                         subpath (j-1, j) of B;
+    if t > -1:
+      P[incr n] = 1/2[point t of subpath (i-1, i) of A, 
+                              point u of subpath (j-1, j) of B];
+    fi
+  endfor
+endfor
+\end{code}
+and then use them like this:
+\begin{code}
+for i=1 upto n:
+    draw fullcircle scaled 4 shifted P[i]; % or whatever
+endfor
+\end{code}
+
+
+
 
 \subsection{Parallel and orthogonal lines}
 
@@ -2458,7 +2487,7 @@ decimal digits,%
 numeric pi;
 % approximate value
 pi := 3.14159; 
-% meaure round a circular arc...
+% measure round a circular arc...
 pi := 1/4 arclength (quartercircle scaled 16);
 % up to 34 digits of precision 
 pi := 3.141592653589793238462643383279503;
