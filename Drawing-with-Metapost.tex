@@ -33,6 +33,7 @@
 \def\mwpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=4in]{#2}}\vss}}}
 \def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
+\def\to{\mathrel{\ldotp\ldotp}}
 %
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
@@ -334,7 +335,7 @@ The second "for" loop steps through this array of paths looking for intersection
 The index "j" is set to be "k" when "i=1", and then set to the previous value of "i"
 at the end of the loop;   in this way
 "pp[j]" is the path before "pp[i]" in what is supposed to be a cycle.
-The macro uses the primitive operator "intersectiontimes" to find the intersection
+The macro uses the primitive operator \mpl{intersectiontimes} to find the intersection
 points, if any. Note that we are looking for two path times: the time to start a
 subpath of the current path and the time to end a subpath of the previous path; the
 macro does this neatly 
@@ -351,7 +352,7 @@ points are not quite co-incident; finally it finishes with a
 at least very close) to 
 point "ta" of path "0".
 
-This implementation of "buildcycle" works well in most cases, provided that there
+This implementation of \mpl{buildcycle} works well in most cases, provided that there
 are enough components to the cycle of paths.  If you only have two paths, then the
 two paths need to be running the same direction, and the start of each path must not
 be contains within the other.  This is explored in the next section.
@@ -1897,11 +1898,11 @@ endfig;
 \end{smallcode}
 \vss}}
 First the base block is created with some noise on the upper side.  Then five rays
-are created.  Applying "ypart" to the pair of times returned by "intersectiontimes"
-gives us the point of the base where the incident ray hits it.  This point and the
-perpendicular at that point are then used to get the angle for the reflected ray.
-The diagrams are effective because the rays are reflected at realistic looking
-angles.
+are created.  Applying \mpl{ypart} to the pair of times returned by
+\mpl{intersectiontimes} gives us the point of the base where the incident ray hits
+it.  This point and the perpendicular at that point are then used to get the angle
+for the reflected ray.  The diagrams are effective because the rays are reflected at
+realistic looking angles.
 
 The simple approach to adding noise along a path works well in most cases provided
 there's not too much noise,  but it is always possible that you'll get two consecutive
@@ -2008,12 +2009,12 @@ vardef equilateral_triangle_point(expr a, b) =
   (c shifted a intersectionpoint c shifted b)
 enddef;
 \end{code}
-This works but has a couple of issues.  First "intersectionpoint" is a bit slow and
+This works but has a couple of issues.  First \mpl{intersectionpoint} is a bit slow and
 not very accurate (although this might not matter to us); secondly and more
 seriously, the point returned depends on the orientation of the points "a" and 
 "b".  In some configurations the first intersection found will be on the left, in
 others on the right.  We could fix this by rotating the circle "c" by "angle (b-a)",
-but  we can do better with a simple rotation of the second point about the first:
+but we can do better with a simple rotation of the second point about the first:
 \begin{code}
 vardef equilateral_triangle_point(expr a, b) =
   b rotatedabout(a,60)
@@ -2074,8 +2075,8 @@ number.
 \smallskip\noindent
 In a triangle these bisecting lines are called medians.  The three medians intersect
 at the centroid of the triangle.  The centroid is a good place to put a label on a
-triangle.  You could find it "intersectionpoint" or with
-a construction using "whatever" on any two medians, but since we know that the centroid
+triangle.  You could find it \mpl{intersectionpoint} or with
+a construction using \mpl{whatever} on any two medians, but since we know that the centroid
 divides each median in the ratio $2:1$ we can find the centroid of a triangle path
 $p$ most simply with:
 \begin{code}
@@ -2123,7 +2124,7 @@ given above.  But if your aim were to find any point on the line bisecting $\ang
 ABC$, then you could simplify this and make it more efficient by using
 $e = \frac12[p,q]$
 instead of calling the triangle macro at all.  However the macro is still making two
-calls to "intersectionpoint".  If you wanted to eliminate this you could use the 
+calls to \mpl{intersectionpoint}.  If you wanted to eliminate this you could use the 
 useful plain \MP\ macro "unitvector" to produce a solution based on adding two equal
 length vectors from the corner to the two other points.  Another approach is to
 exploit another geometric theorem that states that the bisector of an angle in a
@@ -2261,6 +2262,10 @@ in the order $(1,2)$, $(1,4)$, $(3,2)$, $(3,4)$ (as shown above on the right).
 It carries on doing this recursively (well actually using a stack to back track)
 until it finds sufficiently small overlapping rectangles.  The two times returned by
 \mpl{intersectiontimes} are the midpoints of these two tiny rectangles.
+$$\vbox{\halign{$\vcenter{\hbox{#}}$&&\quad$\to\vcenter{\hbox{#}}$\cr
+\includegraphics{intersectme4}&\includegraphics{intersectme5}&\includegraphics{intersectme6}&\quad$\cdots$\cr
+}}$$
+
 
 \subsubsection{Finding all intersection points}
 
@@ -2269,48 +2274,131 @@ intersection of the two paths, but it is possible that the two paths will inters
 again further along.  If you want to find all the intersection points then the
 simplest technique is just to unwrap the algorithm slightly, and loop through all
 the unit subpaths applying \mpl{intersectiontimes} to each pair.  Using an array to
-hold the points and a counter,, you can get them with something like this
-\begin{code}
-pair P[]; numeric n; n = 0;
+hold the points and a counter, you can get them with something like this:
+\begin{smallcode}
+pair P[], times; numeric n; n = 0;
 for i = 1 upto length(A):
   for j = 1 upto length(B):
-    numeric t, u;
-    (t, u) = subpath (i-1, i) of A intersectiontimes 
-                                         subpath (j-1, j) of B;
-    if t > -1:
-      P[incr n] = 1/2[point t of subpath (i-1, i) of A, 
-                              point u of subpath (j-1, j) of B];
+    times := subpath (i-1,i) of A intersectiontimes subpath (j-1,j) of B;
+    if xpart times > -1:
+      P[incr n] = 1/2[point xpart times of subpath (i-1,i) of A, 
+                      point ypart times of subpath (j-1,j) of B];
     fi
   endfor
 endfor
-\end{code}
+\end{smallcode}
 and then use them like this:
-\begin{code}
+\begin{smallcode}
 for i=1 upto n:
     draw fullcircle scaled 4 shifted P[i]; % or whatever
 endfor
+\end{smallcode}
+There are a couple of \MP\ technical points to note.  The \mpl{intersectiontimes}
+operation returns a pair, which we assign to a pair variable $\id{times}$
+above; we have to use \mpl{:=} to re-assign it in each loop, and we have to 
+use an explicit pair variable because you can't assign to a literal pair;
+\MP\ will give you an error if you try \mpl{(t, u) := A intersectiontimes B;}.
+This may come as a surprise, because you \textit{can} legally do \mpl{(t, u) = A
+intersectiontimes B}, but in a loop this causes an inconsistent equation error on
+the second iteration.  If you need to avoid the repeated use of \mpl{xpart} and
+\mpl{ypart}, one alternative is to do this inside the loop:
+\begin{smallcode}
+    ...
+    numeric t, u;
+    (t, u) = A intersectiontimes B;
+    ...
+\end{smallcode}
+Now the numerics are reset each time and the equation is not inconsistent.
+\vadjust{\moveright 384pt\vbox to 0pt{\hsize 4.2in\vss \noindent
+T\textsc{he} technique discussed on the left, works well on paths where the points on one or
+both of the paths are close together, so that the unit subpaths are short;
+But it
+is possible to create quite long paths of unit \mpl{length} and these may intersect
+each other more than once, like so:
+$$\includegraphics{intersectme8}$$
+Here the two paths $A$ and $B$ are Bezier splines of with \mpl{length=1}, so the
+normal \MP\ algorithm is only ever going to give you one of the intersections.  In
+the diagram above, the
+red circle marks the point given by \mpl{A intersectiontimes B}.  We can try
+reversing one of the paths, and in this case you get the point marked in blue, 
+but what about the one in the middle?
+
+The most reliable approach is to take a copy of one of the paths, and snip it off at
+the intersection and try again until there is nothing left to snip.
+$$\includegraphics{intersectme9.pdf}$$
+The three points marked here were captured like this:
+\begin{code}
+pair P[]; numeric n; n=0; 
+path R; R := A;  % take a copy of A
+forever:
+  R := R cutbefore B;  % snip where we cross B
+  exitif length cuttings = 0;  % stop if nothing was cut
+  P[incr n] = point 0 of R; % capture the point
+  R := subpath (epsilon, infinity) of R; % nudge along
+endfor
 \end{code}
+This technique also works on paths with \mpl{length} greater than one, 
+so you may prefer it as your general “get all the intersections” approach.
+Note that the \mpl{cutbefore} macro is defined using \mpl{intersectiontimes}.
+
+\kern 6.5pt
+}}
+
+\subsection{Parallel and orthogonal or whatever}
+
+Given five known points --- $A$, $B$, $C$, $D$, and $E$ --- \MP\ can find the point $F$
+on the line $A \to B$, so that $E \to F$ is parallel to $C \to D$ like this:
+\mpic{0pt}{parallel1}
+\begin{code}
+    F = whatever[A, B]; % F is on the line A..B
+    E-F = whatever * (C-D) % E..F || C..D
+\end{code}
+In the second line the expressions \mpl{E-F} and \mpl{C-D} return \mpl{pair}
+variables and the equation with \mpl{whatever} says that they must be scalar
+multiples of each other.  With the first equation, this is enough for \MP\ to work
+out where $F$ should go.   Note that \mpl{whatever} can take any real value,
+positive or negative, so it does not matter whether you put \mpl{E-F} or \mpl{F-E}.
+Note also that for the same reason, while $F$ will lie on the line \textit{through}
+$A$ and $B$, it might not lie on the segment from $A$ to $B$.
+
+\smallskip\noindent\llap{\nb}%
+To define a line perpendicular to $C\to D$ rather than parallel, you can write:
+\begin{code}
+    G = whatever[A, B];
+    E-G = whatever * (C-D) rotated 90;
+\end{code}
+and obviously the "90" can be adjusted to whatever angle you please.
+
+\smallskip\noindent\llap{\nb}%
+If you need to compute the perpendicular distance from the point $C$ to a line $A\to
+B$, you can use Knuth's ‘slick’ formula:
+\begin{code}
+    abs ypart ((C-A) rotated -angle (B-A))
+\end{code}
+This effectively rotates $C$ about $A$ by the angle of the line, so that the problem
+is reduced to measuring the height of a point above the $x$-axis, which is what
+\mpl{ypart} does, of course.
+
+\smallskip\noindent\llap{\nb}%
+There are some limitations to what you can do with \MP's linear equations; for one
+thing you can't generally say things like \mpl{length(C-A) = 72}.  If you want to
+find the two points on a line that are a given distance from an external point, it's
+often simpler to find the intersection points of the line with a suitably scaled and
+shifted circle, even if you don't actually then draw the circle.  You can usually
+find the other point by reversing the circle.
 
 
 
-
-\subsection{Parallel and orthogonal lines}
-
-T
-
-
+%unitvector
+%dotprod
+%abs
+%++ and +-+
 
 
-unitvector
-dotprod
-abs
-++ and +-+
+%transformations
 
-
-transformations
-
-- reflectedabout
-- rotatedaround
+%- reflectedabout
+%- rotatedaround
 
 \newpage 
 \subsection{Circle through three points}
