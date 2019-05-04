@@ -12,27 +12,26 @@ vardef draw_brace(expr a, b, m) =
 enddef;
 
 vardef do_brace(expr a,b,m,r) =
-  save d, e, bb;
-  numeric d; pair e; path bb;
+  save d, e, n, bb;
+  numeric d, n; pair e; path bb;
   d = angle (b-a); 
   e = up scaled m rotated d shifted r[a,b];
   n = 1/2 m;
-  pickup pencircle yscaled 1.218 xscaled .2 rotated d;
   bb = (
-           (origin {0,n} .. {right} (abs n,n)) rotated d shifted a
+           (origin {0,n} .. {right} (abs n,n)) 
+           rotated d shifted a
        --
            ((-abs n,-n) {right} .. {0,n} origin {0,-n} .. {right}(abs n,-n)) 
            rotated d shifted e
        --
            ((-abs n,n){right}..{0,-n}origin) 
            rotated d shifted b
-       ) shifted (up scaled 1/2 m rotated d);
-   draw bb;
-   pickup defaultpen;
+       ) shifted (up scaled n rotated d);
+   draw bb; % withpen pencircle yscaled 1.218 xscaled .2 rotated d;
    point 3 of bb
 enddef;
 
-prologues:=3;outputtemplate:="%j%c.mps";
+prologues:=3;outputtemplate:="%j%c.eps";
 beginfig(1);
 
 z1 = origin;

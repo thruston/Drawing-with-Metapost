@@ -2344,6 +2344,7 @@ Note that the \mpl{cutbefore} macro is defined using \mpl{intersectiontimes}.
 \kern 6.5pt
 }}
 
+
 \subsection{Parallel and orthogonal or whatever}
 
 Given five known points --- $A$, $B$, $C$, $D$, and $E$ --- \MP\ can find the point $F$
@@ -2400,6 +2401,27 @@ find the other point by reversing the circle.
 %- reflectedabout
 %- rotatedaround
 
+\newpage
+\subsection{Lines tangent to a point on a path}
+
+\MP\ provides a convenient built-in feature to examine the direction 
+of a path $p$ at any time $t$ along it: \mpl{direction t of p}.  This returns a pair
+that represents the direction that the path is taking. In the language of Bezier
+cubic curves, the pair is the value of the current control point minus the current
+point on the path. So if you define a path like this:
+\begin{code}
+    path A;
+    A = origin .. controls (72, 140) and (216, -160) .. (288, 0);
+\end{code}
+
+\subsection{Lines tangent to a circle}
+
+\subsection{Lines tangent to two circles}
+
+\subsection{Axis of similitude}
+
+\subsection{Circles tangent to other circles}
+
 \newpage 
 \subsection{Circle through three points}
 
@@ -2413,6 +2435,7 @@ vardef circle_through(expr A, B, C) =
 enddef;
 \end{code}
 
+Tangent circles...
 
 \newpage
 \subsection{Coordinate geometry examples}
@@ -2728,7 +2751,7 @@ right), but you can use any 8-bit characters as the payload of a string.
 However, plain \MP\ is set by default to use "cmr10", the familiar Computer Modern typeface
 developed by Knuth for \TeX, and unfortunately, this is encoded using the \TeX\ text
 font encoding (also known as `OT1', and as shown in the first table in Appendix~F of the {\sl \TeX book}).  
-\mpic{-72pt}{font-sampler1.pdf}  
+\mpic{-108pt}{font-sampler1.pdf}  
 From the point of
 view of using "infont" to make simple labels, this means that the characters for
 space and seven other characters ("< > \ _ { | }") are in the wrong place.  
@@ -3408,7 +3431,7 @@ gradients
 - drawing knots, double lines, ropes
 
 
-- HSV colours, brewer colours, rainbows, 50\% white etc
+% done - HSV colours, brewer colours, rainbows, 50\% white etc
 
 - decorating lines, Meccano
 
