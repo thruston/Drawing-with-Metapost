@@ -16,7 +16,7 @@
 \usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017}
+\date{March 2017 – June 2019}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
@@ -28,7 +28,7 @@
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textit{#1}}\else\hbox{\it#1\/}\fi\endgroup}
 \def\cycle{{\rm cycle}}
-\def\vpic#1#2{\moveright5.5in\vbox to 0pt{\vskip#1\includegraphics{#2}\vss}}
+\def\vpic#1#2{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}
 \def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
 \def\mwpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=4in]{#2}}\vss}}}
 \def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
@@ -2359,8 +2359,8 @@ variables and the equation with \mpl{whatever} says that they must be scalar
 multiples of each other.  With the first equation, this is enough for \MP\ to work
 out where $F$ should go.   Note that \mpl{whatever} can take any real value,
 positive or negative, so it does not matter whether you put \mpl{E-F} or \mpl{F-E}.
-Note also that for the same reason, while $F$ will lie on the line \textit{through}
-$A$ and $B$, it might not lie on the segment from $A$ to $B$.
+Note also that for the same reason, while $F$ will lie on the \textit{line} through
+$A$ and $B$, it might not lie on the \textit{segment} from $A$ to $B$.
 
 \smallskip\noindent\llap{\nb}%
 To define a line perpendicular to $C\to D$ rather than parallel, you can write:
@@ -2390,31 +2390,112 @@ find the other point by reversing the circle.
 
 
 
-%unitvector
-%dotprod
-%abs
-%++ and +-+
-
-
-%transformations
-
-%- reflectedabout
-%- rotatedaround
 
 \newpage
 \subsection{Lines tangent to a point on a path}
 
+\MP\ represents paths internally as a sequence of nodes. Each node consists of three
+pairs: the point, the pre-control point, and the post-control point.  These three
+points are always co-linear.  The idea is
+that \MP\ adjusts a path so that when it travels through a point, it is heading in 
+the direction from the pre-control point to the post-control point. 
 \MP\ provides a convenient built-in feature to examine the direction 
-of a path $p$ at any time $t$ along it: \mpl{direction t of p}.  This returns a pair
-that represents the direction that the path is taking. In the language of Bezier
+of a path $p$ at any time $t$ along it: \mpl{direction t of p}.  
+
+\smallskip\noindent
+This returns a pair
+that represents the direction that the path is taking at point $t$. 
+\mpic{-32pt}{tang1.pdf}%
+In the language of Bezier
 cubic curves, the pair is the value of the current control point minus the current
-point on the path. So if you define a path like this:
+point on the path. So if you define a path like this $\longrightarrow$
 \begin{code}
-    path A;
-    A = origin .. controls (72, 140) and (216, -160) .. (288, 0);
+path p;
+p = origin .. controls (64, 64) and (128, 64) .. (192, 0) 
+           .. controls (256, -64) and (320, -64) .. (384, 0);
+\end{code}
+it has three points – \id{origin}, $(192,0)$, $(384,0)$ – numbered 0, 1, and 2;
+and you can extract
+any of these points with \mpl{point t of p}.  You can also extract the control points
+with \mpl{precontrol t of p} and \mpl{postcontrol t of p}.  The pre-control is the
+control point just before a node, the post-control is the one after.  Unless the path is
+cyclic, there won't be a control point before the first node or after the last one,
+so \MP\ defines them to be the same as the coordinates of the node, so with:
+\begin{code}
+for t=0 upto length(p): 
+    drawarrow precontrol t of p -- postcontrol t of p;
+endfor
+\end{code}
+you get a neat visualization of how the path is made, and the arrows are tangent to
+the path.  Now, plain \MP\ defines 
+\begin{code}
+vardef direction expr t of p = 
+    postcontrol t of p - precontrol t of p enddef;
+\end{code}
+to save you some typing, but the clever bit is that $t$ does not have to be a whole
+number.  If you set $t=1/2$, \MP\ works out where all the fractional control points
+are, so that you can use \mpl{direction t of p} to get a tangent at any point.  The
+vector pairs returned have the right direction, but rather arbitrary magnitudes, so
+the usual idiom is something like this:
+
+\vskip-\baselineskip
+\vbox to 0pt{%
+\begin{code}
+path s;
+s = origin -- unitvector(direction t of p) scaled 36;
+drawarrow s shifted point t of p;
+\end{code}\vss}
+
+\newpage
+\subsection{Lines tangent to a circle}
+
+The techniques of the preceding section can be used to add a tangent line to a 
+given point on a circular path, but not to find the tangent lines from a given point
+outside a circle.  To do this, you need to adapt the standard geometrical
+construction: for a given circle $C$ and a point $p$, find the midpoint of $p$ and
+the center of $C$; draw a circle through $p$, centered on this midpoint; the tangent
+points are where this second circle intersects $C$.\mpic{-120pt}{tangents3.pdf}
+Given a suitable \mpl{path C} and \mpl{pair p} you can do this:
+\begin{code}
+pair t, t'; 
+t = C intersectionpoint fullcircle scaled abs(p - center C) 
+                                   shifted 1/2[p, center C];
+t' = t reflectedabout(p, center C);
+\end{code}
+No parentheses are needed around the second path, because \mpl{intersectionpoint} is
+defined with \mpl{secondarydef}.
+
+\medskip\noindent
+Things are a little more complicated if you want the points as times along the path
+$C$ and you care about which tangent point is which.  Here is a routine that returns
+the tangent points from $p$ as two times $a$ and $b$ on $C$, with $b$ adjusted so
+that $b > a$ in all cases regardless of the relative rotation of $C$ and $p$.  This
+means that \mpl{subpath (a, b) of C} is always the “long way round” C, on the
+opposite side from $p$, and \mpl{subpath (a, b-8) of C} is always the shorter
+segment.
+\begin{code}
+vardef tangent_times(expr C, p) = 
+    % return the two times on C that correspond 
+    % to the external tangents from p to C
+    save m, a, b, G, H;
+    pair m; numeric a, b; path G, H;
+    m = 1/2[p, center C];
+    H = halfcircle scaled abs (p - center C) 
+                   rotated angle (p - center C) 
+                   shifted m;
+    G = H rotatedabout(m, 180);
+    (a, whatever) = C intersectiontimes H;
+    (b, whatever) = C intersectiontimes G;
+    (a, b if b < a: + 8 fi)
+enddef;
 \end{code}
 
-\subsection{Lines tangent to a circle}
+\vpic{-200pt\noindent Here is the macro in action.  
+Having obtained the two times $a$ and $b$ from the macro, the dashed line
+was drawn along a path that was composed with: 
+\vrule depth 20pt width 0pt height 2pt
+\mpl{p -- subpath (a,b) of C -- cycle}
+}{tangents4.pdf}
 
 \subsection{Lines tangent to two circles}
 
