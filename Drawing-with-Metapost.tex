@@ -159,10 +159,15 @@ as clear as possible in my examples.
         So you can write things like "3a", or even "1/2 a"
         (the space between the number and the variable name is optional). This 
         lets you write very readable mathematical expressions. It’s quite
-        additictive after a while.
-
+        additictive after a while. 
 
 \end{itemize}
+
+\vskip -22pt
+\moveright5.5in\vbox to 0pt{\vss\hsize 4in\noindent
+The \mpl{sqrt} operator is defined at the same (top) level of precedence, so
+that \mpl{sqrt2+1} is read as \mpl{(sqrt2)+1} and not \mpl{sqrt(2+1)}, but fractions
+trump even that, so \mpl{sqrt 1/2 = 0.7071} is true.}
     
     
 
@@ -856,7 +861,7 @@ There is also a simple way to write coordinates using a polar notation.  For the
 point $(r,\theta)$, where $r$ is the radius and $\theta$ is the angle in degrees
 counter-clockwise from the positive $x$-axis, you can write `\mpl{r dir
 theta}'.  For example `\mpl{2 dir 30}' provides another way to get the
-point "(sqrt(3),1)".   
+point "(sqrt 3,1)".   
 And if that's not compact
 enough for you could define a suitable shorthand using a character that's otherwise
 unused.  For example `\mpl{def ^=dir enddef;}', which would let you write
@@ -1609,7 +1614,7 @@ for n=1 upto 4:
     hide(x:=x+4normaldeviate; y:=y+4normaldeviate;) 
     .. (x,y) 
   endfor withcolor ((n+2)/9)[blue,white];
-  fill fullcircle scaled 3 shifted(x,y) withcolor red;
+  fill fullcircle scaled 3 shifted (x,y) withcolor red;
 endfor
 % mark the origin
 fill fullcircle scaled 3 withcolor green;
@@ -2388,6 +2393,53 @@ often simpler to find the intersection points of the line with a suitably scaled
 shifted circle, even if you don't actually then draw the circle.  You can usually
 find the other point by reversing the circle.
 
+\newpage 
+\subsection{Drawing circles}
+
+The canonical way to draw a circle in plain \MP\ is to use the pre-defined path
+\mpl{fullcircle} with a suitable transformation.  
+\mpic{-12pt}{circles1.pdf}
+The path is defined (in
+"plain.mp") using two \MP\ primative commands:
+\begin{code}
+path fullcircle; fullcircle = makepath pencircle;
+\end{code}
+A \kw{pencircle} is the basic nib that is used to draw lines that digitize neatly;
+it represents a true circle of diameter 1, passing through the points $(\pm.5, 0)$
+and $(0, \pm.5)$.  When processed with \kw{makepath} it turns into a cyclic
+polygonal path with eight points that closely approximates a circle with diameter
+1\unit{bp} centered on the point $(0, 0)$.  To use it, you can scale it and shift it.
+To draw a circle with radius 2\unit{cm} at the point $(34, 21)$ you would do:
+\begin{code}
+draw fullcircle scaled 4cm shifted (34, 21);
+\end{code}
+Remember to scale before you shift, and that \id{fullcircle} has unit
+\textit{diameter}, not unit \textit{radius}.  To draw a circle centered at point $A$
+that passes through point $B$ [\textcolor{textred}{I}] try:
+\begin{code}
+draw fullcircle scaled 2 abs (B-A) shifted A;
+\end{code}
+There are of course an infinite number of circles that you can draw through two 
+points, but if the line between the two points is a diameter [\textcolor{textblue}{II}], then you can do:
+\begin{code}
+draw fullcircle scaled abs (B-A) shifted 1/2[A,B];
+\end{code}
+Finally three points define a unique circle [\textcolor{textgreen}{III}]:
+\begin{code}
+vardef circle_through(expr A, B, C) = 
+    save o; pair o;
+    o = whatever * (A-B) rotated 90 shifted 1/2 [A,B]
+      = whatever * (B-C) rotated 90 shifted 1/2 [B,C];
+    fullcircle scaled 2 abs (A-o) shifted o
+enddef;
+\end{code}
+Plain \MP\ also defines \id{halfcircle} and \id{quartercircle}, as the appropriate
+subpaths of \id{fullcircle}, both starting at point 0 (3 o'clock). Curiously, this
+differs from \MF\ where \id{quartercircle} is defined first, and the other two
+composed from it. The reference point of these two paths is the center of the
+complete circle of which they would be part; so if you did “\kw{draw}
+\id{quartercircle} \kw{shifted} $(34, 21)$;”, you would get an quarter-circle arc from
+$(34.5,21)$ to $(34,21.5)$.
 
 
 
@@ -2497,26 +2549,63 @@ was drawn along a path that was composed with:
 \mpl{p -- subpath (a,b) of C -- cycle}
 }{tangents4.pdf}
 
+\newpage
 \subsection{Lines tangent to two circles}
+
+The same \mpl{tangent_times} macro can be reused to find the tangents that touch two
+circles, using an approach like this: \mwpic{-12pt}{tangents5.pdf}
+\begin{code}
+path A, B;
+A = fullcircle scaled 144;
+B = fullcircle scaled 60 shifted (240, 80);
+
+numeric R, r;
+R = abs (point 0 of A - center A);
+r = abs (point 0 of B - center B);
+
+path C; numeric t, u;
+C = fullcircle scaled (2R-2r) shifted center A;
+(t, u) = tangent_times(C, center B);
+
+draw A withpen pencircle scaled 2 withcolor 3/4[blue, white];
+draw B withpen pencircle scaled 2 withcolor 3/4[blue, white];
+
+draw subpath (t, u) of A -- subpath (u-8, t) of B -- cycle; 
+\end{code}
+Here $A$ and $B$ are the two circles you want to connect, and $A$ is larger than
+$B$. $R$ is the radius of the larger, $r$ of the smaller. $C$ is an auxiliary circle
+centered at the same point as $A$ and scaled so that its radius is $R-r$.  If we
+then find the tangent points on $C$ from the center of $B$, the points we want are
+the corresponding points on $A$ and $B$.  
+
+\medskip\noindent
+This works well, provided that none of three
+circles $A$, $B$, or $C$, is rotated (that is that point 0 is at 3 o'clock).  But
+this may not always be the case.   For example, you might have written 
+\begin{code}
+B = fullcircle scaled 60 shifted 240 right rotated 36;  
+\end{code}
+and then point $t$ of $B$ would \textit{not} correspond to point $t$ of the
+auxiliary circle.  So to make the code above more general you have to adjust the
+tangent times to take account of the relative rotation of the circles. 
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vskip-24pt\noindent
+\begin{code}
+vardef adjust_time(expr tt, AA, BB) = 
+    tt + 1/45 angle (point 0 of AA - center AA) 
+       - 1/45 angle (point 0 of BB - center BB)
+enddef;
+\end{code}
+}}
+The in the figure $t$ was adjusted to $t'$ for $A$ and $t''$ for $B$, using the 
+routine shown on the right.  This routine shows the relationship between \mpl{angle}
+and points around a circle:  $360^\circ = 8\:\hbox{points}$.
+
+
 
 \subsection{Axis of similitude}
 
 \subsection{Circles tangent to other circles}
 
-\newpage 
-\subsection{Circle through three points}
-
-\begin{code}
-vardef circle_through(expr A, B, C) = 
-    save m, n, o; pair m, n, o;
-    m = 1/2[A,B]; n = 1/2[B,C];
-    o = whatever[A rotatedabout(m, 90), B rotatedabout(m, 90)]
-      = whatever[B rotatedabout(n, 90), C rotatedabout(n, 90)];
-    fullcircle scaled 2 abs(A-o) shifted o
-enddef;
-\end{code}
-
-Tangent circles...
 
 \newpage
 \subsection{Coordinate geometry examples}
