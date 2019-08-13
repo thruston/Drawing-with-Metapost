@@ -86,7 +86,7 @@ beginfig(3);
 for i=0 upto 15: 
   label.top(decimal i infont "cmss10" scaled 0.7, (15i,108)) withcolor .67 red;
   for j=0 upto 7:
-  label(char (i+16j) infont "eurm10", (15i,100-14j));
+  draw char (i+16j) infont "eurm10" shifted (15i-3,97-14j);
   if i=0: label.lft(decimal 16j infont "cmss10" scaled 0.7, (-8,100-14j)) withcolor .67 red; fi
 endfor endfor
 endfig;

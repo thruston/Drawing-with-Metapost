@@ -34,6 +34,7 @@
 \def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \def\to{\mathrel{\ldotp\ldotp}}
+\def\mptype#1{\ensuremath{\langle\hbox{#1}\rangle}\thinspace}
 %
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
@@ -168,8 +169,103 @@ as clear as possible in my examples.
 The \mpl{sqrt} operator is defined at the same (top) level of precedence, so
 that \mpl{sqrt2+1} is read as \mpl{(sqrt2)+1} and not \mpl{sqrt(2+1)}, but fractions
 trump even that, so \mpl{sqrt 1/2 = 0.7071} is true.}
-    
-    
+   
+\newpage
+\section{Workflow}
+
+This document is not meant for beginners, so you won't find step by step tutorials
+for something so simple as running \MP.  But since you might not find it all that
+simple, and since the basic tutorials can go out of date, here are descriptions of
+my own workflows that you might find helpful.  You might also think I'm being really
+inefficient; if so please drop me a line and suggest an improvement.
+
+The common features of each of these workflows are: mac os, the MacVim editor to
+edit \MP\ source code, and
+Skim.app to view PostScript and PDF files.  I have the complete MacTeX distribution
+installed; any commands mentioned below are supplied by MacTex.
+
+\subsection{Stand alone graphics with plain \MP}\label{sec:plain-flow}
+
+\MP\ source files have the extension ".mp", when I open a file in MacVim that
+matches "*.mp", my editor profile sets the filetype to "mp" (which picks up the
+highlight and indentation rules supplied with MacVim), and adds some relevant
+directories to the search tree.  Finally, if the file is a new file, then the
+profile loads this template:
+\begin{smallcode}
+prologues := 3;
+outputtemplate := "%j%c.eps";
+beginfig(1);
+
+endfig;
+end.
+\end{smallcode}
+The first two lines are important: "prologues := 3;" makes \MP\ put the full font
+details in the output so that the files are self-contained; the "outputtemplate"
+line means that the output will be written to files with an extension of ".eps"
+(suggesting that they are Encapsulated PostScript).
+
+I then add drawing and label commands, using all the traditional facilities for
+typesetting labels described in section \ref{sec:trad-labels}.  I compile the source
+with "mpost". I usually do this from within MacVim using the command line ":!mpost %"
+where "!" means “this is an external command” and the "%" picks up the current file
+name.  Usually I need several attempts to get a diagram right, so I open Skim to preview the
+output with ":!open -a Skim %:r1.eps".  I have Skim set up so that when I recompile
+the source, it automatically updates the view of the PostScript output.
+
+\moveright5.4in\vbox to 0pt{\vss\hsize 4in\noindent
+$$\includegraphics[width=4in]{workflow-plain.pdf}$$
+If I want to use the diagram in a \LaTeX\ document I can include the EPS file
+directly with 
+\begin{Verbatim}
+    \includegraphics{some-diagram1.eps}
+\end{Verbatim}
+but usually I prefer to convert the EPS to PDF using "epstopdf" rather than rely on
+the automatic conversion.  This is mainly because the PDFs are generally more useful
+files to have about (I can include them in presentations etc).  Sometimes I do this
+manually but usually I use a small Python script to automate this process: run
+"mpost" with the "-recorder" option; scan the list of files to see what got
+produced; check which ones are PostScript; call "esptopdf" to make each one into a
+PDF file; remove each EPS file if successful.  Your mileage may vary.\par
+}
+
+\subsection{Stand alone graphics with Lua\LaTeX}\label{sec:sa-lua-flow}
+
+For graphics with more complicated text formatting, I prefer now to use
+\texttt{lualatex} with the \texttt{luamplib} package.  \mpic{0cm}{workflow}
+The work flow is a bit simpler because there are no intermediate EPS files to worry
+about.  Instead of compiling with plain "mpost" I use "lualatex" with the "luamplib"
+package, which calls \MP\ from within the Lua environment.  The \MP\ engine actually
+used is exactly the same.  Here is
+the template I use:
+\begin{smallcode}
+\documentclass[border=5mm]{standalone}
+\usepackage{luatex85}
+\usepackage{luamplib}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
+beginfig(1);
+
+endfig;
+\end{mplibcode}
+\end{document}
+\end{smallcode}
+As you can see, we have \MP\ source code wrapped up in a minimal \LaTeX\ document
+using the \texttt{standlone} class, which automatically adjusts the page size to 
+fit the contents of document, so is ideal for single diagrams.  One small
+disadvantage is that you can only produce one PDF output file, so you need to have a
+separate file for each picture, but the good news is that you get a much simpler and
+more effective integration with \LaTeX, in particular with the font environment.
+Since this only works with "lualatex" you have to use the "fontspec" package, as
+explained in section \ref{sec:neo-labels}.
+
+\subsection{Integrated graphics with Lua\LaTeX}
+   
+If you are ready to use "lualatex" for processing your entire document, then you can 
+directly embed your \MP\ drawings in a series of "mplibcode" environments.  Each one
+produces a horizontal-mode box.  For details try "texdoc luamplib".  The only
+drawback of this all-in-one approach is that you have to compile all the drawings
+every time you compile the document, which might slow you down.
 
 \newpage
 \section{Making and using closed paths}
@@ -1354,6 +1450,33 @@ clipped at the end to a neat rectangle again.
 \newpage
 \subsection{Colorbrewer palettes}
 
+\moveright 384pt\vbox to 0pt{\vskip2.2in\raggedright\hsize4in\noindent
+This map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
+London.  The size of the circles represents the votes in each area, and the 
+colours show how we voted.  The data is from publicly-available UK
+government sources.  The map was created with a small Python script to 
+read the CSV files and write simple lines of \MP\ input.  You \textit{can} read
+CSV files with \MP\ but it's much quicker with Python.
+
+\bigskip\noindent
+Here is the code for the palette used as the legend:
+\begin{smallcode}
+input colorbrewer-rgb
+numeric s; s = 10;
+for i = 1 upto 9:
+    fill unitsquare scaled s shifted (i*s, 0) withcolor RdYlBu[9][i];
+    if i > 1: draw (i*s, 0) -- (i*s, s); fi
+endfor
+draw unitsquare xscaled 9s yscaled s shifted (s,0);
+label.top("Remain" infont "phvr8r", (s, s));
+label.top("Leave" infont "phvr8r", (10s, s));
+\end{smallcode}
+
+\bigskip
+$$\includegraphics{brexit-palette1.pdf}$$
+\vss}
+
+\noindent
 The well-known Colorbrewer website ("http://colorbrewer2.org") provides a 
 useful set of colour palettes that are suitable for a wide range of applications.  They 
 were originally written for maps.  You can get my implementation of these palettes
@@ -1363,24 +1486,13 @@ for \MP\ from
     \item Github – "http://github/thruston/metapost-colorbrewer"
 \end{itemize}
 The package provides two files that define all the colour ranges; one for CMYK and
-another for RGB.  To use them you have to put them into your local TeX tree so that
+another for RGB.  If you are using an up-to-date \TeX\ distribution, you should find 
+that they are already installed, but if not you just have to put the files into your local TeX tree so that
 \MP\ will find them.  On my Mac this means putting the files into
 "~/Library/texmf/metapost".
-\vadjust{\moveright 384pt\vbox to 0pt{\raggedright\hsize4in\vskip1in\noindent
-The map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
-London.  The size of the circles represents the votes in each area, and the 
-colours show how we voted.  The data is from publically-available UK
-government sources.  The map was created with a small Python script to 
-read the CSV files and write simple lines of \MP\ input.  You \textit{can} read
-CSV files with \MP\ but it's much quicker with Python.
 
-\begin{code}
+\vbox to 0pt{$$\includegraphics[width=\textwidth]{brexit-map.pdf}$$\vss}
 
-    
-\end{code}
-
-\par\vss}}
-$$\includegraphics[width=\textwidth]{brexit-map.pdf}$$
 
 
 \newpage
@@ -1653,8 +1765,6 @@ perhaps it would be better to say `translated' rather than `stolen';  moreover m
 implementations are easier to use with plain \MP.\vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in\kern -5.5\baselineskip
 \begin{smallcode}
-defaultfont := "eurm10";
-
 def freehand_segment(expr p) =
   point 0 of p {direction 0 of p rotated (4+normaldeviate)} .. 
   point 1 of p {direction 1 of p rotated (4+normaldeviate)}
@@ -1689,6 +1799,7 @@ draw freehand_segment(point 2 of t--z3);
 draw mark2 moved_along 1/4 of t;
 draw mark2 moved_along 3/4 of t;
 
+defaultfont := "eurm10"; % use Euler
 label.lft("A", z0);
 label.rt ("B", z1);
 label.top("C", z2);
@@ -2014,12 +2125,12 @@ vardef equilateral_triangle_point(expr a, b) =
   (c shifted a intersectionpoint c shifted b)
 enddef;
 \end{code}
-This works but has a couple of issues.  First \mpl{intersectionpoint} is a bit slow and
-not very accurate (although this might not matter to us); secondly and more
-seriously, the point returned depends on the orientation of the points "a" and 
-"b".  In some configurations the first intersection found will be on the left, in
-others on the right.  We could fix this by rotating the circle "c" by "angle (b-a)",
-but we can do better with a simple rotation of the second point about the first:
+This works but has a couple of issues.  First using \mpl{intersectionpoint} feels a
+bit like cheating; secondly, and more seriously, the point returned depends on the
+orientation of the points "a" and "b".  In some configurations the first
+intersection found will be on the left, in others on the right.  We could fix this
+by rotating the circle "c" by "angle (b-a)", but we can do better with a simple
+rotation of the second point about the first:
 \begin{code}
 vardef equilateral_triangle_point(expr a, b) =
   b rotatedabout(a,60)
@@ -2499,7 +2610,7 @@ drawarrow s shifted point t of p;
 \end{code}\vss}
 
 \newpage
-\subsection{Lines tangent to a circle}
+\subsection{Lines tangent to a circle}\label{sec:tangent-times}
 
 The techniques of the preceding section can be used to add a tangent line to a 
 given point on a circular path, but not to find the tangent lines from a given point
@@ -2550,7 +2661,7 @@ was drawn along a path that was composed with:
 }{tangents4.pdf}
 
 \newpage
-\subsection{Lines tangent to two circles}
+\subsection{Lines tangent to two circles (exterior)}\label{sec:adjust-times}
 
 The same \mpl{tangent_times} macro can be reused to find the tangents that touch two
 circles, using an approach like this: \mwpic{-12pt}{tangents5.pdf}
@@ -2600,7 +2711,67 @@ The in the figure $t$ was adjusted to $t'$ for $A$ and $t''$ for $B$, using the
 routine shown on the right.  This routine shows the relationship between \mpl{angle}
 and points around a circle:  $360^\circ = 8\:\hbox{points}$.
 
+\newpage
+\subsection{Lines tangent to two circles (interior)}
 
+To find the interior tangents, you just need to add the smaller radius rather than
+subtract it, and add 4 to the times on the smaller circles, so that they are on the
+other side:
+$$\includegraphics[width=\textwidth]{tangents55.pdf}$$
+
+\bigskip\noindent
+The complete code for this is shown on the right.  It uses the same
+routines given above; \mpl{tangent_times} from section \ref{sec:tangent-times}, and
+\mpl{adjust_time} from section \ref{sec:adjust-times}.
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+\begin{smallcode}
+beginfig(1);
+path A, B;
+A = fullcircle scaled 144 rotated uniformdeviate 360; 
+B = fullcircle scaled 60 shifted 240 right rotated 36;  
+
+numeric R, r;
+R = abs (point 0 of A - center A);
+r = abs (point 0 of B - center B);
+
+path C;
+C = fullcircle scaled (2R+2r) shifted center A; % NB +ve
+
+numeric t, t', t'', u, u', u'';
+(t, u) = tangent_times(C, center B);
+t' = adjust_time(t, C, A);
+u' = adjust_time(u, C, A);
+t'' = adjust_time(t + 4, C, B);  % Note the plus fours
+u'' = adjust_time(u + 4, C, B);
+
+draw A withpen pencircle scaled 2 withcolor 3/4[blue, white];
+draw B withpen pencircle scaled 2 withcolor 3/4[blue, white];
+draw C withpen pencircle scaled 1 withcolor 3/4[blue, white];
+
+draw subpath (t', u') of A -- subpath (u'', t'') of B -- cycle; 
+draw center B -- subpath (t, u) of C -- cycle dashed evenly;
+
+draw center B -- point t'' of B dashed withdots scaled 1/2;
+draw center B -- point u'' of B dashed withdots scaled 1/2;
+draw point t of C -- point t' of A dashed withdots scaled 1/2;
+draw point u of C -- point u' of A dashed withdots scaled 1/2;
+
+dotlabel.ulft(btex $t$   etex, point t   of C); 
+dotlabel.lrt (btex $t'$  etex, point t'  of A); 
+dotlabel.lrt (btex $t''$ etex, point t'' of B); 
+dotlabel.lrt (btex $u$   etex, point u   of C); 
+dotlabel.ulft(btex $u'$  etex, point u'  of A); 
+dotlabel.ulft(btex $u''$ etex, point u'' of B); 
+drawdot center B withpen pencircle scaled dotlabeldiam;
+
+drawoptions(withcolor 1/2[blue, white]);
+    label.urt(btex $A$ etex, point 1/2(t'+u'- 7.6) of A);
+    label.rt (btex $B$ etex, point 1/2(t''+u''- 2) of B);
+    label.urt(btex $C$ etex, point 1/2(t+u-8) of C);
+drawoptions();
+endfig;
+\end{smallcode}\vskip -1in
+}}
 
 \subsection{Axis of similitude}
 
@@ -2763,7 +2934,7 @@ First you might want versions that accept arguments in radians instead of degree
 For this you need to know the value of $\pi$, but this is not built into plain \MP.
 If you are using the default number system then it's enough to define to five
 decimal digits,%
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-108pt
+\vadjust{\moveright 384pt\vbox to 0pt{\kern-144pt
 \begin{code}
 numeric pi;
 % approximate value
@@ -2833,7 +3004,7 @@ point.
 
 
 \newpage
-\section{Traditional labels and annotations}
+\section{Traditional labels and annotations}\label{sec:trad-labels}
 
 \moveright384pt\vbox to 0pt{\hsize 4.2in\vss\textcolor{blue}{\itshape This section describes labels and
 annotations in what can be called the traditional \MP\ environment, where your
@@ -3211,119 +3382,24 @@ width, and depth that you can measure, and adjust, as discussed in
 section~\ref{infontbbox}.  And again, just like "infont" you can either use "draw"
 to place the resulting picture directly, or pass it to the "label" macro.
 
-What you need to be aware of is that \MP\ places everything you put between the "btex" and
-"etex" into an "\hbox{...}" and processes it with plain \TeX.  This has several
-implications, especially if you need to make your diagrams match the formatting of a
-particular \LaTeX\ format.
+What you need to be aware of is that \MP\ places everything you put between the
+"btex" and "etex" into an "\hbox{...}" and processes it with plain \TeX.  This has
+several implications: on the positive side you have easy access to italics and bold
+letters, mathematical formulae, symbols like "$\alpha$", and anything else you can
+normally put in an "\hbox{}"; but there are some restrictions especially if you want
+to do anything more than produce a simple single-line label in the default Computer
+Modern type face.  The next few sections deal with some of the things you might want
+to do.
 
-\subsubsection{Matching the fonts with plain \TeX}
-
-Despite the apparent restriction of using plain \TeX\ it is almost always possible
-to match the font and format of an enclosing \LaTeX\ document. 
-The simplest approach is to use the plain
-\TeX\ font mechanism with the names from "psfonts.map".  
-\begin{code}
-verbatimtex
-\font\rm=ptmr8r\rm
-etex
-\end{code}
-Adding this at the top of your \MP\ program will set your text in Times New Roman,
-although any maths will still be set using Computer Modern.  
-To fix this, all you
-have to do is to redefine all the maths fonts in all sizes you need; this is not really
-that hard but it is a fiddle to get all the details right.  Fortunately
-the wonderful "font-change" package has done it all for you for a large range of
-fonts; with this package installed you can use
-\begin{code}
-verbatimtex
-\input font_times
-etex
-\end{code}
-instead, and all of your \TeX\ labels, including bold letters, italics, small caps,
-and mathematics will be set in Times New Roman.\vadjust{\moveright5.5in\vbox to
-0pt{\hsize 4in\vss\noindent
-Here are some samples of the fonts available in the "font-change" package.  For full
-details, and especially details about using AMS symbols, see the package
-documentation.
-$$\includegraphics{font-sampler3}$$
-}}
-
-\newpage
-\subsubsection{Matching fonts using \LaTeX}
-If you still can't get your labels to match, you can force \MP\ to use \LaTeX\
-instead of plain \TeX\.  You need to use the "-tex" command line switch:
-\begin{code}
-    mpost -tex=latex
-\end{code}
-and also load whatever packages you need in a "verbatimtex" block at the top of your
-\MP\ file.
-\begin{code}
-verbatimtex
-\documentclass{article}
-\usepackage{mathpazo}
-\usepackage{xcolor}
-\begin{document}
-etex
-\end{code}
-Note that the "\documentclass" and the "\begin{document}" lines are required, but
-\MP\ is smart enough to add an "\end{document}" for you.
-
-\MP\ needs a ".dvi" file to work with, so you can only use "latex" or "elatex", and
-not any of the more modern engines, like "pdflatex".  Generating the labels takes a
-little bit longer because you have to load rather more `infrastructure' for \LaTeX,
-and you are limited to whatever font packages you have that work with the
-traditional \LaTeX\ engine. 
-
-\subsubsection{Getting full access to your system fonts}
-
-If you want full access to all of your system fonts you can
-approach the problem the other way round and use one of the various means to include
-\MP\ graphics as part of your \LaTeX\ source code.  These include "gmp" for
-pdf\LaTeX, "luamplib" for lua\LaTeX, and the whole Context system.  The great
-advantage of these systems is that all of your \MP\ labels directly inherit the
-environment of the parent document, and give you access to all your system fonts and
-full Unicode support -- the only disadvantages are that it's not so fast or simple as plain \MP\
-and you have to compile every graphic everytime you compile the document.  It is of course always possible to
-use these systems to produce standalone PDF graphics that you can then include in a
-more conventional \TeX\ document.  The example on the right shows how;  in this case
-the text uses the fonts set in the \LaTeX\ preamble.\vadjust{\moveright5.5in\vbox to
-0pt{\hsize 4in\vss\noindent
-Here is a version of the Lua logo, with a Unicode accent for show.
-$$\includegraphics[scale=0.7]{lulu.pdf}$$
-produced with "luamplib":
-\begin{smallcode}
-\documentclass[margin=5mm]{standalone}
-\usepackage{fontspec}
-\setmainfont{TeX Gyre Heros}
-\usepackage{luamplib}
-\begin{document}
-\begin{mplibcode}
-beginfig(1);
-color lemon, midnight; lemon = (1,1,1/2); midnight = (0,0,1/2);
-
-fill unitsquare shifted -(1/2,1/2) scaled 4cm withcolor lemon;
-fill fullcircle scaled 3cm withcolor midnight;
-draw fullcircle scaled 3.7cm dashed evenly scaled 2 withcolor .5 white;
-
-fill fullcircle scaled 8mm shifted (0.7cm,0.7cm) withcolor white;
-fill fullcircle scaled 8mm shifted (1.4cm,1.4cm) withcolor midnight;
-
-label.bot(btex Luã etex scaled 2.8,origin) withcolor white;
-endfig;
-\end{mplibcode}
-\end{document}
-\end{smallcode}
-}}
-
-% new page
 \subsubsection{Producing display maths}
 
-As noted above, \MP\ places everything you put between "btex" and "etex" into an
-"hbox" and typesets it in restricted horizontal mode.  One of the restrictions in
-this mode is that you can't use "$$ ... $$" to produce display maths. This means that  
+One of the obvious restrictions that \TeX\ imposes in
+restricted horizontal mode
+is that you can't use "$$ ... $$" to produce display maths. This means that  
 the various mode-sensitive constructs like $\sum$ and $\int$ will come out in their
-smaller forms.  If you want them big, then the solution is simple: just add
-"\displaystyle" at the beginning of your formula.\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+smaller forms.  And your fractions will look like they are $3\over4$ size. 
+If you want them big, then the solution is simple: just add
+"\displaystyle" at the beginning of your formula $\longrightarrow$\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 \begin{code}
 ...
 label(btex $\displaystyle \int_0_t 3x^2\, dx$ etex, (x,y));
@@ -3331,24 +3407,38 @@ label(btex $\displaystyle \int_0_t 3x^2\, dx$ etex, (x,y));
 \end{code}
 }}
 
+\subsubsection{Getting consistent baselines for your labels}
+
+As already discussed (§\ref{infontbbox}), you can fiddle with the
+bounding box of a text picture to make
+the \mpl{label} macro line things up on a common baseline, but there is a 
+much easier way with "btex" and "etex".  Plain \TeX\ provides a "\strut" 
+command that inserts an invisible rule that sticks up 8.5pt above the baseline
+and 3.5pt below.  If you put one of these in each of the your labels,
+then they will all have the same vertical size and will all line up
+neatly:\quad\mpl{label(btex \\strut a etex, origin);}
+
+
 \subsubsection{Multiline text labels}
 
 Another consequence of the "hbox" feature is that there is no automatic text
 wrapping done for you, but again you can work round this easily because \TeX\ lets
 you nest a "\vbox" inside an "\hbox".  This gives you proper paragraph-like wrapping
-but you will almost certainly need to adjust the line length, justification, and paragraph
-indentation.\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+but you will almost certainly need to adjust the line length, justification, and 
+indentation in order to get a satisfactory result \rightarrow \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vskip -42pt\noindent
 \begin{code}
 ...
 label(btex \vbox{\hsize 2in\parindent 0pt\raggedright
     An extended caption or label that will be set as a 
-    small paragraph with automatic hyphenation and line-wrapping.
-} etex, (x,y));
+    small paragraph with automatic hyphenation and 
+    line-wrapping.
+} etex, z0);
 ...
-\end{code}
+\end{code}\vss
 }}
 
-You will only need the full power of \TeX's paragraph making system occasionally
+\medskip\noindent
+You may only need the full power of \TeX's paragraph making system occasionally
 though: more usually you will just have one or two lines in each label, and you
 might be quite happy to control the line breaks manually.  In this case it's helpful
 to wrap a little tabular structure around your text.  Here's how to define something
@@ -3370,18 +3460,23 @@ Notice how you can still use the macro with single lines, you just get a one-lin
 table as it were. 
 Note also that the definition of "\s" as given will centre each line of the text under
 the one above.  If you want them left aligned or right aligned, omit one of the
-"\hfil" commands.
+"\hfil" commands. \mpic{-160pt}{labels2}
+The three examples from this page are typeset over here \rightarrow\break
+The small red circle show the reference points and the pale blue lines the 
+bounding boxes of the pictures that \MP\ gets back from \TeX.  
 
 You can of course achieve the same effects using \LaTeX\ tabular structures, but
 then you have to use the "-tex=latex" option to run
-\MP.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in\noindent
-        \textbf{Note}: In case it's not obvious, if you want text wrapping or
-        tabular arrangements as discussed here, you need to use \texttt{btex ... etex}
-        to set your labels.  There's no text wrapping with "infont".  On the other
-        hand if all of your labels are in "infont" but you just want one extra that
-        has two lines, you can split the text into two separate labels and position
-them independently.}}
+\MP.
 
+\smallskip\noindent
+\textbf{Note}: In case it's not obvious, if you want text wrapping or tabular
+arrangements as discussed here, you need to use \texttt{btex ... etex} to set your
+labels.  There's no text wrapping with "infont".  On the other hand if all of your
+labels are in "infont" but you just want one extra that has two lines, you can split
+the text into two separate labels and position them independently.
+
+\newpage
 \subsubsection{Dynamic labels}
 
 If you are a maven of programming language syntax you may have noticed that 
@@ -3451,18 +3546,295 @@ would have to write:
 }}
 
 \newpage
+\subsubsection{Matching the fonts with plain \TeX}
+
+Despite the apparent restriction of using plain \TeX\ it is almost always possible
+to match the font and format of an enclosing \LaTeX\ document. 
+The simplest approach is to use the plain
+\TeX\ font mechanism with the names from "psfonts.map".  
+\begin{code}
+verbatimtex
+\font\rm=ptmr8r\rm
+etex
+\end{code}
+Adding this at the top of your \MP\ program will set your text in Times New Roman,
+although any maths will still be set using Computer Modern.  
+To fix this, all you
+have to do is to redefine all the maths fonts in all sizes you need; this is not really
+that hard but it is a fiddle to get all the details right.  Fortunately
+the wonderful "font-change" package has done it all for you for a large range of
+fonts; with this package installed you can use
+\begin{code}
+verbatimtex
+\input font_times
+etex
+\end{code}
+instead, and all of your \TeX\ labels, including bold letters, italics, small caps,
+and mathematics will be set in Times New Roman.\vadjust{\moveright5.5in\vbox to
+0pt{\hsize 4in\vss\noindent
+Here are some samples of the fonts available in the "font-change" package.  For full
+details, and especially details about using AMS symbols, see the package
+documentation.
+$$\includegraphics{font-sampler3}$$
+}}
+
+\subsubsection{Matching fonts using \LaTeX}
+
+If you still can't get your labels to match, you can force \MP\ to use \LaTeX\
+instead of plain \TeX.  You need to use the "-tex" command line switch:
+\begin{code}
+    mpost -tex=latex
+\end{code}
+and also load the packages you need in a "verbatimtex" block at the top of your
+file\rlap{\ $\longrightarrow$}\vadjust{\moveright 5.5in\vbox to 0pt{\hsize 4in\raggedright
+\vskip -42pt
+\noindent
+\begin{smallcode}
+verbatimtex
+ \documentclass{article}
+ \usepackage{mathpazo}
+ \usepackage{xcolor}
+ \begin{document}
+etex
+\end{smallcode}
+Note that the "\documentclass" and the "\begin{document}" lines are required, but
+\MP\ is smart enough to add an "\end{document}" for you.\vss}}
+
+Plain "mpost" needs an old-fashioned ".dvi" file to work with, so you can only use
+an engine that still produces one, like "latex" or "elatex", and not any of the
+more modern engines, like "pdflatex".  Generating the labels takes a little bit
+longer because you have to load rather more `infrastructure' for \LaTeX, and you
+are limited to whatever font packages you have that work with the traditional
+\LaTeX\ engine.  For a more modern approach, read on into section
+\ref{sec:neo-labels}.
+
+%% \subsubsection{Getting full access to your system fonts}
+%% 
+%% If you want full access to all of your system fonts you can
+%% approach the problem the other way round and use one of the various means to include
+%% \MP\ graphics as part of your \LaTeX\ source code.  These include "gmp" for
+%% pdf\LaTeX, "luamplib" for lua\LaTeX, and the whole Context system.  The great
+%% advantage of these systems is that all of your \MP\ labels directly inherit the
+%% environment of the parent document, and give you access to all your system fonts and
+%% full Unicode support -- the only disadvantages are that it's not so fast or simple as plain \MP\
+%% and you have to compile every graphic everytime you compile the document.  It is of course always possible to
+%% use these systems to produce standalone PDF graphics that you can then include in a
+%% more conventional \TeX\ document.  The example on the right shows how;  in this case
+%% the text uses the fonts set in the \LaTeX\ preamble.\vadjust{\moveright5.5in\vbox to
+%% 0pt{\hsize 4in\vss\noindent
+%% Here is a version of the Lua logo, with a Unicode accent for show.
+%% $$\includegraphics[scale=0.7]{lulu.pdf}$$
+%% produced with "luamplib":
+%% \begin{smallcode}
+%% \documentclass[margin=5mm]{standalone}
+%% \usepackage{fontspec}
+%% \setmainfont{TeX Gyre Heros}
+%% \usepackage{luamplib}
+%% \begin{document}
+%% \begin{mplibcode}
+%% beginfig(1);
+%% color lemon, midnight; lemon = (1,1,1/2); midnight = (0,0,1/2);
+%% 
+%% fill unitsquare shifted -(1/2,1/2) scaled 4cm withcolor lemon;
+%% fill fullcircle scaled 3cm withcolor midnight;
+%% draw fullcircle scaled 3.7cm dashed evenly scaled 2 withcolor .5 white;
+%% 
+%% fill fullcircle scaled 8mm shifted (0.7cm,0.7cm) withcolor white;
+%% fill fullcircle scaled 8mm shifted (1.4cm,1.4cm) withcolor midnight;
+%% 
+%% label.bot(btex Luã etex scaled 2.8,origin) withcolor white;
+%% endfig;
+%% \end{mplibcode}
+%% \end{document}
+%% \end{smallcode}
+%% }}
+
+
+\newpage
+\section{Modern labels and annotations}\label{sec:neo-labels}
+
+This section is a re-working of the previous section, that attempts to show how much
+nicer it is to handle labels in the new world of "luamplib".  If this is all new
+to you, you probably should start by doing "texdoc luamplib" on your system
+and reading the documentation provided with the package.  In order to use these
+new-fangled facilities you need to create your \MP\ diagrams inside a \TeX-wrapper
+as explained above in §\ref{sec:sa-lua-flow}.
+
+\medskip\noindent
+The first thing to say is that everything in the preceding section
+will continue to work more or less the same when you use "luamplib" with Lua\LaTeX.
+It is designed to be backwards-compatible, so that existing \MP\ programs using "infont" and 
+"btex" \dots\ "etex" will continue to work without change.  The only differences are:
+that the "TEX()" macro is re-implemented with internal library functions
+so that it no longer uses temporary files, and is therefore very much faster; and it
+is easier to integrate your drawings into \LaTeX\ because you no longer need to muck
+about with \mpl{verbatimtex} blocks. 
+So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-160pt
+\begin{smallcode}
+\documentclass[border=5mm]{standalone}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\usepackage{luatex85}
+\usepackage{luamplib}
+\begin{document}
+\begin{mplibcode}
+beginfig(1);
+    for x = 0 upto 1:
+        draw (80x,16) -- (80x, -68) withcolor 3/4[red, white];
+    endfor
+    for y = 0 upto 3:
+        draw (0, -20y) -- (160, -20y) withcolor 3/4[red, white];
+    endfor
+
+    string s; s = "Hand gloves"; 
+    draw s infont defaultfont  shifted (0, 0);
+    draw s infont "phvr8r"     shifted (0, -20);
+    draw TEX(s)                shifted (0, -40);
+    draw btex Hand gloves etex shifted (0, -60);
+
+    dotlabel.urt(s,                     (80, 0));
+    dotlabel.urt(s infont "phvr8r",     (80, -20));
+    dotlabel.urt(TEX(s),                (80, -40));
+    dotlabel.urt(btex Hand gloves etex, (80, -60));
+endfig;
+\end{mplibcode}
+\end{document}
+\end{smallcode}\vss}}
+will produce this:
+$$\includegraphics{neo-labels.pdf}$$
+Note that "defaultfont" is still "cmr10" with the encoding that has the small stroke 
+(that plain \TeX\ uses for the \L\ character) instead of a space, and that you can still use PostScript
+fonts like "phvr8r".  But also notice that the "TEX()" macro and the "btex" \dots\ 
+"etex" construction have picked up the font set by the \LaTeX\ wrapper.  As you can
+see they produce exactly the same output; "TEX()" is more useful because you can 
+pass a primary string variable as an argument, which makes it easier to
+construct dynamic labels.  "TEX()" also has the synonym "textext()" for compatibility
+with ConTexT.  You can use either name, as you prefer.  
+
+\smallskip\noindent
+But this isn't the clever bit\dots
+
+\clearpage
+\subsection{The magic of the \texttt{textextlabel} option}
+
+The clever bit is that "luamplib" allows us to turn on the "TEX()" behaviour by
+default, so that you can just use plain strings with the \mpl{label()} macro, and
+have them automatically processed through \LaTeX.  All you have to do is add this 
+to the preamble:
+\begin{Verbatim}
+\mplibtextextlabel{enable}
+\end{Verbatim}
+If you add this line to the example from the previous
+page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-80pt
+\begin{smallcode}
+\documentclass[border=5mm]{standalone}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\usepackage{luatex85}
+\usepackage{luamplib}
+\mplibtextextlabel{enable}  % <--- added option
+\begin{document}
+\begin{mplibcode}
+beginfig(1);
+    for x = 0 upto 1:
+        draw (80x,16) -- (80x, -68) withcolor 3/4[red, white];
+    endfor
+    for y = 0 upto 3:
+        draw (0, -20y) -- (160, -20y) withcolor 3/4[red, white];
+    endfor
+
+    string s; s = "Hand gloves"; 
+    draw s infont defaultfont  shifted (0, 0);
+    draw s infont "phvr8r"     shifted (0, -20);
+    draw TEX(s)                shifted (0, -40);
+    draw btex Hand gloves etex shifted (0, -60);
+
+    dotlabel.urt(s,                     (80, 0));
+    dotlabel.urt(s infont "phvr8r",     (80, -20));
+    dotlabel.urt(TEX(s),                (80, -40));
+    dotlabel.urt(btex Hand gloves etex, (80, -60));
+endfig;
+\end{mplibcode}
+\end{document}
+\end{smallcode}
+
+\vskip 58pt
+\centerline{\textcolor{textred}{$\star$ All the examples in the rest of this section $\star$}}
+\centerline{\textcolor{textred}{assume that you have set \texttt{\textbackslash
+mplibtextextlabel}}}
+\vss}}
+you get this output:
+$$\includegraphics{neo-labels-tte.pdf}$$
+As you can see, they all come out the same.  
+When the magic option is enabled, "luamplib" redefines
+the primitive binary operator \mpl{infont}. 
+Ordinarily, this command takes two strings (the text you want to show, and the name
+of the font to use) and produces a picture object consisting of the text typeset in
+the given font.
+$$\mptype{string} "infont" \mptype{string} \longrightarrow \mptype{picture}$$
+With the option enabled, 
+the right hand \mptype{string} argument (which names the font) is completely ignored,
+and the left hand \mptype{string} argument (the text to show) is passed to the "TEX()"
+macro. The result is still a \mptype{picture} of course, but instead
+of a simple rendering in a single font, the string will have been passed through
+\LaTeX, so it can include maths, bold text, or any arbitrary typesetting
+constructions.
+
+Note that even with the option enabled, \MP\ will not let you pass a \mptype{string}
+to \mpl{draw}.   You have to put \mpl{infont "somefont"} after the string to get the
+magic to work; the nice thing is that the \mpl{label()} macros do this for you.  
+
+If you experiment a bit, you will find that even though the font name argument is
+completely ignored, you can't leave it out; you have to give at least an empty
+string: \mpl{draw "my text" infont ""}.  However if you find yourself writing this,
+you probably should try \mpl{draw TEX("my text")} instead.
+
+\subsection{Matching style with Unicode and OTF fonts}
+
+matching fonts
+using UTF8 and OTF fonts (and greek)
+
+\subsection{Typographical minus signs for labels}
+
+This is really easy now, because we can assemble a string
+on the fly:\mpic{0pt}{simple-number-line}
+\begin{code}
+draw (left--right) scaled 2in withcolor 2/3 red;
+for i=-4 upto 4:
+  dotlabel.top("$" & decimal i & "$", (32i, 0);
+endfor
+\end{code}
+You will recall that the "&" binary operator concatenates two strings.
+
+\subsection{Dynamic labels}
+
+This is also really easy, for the same reason.  The code to label
+points round a circle is now simple \textit{and} quick:\mpic{0pt}{simple-circle-labels}
+\begin{code}
+path C; C = fullcircle scaled 100; draw C withcolor 2/3 red;
+for i=0 upto 11:
+  drawdot point 2/3 i of C withpen pencircle scaled dotlabeldiam;
+  label("$p_{" & decimal i & "}$", point 2/3 i of C scaled 1.17);
+endfor
+\end{code}
+
+
+bounding boxes
+
+label vs draw
+
+plain TeX?
+
+display maths
+multiline text
+
+\newpage
 \subsection{Markers for annotations}
 
 \subsubsection{Call outs}
 
 
 - annotations - overbrace, underbrace, length arrows etc, ahangle trick
-
-\newpage
-\section{Modern labels and annotations}
-
-This section is a re-working of the previous section, that attempts to show how much
-nicer it is to handle labels in the new world of `luamplib`.
 
 
 \newpage
