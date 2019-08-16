@@ -45,7 +45,7 @@
 %md-chrma MathDesign-CH-Regular-MathDesignSymbolA-10 <md-chrma.pfb
 %md-chrmb MathDesign-CH-Regular-MathDesignSymbolB-10 <md-chrmb.pfb
 prologues := 3;
-outputtemplate := "%j%c.mps";
+outputtemplate := "%j%c.eps";
 beginfig(1);
 ypos = 0;
 picture glyph; 
@@ -81,7 +81,7 @@ vardef set_line(expr f, n) =
   picture code, name, sample;
   code = f infont "cs-lmtt10";
   name = n infont "cs-lmss10";
-  sample = "Grey fox 42" infont f;
+  sample = "Hand in glove 42" infont f;
   yy := yy - 14;
   draw code shifted (-48,yy);
   draw name shifted (0,yy);
@@ -107,7 +107,6 @@ yy := 150;
 set_line("pagk8r","Avant Garde"); 
 set_line("pbkl8r","Bookman"); 
 set_line("pcrr8r","Courier"); 
-set_line("ugmr8r","Garamond");
 set_line("phvr8r","Helvetica"); 
 set_line("pncr8r","New Century Schoolbook"); 
 set_line("pplr8r","Palatino"); 

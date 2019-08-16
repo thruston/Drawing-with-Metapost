@@ -40,6 +40,18 @@
 \definecolor{textred}{rgb}{0.54,0,0}
 \definecolor{textgreen}{rgb}{0,0.43,0}
 % style for highlighting
+\newcommand\texstyle{\lstset{
+    language=[LaTeX]Tex,
+basicstyle=\ttfamily,
+keywordstyle=\color{textblue},
+commentstyle=\color{textred},    % Custom highlighting style
+stringstyle=\color{textgreen},
+frame=none,                      % Any extra options here
+columns=fullflexible,
+keepspaces=true,
+xleftmargin=\parindent,
+showstringspaces=false,
+}}
 \newcommand\mpstyle{\lstset{
 language=Metapost,
 basicstyle=\ttfamily,
@@ -50,9 +62,11 @@ frame=none,                      % Any extra options here
 columns=fullflexible,
 keepspaces=true,
 xleftmargin=\parindent,
-showstringspaces=false           % 
+showstringspaces=false,
+morestring=[s]{btex}{etex}
 }}
 \lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily}}{}
+\lstnewenvironment{texcode}[1][]{\texstyle\lstset{basicstyle=\small\ttfamily}}{}
 \lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
 \newcommand\mpexternal[2][]{{\mpstyle\lstinputlisting[#1]{#2}}}
 \newcommand\mpl[1]{{\mpstyle\lstinline!#1!}}
@@ -237,19 +251,25 @@ about.  Instead of compiling with plain "mpost" I use "lualatex" with the "luamp
 package, which calls \MP\ from within the Lua environment.  The \MP\ engine actually
 used is exactly the same.  Here is
 the template I use:
-\begin{smallcode}
+\begin{texcode}
 \documentclass[border=5mm]{standalone}
 \usepackage{luatex85}
 \usepackage{luamplib}
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
-beginfig(1);
+\end{texcode} 
+\vskip-12pt
+\begin{smallcode}
+    beginfig(1);
 
-endfig;
+    endfig;
+\end{smallcode}
+\vskip-12pt
+\begin{texcode}
 \end{mplibcode}
 \end{document}
-\end{smallcode}
+\end{texcode}
 As you can see, we have \MP\ source code wrapped up in a minimal \LaTeX\ document
 using the \texttt{standlone} class, which automatically adjusts the page size to 
 fit the contents of document, so is ideal for single diagrams.  One small
@@ -3034,9 +3054,9 @@ to use with "infont" is in the first column.
 $$\includegraphics{font-sampler2}$$
 The text example in the first line
 of this table was produced with
-\begin{code}
-    draw "Grey fox 42" infont "pagk8r" shifted (124,144);
-\end{code}
+\begin{smallcode}
+draw "Hand in glove 42" infont "pagk8r" shifted (124,144);
+\end{smallcode}
 Note that in PostScript terms each of these font names refers to a combination of
 three files: an encoding that maps the characters you type to the glyphs in the
 font; a font metrics file that defines the sizes of the virtual boxes surrounding
@@ -3092,7 +3112,7 @@ right), but you can use any 8-bit characters as the payload of a string.
 However, plain \MP\ is set by default to use "cmr10", the familiar Computer Modern typeface
 developed by Knuth for \TeX, and unfortunately, this is encoded using the \TeX\ text
 font encoding (also known as `OT1', and as shown in the first table in Appendix~F of the {\sl \TeX book}).  
-\mpic{-108pt}{font-sampler1.pdf}  
+\mpic{-108pt}{font-sampler1}  
 From the point of
 view of using "infont" to make simple labels, this means that the characters for
 space and seven other characters ("< > \ _ { | }") are in the wrong place.  
@@ -3670,15 +3690,18 @@ so that it no longer uses temporary files, and is therefore very much faster; an
 is easier to integrate your drawings into \LaTeX\ because you no longer need to muck
 about with \mpl{verbatimtex} blocks. 
 So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-160pt
-\begin{smallcode}
+\begin{texcode}
 \documentclass[border=5mm]{standalone}
 \usepackage{fontspec}
-\setmainfont{TeX Gyre Pagella}
+\setmainfont{TeX Gyre Pagella} % <-- note chosen font
 \usepackage{luatex85}
 \usepackage{luamplib}
 \begin{document}
 \begin{mplibcode}
-beginfig(1);
+\end{texcode}
+\vskip-\baselineskip
+\begin{smallcode}
+  beginfig(1);
     for x = 0 upto 1:
         draw (80x,16) -- (80x, -68) withcolor 3/4[red, white];
     endfor
@@ -3696,20 +3719,23 @@ beginfig(1);
     dotlabel.urt(s infont "phvr8r",     (80, -20));
     dotlabel.urt(TEX(s),                (80, -40));
     dotlabel.urt(btex Hand gloves etex, (80, -60));
-endfig;
+  endfig;
+\end{smallcode}
+\vskip-\baselineskip
+\begin{texcode}
 \end{mplibcode}
 \end{document}
-\end{smallcode}\vss}}
+\end{texcode}\vss}}
 will produce this:
 $$\includegraphics{neo-labels.pdf}$$
 Note that "defaultfont" is still "cmr10" with the encoding that has the small stroke 
-(that plain \TeX\ uses for the \L\ character) instead of a space, and that you can still use PostScript
-fonts like "phvr8r".  But also notice that the "TEX()" macro and the "btex" \dots\ 
-"etex" construction have picked up the font set by the \LaTeX\ wrapper.  As you can
-see they produce exactly the same output; "TEX()" is more useful because you can 
-pass a primary string variable as an argument, which makes it easier to
-construct dynamic labels.  "TEX()" also has the synonym "textext()" for compatibility
-with ConTexT.  You can use either name, as you prefer.  
+(that plain \TeX\ uses for the \L\ character) instead of a space, and that you can
+still use PostScript fonts like "phvr8r".  But also notice that the "TEX()" macro
+and the "btex" \dots\ "etex" construction have picked up the font set by the \LaTeX\
+wrapper.  As you can see they produce exactly the same output; "TEX()" is generally
+more useful because you can pass a primary string variable as an argument, which
+makes it easier to construct dynamic labels.  "TEX()" also has the synonym
+"textext()" for compatibility with ConTexT.  You can use either name, as you prefer.  
 
 \smallskip\noindent
 But this isn't the clever bit\dots
@@ -3721,12 +3747,12 @@ The clever bit is that "luamplib" allows us to turn on the "TEX()" behaviour by
 default, so that you can just use plain strings with the \mpl{label()} macro, and
 have them automatically processed through \LaTeX.  All you have to do is add this 
 to the preamble:
-\begin{Verbatim}
+\begin{texcode}
 \mplibtextextlabel{enable}
-\end{Verbatim}
+\end{texcode}
 If you add this line to the example from the previous
 page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-80pt
-\begin{smallcode}
+\begin{texcode}
 \documentclass[border=5mm]{standalone}
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Pagella}
@@ -3735,7 +3761,10 @@ page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-80pt
 \mplibtextextlabel{enable}  % <--- added option
 \begin{document}
 \begin{mplibcode}
-beginfig(1);
+\end{texcode}
+\vskip-\baselineskip
+\begin{smallcode}
+  beginfig(1);
     for x = 0 upto 1:
         draw (80x,16) -- (80x, -68) withcolor 3/4[red, white];
     endfor
@@ -3753,10 +3782,13 @@ beginfig(1);
     dotlabel.urt(s infont "phvr8r",     (80, -20));
     dotlabel.urt(TEX(s),                (80, -40));
     dotlabel.urt(btex Hand gloves etex, (80, -60));
-endfig;
+  endfig;
+\end{smallcode}
+\vskip-\baselineskip
+\begin{texcode}
 \end{mplibcode}
 \end{document}
-\end{smallcode}
+\end{texcode}
 
 \vskip 58pt
 \centerline{\textcolor{textred}{$\star$ All the examples in the rest of this section $\star$}}
@@ -3789,10 +3821,81 @@ completely ignored, you can't leave it out; you have to give at least an empty
 string: \mpl{draw "my text" infont ""}.  However if you find yourself writing this,
 you probably should try \mpl{draw TEX("my text")} instead.
 
-\subsection{Matching style with Unicode and OTF fonts}
+\subsection{Using Unicode and matching style with OTF fonts}
+
+If you read "texdoc luamplib" carefully, you will see that you \textit{can} use all
+these new facilities with plain Lua\TeX, but this chapter is about using them with
+Lua\LaTeX, and in particular it assumes some familiarity with the packages
+"fontspec" and "unicode-math" that provide complete support for Unicode and OTF
+fonts; you need this familiarity in order to use "luamplib" properly. 
+\mpic{1cm}{unicode}
+
+You also need an editor that will handle Unicode.  \MP\ still restricts you to using
+printable ASCII in your source code, except within a string literal or a "btex"
+\dots\ "etex" picture literal.  So it becomes very easy to write this sort of label:
+\begin{smallcode}
+label("café noir £2.50", origin);
+\end{smallcode}
+or even whole paragraphs that use Unicode:
+\begin{smallcode}
+    label(btex \vbox{\hsize 4in 
+     Nous étions à l'Étude, quand le Proviseur entra, suivi d'un \textit{nouveau}
+     habillé en bourgeois et d'un garçon de classe qui portait un grand
+     pupitre. Ceux qui dormaient se réveillèrent, et chacun se leva comme
+     surpris dans son travail. \par} etex, 40 down);
+\end{smallcode}
+
+But you also need a font that actually supports the Unicode characters you use.
+The default Latin Modern font used by Lua\LaTeX\ has a good range for English and
+most European languages, but is a bit lacking in (say) polytonic Greek.  So you will
+need to define a suitable font in your preamble, and turn it on in your labels.
+\begin{texcode}
+\usepackage{fontspec} \newfontface\polytonic{GFS Porson}
+\end{texcode}
+then 
+\begin{smallcode}
+label(btex \vbox{\polytonic\halign{#\hfil\cr 
+   Μῆνιν ἄειδε, θεά, Πηληϊάδεω Ἀχιλῆος\cr 
+   οὐλομένην, ἣ μυρί\thinspace᾽ Ἀχαιοῖς ἄλγε᾽ ἔθηκε,\cr 
+   πολλὰς δ᾽ ἰφθίμους ψυχὰς Ἄϊδι προΐαψεν\cr 
+   ἡρώων, αὐτοὺς δὲ ἑλώρια τεῦχε κύνεσσιν\cr 
+   οἰωνοῖσί τε πᾶσι· Διὸς δ᾽ ἐτελείετο βουλή·\cr 
+   ἐξ οὗ δὴ τὰ πρῶτα διαστήτην ἐρίσαντε\cr 
+   Ἀτρεΐδης τε ἄναξ ἀνδρῶν καὶ δῖος Ἀχιλλεύς.\cr}} etex, 120 down);
+\end{smallcode}
+
+
+
+This chapter assumes that you
 
 matching fonts
 using UTF8 and OTF fonts (and greek)
+
+\subsection{Multi-line labels}
+
+It is a rule of syntax in \MP\ that a string token has to be given all on one line.
+So if you have very long labels, or paragraphs of text, then you have to split them
+up into separate shorter string tokens:
+\begin{code}
+label("\vbox{\hsize 4in It is a truth universally acknowledged,"
+     & " that a single man in possession of a good fortune,"
+     & " must be in want of a wife.\par}", origin);
+\end{code}
+taking care to include the necessary spaces, which can get fiddly.
+But this is where the "btex" \dots\ "etex" construction comes into play, even with
+"luamplib".  As we saw in the preceding section the construction fits into the \MP\
+syntax scheme as a special pair of quotation marks that produces a \mptype{picture}.
+Unlike regular string token, a "btex" \dots\ "etex" picture token can span several
+lines of source code, so you can (more easily) write long \TeX\ labels like this:
+\begin{code}
+label(btex \vbox{\hsize 4in 
+     It is a truth universally acknowledged,
+     that a single man in possession of a good fortune,
+     must be in want of a wife.
+     \par} etex, origin);
+\end{code}
+Thanks to the backward compatibility of the implementation, this works very well
+even when you have "mplibtextextlabel" enabled.
 
 \subsection{Typographical minus signs for labels}
 
@@ -3804,7 +3907,7 @@ for i=-4 upto 4:
   dotlabel.top("$" & decimal i & "$", (32i, 0);
 endfor
 \end{code}
-You will recall that the "&" binary operator concatenates two strings.
+You will recall that the binary operator "&" concatenates two strings.
 
 \subsection{Dynamic labels}
 
