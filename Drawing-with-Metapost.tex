@@ -105,12 +105,12 @@ to questions about technical drawing on the wonderful \TeX\ StackExchange site. 
 accordance with their terms and conditions, I’ve only included material here that
 I’ve written myself --- if you want other people’s code then visit the site;
 while most answers there focus on writing \LaTeX\ documents, there are a great
-many questions about drawing, and some of the answers are very illuminating.  
+many questions about drawing, and some of the answers are very illuminating.
 
 My approach here will be to explore plain \MP, with examples grouped
 into themes.  One approach to using this document would be to read it end to end.
 Another would be to flick through until you see something that looks like it might
-be useful and then see how it’s done. 
+be useful and then see how it’s done.
 
 And when I say \textit{plain} \MP\ I mean \MP\ with the default format (as defined
 in the file "plain.mp") loaded and no other external packages (apart from "boxes.mp"
@@ -127,12 +127,12 @@ as clear as possible in my examples.
     \item Assignment or equation:  the equation "a=3;" means "a" is the same as "3" throughout the
         current scope; the assignment "a:=3;" means update the value of "a" to the value "3"
         immediately.  The difference becomes apparent when you try to update a
-        variable in the same scope.  
+        variable in the same scope.
         \mwpic{0pt}{tiling}
-        
+
         This difference also lets you write linear equations
         like "a=-b;".  After this, as soon as you give  a value to "a", \MP\ immediately works
-        out the value of "b".  
+        out the value of "b".
         This is clever but has its limitations.  As the following snippet reveals:
 \begin{code}
   % if you run this       you will get this in the log
@@ -143,10 +143,10 @@ as clear as possible in my examples.
         As soon as you assign to variable with ":=" \MP\ breaks any previously
         established equations.
 
-    \item Variable types: 
-        
+    \item Variable types:
+
         —
-        \mpl{numeric} "a", 
+        \mpl{numeric} "a",
         \mpl{pair} "(a,b)"
 
         —
@@ -163,18 +163,18 @@ as clear as possible in my examples.
         If you don’t declare a variable, it’s assumed that it’s a \mpl{numeric}.
         When you do declare a variable --- \mpl{numeric} or otherwise — any value that it
        already had in the current scope is removed.
-            
+
     \item Implicit multiplication: \MP\ inherits a rich set of rules about numerical
         expressions from \MF, and of special interest is the scalar multiplication
         operator.  Any simple number, like "42", "3.1415", or ".6931", or any simple
         fraction like "1/2" or "355/113" standing on it’s own (technically at the
         primary level) and not followed by "+" or "-" becomes a scalar
-        multiplication operator that applies to the next token (which should be variable 
+        multiplication operator that applies to the next token (which should be variable
         of some appropriate type).
         So you can write things like "3a", or even "1/2 a"
-        (the space between the number and the variable name is optional). This 
+        (the space between the number and the variable name is optional). This
         lets you write very readable mathematical expressions. It’s quite
-        additictive after a while. 
+        additictive after a while.
 
 \end{itemize}
 
@@ -183,7 +183,7 @@ as clear as possible in my examples.
 The \mpl{sqrt} operator is defined at the same (top) level of precedence, so
 that \mpl{sqrt2+1} is read as \mpl{(sqrt2)+1} and not \mpl{sqrt(2+1)}, but fractions
 trump even that, so \mpl{sqrt 1/2 = 0.7071} is true.}
-   
+
 \newpage
 \section{Workflow}
 
@@ -229,7 +229,7 @@ the source, it automatically updates the view of the PostScript output.
 \moveright5.4in\vbox to 0pt{\vss\hsize 4in\noindent
 $$\includegraphics[width=4in]{workflow-plain.pdf}$$
 If I want to use the diagram in a \LaTeX\ document I can include the EPS file
-directly with 
+directly with
 \begin{Verbatim}
     \includegraphics{some-diagram1.eps}
 \end{Verbatim}
@@ -258,7 +258,7 @@ the template I use:
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
-\end{texcode} 
+\end{texcode}
 \vskip-12pt
 \begin{smallcode}
     beginfig(1);
@@ -271,7 +271,7 @@ the template I use:
 \end{document}
 \end{texcode}
 As you can see, we have \MP\ source code wrapped up in a minimal \LaTeX\ document
-using the \texttt{standlone} class, which automatically adjusts the page size to 
+using the \texttt{standlone} class, which automatically adjusts the page size to
 fit the contents of document, so is ideal for single diagrams.  One small
 disadvantage is that you can only produce one PDF output file, so you need to have a
 separate file for each picture, but the good news is that you get a much simpler and
@@ -280,8 +280,8 @@ Since this only works with "lualatex" you have to use the "fontspec" package, as
 explained in section \ref{sec:neo-labels}.
 
 \subsection{Integrated graphics with Lua\LaTeX}
-   
-If you are ready to use "lualatex" for processing your entire document, then you can 
+
+If you are ready to use "lualatex" for processing your entire document, then you can
 directly embed your \MP\ drawings in a series of "mplibcode" environments.  Each one
 produces a horizontal-mode box.  For details try "texdoc luamplib".  The only
 drawback of this all-in-one approach is that you have to compile all the drawings
@@ -291,7 +291,7 @@ every time you compile the document, which might slow you down.
 \section{Making and using closed paths}
 \label{plain-shapes}
 
-In \MP\ there are two sorts of paths: open and closed.  
+In \MP\ there are two sorts of paths: open and closed.
 \mpic{-12pt}{closed0}
 A closed path is called a cycle, and is created with the "cycle" primitive like this:
 \begin{code}
@@ -303,16 +303,16 @@ cycle.  This concept is common to most drawing languages but it’s often hidden
 open path might be automatically closed for you when you try to fill it.  \MP\ takes
 a more cautious approach; if you pass an open path to "fill" you will get an error
 that says ‘Not a cycle’.  You can also use "cycle" in a boolean context to test
-whether a path "p" is cyclic: 
+whether a path "p" is cyclic:
 $\hbox{\ttfamily if cycle p: ... fi}$.
 
 \medskip\noindent
-There are several closed paths defined for you in plain \MP. 
+There are several closed paths defined for you in plain \MP.
 \mpic{1cm}{closed7}
 \begin{itemize}
     \item "unitsquare" which you can use to draw any rectangle with appropriate
         use of "xscaled" and "yscaled" --- it’s defined so that the bottom left
-        corner is point 0 of the shape.  This point is also defined as "(0,0)", 
+        corner is point 0 of the shape.  This point is also defined as "(0,0)",
         so the "unitsquare" is centred on point "(1/2,1/2)".  If you want a square
         centered on the origin, then shift it by "-(1/2,1/2)" before you scale it.
 
@@ -340,7 +340,7 @@ centered on the origin in all of these examples.  The small red circle marks the
 \textit{unitsquare} has four points, while the other two shapes both have eight.
 The small
 arrows between point~0 and point~1 of each shape indicate the direction of the path
-that makes up the shape.  
+that makes up the shape.
 
 \vfill\noindent
 If you want to highlight a segment of your shape, there’s a neat way to define it
@@ -368,7 +368,7 @@ $4/\pi \simeq 1.27324$).
 \vfill\noindent
 In a cyclic path, the point numbering in \MP\ wraps round: so in a
 circle, point $n$ is the same as point $n+8$; and in general point $n$ is the same as
-point $n+\hbox{\bf length }p$.  This works with negative numbers too, so we could use 
+point $n+\hbox{\bf length }p$.  This works with negative numbers too, so we could use
 \begin{code}
 center p -- subpath(-1,1) of p -- cycle
 \end{code}
@@ -378,7 +378,7 @@ to get wedge centered on point 0.
 
 Plain \MP\ has a built-in function to compute the intersection points of two paths, and
 there’s a handy high level function called "buildcycle" that uses this function to
-create an arbitrary closed path.  
+create an arbitrary closed path.
 \mpic{0pt}{area-under-graph1}
 The arguments to the function are just a list of paths, and providing the paths all
 intersect sensibly, it
@@ -421,7 +421,7 @@ vardef buildcycle(text input_path_list) =
   for p=input_path_list: pp[incr k]=p; endfor
   j=k;
   for i=1 upto k:
-    (ta[i], length pp[j]-tb[j]) 
+    (ta[i], length pp[j]-tb[j])
       = pp[i] intersectiontimes reverse pp[j];
     if ta[i]<0:
       errmessage("Paths " & decimal i &
@@ -429,15 +429,15 @@ vardef buildcycle(text input_path_list) =
     fi
     j := i;
   endfor
-  for i=1 upto k: 
-    subpath (ta[i],tb[i]) of pp[i] .. 
+  for i=1 upto k:
+    subpath (ta[i],tb[i]) of pp[i] ..
   endfor cycle
 enddef;
 \end{code}
 \vss}}
 
 \noindent
-Notice how freely the indentation can vary; this is both a blessing 
+Notice how freely the indentation can vary; this is both a blessing
 (because you can line up things clearly) and a curse (because the syntax may not
 be very obvious at first glance).  Notice also the different ways we can use a
 $\kw{for}$-loop.  The first two are used at the ‘outer’ level to repeat complete
@@ -459,18 +459,18 @@ at the end of the loop;   in this way
 The macro uses the primitive operator \mpl{intersectiontimes} to find the intersection
 points, if any. Note that we are looking for two path times: the time to start a
 subpath of the current path and the time to end a subpath of the previous path; the
-macro does this neatly 
+macro does this neatly
 by reversing the previous path and setting the $b$-point indirectly by subtracting
-the time returned from the length of the path. 
+the time returned from the length of the path.
 
 If all has gone well, then "ta" will hold all the start points of the desired
 subpaths, and "tb" all the corresponding end
 points.
-The third and final "for" loop assumes that this is indeed the case, and tries to 
+The third and final "for" loop assumes that this is indeed the case, and tries to
 connect them all together.  Note that it uses ".." rather than "&" just in case the
 points are not quite co-incident; finally it finishes with a
 "cycle" to close the path even though point "tb" of path "k" should be identical (or
-at least very close) to 
+at least very close) to
 point "ta" of path "0".
 
 This implementation of \mpl{buildcycle} works well in most cases, provided that there
@@ -485,18 +485,18 @@ The implementation of "buildcycle" in plain \MP\ can get confused if you use it 
 just two paths.  Consider the following example: \mpic{0pt}{overlaps2}
 \begin{code}
 beginfig(1);
-  path A, B;  
-  A = fullcircle scaled 2.5cm; 
+  path A, B;
+  A = fullcircle scaled 2.5cm;
   B = fullcircle scaled 1.8cm shifted (1cm,0);
-  fill buildcycle(A,B) withcolor .8[blue,white]; 
+  fill buildcycle(A,B) withcolor .8[blue,white];
   drawarrow A; drawarrow B;
 endfig;
 \end{code}
-When we compile this example, we get no error message from "buildcycle", but there 
+When we compile this example, we get no error message from "buildcycle", but there
 is no fill colour visible in the output.  The problem is that the points found by
 "buildcycle" are the same both times that it steps through the middle loop, so
-the cyclic path it returns consists of two identical (or very close) points and the 
-so the fill has zero area.  
+the cyclic path it returns consists of two identical (or very close) points and the
+so the fill has zero area.
 
 Now observe what happens when we rotate and reverse each of the paths in
 turn.\mpic{-24pt}{overlaps3}
@@ -507,7 +507,7 @@ time it does so.  In~3, we've rotated $B$ by 180° as well, so that $B$ starts i
 $A$ and as expected "buildcycle" fails.  In 4 we've rotated $A$ back to it's
 original position, so that both paths start inside each other; and we get the
 union of the two shapes.  In 5--8, we've repeated the exercise with path $A$
-reversed, and "buildcycle" fails in yet more interesting ways.  
+reversed, and "buildcycle" fails in yet more interesting ways.
 
 You could use this behaviour as a feature if you need to treat $A$ and $B$ as sets
 and you wanted to fill the intersection, union, or set differences, but if you just
@@ -530,13 +530,13 @@ the point towards the right margin and to count how many times it crosses the cy
 path; if the number is odd, the point must be inside.\vadjust{\moveright5.5in\vbox
     to 0pt{\kern-4.05cm
 \begin{code}
-vardef inside(expr p, ring) = 
+vardef inside(expr p, ring) =
   save t, count, test_line;
   count := 0;
   path test_line;
   test_line = p -- (infinity, ypart p);
   for i = 1 upto length ring:
-     t := xpart(subpath(i-1,i) of ring 
+     t := xpart(subpath(i-1,i) of ring
                   intersectiontimes test_line);
      if ((0<=t) and (t<1)): count := count + 1; fi
   endfor
@@ -552,20 +552,20 @@ same direction, and then uses "inside" to determine where the start points are.
 vardef front_half primary p = subpath(0, 1/2 length p) of p enddef;
 vardef back_half primary p = subpath(1/2 length p, length p) of p enddef;
 % a and b should be cyclic paths...
-vardef overlap(expr a, b) = 
+vardef overlap(expr a, b) =
   save A, B, p, q;
   path A, B; boolean p, q;
   A = counterclockwise a;
   B = counterclockwise b;
   p = not inside(point 0 of A, B);
   q = not inside(point 0 of B, A);
-  if (p and q): 
+  if (p and q):
     buildcycle(A,B)
-  elseif p: 
+  elseif p:
     buildcycle(front_half B, A, back_half B)
-  elseif q: 
+  elseif q:
     buildcycle(front_half A, B, back_half A)
-  else: 
+  else:
     buildcycle(front_half A, back_half B, front_half B, back_half A)
   fi
 enddef;
@@ -577,7 +577,7 @@ results.\mpic{-2in}{overlaps4}
 \section{Numbers}
 
 This section discusses plain \MP 's scalar numeric variables
-and what you can do with them. 
+and what you can do with them.
 \MP\ inherits its unusual native system of scaled numbers from \MF;  like many of
 Knuth's creations it is slightly quirky, but works very well once you get the hang
 of it.  The original objective was to make \MF\ produce identical results on a wide
@@ -588,10 +588,10 @@ implications:
 \begin{itemize}
     \item All fractions are rounded to the nearest multiple of $1\over65536$, so
          negative powers of 2 ($1\over2$,
-        $1\over4$, $1\over8$, $\dots$) are exact, but other common fractions are not:  
-        for example $1\over3$ is represented as 
-        ${21845\over65536} \simeq 0.333328$, and $1\over10$ as 
-        ${6554\over65536} \simeq 0.100006$.  
+        $1\over4$, $1\over8$, $\dots$) are exact, but other common fractions are not:
+        for example $1\over3$ is represented as
+        ${21845\over65536} \simeq 0.333328$, and $1\over10$ as
+        ${6554\over65536} \simeq 0.100006$.
         You should bear this in mind particularly when you
  are chosing fractional step-values in a "for" loop, where the errors can accumulate so that
  you may miss your expected terminal value.\vadjust{\moveright5.5in\vbox to
@@ -600,13 +600,13 @@ implications:
      $$\vbox{\halign{#\hfil\quad&#\hfil\cr
      Code&Output\cr\noalign{\smallskip\hrule\bigskip}
      \vtop{\parindent0pt\hsize2.2in
-     \bgroup\obeylines 
-     $\kw{for}$ $i=0$ \kw{step} $1/10$ \kw{until} $1$: 
-     \quad$\kw{show}$ $i$; 
+     \bgroup\obeylines
+     $\kw{for}$ $i=0$ \kw{step} $1/10$ \kw{until} $1$:
+     \quad$\kw{show}$ $i$;
      $\kw{endfor}$
      \egroup
 
-}     
+}
      &
      \vtop{\parindent0pt\parskip-2pt\obeylines\hsize60pt\tt
 >> 0
@@ -622,12 +622,12 @@ implications:
 }
 \cr\noalign{\bigskip}
      \vtop{\parindent0pt\hsize2.2in
-     \bgroup\obeylines 
-     $\kw{for}$ $i=0$ \kw{step} $1$ \kw{until} $10$: 
-     \quad$\kw{show}$ $i/10$; 
+     \bgroup\obeylines
+     $\kw{for}$ $i=0$ \kw{step} $1$ \kw{until} $10$:
+     \quad$\kw{show}$ $i/10$;
      $\kw{endfor}$
      \egroup
-}     
+}
      &
      \vtop{\parindent0pt\parskip-2pt\obeylines\hsize60pt\tt
 >> 0
@@ -644,8 +644,8 @@ implications:
 }\cr\noalign{\bigskip\hrule}\cr
 }}$$
 You get 11 iterations in the second but only 10 with the first.
-\vss}} 
-        
+\vss}}
+
     \item The system limits you to numbers that are less than 4096 in absolute value.
         This can be an irritation if you are trying to plot data with large values,
         but the solution is simple:  scale your values to a reasonable range first.
@@ -653,7 +653,7 @@ You get 11 iterations in the second but only 10 with the first.
     \item Intermediate calculations are allowed to be upto 32768 in absolute value
         before an error occurs.  You can sometimes avoid problems by using the
         special Pythagorean addition and subtraction operators, but the general
-        approach should be to do your calculations before you scale a path 
+        approach should be to do your calculations before you scale a path
         for filling or drawing.
 
     \item You can turn a number upto 32768 into a string using the "decimal"
@@ -669,7 +669,7 @@ approaches just in case, but you will not need to use them very often.
 
 \newpage\subsection{Numeric constants}
 
-Alongside the quirky number system, 
+Alongside the quirky number system,
 plain \MP\ also inherits three numeric constants from \MF: \id{infinity}, \id{epsilon},
 and \id{eps}:
 \begin{itemize}
@@ -694,18 +694,18 @@ you can safely test for equality with: $\kw{abs}(\id{a}-\id{b})<\id{eps}$.
 These three quantities retain (approximately) the same value even if you choose one of the
 alternative, higher precision, number systems.   This is probably the most sane
 approach, but the constants lose their status as the smallest and largest numbers you can
-have.  
+have.
 \vadjust{\moveright5.5in\vbox to 0pt{\kern-221pt\hsize 4.25in
 \noindent
-Running the toy program: 
+Running the toy program:
 \par\bigskip
-$\kw{show} \id{numbersystem}, \id{eps}, \id{epsilon}, \id{infinity}; \kw{end}\!.$ 
+$\kw{show} \id{numbersystem}, \id{eps}, \id{epsilon}, \id{infinity}; \kw{end}\!.$
 \par\bigskip\noindent
-gives the following results with the different 
+gives the following results with the different
 number systems:
 
 \begin{code}
->> "scaled" 
+>> "scaled"
 >> 0.00049
 >> 0.00002
 >> 4095.99998
@@ -772,12 +772,12 @@ other lengths in terms of \id{u}.  If you later wish to make a smaller or larger
 version of the drawing then you can adjust the definition of \id{u} accordingly.
 Two points to note:
 \begin{itemize}
-    \item If you want different vertical units, you can define something like 
+    \item If you want different vertical units, you can define something like
         `$\id{v}=8\,{mm}$' and specify horizontal lengths in terms of \id{u}, but
         verticals in terms of \id{v}.
     \item If you want to change the definition of \id{u} or \id{v} from one figure
         to the next, you will either have to use `$\kw{numeric} \id{u},\id{v};$' at
-        the start of the your program in order to reset them, or 
+        the start of the your program in order to reset them, or
          use the assignment operator instead of the
         equality operator to overwrite the previous values.
 \end{itemize}
@@ -788,14 +788,14 @@ including something like this at the top of your program: $\longrightarrow$
 \vadjust{\moveright 5.5in \vbox to 0pt{\kern-24pt
 \begin{code}
 numeric bp, in, mm, cm, pt, pc, dd, cc;
-72 = 72 bp = 1 in; 
+72 = 72 bp = 1 in;
 800 = 803 pt = 803/12 pc;
 3600 = 1270 mm = 127 cm;
 1238 pt = 1157 dd = 1157/12 cc;
 \end{code}
 %\bgroup\obeylines\parindent0pt
 %$\kw{numeric} \id{bp}, \id{in}, \id{mm}, \id{cm}, \id{pt}, \id{pc}, \id{dd}, \id{cc};$
-%$72 = 72\id{bp} = 1\id{in}$; 
+%$72 = 72\id{bp} = 1\id{in}$;
 %$800 = 803 \id{pt} = 803/12 \id{pc};$
 %$3600 = 1270 \id{mm} = 127 \id{cm};$
 %$1238 \id{pt} = 1157 \id{dd} = 1157/12 \id{cc};$
@@ -825,26 +825,26 @@ more useful functions based on this.
         division.
     \item `$x \mathbin{\kw{mod}} y$' returns $x-y\times\lfloor x/y \rfloor$,
         integer remainder.
-    
+
 \end{itemize}
-Note that $\kw{mod}$ preserves any fractional part, so $355/113 \mathrel{\kw{mod}} 3 = 0.14159$.  
+Note that $\kw{mod}$ preserves any fractional part, so $355/113 \mathrel{\kw{mod}} 3 = 0.14159$.
 
 \smallskip
 \parshape=1 0pt 3.4in
-This behaviour is usually what you want.  
+This behaviour is usually what you want.
 \vadjust{\moveright 3.4in\vbox to 0pt{\includegraphics[scale=0.8]{clocks1}\vss}}
 For example we can use it to turn the time of day into an appropriate rotation for
 the hands of a clock.%
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-196pt
 \begin{code}
-path hand[]; 
-hand1 = origin .. (.257,1/50) .. (.377,1/60) 
-          & (.377,1/60) {up} .. (.40,3/50) 
+path hand[];
+hand1 = origin .. (.257,1/50) .. (.377,1/60)
+          & (.377,1/60) {up} .. (.40,3/50)
          .. (.60, 1/40) .. {right} (.75,0);
-hand1 := (hand1 .. reverse hand1 reflectedabout(left,right) 
+hand1 := (hand1 .. reverse hand1 reflectedabout(left,right)
           .. cycle) scaled 50;
 hand2 = origin  .. (.60, 1/64) .. {right} (.925,0);
-hand2 := (hand2 .. reverse hand2 reflectedabout(left,right) 
+hand2 := (hand2 .. reverse hand2 reflectedabout(left,right)
          .. cycle) scaled 50;
 
 % hour of the day to degrees
@@ -858,15 +858,15 @@ vardef clock(expr hours, minutes) = image(
   draw fullcircle scaled 100 withpen pencircle scaled 7/8;
   % numerals
   for h=1 upto 12:
-    label( decimal h infont "bchr8r", (40,0) rotated htod(h)); 
+    label( decimal h infont "bchr8r", (40,0) rotated htod(h));
   endfor
   % hour and minute marks
-  for t=0 step  6 until 359: 
-    draw ((48,0)--(49,0)) rotated t; 
+  for t=0 step  6 until 359:
+    draw ((48,0)--(49,0)) rotated t;
   endfor
   drawoptions(withpen pencircle scaled 7/8);
-  for t=0 step 30 until 359: 
-    draw ((47,0)--(49,0)) rotated t; 
+  for t=0 step 30 until 359:
+    draw ((47,0)--(49,0)) rotated t;
   endfor
   % hands rotated to the given time
   filldraw hand1 rotated htod(hours+minutes/60);
@@ -914,7 +914,7 @@ numbers, as discussed below.
 elements in these tuples can take any numeric value, so in theory it would be
 possible to use them for three- and four-dimensional coordinates, but there are no
 built-in facilities for this in plain \MP, so some external library is needed. None
-of those available is very easy to use, and they are not discussed in this document.   
+of those available is very easy to use, and they are not discussed in this document.
 
 Unlike simple numerics, these extended tuple variables are not automatically
 declared for you, so if you want to define points $A$ and $B$ you need to explicitly
@@ -927,13 +927,13 @@ declared them, you can equate them to an appropriate tuple using $=$ as normal.
     cmykcolor C; C = (1,2,3,4);
 \end{code}
 
-The normal use of triples and quads is for colours (RGB colours and CMYK colours); 
+The normal use of triples and quads is for colours (RGB colours and CMYK colours);
 Triples are type \kw{color}, quads are type \kw{cmykcolor}.
 You can't have tuples of any other length, not even as constants, except for
-transforms.  
+transforms.
 
 A transform is how \MP\ represents
-an affine transformation such as "rotated 45 shifted (10,20)".  
+an affine transformation such as "rotated 45 shifted (10,20)".
 They are represented as 6-tuples, but if you try to write:
 \begin{code}
     transform T; T = (1,2,3,4,5,6); % <-- doesn't work
@@ -959,7 +959,7 @@ part of a pair, you have to do something like this: `$\id{A} \mathrel{:}= (42,
 \kw{ypart}\id{A});$'.
 
 In addition there is a neat macro defintion in plain \MP\ that allows you do deal
-with the $x$- and $y$-parts of pairs rather more succintly.    
+with the $x$- and $y$-parts of pairs rather more succintly.
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-140pt
 \includegraphics{somewhat-random-function1}
 \begin{code}
@@ -969,7 +969,7 @@ vardef z@#=(x@#,y@#) enddef;
 The deceptively simple definition of $\id{z}$ as a subscripted macro allows you to
 write "z1 = (10,20);" and have it automatically expanded into the equivalent of
 "x1=10;" and "y1=20;".  You can then use "x1" and "y1" as independent numerics or
-refer to them as a pair with "z1".  A common usage is to find the orthogonal points 
+refer to them as a pair with "z1".  A common usage is to find the orthogonal points
 on the axes in graphs, like so $\longrightarrow$
 
 \smallskip
@@ -977,7 +977,7 @@ There is also a simple way to write coordinates using a polar notation.  For the
 point $(r,\theta)$, where $r$ is the radius and $\theta$ is the angle in degrees
 counter-clockwise from the positive $x$-axis, you can write `\mpl{r dir
 theta}'.  For example `\mpl{2 dir 30}' provides another way to get the
-point "(sqrt 3,1)".   
+point "(sqrt 3,1)".
 And if that's not compact
 enough for you could define a suitable shorthand using a character that's otherwise
 unused.  For example `\mpl{def ^=dir enddef;}', which would let you write
@@ -997,7 +997,7 @@ origin=(0,0); up=-down=(0,1); right=-left=(1,0);
 \vss}}%
 As you can see, pair variables can be used in implicit equations.
 
-They can also be scaled using implicit multiplication, so writing 
+They can also be scaled using implicit multiplication, so writing
 `$144 \id{right}$' is equivalent to writing `$(144,0)$' but possibly a bit more
 readable.  In particular the idiom `$\kw{shifted} 200 \id{up};$'
 works well when applied to a point, a path,
@@ -1005,7 +1005,7 @@ or an image.
 Unfortunately, this convenient notation does not work well with units of
 measure.  This is because implicit multiplication only works between a numeric constant and a
 variable.  So `$2 \id{in}\, \id{right}$' does not work as you might expect; you can
-write `$2\id{in} \mathrel{\ast}\id{right}$' but by that stage it's probably simpler to 
+write `$2\id{in} \mathrel{\ast}\id{right}$' but by that stage it's probably simpler to
 write `$(2\id{in},0)$' or even just `$(144,0)$'.
 
 
@@ -1026,18 +1026,18 @@ to do the same thing. So after `\mpl{pair w; w=(3,4);}' you can get the real par
 "xpart w" and the imaginary part with "ypart w".
 You can also use the polar notation shown above to write complex numbers.  For
 $re^{i\theta}$ you can write `\mpl{r dir theta}' where "r" is the modulus and
-"theta" is the argument in degrees. 
+"theta" is the argument in degrees.
 
-The predfined constants \mpl{up}, 
-\mpl{down}, 
-\mpl{left}, and  
+The predfined constants \mpl{up},
+\mpl{down},
+\mpl{left}, and
 \mpl{right} also provide points on the unit circle corresponding to $i$, $-i$,
 $-1$, and $+1$ respectively.  It's tempting to define `\mpl{pair i; i=(0,1);}', so that
 you can write constants like "4i" directly, but this is not very helpful, because
 "3+4i" will give you an error since \MP\ does not let you add a "numeric" to a "pair".
 
 However \MP\ does let you add (and subtract) two pairs, so complex addition and
-subtraction are just done with the 
+subtraction are just done with the
 normal operators.
 \vadjust{\moveright 384pt\vbox to 0pt{\vss
 \begin{code}
@@ -1055,7 +1055,7 @@ beginfig(1);
     interim ahangle := 30;
     forsuffixes @=1,2,3,4,5:
         x@ := x@ * u; y@ := y@ * u;
-        drawarrow origin -- z@  
+        drawarrow origin -- z@
                   cutafter fullcircle scaled 5 shifted z@
                   withcolor 2/3 if @ < 3: blue else: red fi;
     endfor
@@ -1081,10 +1081,10 @@ could use "reflectedabout(left,right)", but it's probably easier just to write
 Complex multiplication is provided as part of the core language by the "zscaled"
 operator.  This is defined with the same precedence as "scaled" or normal scalar
 multiplication (which is what you usually want).  So "(3,4) zscaled (1,2)" gives
-"(-5,10)" because $(3+4i)\times(1+2i) = 3+6i+4i-8 = -5+10i$. 
+"(-5,10)" because $(3+4i)\times(1+2i) = 3+6i+4i-8 = -5+10i$.
 "zscaled" is only defined to work on two "pair" variables, so you can't write
-\mpl{(3,4) zscaled 4}.  To get that effect with "zscaled" you would have to write 
-\mpl{(3,4) zscaled (4,0)}, but this is the same as 
+\mpl{(3,4) zscaled 4}.  To get that effect with "zscaled" you would have to write
+\mpl{(3,4) zscaled (4,0)}, but this is the same as
 \mpl{(3,4) scaled 4}, which is usually simpler to write.  If your pair is
 stored as a variable you can write (for example) \mpl{4 z0} to get the same
 effect.  Or \mpl{1/4 z0} or \mpl{z0/4} for scalar division.
@@ -1100,25 +1100,25 @@ rotation by the argument of $z$ and scaling by $|z|$, you can define the complex
 inverse and complex square root simply using \mpl{angle} and \mpl{abs}.
 
 First an inverse function.  The idea here is to find a function that is the opposite
-of complex multiplication, so we want something that gives 
+of complex multiplication, so we want something that gives
 \begin{code}
 z zscaled zinverse(z) = (1,0)
 \end{code}
 In other words you need to find a complex number with an argument that is the
-negative of the argument of $z$ and a modulus that will scale $|z|$ to 1.  
+negative of the argument of $z$ and a modulus that will scale $|z|$ to 1.
 You can use the polar notation with "dir" to write this directly:
 \begin{code}
-def zinverse(expr z) = 1/abs z * dir - angle z enddef; 
+def zinverse(expr z) = 1/abs z * dir - angle z enddef;
 \end{code}
 The complex division, $z/w$, can now be done as: \mpl{z zscaled zinverse(w)}.
 The only difficulty with this function is how it deals with zero, or rather with
 the point $(0,0)$.  Since `\mpl{abs (0,0)}' gives $0$, the function will give you
 a `divide by zero' error if it's called with $(0,0)$.  But this is probably what you want
 it to do, since there is no easy way to represent the point at infinity in the
-extended complex plane on paper.  
+extended complex plane on paper.
 
 \medskip\noindent
-For square root, you want a function `\mpl{zsqrt(z)}' that returns 
+For square root, you want a function `\mpl{zsqrt(z)}' that returns
 a complex number with half
 the argument of $z$ and a modulus that is the square root of the modulus of $z$, so that
 `\mpl{zsqrt(z) zscaled zsqrt(z) = z}'.  This does the trick:
@@ -1129,8 +1129,8 @@ This function also has a difficulty with the point $(0,0)$, because "angle (0,0)
 not well defined, and so \MP\ throws an error.  If you want a function that
 correctly returns $(0,0)$ as its own square root, then try something like this:
 \begin{code}
-def zsqrt(expr z) = 
-    if abs z > 0: sqrt(abs z) * dir 1/2 angle fi z 
+def zsqrt(expr z) =
+    if abs z > 0: sqrt(abs z) * dir 1/2 angle fi z
 enddef;
 \end{code}
 
@@ -1144,8 +1144,8 @@ represent grey scale colours.
 
 The numeric values can take any \kw{numeric} value, but \MP\ only considers the
 range 0 to 1.  Values less than zero are treated as zero, values greater than 1 are
-treated as 1.  
-So to encode colors, such as British Racing Green with RGB code "(1,66,37)" 
+treated as 1.
+So to encode colors, such as British Racing Green with RGB code "(1,66,37)"
 or Pillar Box Red with code "(223,52,57)", you should write:
 \begin{code}
     color brg, pbr;
@@ -1157,13 +1157,13 @@ or, slightly more idiomatically:
     brg = 1/256 (1, 66, 37);
     pbr = 1/256 (223, 52, 57);
 \end{code}
-As you can see, you can apply implicit multiplication to a \mpl{color}, so after 
-the declaration above "2 brg" would be a valid colour, although you have to think 
-a bit to know what that means in terms of colour in your drawings.  
+As you can see, you can apply implicit multiplication to a \mpl{color}, so after
+the declaration above "2 brg" would be a valid colour, although you have to think
+a bit to know what that means in terms of colour in your drawings.
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-72pt
 To use RGB hex strings, you'll need to write a function:
 \begin{code}
-vardef hexrgb(expr Spec) = 
+vardef hexrgb(expr Spec) =
     save r, g, b;
     numeric r, g, b;
     r = hex(substring (1,3) of Spec);
@@ -1179,11 +1179,11 @@ pbr = hexrgb("#df3439");
 Plain \MP\ defines five basic colour constants: \mpl{red}, \mpl{green},
 \mpl{blue}, \mpl{white}, \mpl{black}.  These are quite useful with leading
 fractions: \mpl{2/3 red} gives a nice dark red, that's good for drawing lines you
-want to emphasize; \mpl{1/2 white} gives you a shade of grey; and so on.  But since 
+want to emphasize; \mpl{1/2 white} gives you a shade of grey; and so on.  But since
 \mpl{black} is defined as \mpl{(0,0,0)}, \mpl{1/2 black} just gives you \mpl{black}.
 
 You can also add up \mpl{colors}.  So \mpl{red + 1/2 green} gives you a shade of
-orange;  this is more long-winded than writing \mpl{(1, 0.5, 0)} but maybe slightly 
+orange;  this is more long-winded than writing \mpl{(1, 0.5, 0)} but maybe slightly
 easier to read.  Much more usefully, you can use the mediation notation to get a
 colour that is part way between two others.  So \mpl{1/2[red, white]} gives you a
 shade of pink, and \mpl{2/3[blue, white]} a sort of sky blue.  You can also use this
@@ -1198,7 +1198,7 @@ for y=1 upto N:
     fill fullcircle scaled 16 shifted 20(x,y)
       withpen pencircle scaled 2
       withcolor (n/N/N)[pbr, brg;
-    label(decimal incr n infont "phvr8r", 20(x,y)) 
+    label(decimal incr n infont "phvr8r", 20(x,y))
       withcolor white;
   endfor
 endfor
@@ -1210,18 +1210,18 @@ Here's a toy example:
 \newpage
 \subsection{CMYK colours}
 
-\MP\ also implements a CMYK colour model, using tuples of four numerics.  
+\MP\ also implements a CMYK colour model, using tuples of four numerics.
 This is more or less a direct mapping onto the PostScript "cmykcolor" functions.
 In this model the four components represent cyan, magenta, yellow, and black.
 White is \mpl{(0,0,0,0)} and black is anything where the last component is 1.
 Beware however that the constants, \mpl{white} and \mpl{black} are defined in
-"plain.mp" as RGB colours, and you can't mix the two models, so anything like 
+"plain.mp" as RGB colours, and you can't mix the two models, so anything like
 \mpl{1/2[(1,1,0,0), white]} will not work.  If you want to do lots of work with CMYK colours
 you might like to redefine the color constants.
 $$\includegraphics[width=0.7\textwidth]{color-wheel1}$$
 Note that the apparent blending of colours here is done by calculating the overlaps
 and filling them in order.  There is no support for transparency in any of the
-colour models; this is because they are inherited directly from PostScript.  
+colour models; this is because they are inherited directly from PostScript.
 
 \moveright 384pt\vbox to 0pt{\vss
 \begin{code}
@@ -1256,7 +1256,7 @@ for x=0 upto 1:
       ) shifted -(200x, 200y);
       draw P;
       label.bot(("shade: " & decimal s & ", k: " & decimal k)
-                 infont "phvr8r", point 1/2 of bbox P); 
+                 infont "phvr8r", point 1/2 of bbox P);
   endfor
 endfor
 \end{code}}
@@ -1265,7 +1265,7 @@ endfor
 \subsection{HSV colours}
 
 HSV colours are colours defined by a triple of hue, saturation, and value.
-Unlike RGB and CMYK colours there is no native support in \MP\ but it is possible to 
+Unlike RGB and CMYK colours there is no native support in \MP\ but it is possible to
 write a routine that maps HSV triples into RGB colours:
 \begin{code}
 vardef hsv_color(expr h,s,v) =
@@ -1283,8 +1283,8 @@ vardef hsv_color(expr h,s,v) =
     fi
 enddef;
 \end{code}
-This is based on information from the Wikipedia article on 
-on “HSL and HSV”.  
+This is based on information from the Wikipedia article on
+on “HSL and HSV”.
 
 \medskip\noindent
 The hue values in HSV colours map nicely to the familiar spectrum
@@ -1305,12 +1305,12 @@ s1 = 7/8; v1 = 7/8;
 s2 = 7/8; v2 = 1/2;
 for y=0 upto 2:
   for h=0 step 15 until 360:
-    fill fullcircle scaled 24 shifted (h, -32y) 
+    fill fullcircle scaled 24 shifted (h, -32y)
           withcolor hsv_color(h, s[y], v[y]);
     draw fullcircle scaled 24 shifted (h, -32y)
           withcolor white;
-    if y=1: 
-      label(decimal h infont defaultfont scaled 1/2, (h,-16)); 
+    if y=1:
+      label(decimal h infont defaultfont scaled 1/2, (h,-16));
     fi
   endfor
 endfor
@@ -1333,29 +1333,29 @@ defaultfont := "phvr8r"; defaultscale := 3/4;
 path h,d,b; numeric n; n = 10;
 h = ((-2,0)--(0,0)--(-1,3)--(-2,3)--cycle) scaled 60;
 d = h rotated 180;
-b = subpath (0,1) of h -- point 1+1/n of d -- 
+b = subpath (0,1) of h -- point 1+1/n of d --
     (xpart point 0 of h, ypart point 1+1/n of d) -- cycle;
 fill b withcolor hsv_color(123, 1/8, 7/8);
 draw subpath (2.13,4) of b;
 for i=1 upto n:
-    fill point 4-(i-1)/n of h -- point 1+(i-1)/n of h 
+    fill point 4-(i-1)/n of h -- point 1+(i-1)/n of h
          -- point 1+i/n of h -- point 4-i/n of h -- cycle
          withcolor hsv_color(42, 1/4 + 3/4 * i/n, 1 - i/3n);
-    fill point 4-(i-1)/n of d -- point 1+(i-1)/n of d 
+    fill point 4-(i-1)/n of d -- point 1+(i-1)/n of d
          -- point 1+i/n of d -- point 4-i/n of d -- cycle
          withcolor hsv_color(200, i/n - 1/n, 1 - i/3n);
 endfor
 string s;
-for i=1 upto n-1: 
-    draw point 4-i/n of h -- point 1+i/n of h; 
-    draw point 4-i/n of d -- point 1+i/n of d; 
+for i=1 upto n-1:
+    draw point 4-i/n of h -- point 1+i/n of h;
+    draw point 4-i/n of d -- point 1+i/n of d;
     s := decimal if i < 4: (i**2+1) else: (10 + (i-3)*10) fi & "00";
     label.rt(s, point 1+i/n of h);
     label.lft(s, point 1+i/n of d);
 endfor
 label.rt("Metres", point 2 of h);
 label.lft("Metres", point 2 of d);
-label.lft("Hypsometric tints" infont defaultfont 
+label.lft("Hypsometric tints" infont defaultfont
         scaled defaultscale rotated 90, point 7/2 of h);
 label.rt("Bathymetric tints" infont defaultfont
         scaled defaultscale rotated -90, point 7/2 of d);
@@ -1372,8 +1372,8 @@ draw h; draw d;
 \moveright5.5in\vbox to 0pt{\vskip6pt
 \begin{code}[xleftmargin=0pt]
 numeric s; s = 13;
-path atom; 
-atom = origin 
+path atom;
+atom = origin
    -- (2s,0) rotated -30 -- (2s,0) rotated -30 + (0,s)
    -- ( s,0) rotated  30 -- ( s,0) rotated  30 + (0,s)
    -- (0,2s) -- cycle;
@@ -1390,14 +1390,14 @@ n = 13;
 for i=-n upto n:
     for j=-n upto n:
         forsuffixes $=0,1,2:
-            draw p$ shifted ((3i*s,0) rotated -30 
+            draw p$ shifted ((3i*s,0) rotated -30
                            + (0,floor(1/2i)*3s + 3j*s));
         endfor
     endfor
 endfor
-        
-clip currentpicture to (unitsquare shifted -(1/2,1/2) 
-                        xscaled 55.425s  yscaled 30s);   
+
+clip currentpicture to (unitsquare shifted -(1/2,1/2)
+                        xscaled 55.425s  yscaled 30s);
 \end{code}
 \vss}
 \noindent
@@ -1412,7 +1412,7 @@ Grey scale is appropriate for some printed media, and can make effective texture
 and patterns.
 The code on the right was used to produce this:
 $$\includegraphics[width=\textwidth]{escher1}$$
-First a basic path (named $\id{atom}$) is defined, then in the first loop three 
+First a basic path (named $\id{atom}$) is defined, then in the first loop three
 picture variables, $p_1$, $p_2$, and $p_3$, are defined, each one rotated
 120° from the previous and filled with a slightly darker shade of grey.
 The double loop then draws the three versions of the shape on an up-and-down grid.
@@ -1422,7 +1422,7 @@ Finally the picture is clipped to a neat rectangle.
 \subsubsection{Drawing algorithmic shadows}
 \moveright5.5in\vbox to 0pt{\vskip6pt
 \begin{code}[xleftmargin=0pt]
-path b, w; 
+path b, w;
 b = ((-3,-4)--(3,-2)--(3,+2)--(-3,4)--cycle) scaled 5;
 w = b reflectedabout(up, down);
 
@@ -1430,14 +1430,14 @@ numeric n;
 n = 128;
 
 picture B, W;
-B = image(for i=0 step 1/n until 1: 
-              draw point 4-i of b -- point 1+i**2 of b 
-                  withcolor 1-i**8; 
+B = image(for i=0 step 1/n until 1:
+              draw point 4-i of b -- point 1+i**2 of b
+                  withcolor 1-i**8;
           endfor);
 
-    W = image(for i=0 step 1/n until 1: 
-              draw point 4-i of w -- point 1+i**2 of w 
-                  withcolor 3/4-i**8; 
+    W = image(for i=0 step 1/n until 1:
+              draw point 4-i of w -- point 1+i**2 of w
+                  withcolor 3/4-i**8;
           endfor);
 
 for i=-9 upto 9:
@@ -1446,22 +1446,22 @@ for i=-9 upto 9:
     endfor
 endfor
 
-clip currentpicture to bbox currentpicture yscaled 7/8; 
+clip currentpicture to bbox currentpicture yscaled 7/8;
 \end{code}
 \vss}
 \noindent
-Here is a more complex pattern, showing one way to create an 
+Here is a more complex pattern, showing one way to create an
 illusion of shadows with multiple fine lines.
 $$\includegraphics[width=\textwidth]{more-grey2}$$
-The first part defines two wedge-shaped closed paths, $\id{w}$ being 
-the mirror image of $\id{b}$.  Like the standard \id{unitsquare} path, the 
-path $\id{b}$ is defined so that point 0 is the bottom left corner. 
+The first part defines two wedge-shaped closed paths, $\id{w}$ being
+the mirror image of $\id{b}$.  Like the standard \id{unitsquare} path, the
+path $\id{b}$ is defined so that point 0 is the bottom left corner.
 
 The two $\kw{picture}$ variables are produced
 by drawing lines across the shapes from bottom to top.  By setting $n$ high enough,
 these multiple lines blend smoothly to give an even colour.  And by using higher
-powers of the index variable, an effective shadow can be drawn ‘bunched up’ into the 
-top of each shape.  
+powers of the index variable, an effective shadow can be drawn ‘bunched up’ into the
+top of each shape.
 
 By repeating them alternately in a grid, we get an effective texture, which is
 clipped at the end to a neat rectangle again.
@@ -1472,9 +1472,9 @@ clipped at the end to a neat rectangle again.
 
 \moveright 384pt\vbox to 0pt{\vskip2.2in\raggedright\hsize4in\noindent
 This map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
-London.  The size of the circles represents the votes in each area, and the 
+London.  The size of the circles represents the votes in each area, and the
 colours show how we voted.  The data is from publicly-available UK
-government sources.  The map was created with a small Python script to 
+government sources.  The map was created with a small Python script to
 read the CSV files and write simple lines of \MP\ input.  You \textit{can} read
 CSV files with \MP\ but it's much quicker with Python.
 
@@ -1497,16 +1497,16 @@ $$\includegraphics{brexit-palette1.pdf}$$
 \vss}
 
 \noindent
-The well-known Colorbrewer website ("http://colorbrewer2.org") provides a 
-useful set of colour palettes that are suitable for a wide range of applications.  They 
+The well-known Colorbrewer website ("http://colorbrewer2.org") provides a
+useful set of colour palettes that are suitable for a wide range of applications.  They
 were originally written for maps.  You can get my implementation of these palettes
-for \MP\ from 
+for \MP\ from
 \begin{itemize}
     \item CTAN – "https://ctan.org/pkg/metapost-colorbrewer"
     \item Github – "http://github/thruston/metapost-colorbrewer"
 \end{itemize}
 The package provides two files that define all the colour ranges; one for CMYK and
-another for RGB.  If you are using an up-to-date \TeX\ distribution, you should find 
+another for RGB.  If you are using an up-to-date \TeX\ distribution, you should find
 that they are already installed, but if not you just have to put the files into your local TeX tree so that
 \MP\ will find them.  On my Mac this means putting the files into
 "~/Library/texmf/metapost".
@@ -1521,13 +1521,13 @@ that they are already installed, but if not you just have to put the files into 
 \MP\ provides us with two built-in functions to generate random numbers.
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
 \begin{code}
-vardef dice(expr pip_count, pip_color) = 
-  save d,r,p, ul, ur, lr, ll; 
+vardef dice(expr pip_count, pip_color) =
+  save d,r,p, ul, ur, lr, ll;
   r=1/8; path d; picture p;
-  d = for i=0 upto 3: 
-        quartercircle scaled 3 shifted (15,15) rotated 90i -- 
+  d = for i=0 upto 3:
+        quartercircle scaled 3 shifted (15,15) rotated 90i --
       endfor cycle;
-  p = image(draw fullcircle scaled 6; 
+  p = image(draw fullcircle scaled 6;
             fill fullcircle scaled 6 withcolor pip_color);
   pair ul, ur, ll, lr;
   ul = 1/5[ulcorner d, lrcorner d];
@@ -1552,8 +1552,8 @@ enddef;
 
 beginfig(1);
 for i=0 upto 4:
-  draw dice(1+floor uniformdeviate 6, red) 
-       rotated (2 normaldeviate) 
+  draw dice(1+floor uniformdeviate 6, red)
+       rotated (2 normaldeviate)
        shifted (36i,0);
 endfor
 endfig;
@@ -1562,13 +1562,13 @@ endfig;
 \vss}}
 \begin{itemize}
     \item `$\kw{uniformdeviate}\,n$' generates a random real number between $0$ and
-        $n$.  
-        
+        $n$.
+
         Note that the $n$ is required.  It can be negative, in which case you get negative random
         numbers; or it can be zero, but then you just get $0$ every time. In other words the
         implementation generates a number $r$ such that $0\le r<1$ and then
         multiplies $r$ by
-        $n$. 
+        $n$.
 
         If you want a random whole number, use `$\kw{floor}$' on the result.
         So to simulate six-sided dice, you can use `$1+\kw{floor}\,\kw{uniformdeviate}6$'.
@@ -1581,17 +1581,17 @@ endfig;
 
     \item `\kw{normaldeviate}' generates a random real number that follows the
         familiar normal distribution. The algorithm used is discussed in \textsl{The
-        Art of Computer Programming}, section~3.4.1.  
+        Art of Computer Programming}, section~3.4.1.
         If you generate enough samples, the mean should
-        be approximately zero, and the variance about 1. 
+        be approximately zero, and the variance about 1.
         The chance of getting a number between $-1$ and 1 is
         about 68\%; between $-2$ and 2, about 95\%.
         $$\includegraphics{gauss3}$$
-        To relocate the mean, just add a constant.  To rescale the distribution, 
+        To relocate the mean, just add a constant.  To rescale the distribution,
         multiply by the desired standard deviation (the square root of the
         desired variance).
 
-    
+
 \end{itemize}
 
 
@@ -1603,30 +1603,30 @@ Computer Programming}, section~3.4.1.   It turns out to be very straightforward 
 implement the algorithm for this method as a user-level program $\to$
 \vadjust{\moveright5.5in\vbox to 0pt{\kern -64pt
 \begin{smallcode}
-vardef normaldeviate = 
-    save u, v, xa; 
+vardef normaldeviate =
+    save u, v, xa;
     forever:
         forever:
             u := uniformdeviate 1;
-            exitif (u>1/64); 
+            exitif (u>1/64);
         endfor
         v := sqrt(8/mexp(256)) * ( -1/2 + uniformdeviate 1 );
-        xa := v/u; 
+        xa := v/u;
         exitif ( xa**2 <= -mlog(u)/64 );
     endfor
     xa
 enddef;
 
-vardef exponentialdeviate = 
+vardef exponentialdeviate =
   save u;
-  forever: 
-    u := uniformdeviate 1; 
-    exitif (u>0); 
+  forever:
+    u := uniformdeviate 1;
+    exitif (u>0);
   endfor
   -mlog(u)/256
 enddef;
 
-vardef gammadeviate(expr a,b) = 
+vardef gammadeviate(expr a,b) =
   save y, x, v, s, accept; boolean accept;
   s = sqrt(2a-1);
   forever:
@@ -1662,7 +1662,7 @@ It is also fairly straightforward to implement random number generators that fol
 distributions.  The mathematical details are in the section of \textsl{TOACP}
 referenced above. Two examples, for the exponential distribution and the gamma
 distribution, are shown on the right.  In both cases note the care required to avoid
-arithmetic overflow (and see section~\ref{trig} for the "tand" function). 
+arithmetic overflow (and see section~\ref{trig} for the "tand" function).
 
 \medskip\noindent
 You can also see the special nature of \MP's \kw{mexp} and \kw{mlog}
@@ -1677,7 +1677,7 @@ this yourself if you need the same sequence each time.  At the start of your pro
 you should put "randomseed:=3.14;" (or whatever value you prefer). According to
 \textsl{The Metafont Book}, the default value is
 $\id{day}+\id{time}\ast\id{epsilon}$, but in \MP\ the exact value used depends on
-the resolution of the timers available on your system.  
+the resolution of the timers available on your system.
 
 
 \newpage\subsection{Random walks}
@@ -1692,14 +1692,14 @@ pair zenith, nadir; zenith = nadir = origin;
 path walk[];
 for i=1 upto 16:
   y := 0;
-  walk[i] = origin for x=0 step w/n until w: 
+  walk[i] = origin for x=0 step w/n until w:
      hide(
        d := floor uniformdeviate 2 * 2 - 1;
        y := y + d;
        if y > ypart zenith: zenith := (x,y) ; fi
        if y < ypart nadir:  nadir  := (x,y) ; fi
-     ) 
-     -- (x,y) 
+     )
+     -- (x,y)
   endfor;
   draw walk[i] withcolor ((y+h/4)/(h/2))[red,blue];
   endfor
@@ -1724,7 +1724,7 @@ pairs.  Inside the loop you can conceal yet more instructions in a `\kw{hide}' b
 These instructions contribute nothing to the assignment, but can change the values
 of variables outside the block.
 
-Note the first line of the \kw{hide} block sets "d" to $-1$ or $+1$. 
+Note the first line of the \kw{hide} block sets "d" to $-1$ or $+1$.
 You can (of course) create different kinds of random walks, by changing the way you
 set this delta value, for example by removing the \kw{floor} instruction, or scaling
 the value, or changing the odds in favour of one direction or the other.  For
@@ -1742,9 +1742,9 @@ can get rather more interesting patterns.\vadjust{\moveright5.5in\vbox to 0pt{
 beginfig(2);
 for n=1 upto 4:
   x:=y:=0;
-  draw (x,y) for i=1 upto 2000: 
-    hide(x:=x+4normaldeviate; y:=y+4normaldeviate;) 
-    .. (x,y) 
+  draw (x,y) for i=1 upto 2000:
+    hide(x:=x+4normaldeviate; y:=y+4normaldeviate;)
+    .. (x,y)
   endfor withcolor ((n+2)/9)[blue,white];
   fill fullcircle scaled 3 shifted (x,y) withcolor red;
 endfor
@@ -1780,17 +1780,17 @@ you draw a new curve, then the result is almost artistic.
 
 This idea is shamelessly stolen from the wonderful collection of \MP\ examples
 available at "http://melusine.eu.org/syracuse/metapost/".  But since the
-examples there are all in French (including all the names of the custom macros), 
+examples there are all in French (including all the names of the custom macros),
 perhaps it would be better to say `translated' rather than `stolen';  moreover my
 implementations are easier to use with plain \MP.\vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in\kern -5.5\baselineskip
 \begin{smallcode}
 def freehand_segment(expr p) =
-  point 0 of p {direction 0 of p rotated (4+normaldeviate)} .. 
+  point 0 of p {direction 0 of p rotated (4+normaldeviate)} ..
   point 1 of p {direction 1 of p rotated (4+normaldeviate)}
 enddef;
 
-def freehand_path(expr p) = 
+def freehand_path(expr p) =
   freehand_segment(subpath(0,1) of p)
   for i=1 upto length(p)-1:
     & freehand_segment(subpath(i,i+1) of p)
@@ -1802,11 +1802,11 @@ picture mark[];
 mark1 = image(draw (left--right) scaled 2 rotated 60);
 mark2 = image(draw mark1 shifted left; draw mark1 shifted right);
 
-def moved_along expr x of p = rotated angle direction x of p 
+def moved_along expr x of p = rotated angle direction x of p
                               shifted point x of p enddef;
 
-z0 = (0,-1cm); z1 = (6cm,0);  z2 = (4cm,3cm); 
-path t, c; 
+z0 = (0,-1cm); z1 = (6cm,0);  z2 = (4cm,3cm);
+path t, c;
 t = freehand_path(z0--z1--z2--cycle);
 c = freehand_path(z0..z1..z2..cycle);
 
@@ -1836,7 +1836,7 @@ that the "freehand_path" macro will transform a path whether it is straight or c
 and open or cyclic.  Notice also that to find the mid-point of a line, you find the
 point along the freehand path; if you simply put "1/2[a,b]" there's no guarantee
 that the point would actually be on the free hand path between "a" and "b".  In this
-case a little extra randomness has been added, and the 
+case a little extra randomness has been added, and the
 two segments $AD$ and $DB$ have been marked with traditional
 markers to show that they are equal.  The "moved_along" macro combines shifted and
 rotating to make the markers fit the wonky lines properly.
@@ -1852,17 +1852,17 @@ drawn look at the corners.\vadjust{\moveright5.5in\vbox to 0pt{
 \begin{code}
 color sepia; sepia = (0.44, 0.26, 0.08);
 
-def draw_out(expr p, o) = 
+def draw_out(expr p, o) =
   draw p;
   for i=1 upto length(p):
-     draw (unitvector(direction i-eps of p) scaled +o 
+     draw (unitvector(direction i-eps of p) scaled +o
            -- origin --
-           unitvector(direction i+eps of p) scaled -o) 
+           unitvector(direction i+eps of p) scaled -o)
            shifted point i of p;
   endfor
 enddef;
 
-def angle_label_pos(expr p, i, s) = 
+def angle_label_pos(expr p, i, s) =
   ( unitvector(point i-1 of p-point i of p)
   + unitvector(point i+1 of p-point i of p)
   ) scaled s shifted point i of p
@@ -1906,7 +1906,7 @@ beginfig(1);
 desired_length := 180; n := 30; s := 80;
 path shape;
 for r=0 upto 8:
-  shape := for i=0 upto n-1: 
+  shape := for i=0 upto n-1:
              (s + r * normaldeviate, 0) rotated (360/n*i) ..
            endfor cycle;
   shape := shape scaled (desired_length/arclength shape);
@@ -1924,7 +1924,7 @@ for i=0 upto n-1: (s,0) rotated (360/n*i) .. endfor cycle
 \end{code}
 The random noise is then added to the $x$-coordinate at each step: when the noise is
 zero ($\id{r}=0$) you get a circle; as the noise increases the circle is
-increasingly distorted.  
+increasingly distorted.
 
 The scaling is done using the "arclength" operator.  This works like "length" but
 instead of telling you the number of points in a path, it returns the actual length
@@ -1941,21 +1941,21 @@ presentations, and infographics.  Here are two simple example shapes: $\to$
 \mpic{18pt}{explode1}
 
 \begin{smallcode}
-string heavy_font; 
+string heavy_font;
 heavy_font = "PlayfairDisplay-Black-osf-t1--base";
 
 randomseed:=2128.5073;
 
-beginfig(1);  
+beginfig(1);
 n = 40; r = 10; s = 50;
 path explosion, splash;
 explosion = for i=1 upto n:
   (s if odd(i): - else: + fi r + uniformdeviate r,0) rotated (i*360/n) --
-endfor cycle; 
+endfor cycle;
 
 splash = for i=1 upto n:
   (s if odd(i): - else: + fi r + uniformdeviate r,0) rotated (i*360/n) ..
-endfor cycle; 
+endfor cycle;
 splash := splash shifted (3s,0);
 
 fill explosion withcolor 1/2 green + red;
@@ -1964,7 +1964,7 @@ label("BOOM!" infont heavy_font scaled 2, center explosion)
                                                      withcolor red;
 fill splash withcolor 1/2 green + blue;
 draw splash withpen pencircle scaled 2 withcolor 2/3 blue;
-label("SPLAT!" infont heavy_font scaled 2, center splash) 
+label("SPLAT!" infont heavy_font scaled 2, center splash)
                                                      withcolor blue;
 endfig;
 \end{smallcode}
@@ -1976,11 +1976,11 @@ In order to get a clear zig-zag outline, the loop alternately adds or subtracts 
 and then adds a random amount on top to make it look random.
 Notice that the only difference between the "explosion" and "splash" is that how
 the connecting lines are constrained to be straight or allowed to make smooth
-curves.\vadjust{\moveright5.5in\vtop to -2pt{\hsize 4in\vss\noindent 
+curves.\vadjust{\moveright5.5in\vtop to -2pt{\hsize 4in\vss\noindent
 The display font used here is one of the gems hidden away in "psfonts.map".
 If you run \MP\ with the "-recorder" option, it will create a list of all the files
 used, with the current job name and an extension of ".fls".  This file will include
-a line which tells you exactly which version of "psfonts.map" is being used.  
+a line which tells you exactly which version of "psfonts.map" is being used.
 
 The DVIPS documentation explains the format of the file, but for \MP's purposes the
 first word of each non-comment line defines a font name you can try.  However beware
@@ -1997,14 +1997,14 @@ You can use the idea of adding a little bit of noise to simulate a rough surface
 $$\includegraphics{qed1}\quad
   \includegraphics{qed2}$$
 These diagrams are supposed to represent light rays reflecting from a surface: on
-the left the surface is smooth ($r=0$) and on the right it's rough ($r=0.42$).  
+the left the surface is smooth ($r=0$) and on the right it's rough ($r=0.42$).
 The parameter $r$ is used in the \MP\ program as a scaling factor for the random
 noise added to each point along the rough surface; the only difference in the code
 to produce the two figures was the value of $r$.%
 \vadjust{\moveright5.5in\vbox to
     0pt{\hsize 4in\vss
 \begin{smallcode}
-def perpendicular expr t of p = 
+def perpendicular expr t of p =
   direction t of p rotated 90 shifted point t of p
   enddef;
 
@@ -2012,8 +2012,8 @@ beginfig(1);
 u = 5mm;  r = 0.42; n = 32; s = 8u; theta = -45;
 
 path base;
-base = origin 
-       for i=1 upto n-1: -- (i/n*s,r*normaldeviate) endfor 
+base = origin
+       for i=1 upto n-1: -- (i/n*s,r*normaldeviate) endfor
        -- (s,0) -- (s,-u) -- (0,-u) -- cycle;
 fill base withcolor .8[blue,white];
 draw base withcolor .67 blue;
@@ -2022,12 +2022,12 @@ path ray[];
 for i=2 upto 6:
   ray[i] = (left--right) scaled 2/3 s rotated theta shifted (i*u,0);
   b := ypart (ray[i] intersectiontimes base);
-  ray[i] := point 0 of ray[i] 
-         -- point b of base 
-         -- point 0 of ray[i] 
+  ray[i] := point 0 of ray[i]
+         -- point b of base
+         -- point 0 of ray[i]
             reflectedabout(point b of base, perpendicular b of base);
   drawarrow ray[i];
-endfor   
+endfor
 
 label("r=" & decimal r, center base);
 endfig;
@@ -2045,7 +2045,7 @@ there's not too much noise,  but it is always possible that you'll get two conse
 values at opposite extremes that will show up as an obtrusive jag in your line.  To
 fix this you can simply run your program again to use a different random seed value;
 or you could try using ".." instead of "--" to connect each point, but beware that
-sometimes this can create unexpected loops.  
+sometimes this can create unexpected loops.
 
 \newpage\subsubsection{Walking along a torn edge}
 
@@ -2055,22 +2055,22 @@ any big jumps.  Here's one way to do that.
 \begin{code}
 beginfig(1);
   y=0;
-  path e; 
+  path e;
   e = (0,y) for i=1 upto 288: -- (i,walkr y) endfor ;
   draw e;
-endfig;  
+endfig;
 \end{code}
 $$\includegraphics{torn-edge1}$$
 The "walkr" routine works like the "incr" and "decr" commands; it updates the value of the
 argument.  The idea is that the further away from zero you are, the more likely is
-that the next value will take you back towards zero.  
+that the next value will take you back towards zero.
 \begin{code}
-vardef walkr suffix $ = 
-  $ := $ if uniformdeviate 1 < (2**-abs($)): + else: - fi 
-    signr $; $ 
+vardef walkr suffix $ =
+  $ := $ if uniformdeviate 1 < (2**-abs($)): + else: - fi
+    signr $; $
   enddef;
-vardef signr suffix $ = 
-  if $<0: - else: + fi uniformdeviate 1 
+vardef signr suffix $ =
+  if $<0: - else: + fi uniformdeviate 1
   enddef;
 \end{code}
 You can use this to produce more realistic torn edges.  You can also apply this as a
@@ -2085,9 +2085,9 @@ draw c withcolor .8 white;
 
 y=0; n = 600;
 path t; t = for i=0 upto n-1:
-  point i/n*length(c) of c 
+  point i/n*length(c) of c
   + (0, walkr y) rotated angle direction i/n*length(c) of c
-  -- 
+  --
 endfor cycle;
 draw t withcolor .67 red;
 endfig;
@@ -2132,16 +2132,16 @@ issues is catching exceptions; since it is hard to write completely general macr
 the techniques presented here should be adapted as required rather than blindly
 copied.
 
-The classical constructions from Euclid's \textsl{Elements} are often useful 
-sources of inspiration for macros, but they do not always point in the right 
+The classical constructions from Euclid's \textsl{Elements} are often useful
+sources of inspiration for macros, but they do not always point in the right
 direction.  For example consider the first proposition: \textit{given two points
 find a third point, so that the three points make an equilateral triangle}.
 Euclid's construction is to draw an arc, with radius equal to the length of the
-segment between the two points, at each point and find the intersection.  This might 
+segment between the two points, at each point and find the intersection.  This might
 lead us to a function like this:
 \begin{code}
 vardef equilateral_triangle_point(expr a, b) =
-  save c; path c; c = fullcircle scaled 2 abs(b-a); 
+  save c; path c; c = fullcircle scaled 2 abs(b-a);
   (c shifted a intersectionpoint c shifted b)
 enddef;
 \end{code}
@@ -2176,12 +2176,12 @@ enddef;
 \vss}
 \noindent
 The best way to bisect a line, depends on how you have defined it.
-If you have two pairs $a$ and $b$, then the simplest way to find 
-the pair that bisects them is to write "1/2[a,b]".  This mediation 
+If you have two pairs $a$ and $b$, then the simplest way to find
+the pair that bisects them is to write "1/2[a,b]".  This mediation
 mechanism is entirely general, so you can write \mpl{1/3[a,b]}, "1/4[a,b]", and
 so on to define other pairs that are part of the way from $a$ to $b$.
 The expression "0[a,b]" is equal to $a$, and "1[a,b]" is equal to $b$;
-but the number before the left bracket does not have to 
+but the number before the left bracket does not have to
 be confined to the range $(0,1)$.  If you write "3/2[a,b]" you will get a pair on
 the extension of the line from $a$ to $b$ beyond $b$.  To get a pair going the
 other way you can either reverse $a$ and $b$, or use a negative number; but don't
@@ -2190,23 +2190,23 @@ get caught out by the \MP\ precendence rules:  "-1/2[a,b]" is interpreted as
 the order of the pairs: "(3/2)[b,a]". See $\longrightarrow$.
 
 If you want to work with a \kw{path} variable, rather than separate \kw{pair}
-variables, you can 
+variables, you can
 use the \mpl{point t of p}
 notation to do mediation along the path.  For a simple straight path $p$ of length 1
-then \mpl{point 1/2 of p} will give you the midpoint.  More generally, 
-\mpl{point 1/2 length p of p} will give you the midpoint of a path of any length. 
-This works fine for simple paths, along which \MP's time moves evenly, 
+then \mpl{point 1/2 of p} will give you the midpoint.  More generally,
+\mpl{point 1/2 length p of p} will give you the midpoint of a path of any length.
+This works fine for simple paths, along which \MP's time moves evenly,
 but for more complicated, curved paths you have to use this rather cumbersome notation:
 \begin{code}
     point arctime 1/2 arclength p of p of p
 \end{code}
 If your path is cyclic, and makes a triangle or a regular polygon,
-then you can bisect it with the line 
+then you can bisect it with the line
 \begin{code}
     point t of p -- point t + 1/2 length p of p
 \end{code}
 \textbf{NB}: if the polygon has an odd number of sides, then $2t$ must be a whole
-number. 
+number.
 
 \smallskip\noindent
 In a triangle these bisecting lines are called medians.  The three medians intersect
@@ -2225,8 +2225,8 @@ triangle. The theorem shown here was first published in 2014.
 \subsection{Bisecting angles}
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
 \begin{code}
-vardef euclidean_bisector(expr a,b,c,r) = 
-  save arc,p,q,e; 
+vardef euclidean_bisector(expr a,b,c,r) =
+  save arc,p,q,e;
   path arc; pair p,q,e;
   arc = fullcircle scaled r shifted b;
   p = (a--b) intersectionpoint arc;
@@ -2237,8 +2237,8 @@ enddef;
 \end{code}
 $$\includegraphics{bisection1}$$
 \begin{code}
-vardef vector_bisector(expr a,b,c,r) = 
-   b + unitvector (a-b) scaled r 
+vardef vector_bisector(expr a,b,c,r) =
+   b + unitvector (a-b) scaled r
      + unitvector (c-b) scaled r
 enddef;
 \end{code}
@@ -2260,16 +2260,16 @@ given above.  But if your aim were to find any point on the line bisecting $\ang
 ABC$, then you could simplify this and make it more efficient by using
 $e = \frac12[p,q]$
 instead of calling the triangle macro at all.  However the macro is still making two
-calls to \mpl{intersectionpoint}.  If you wanted to eliminate this you could use the 
+calls to \mpl{intersectionpoint}.  If you wanted to eliminate this you could use the
 useful plain \MP\ macro "unitvector" to produce a solution based on adding two equal
 length vectors from the corner to the two other points.  Another approach is to
 exploit another geometric theorem that states that the bisector of an angle in a
-triangle divides the opposite side in the ratio of the two other sides. 
-So if sides $AB$ and $BC$ have lengths $p$ and $q$ then the bisector will 
+triangle divides the opposite side in the ratio of the two other sides.
+So if sides $AB$ and $BC$ have lengths $p$ and $q$ then the bisector will
 be ${p\over p+q}={1\over1+q/p}$ from $A$ to $C$, and you can express this
 simply using \MP's mediation syntax:
 \begin{code}
-vardef interior_bisector(expr a,b,c) = 
+vardef interior_bisector(expr a,b,c) =
   (1/(1+abs(c-b)/abs(a-b)))[a,c]
 enddef;
 \end{code}
@@ -2304,10 +2304,10 @@ from the $x$-axis to a line through the origin and the point represented by the 
 This definition means that if you have three points $A$, $B$, and $C$, then you can
 measure $\angle ABC$ with \mpl{angle(C-B)-angle(A-B)}. Following the usual
 convention this gives you the angle at $B$; if you list the points in clockwise
-order you will get a positive result. If you don't care about the order, you 
+order you will get a positive result. If you don't care about the order, you
 can make this into a more robust macro:
 \begin{smallcode}
-vardef measured_angle(expr P, Q, R) = 
+vardef measured_angle(expr P, Q, R) =
   (angle (P-Q) - angle (R-Q)) * turningnumber (P--Q--R--cycle) mod 360
 enddef;
 \end{smallcode}
@@ -2318,11 +2318,11 @@ negate the measured angle if necessary, so that you always get the interior angl
 The \mpl{mod 360} on the end ensures that the result is in the range $0 \le \theta <
 360$.  Armed with a measured angle, all you then need is arithmetic.
 \mpic{-160pt}{trisection-classical.pdf}
-It might be possible to use the \id{solve} macro to simulate the Neusis construction 
+It might be possible to use the \id{solve} macro to simulate the Neusis construction
 (that allows you to measure a length) illustrated on the right, but measuring the
 angles is rather easier.
 
-\newpage 
+\newpage
 \subsection{Intersections}
 
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
@@ -2337,7 +2337,7 @@ z7 = z4 reflectedabout(origin, (1,1));
 
 z2 = 1/2 [z5, z7];
 z9 = whatever [z1, z4];
-z2-z9 = whatever * (z7-z1); 
+z2-z9 = whatever * (z7-z1);
 z8 = whatever [z1, z5] = whatever [z2, z4];
 z3 = whatever [z2, z9] = whatever [z4, z7];
 z6 = whatever [z1, z7] = whatever [z3, z5];
@@ -2386,7 +2386,7 @@ first intersection is found.  The upshot of this is that the intersection point
 found will always be as early as possible on $A$.  Note that after the call above
 point $t$ of $A$ will be very close to point $u$ of $B$, as they both refer to the
 same intersection point.  If there is an alternative point that is earlier on $B$,
-then use `$B \mathbin{\textrm{intersectiontimes}} A$' instead.\mpic{-222pt}{intersectme1} 
+then use `$B \mathbin{\textrm{intersectiontimes}} A$' instead.\mpic{-222pt}{intersectme1}
 $$\vbox{\halign{$\vcenter{\hbox{#}}$&&\quad$\to\vcenter{\hbox{#}}$\cr
 \includegraphics{intersectme0}&\includegraphics{intersectme2}&\includegraphics{intersectme3}\cr
 }}$$
@@ -2406,7 +2406,7 @@ $$\vbox{\halign{$\vcenter{\hbox{#}}$&&\quad$\to\vcenter{\hbox{#}}$\cr
 \subsubsection{Finding all intersection points}
 
 As noted above, the \mpl{intersectiontimes} algorithm will stop at the first
-intersection of the two paths, but it is possible that the two paths will intersect 
+intersection of the two paths, but it is possible that the two paths will intersect
 again further along.  If you want to find all the intersection points then the
 simplest technique is just to unwrap the algorithm slightly, and loop through all
 the unit subpaths applying \mpl{intersectiontimes} to each pair.  Using an array to
@@ -2417,7 +2417,7 @@ for i = 1 upto length(A):
   for j = 1 upto length(B):
     times := subpath (i-1,i) of A intersectiontimes subpath (j-1,j) of B;
     if xpart times > -1:
-      P[incr n] = 1/2[point xpart times of subpath (i-1,i) of A, 
+      P[incr n] = 1/2[point xpart times of subpath (i-1,i) of A,
                       point ypart times of subpath (j-1,j) of B];
     fi
   endfor
@@ -2431,7 +2431,7 @@ endfor
 \end{smallcode}
 There are a couple of \MP\ technical points to note.  The \mpl{intersectiontimes}
 operation returns a pair, which we assign to a pair variable $\id{times}$
-above; we have to use \mpl{:=} to re-assign it in each loop, and we have to 
+above; we have to use \mpl{:=} to re-assign it in each loop, and we have to
 use an explicit pair variable because you can't assign to a literal pair;
 \MP\ will give you an error if you try \mpl{(t, u) := A intersectiontimes B;}.
 This may come as a surprise, because you \textit{can} legally do \mpl{(t, u) = A
@@ -2456,7 +2456,7 @@ Here the two paths $A$ and $B$ are Bezier splines of with \mpl{length=1}, so the
 normal \MP\ algorithm is only ever going to give you one of the intersections.  In
 the diagram above, the
 red circle marks the point given by \mpl{A intersectiontimes B}.  We can try
-reversing one of the paths, and in this case you get the point marked in blue, 
+reversing one of the paths, and in this case you get the point marked in blue,
 but what about the one in the middle?
 
 The most reliable approach is to take a copy of one of the paths, and snip it off at
@@ -2464,7 +2464,7 @@ the intersection and try again until there is nothing left to snip.
 $$\includegraphics{intersectme9.pdf}$$
 The three points marked here were captured like this:
 \begin{code}
-pair P[]; numeric n; n=0; 
+pair P[]; numeric n; n=0;
 path R; R := A;  % take a copy of A
 forever:
   R := R cutbefore B;  % snip where we cross B
@@ -2473,7 +2473,7 @@ forever:
   R := subpath (epsilon, infinity) of R; % nudge along
 endfor
 \end{code}
-This technique also works on paths with \mpl{length} greater than one, 
+This technique also works on paths with \mpl{length} greater than one,
 so you may prefer it as your general “get all the intersections” approach.
 Note that the \mpl{cutbefore} macro is defined using \mpl{intersectiontimes}.
 
@@ -2524,11 +2524,11 @@ often simpler to find the intersection points of the line with a suitably scaled
 shifted circle, even if you don't actually then draw the circle.  You can usually
 find the other point by reversing the circle.
 
-\newpage 
+\newpage
 \subsection{Drawing circles}
 
 The canonical way to draw a circle in plain \MP\ is to use the pre-defined path
-\mpl{fullcircle} with a suitable transformation.  
+\mpl{fullcircle} with a suitable transformation.
 \mpic{-12pt}{circles1.pdf}
 The path is defined (in
 "plain.mp") using two \MP\ primative commands:
@@ -2550,14 +2550,14 @@ that passes through point $B$ [\textcolor{textred}{I}] try:
 \begin{code}
 draw fullcircle scaled 2 abs (B-A) shifted A;
 \end{code}
-There are of course an infinite number of circles that you can draw through two 
+There are of course an infinite number of circles that you can draw through two
 points, but if the line between the two points is a diameter [\textcolor{textblue}{II}], then you can do:
 \begin{code}
 draw fullcircle scaled abs (B-A) shifted 1/2[A,B];
 \end{code}
 Finally three points define a unique circle [\textcolor{textgreen}{III}]:
 \begin{code}
-vardef circle_through(expr A, B, C) = 
+vardef circle_through(expr A, B, C) =
     save o; pair o;
     o = whatever * (A-B) rotated 90 shifted 1/2 [A,B]
       = whatever * (B-C) rotated 90 shifted 1/2 [B,C];
@@ -2580,21 +2580,21 @@ $(34.5,21)$ to $(34,21.5)$.
 \MP\ represents paths internally as a sequence of nodes. Each node consists of three
 pairs: the point, the pre-control point, and the post-control point.  These three
 points are always co-linear.  The idea is
-that \MP\ adjusts a path so that when it travels through a point, it is heading in 
-the direction from the pre-control point to the post-control point. 
-\MP\ provides a convenient built-in feature to examine the direction 
-of a path $p$ at any time $t$ along it: \mpl{direction t of p}.  
+that \MP\ adjusts a path so that when it travels through a point, it is heading in
+the direction from the pre-control point to the post-control point.
+\MP\ provides a convenient built-in feature to examine the direction
+of a path $p$ at any time $t$ along it: \mpl{direction t of p}.
 
 \smallskip\noindent
 This returns a pair
-that represents the direction that the path is taking at point $t$. 
+that represents the direction that the path is taking at point $t$.
 \mpic{-32pt}{tang1.pdf}%
 In the language of Bezier
 cubic curves, the pair is the value of the current control point minus the current
 point on the path. So if you define a path like this $\longrightarrow$
 \begin{code}
 path p;
-p = origin .. controls (64, 64) and (128, 64) .. (192, 0) 
+p = origin .. controls (64, 64) and (128, 64) .. (192, 0)
            .. controls (256, -64) and (320, -64) .. (384, 0);
 \end{code}
 it has three points – \id{origin}, $(192,0)$, $(384,0)$ – numbered 0, 1, and 2;
@@ -2605,14 +2605,14 @@ control point just before a node, the post-control is the one after.  Unless the
 cyclic, there won't be a control point before the first node or after the last one,
 so \MP\ defines them to be the same as the coordinates of the node, so with:
 \begin{code}
-for t=0 upto length(p): 
+for t=0 upto length(p):
     drawarrow precontrol t of p -- postcontrol t of p;
 endfor
 \end{code}
 you get a neat visualization of how the path is made, and the arrows are tangent to
-the path.  Now, plain \MP\ defines 
+the path.  Now, plain \MP\ defines
 \begin{code}
-vardef direction expr t of p = 
+vardef direction expr t of p =
     postcontrol t of p - precontrol t of p enddef;
 \end{code}
 to save you some typing, but the clever bit is that $t$ does not have to be a whole
@@ -2632,7 +2632,7 @@ drawarrow s shifted point t of p;
 \newpage
 \subsection{Lines tangent to a circle}\label{sec:tangent-times}
 
-The techniques of the preceding section can be used to add a tangent line to a 
+The techniques of the preceding section can be used to add a tangent line to a
 given point on a circular path, but not to find the tangent lines from a given point
 outside a circle.  To do this, you need to adapt the standard geometrical
 construction: for a given circle $C$ and a point $p$, find the midpoint of $p$ and
@@ -2640,8 +2640,8 @@ the center of $C$; draw a circle through $p$, centered on this midpoint; the tan
 points are where this second circle intersects $C$.\mpic{-120pt}{tangents3.pdf}
 Given a suitable \mpl{path C} and \mpl{pair p} you can do this:
 \begin{code}
-pair t, t'; 
-t = C intersectionpoint fullcircle scaled abs(p - center C) 
+pair t, t';
+t = C intersectionpoint fullcircle scaled abs(p - center C)
                                    shifted 1/2[p, center C];
 t' = t reflectedabout(p, center C);
 \end{code}
@@ -2657,14 +2657,14 @@ means that \mpl{subpath (a, b) of C} is always the “long way round” C, on th
 opposite side from $p$, and \mpl{subpath (a, b-8) of C} is always the shorter
 segment.
 \begin{code}
-vardef tangent_times(expr C, p) = 
-    % return the two times on C that correspond 
+vardef tangent_times(expr C, p) =
+    % return the two times on C that correspond
     % to the external tangents from p to C
     save m, a, b, G, H;
     pair m; numeric a, b; path G, H;
     m = 1/2[p, center C];
-    H = halfcircle scaled abs (p - center C) 
-                   rotated angle (p - center C) 
+    H = halfcircle scaled abs (p - center C)
+                   rotated angle (p - center C)
                    shifted m;
     G = H rotatedabout(m, 180);
     (a, whatever) = C intersectiontimes H;
@@ -2673,9 +2673,9 @@ vardef tangent_times(expr C, p) =
 enddef;
 \end{code}
 
-\vpic{-200pt\noindent Here is the macro in action.  
+\vpic{-200pt\noindent Here is the macro in action.
 Having obtained the two times $a$ and $b$ from the macro, the dashed line
-was drawn along a path that was composed with: 
+was drawn along a path that was composed with:
 \vrule depth 20pt width 0pt height 2pt
 \mpl{p -- subpath (a,b) of C -- cycle}
 }{tangents4.pdf}
@@ -2701,33 +2701,33 @@ C = fullcircle scaled (2R-2r) shifted center A;
 draw A withpen pencircle scaled 2 withcolor 3/4[blue, white];
 draw B withpen pencircle scaled 2 withcolor 3/4[blue, white];
 
-draw subpath (t, u) of A -- subpath (u-8, t) of B -- cycle; 
+draw subpath (t, u) of A -- subpath (u-8, t) of B -- cycle;
 \end{code}
 Here $A$ and $B$ are the two circles you want to connect, and $A$ is larger than
 $B$. $R$ is the radius of the larger, $r$ of the smaller. $C$ is an auxiliary circle
 centered at the same point as $A$ and scaled so that its radius is $R-r$.  If we
 then find the tangent points on $C$ from the center of $B$, the points we want are
-the corresponding points on $A$ and $B$.  
+the corresponding points on $A$ and $B$.
 
 \medskip\noindent
 This works well, provided that none of three
 circles $A$, $B$, or $C$, is rotated (that is that point 0 is at 3 o'clock).  But
-this may not always be the case.   For example, you might have written 
+this may not always be the case.   For example, you might have written
 \begin{code}
-B = fullcircle scaled 60 shifted 240 right rotated 36;  
+B = fullcircle scaled 60 shifted 240 right rotated 36;
 \end{code}
 and then point $t$ of $B$ would \textit{not} correspond to point $t$ of the
 auxiliary circle.  So to make the code above more general you have to adjust the
-tangent times to take account of the relative rotation of the circles. 
+tangent times to take account of the relative rotation of the circles.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vskip-24pt\noindent
 \begin{code}
-vardef adjust_time(expr tt, AA, BB) = 
-    tt + 1/45 angle (point 0 of AA - center AA) 
+vardef adjust_time(expr tt, AA, BB) =
+    tt + 1/45 angle (point 0 of AA - center AA)
        - 1/45 angle (point 0 of BB - center BB)
 enddef;
 \end{code}
 }}
-The in the figure $t$ was adjusted to $t'$ for $A$ and $t''$ for $B$, using the 
+The in the figure $t$ was adjusted to $t'$ for $A$ and $t''$ for $B$, using the
 routine shown on the right.  This routine shows the relationship between \mpl{angle}
 and points around a circle:  $360^\circ = 8\:\hbox{points}$.
 
@@ -2747,8 +2747,8 @@ routines given above; \mpl{tangent_times} from section \ref{sec:tangent-times}, 
 \begin{smallcode}
 beginfig(1);
 path A, B;
-A = fullcircle scaled 144 rotated uniformdeviate 360; 
-B = fullcircle scaled 60 shifted 240 right rotated 36;  
+A = fullcircle scaled 144 rotated uniformdeviate 360;
+B = fullcircle scaled 60 shifted 240 right rotated 36;
 
 numeric R, r;
 R = abs (point 0 of A - center A);
@@ -2768,7 +2768,7 @@ draw A withpen pencircle scaled 2 withcolor 3/4[blue, white];
 draw B withpen pencircle scaled 2 withcolor 3/4[blue, white];
 draw C withpen pencircle scaled 1 withcolor 3/4[blue, white];
 
-draw subpath (t', u') of A -- subpath (u'', t'') of B -- cycle; 
+draw subpath (t', u') of A -- subpath (u'', t'') of B -- cycle;
 draw center B -- subpath (t, u) of C -- cycle dashed evenly;
 
 draw center B -- point t'' of B dashed withdots scaled 1/2;
@@ -2776,12 +2776,12 @@ draw center B -- point u'' of B dashed withdots scaled 1/2;
 draw point t of C -- point t' of A dashed withdots scaled 1/2;
 draw point u of C -- point u' of A dashed withdots scaled 1/2;
 
-dotlabel.ulft(btex $t$   etex, point t   of C); 
-dotlabel.lrt (btex $t'$  etex, point t'  of A); 
-dotlabel.lrt (btex $t''$ etex, point t'' of B); 
-dotlabel.lrt (btex $u$   etex, point u   of C); 
-dotlabel.ulft(btex $u'$  etex, point u'  of A); 
-dotlabel.ulft(btex $u''$ etex, point u'' of B); 
+dotlabel.ulft(btex $t$   etex, point t   of C);
+dotlabel.lrt (btex $t'$  etex, point t'  of A);
+dotlabel.lrt (btex $t''$ etex, point t'' of B);
+dotlabel.lrt (btex $u$   etex, point u   of C);
+dotlabel.ulft(btex $u'$  etex, point u'  of A);
+dotlabel.ulft(btex $u''$ etex, point u'' of B);
 drawdot center B withpen pencircle scaled dotlabeldiam;
 
 drawoptions(withcolor 1/2[blue, white]);
@@ -2806,7 +2806,7 @@ endfig;
 \kern-.5\baselineskip
 \begin{code}[xleftmargin=0pt, xrightmargin=-72pt]
 beginfig(1);
-    z.P = 200 up rotated 21; z.A = 100 left rotated -21; 
+    z.P = 200 up rotated 21; z.A = 100 left rotated -21;
     z.B = origin; z.C = 90 right rotated 42;
 
     z.A' = 3/8[z.P, z.A];
@@ -2834,7 +2834,7 @@ beginfig(1);
     drawoptions(dashed evenly scaled 1/2);
     draw z.B--z.R--z.B';
     draw z.C--z.S--z.C';
-    undraw subpath (1/4, 3/4) of (z.C'--z.T) withpen 
+    undraw subpath (1/4, 3/4) of (z.C'--z.T) withpen
         pencircle scaled 5;
     draw z.C--z.T--z.C';
 \end{code}
@@ -2844,7 +2844,7 @@ beginfig(1);
     drawoptions(withcolor 2/3 red);
     draw 9/8[z.S,z.R] -- 9/8[z.R,z.S];
     picture pp; pp = thelabel("perspectrix", origin);
-    draw pp shifted 7 down rotated angle (z.S-z.R) 
+    draw pp shifted 7 down rotated angle (z.S-z.R)
          shifted 1/2[z.R, z.T];
     dotlabel.urt("perspector", z.P);
 
@@ -2865,7 +2865,7 @@ endfig;
 \vskip-\baselineskip
 \begin{code}[xleftmargin=0pt, xrightmargin=-80pt]
 randomseed := 2485.81543;
-vardef measured_angle(expr p, o, q) = 
+vardef measured_angle(expr p, o, q) =
    (angle (p-o) - angle (q-o)) mod 360
 enddef;
 beginfig(1);
@@ -2881,11 +2881,11 @@ for i=0 upto 1:
       a = measured_angle(z3, z1, z2);
       b = measured_angle(z1, z2, z3);
       c = measured_angle(z2, z3, z1);
-      z4 = whatever [z1, z2 rotatedabout(z1, 1/3 a)] 
+      z4 = whatever [z1, z2 rotatedabout(z1, 1/3 a)]
          = whatever [z2, z3 rotatedabout(z2, 2/3 b)];
-      z5 = whatever [z2, z3 rotatedabout(z2, 1/3 b)] 
+      z5 = whatever [z2, z3 rotatedabout(z2, 1/3 b)]
          = whatever [z3, z1 rotatedabout(z3, 2/3 c)];
-      z6 = whatever [z3, z1 rotatedabout(z3, 1/3 c)] 
+      z6 = whatever [z3, z1 rotatedabout(z3, 1/3 c)]
          = whatever [z1, z2 rotatedabout(z1, 2/3 a)];
       fill z4--z5--z6--cycle withcolor 3/4[red + 1/2 green, white];
       draw z4--z5--z6--cycle;
@@ -2896,7 +2896,7 @@ for i=0 upto 1:
     draw T shifted (200i, 240j);
   endfor
 endfor
-label.rt(btex \vbox{\halign{#\hfil\cr The trisectors of each angle\cr 
+label.rt(btex \vbox{\halign{#\hfil\cr The trisectors of each angle\cr
 in any given triangle form a\cr central equilateral triangle.\cr}} etex, (24, 128));
 endfig;
 \end{code}
@@ -2958,10 +2958,10 @@ decimal digits,%
 \begin{code}
 numeric pi;
 % approximate value
-pi := 3.14159; 
+pi := 3.14159;
 % measure round a circular arc...
 pi := 1/4 arclength (quartercircle scaled 16);
-% up to 34 digits of precision 
+% up to 34 digits of precision
 pi := 3.141592653589793238462643383279503;
 % as many digits as are needed...
 vardef getpi =
@@ -2971,7 +2971,7 @@ vardef getpi =
     exitif lasts=s;
     lasts := s;
     n := n+na; na := na+8;
-    d := d+da; da := da+32; 
+    d := d+da; da := da+32;
     t := t*n/d;
     s := s+t;
   endfor
@@ -3050,7 +3050,7 @@ the font to use; and the result is a "picture" primary.\vadjust{
 To find the name of a suitable font, you have to consult your local "psfonts.map"
 file, and probably the PSNFSS documentation.
 Here are a few of the many fonts available on my local \TeX\ installation; the name
-to use with "infont" is in the first column.  
+to use with "infont" is in the first column.
 $$\includegraphics{font-sampler2}$$
 The text example in the first line
 of this table was produced with
@@ -3061,7 +3061,7 @@ Note that in PostScript terms each of these font names refers to a combination o
 three files: an encoding that maps the characters you type to the glyphs in the
 font; a font metrics file that defines the sizes of the virtual boxes surrounding
 these glyphs; and a set of PostScript routines that actually draw them.  In a \TeX\
-installation 
+installation
 these combinations are defined in a font map file, usually called "psfonts.map".
 If you run "mpost" with the "-recorder" switch it will write an extra log file (with
 a ".fls" extension) that lists the names of all the files used in a job.
@@ -3070,7 +3070,7 @@ find a definitive list of the font names you can use with your local \MP.
 \vss}}
 
 To make a suitable string you can enclose your text
-in double quotes to make a string token, or to refer to a string variable, or do 
+in double quotes to make a string token, or to refer to a string variable, or do
 one of these:
 \begin{itemize}
     \item Concatenate two other strings with "&".
@@ -3079,13 +3079,13 @@ one of these:
 
     \item Use "min(a,b,...)" or "max(a,b,..)" to find the lexicographically smallest
         (or largest) string in the list "a,b,...".  The list must have at least two
-        entries, and they must all be strings. 
+        entries, and they must all be strings.
 
     \item Use "char" to convert a numeric expression to the corresponding an ASCII
         code;
           the numeric expression is rounded to the nearest integer modulo
           256.
-    
+
     \item Use "decimal" to get
         the value (as a decimal) of a numeric expression.
 
@@ -3104,18 +3104,18 @@ one of these:
 \end{itemize}
 
 \newpage
-\subsubsection{Character sets used by \texttt{infont} to set text} 
+\subsubsection{Character sets used by \texttt{infont} to set text}
 
 Standard \MP\ is configured to accept as input only space and the usual 94 visible
 ASCII characters (that is the characters numbered 32 to 126 in the tables at the
-right), but you can use any 8-bit characters as the payload of a string. 
+right), but you can use any 8-bit characters as the payload of a string.
 However, plain \MP\ is set by default to use "cmr10", the familiar Computer Modern typeface
 developed by Knuth for \TeX, and unfortunately, this is encoded using the \TeX\ text
-font encoding (also known as `OT1', and as shown in the first table in Appendix~F of the {\sl \TeX book}).  
-\mpic{-108pt}{font-sampler1}  
+font encoding (also known as `OT1', and as shown in the first table in Appendix~F of the {\sl \TeX book}).
+\mpic{-108pt}{font-sampler1}
 From the point of
 view of using "infont" to make simple labels, this means that the characters for
-space and seven other characters ("< > \ _ { | }") are in the wrong place.  
+space and seven other characters ("< > \ _ { | }") are in the wrong place.
 You are likely to notice this first if you try to set a label with two words; the
 space will come out as a small diagonal stroke accent that is used in plain \TeX\
 to make the characters Ł and ł, used in Polish and other Slavic languages.
@@ -3131,13 +3131,13 @@ previous page, then the encoding to use is "8r".  As you can see from the lower
 table, this is nearly the
 same; for most users the main difference is the location of the Euro currency
 symbol.
-   
+
 Choosing a font with one of these encodings means that if you use Windows code page
 1252 or ISO Latin 1 as the encoding for your text editor, you can create labels with
 accented characters using "infont" and without resorting to "btex" \dots\ "etex".
 But if you are using UTF-8 characters (as many of us are now), then you have to do
 some extra work to get them printed correctly with "infont".  A solution is shown on
-the next page.  
+the next page.
 
 In the normal course of labelling a drawing, it is always possible to
 use "btex" \dots\ "etex" to produce your accented characters as discussed in section
@@ -3155,7 +3155,7 @@ will see this as Ã©.  But you can write a fairly simple routine to decode the
 commonly used subset of
 UTF-8.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\parindent 0pt
 \def\item{\leavevmode\llap{•~}}
-\item You can extend this idea to cope with other UTF-8 characters, including 
+\item You can extend this idea to cope with other UTF-8 characters, including
   those that use three bytes.  The UTF-8 page on Wikipedia shows you how it
   works.  Essentially you look at the values of the next 2 or 3 characters and
   then pick the appropriate character in your encoding with "char".  But your
@@ -3176,17 +3176,17 @@ label.rt(U"café à la möde", (x,y));
   really want proper Unicode support you should use \MP\ with Lua\TeX.
 \vss}}
 \begin{code}[xrightmargin=-10pt]
-vardef decode(expr given) = 
+vardef decode(expr given) =
   save a,i,s,out; string s, out; numeric a, i;
   out = ""; i=0;
   forever:
     i := i+1; s := substring (i-1,i) of given; a := ASCII s;
-    if a < 128: 
-    elseif a = 194: 
+    if a < 128:
+    elseif a = 194:
       i := i+1; s := substring (i-1,i) of given;
-    elseif a = 195: 
+    elseif a = 195:
       i := i+1; s := char (64 + ASCII substring (i-1,i) of given);
-    else: 
+    else:
       s := "?";
     fi
     out := out & s;
@@ -3202,7 +3202,7 @@ usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt
 $$\includegraphics{utf82}$$
 The \texttt{label} macro automatically calls \texttt{infont} with the current value
 of \texttt{defaultfont}; notice how it also adds some extra space.
-\vss}} 
+\vss}}
 \begin{code}
 draw "café noir £2.50" infont "pncr8r";
 draw decode("café noir £2.50") infont "pncr8r" shifted 12 down;
@@ -3213,7 +3213,7 @@ label.rt(decode("café noir £2.50"), 36 down);
 Note that you can't just use "draw" with a string variable; you have to use
 "infont" to turn the string into a picture.
 On the other hand, "label" calls "infont" automatically, but you must explicitly set
-the default font, preferably to one with an encoding that 
+the default font, preferably to one with an encoding that
 is compatible with ISO Latin~1.
 
 
@@ -3232,13 +3232,13 @@ which is the hyphen character.  What we need is the mathematical minus sign inst
 this is what you get with "btex $-1$ etex" of course, but that's hard to put in a
 loop.  Instead you can do this:\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
 $$\includegraphics{minus1}$$
-\vss}} 
+\vss}}
 \begin{code}
 string minus_sign;
 minus_sign := char 143; % if you are using the texnansi encoding
 minus_sign := char 12;  % if you are using the 8r encoding
-for x=-10 upto 10: 
-   label(if x<0: minus_sign & fi decimal abs(x), (x*u,-5)); 
+for x=-10 upto 10:
+   label(if x<0: minus_sign & fi decimal abs(x), (x*u,-5));
 endfor
 \end{code}
 Note that this does not work with the default encoding used in "cmr10" because
@@ -3256,9 +3256,9 @@ $$\includegraphics{infont-example1} \qquad \includegraphics{infont-example2} $$
 beyond the bounding box of the picture produced by "infont".  This is not normally a
 problem unless the picture happens to be at the edge of your figure.  In the first
 example observe how the first and last letters have been clipped; in the second a
-wider baseline has been added to prevent this.  
+wider baseline has been added to prevent this.
 If you want this effect, but you
-don't want to see the baseline, then draw it 
+don't want to see the baseline, then draw it
 using the colour "background".
 
 \subsubsection{But what about the \texttt{label} command?}
@@ -3269,8 +3269,8 @@ turns strings into pictures for you using whatever font name is the current valu
 \noindent
 The "label" macro is defined (essentially) to do this:
 \begin{code}
-    def *label(expr s, z) = 
-      draw s if string s: infont defaulfont 
+    def *label(expr s, z) =
+      draw s if string s: infont defaulfont
                           scaled defaultscale fi shifted z
     enddef;
 \end{code}
@@ -3287,7 +3287,7 @@ operators to measure the bounding box of a picture; they are shown in
 width, depth, and height of a textual picture.  You can also work out the location
 of the baseline of the text or the x-height, provided you know how much your picture
 has been shifted.
-The easiest way to do this is to 
+The easiest way to do this is to
 measure the picture \textit{before} you shift it.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
 $$\includegraphics{infont-example3}  $$
 \vss}}
@@ -3302,7 +3302,7 @@ then you can get the dimensions like this
     ht = ypart urcorner pp;
     dp = ypart lrcorner pp;
 \end{code}
-In this particular case you will find that you have $wd=20.47292$, $ht=7.19798$, and 
+In this particular case you will find that you have $wd=20.47292$, $ht=7.19798$, and
 $dp=-2.60017$.  The depth is negative because the descenders on the
 \textdemo{\textit{p}} and the \textdemo{\textit{f}}
 in the chosen font stick down below the base line.  The height is greater than the
@@ -3313,7 +3313,7 @@ numeric xheight; xheight = ypart urcorner ("x" infont "pplri8r");
 Armed with these measurements you can align your text labels neatly so that they are
 all positioned on the base line or vertically centered on the lower case letters
 regardless of any ascenders or descenders.  To draw your label left-aligned with its
-origin at position $(x,y)$ you just need to use: \kw{draw} \id{pp} \kw{shifted} $(x,y)$.  
+origin at position $(x,y)$ you just need to use: \kw{draw} \id{pp} \kw{shifted} $(x,y)$.
 To draw it right-aligned, you subtract
 \id{wd} from the $x$-coordinate: \kw{draw} \id{pp} \kw{shifted} $(x-wd,y)$.  Or to
 centre it, subtract $1/2wd$.  To center it vertically on the lowercase letters,
@@ -3323,11 +3323,11 @@ consistency in a diagram with many labels.
 
 Alternatively you can adjust the bounding box of your textual picture and then use
 it with "label" as normal.  Assuming \id{wd} is set to the width of your picture
-and \id{xheight} is set correctly for the current font, then 
+and \id{xheight} is set correctly for the current font, then
 \begin{code}
     setbounds pp to unitsquare xscaled wd yscaled xheight;
 \end{code}
-will make the "label" alignment routines ignore any ascenders or descenders.  
+will make the "label" alignment routines ignore any ascenders or descenders.
 %Beware
 %that if the resulting label is right at the edge of your drawing then any parts of
 %the text that stick out of the adjusted bounding box will be clipped.
@@ -3356,9 +3356,9 @@ makes a refreshing change for some diagrams.\vadjust{\moveright5.5in\vbox to
 \begin{code}
 beginfig(1);
 string ab, AB;
-ab = ("" for i=11 upto 23: & char i endfor 
+ab = ("" for i=11 upto 23: & char i endfor
    & "o" for i=24 upto 33: & char i endfor);
-AB = ("AB" & char 0 & char 1 & "EZH" & char 2 & "IK" 
+AB = ("AB" & char 0 & char 1 & "EZH" & char 2 & "IK"
           & char 3 & "MNO" & char 4 & char 5 & "P"
           & char 6 & "T"   & char 7 & char 8 & "X"
           & char 9 & char 10);
@@ -3382,7 +3382,7 @@ AB = "ABGDEZHJIKLMNOXPRSTUFQYW";
 \medskip\noindent
 If you have fonts installed from the Greek Font Society, then you get a wider
 choice, and a slightly more modern encoding.  All of the letters are available in the
-normal ASCII positions, so you do not have to muck about with "char xx".  
+normal ASCII positions, so you do not have to muck about with "char xx".
 
 \vbox to 0pt{\centerline{\includegraphics{gfs-encoding.pdf}}\vss}
 
@@ -3415,14 +3415,14 @@ to do.
 
 One of the obvious restrictions that \TeX\ imposes in
 restricted horizontal mode
-is that you can't use "$$ ... $$" to produce display maths. This means that  
+is that you can't use "$$ ... $$" to produce display maths. This means that
 the various mode-sensitive constructs like $\sum$ and $\int$ will come out in their
-smaller forms.  And your fractions will look like they are $3\over4$ size. 
+smaller forms.  And your fractions will look like they are $3\over4$ size.
 If you want them big, then the solution is simple: just add
 "\displaystyle" at the beginning of your formula $\longrightarrow$\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 \begin{code}
 ...
-label(btex $\displaystyle \int_0_t 3x^2\, dx$ etex, (x,y));
+label(btex $\displaystyle \int_0^t 3x^2\, dx$ etex, (x,y));
 ...
 \end{code}
 }}
@@ -3431,8 +3431,8 @@ label(btex $\displaystyle \int_0_t 3x^2\, dx$ etex, (x,y));
 
 As already discussed (§\ref{infontbbox}), you can fiddle with the
 bounding box of a text picture to make
-the \mpl{label} macro line things up on a common baseline, but there is a 
-much easier way with "btex" and "etex".  Plain \TeX\ provides a "\strut" 
+the \mpl{label} macro line things up on a common baseline, but there is a
+much easier way with "btex" and "etex".  Plain \TeX\ provides a "\strut"
 command that inserts an invisible rule that sticks up 8.5pt above the baseline
 and 3.5pt below.  If you put one of these in each of the your labels,
 then they will all have the same vertical size and will all line up
@@ -3444,13 +3444,13 @@ neatly:\quad\mpl{label(btex \\strut a etex, origin);}
 Another consequence of the "hbox" feature is that there is no automatic text
 wrapping done for you, but again you can work round this easily because \TeX\ lets
 you nest a "\vbox" inside an "\hbox".  This gives you proper paragraph-like wrapping
-but you will almost certainly need to adjust the line length, justification, and 
+but you will almost certainly need to adjust the line length, justification, and
 indentation in order to get a satisfactory result \rightarrow \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vskip -42pt\noindent
 \begin{code}
 ...
 label(btex \vbox{\hsize 2in\parindent 0pt\raggedright
-    An extended caption or label that will be set as a 
-    small paragraph with automatic hyphenation and 
+    An extended caption or label that will be set as a
+    small paragraph with automatic hyphenation and
     line-wrapping.
 } etex, z0);
 ...
@@ -3477,13 +3477,13 @@ label(btex \s{Longer text split\\onto a new line} etex, z2);
 ...
 \end{code}
 Notice how you can still use the macro with single lines, you just get a one-line
-table as it were. 
+table as it were.
 Note also that the definition of "\s" as given will centre each line of the text under
 the one above.  If you want them left aligned or right aligned, omit one of the
 "\hfil" commands. \mpic{-160pt}{labels2}
 The three examples from this page are typeset over here \rightarrow\break
-The small red circle show the reference points and the pale blue lines the 
-bounding boxes of the pictures that \MP\ gets back from \TeX.  
+The small red circle show the reference points and the pale blue lines the
+bounding boxes of the pictures that \MP\ gets back from \TeX.
 
 You can of course achieve the same effects using \LaTeX\ tabular structures, but
 then you have to use the "-tex=latex" option to run
@@ -3497,21 +3497,21 @@ labels are in "infont" but you just want one extra that has two lines, you can s
 the text into two separate labels and position them independently.
 
 \newpage
-\subsubsection{Dynamic labels}
+\subsubsection{Dynamic labels}\label{sec:old-and-dynamic}
 
-If you are a maven of programming language syntax you may have noticed that 
+If you are a maven of programming language syntax you may have noticed that
 "btex ... etex" fits into the type system that \MP\ inherits from \MF\ as a "picture" and
 not as a "string".  Effectively "btex" and "etex" act as a special pair of quotation
 marks that create a picture; however the contents are used verbatim, so that the
 whole contruction is a syntactical atom.  This means that you \textbf{cannot} write
-this sort of thing: 
-\begin{code} 
+this sort of thing:
+\begin{code}
 for i=0 upto 4: % this won't work
-  label(btex "$p_" & decimal i & "$" etex, (10i,0)); 
-endfor 
-\end{code} 
+  label(btex "$p_" & decimal i & "$" etex, (10i,0));
+endfor
+\end{code}
 Given this input \MP\ would attempt to get \TeX\
-to typeset 
+to typeset
 \begin{code}
 \hbox{"$p_" & decimal i & "$"}
 \end{code}
@@ -3530,11 +3530,11 @@ endfor
 This works because the TEX macro is expecting a "string" so the normal string
 concatenation rules are applied.  The macro wraps the result with "btex" and "etex",
 writes them out to a file, and then reads the file in again so that \MP\ gets the
-correct contents to pass to \TeX.  
+correct contents to pass to \TeX.
 
 The only trouble with this is that it makes \MP\ open a file,
 write to it, close it, and then read it in again for each label one at a time; this
-means that it's very slow.  
+means that it's very slow.
 The example on the right shows how to speed things up, by using the same file for
 all the labels and only writing it once.
 The "write" command is a \MP\ primitive, and "EOF" is defined in "plain.mp".%
@@ -3544,7 +3544,7 @@ path c; c = fullcircle scaled 100; draw c withcolor .67 red;
 for i=0 upto 7:
   fill fullcircle scaled 3 shifted point i of c;
   z[i] = point i of c scaled 1.15;
-  write "label(btex $p_" & decimal i & "$ etex,(" 
+  write "label(btex $p_" & decimal i & "$ etex,("
         & decimal x[i] & "," & decimal y[i]
         & "));" to ".mplabels";
 endfor
@@ -3559,8 +3559,8 @@ as a "z"-variable and then use the "x" and "y" syntax.  The scaling trick used h
 only works because "c" is centered on the origin.  If "c" were drawn elsewhere, you
 would have to write:
 \begin{code}
-... point i of c shifted -center c 
-                 scaled 1.15 
+... point i of c shifted -center c
+                 scaled 1.15
                  shifted center c ...
 \end{code}
 }}
@@ -3569,16 +3569,16 @@ would have to write:
 \subsubsection{Matching the fonts with plain \TeX}
 
 Despite the apparent restriction of using plain \TeX\ it is almost always possible
-to match the font and format of an enclosing \LaTeX\ document. 
+to match the font and format of an enclosing \LaTeX\ document.
 The simplest approach is to use the plain
-\TeX\ font mechanism with the names from "psfonts.map".  
+\TeX\ font mechanism with the names from "psfonts.map".
 \begin{code}
 verbatimtex
 \font\rm=ptmr8r\rm
 etex
 \end{code}
 Adding this at the top of your \MP\ program will set your text in Times New Roman,
-although any maths will still be set using Computer Modern.  
+although any maths will still be set using Computer Modern.
 To fix this, all you
 have to do is to redefine all the maths fonts in all sizes you need; this is not really
 that hard but it is a fiddle to get all the details right.  Fortunately
@@ -3629,7 +3629,7 @@ are limited to whatever font packages you have that work with the traditional
 \ref{sec:neo-labels}.
 
 %% \subsubsection{Getting full access to your system fonts}
-%% 
+%%
 %% If you want full access to all of your system fonts you can
 %% approach the problem the other way round and use one of the various means to include
 %% \MP\ graphics as part of your \LaTeX\ source code.  These include "gmp" for
@@ -3654,14 +3654,14 @@ are limited to whatever font packages you have that work with the traditional
 %% \begin{mplibcode}
 %% beginfig(1);
 %% color lemon, midnight; lemon = (1,1,1/2); midnight = (0,0,1/2);
-%% 
+%%
 %% fill unitsquare shifted -(1/2,1/2) scaled 4cm withcolor lemon;
 %% fill fullcircle scaled 3cm withcolor midnight;
 %% draw fullcircle scaled 3.7cm dashed evenly scaled 2 withcolor .5 white;
-%% 
+%%
 %% fill fullcircle scaled 8mm shifted (0.7cm,0.7cm) withcolor white;
 %% fill fullcircle scaled 8mm shifted (1.4cm,1.4cm) withcolor midnight;
-%% 
+%%
 %% label.bot(btex Luã etex scaled 2.8,origin) withcolor white;
 %% endfig;
 %% \end{mplibcode}
@@ -3683,12 +3683,12 @@ as explained above in §\ref{sec:sa-lua-flow}.
 \medskip\noindent
 The first thing to say is that everything in the preceding section
 will continue to work more or less the same when you use "luamplib" with Lua\LaTeX.
-It is designed to be backwards-compatible, so that existing \MP\ programs using "infont" and 
+It is designed to be backwards-compatible, so that existing \MP\ programs using "infont" and
 "btex" \dots\ "etex" will continue to work without change.  The only differences are:
 that the "TEX()" macro is re-implemented with internal library functions
 so that it no longer uses temporary files, and is therefore very much faster; and it
 is easier to integrate your drawings into \LaTeX\ because you no longer need to muck
-about with \mpl{verbatimtex} blocks. 
+about with \mpl{verbatimtex} blocks.
 So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-160pt
 \begin{texcode}
 \documentclass[border=5mm]{standalone}
@@ -3709,7 +3709,7 @@ So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsi
         draw (0, -20y) -- (160, -20y) withcolor 3/4[red, white];
     endfor
 
-    string s; s = "Hand gloves"; 
+    string s; s = "Hand gloves";
     draw s infont defaultfont  shifted (0, 0);
     draw s infont "phvr8r"     shifted (0, -20);
     draw TEX(s)                shifted (0, -40);
@@ -3728,14 +3728,14 @@ So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsi
 \end{texcode}\vss}}
 will produce this:
 $$\includegraphics{neo-labels.pdf}$$
-Note that "defaultfont" is still "cmr10" with the encoding that has the small stroke 
+Note that "defaultfont" is still "cmr10" with the encoding that has the small stroke
 (that plain \TeX\ uses for the \L\ character) instead of a space, and that you can
 still use PostScript fonts like "phvr8r".  But also notice that the "TEX()" macro
 and the "btex" \dots\ "etex" construction have picked up the font set by the \LaTeX\
 wrapper.  As you can see they produce exactly the same output; "TEX()" is generally
 more useful because you can pass a primary string variable as an argument, which
 makes it easier to construct dynamic labels.  "TEX()" also has the synonym
-"textext()" for compatibility with ConTexT.  You can use either name, as you prefer.  
+"textext()" for compatibility with ConTexT.  You can use either name, as you prefer.
 
 \smallskip\noindent
 But this isn't the clever bit\dots
@@ -3745,7 +3745,7 @@ But this isn't the clever bit\dots
 
 The clever bit is that "luamplib" allows us to turn on the "TEX()" behaviour by
 default, so that you can just use plain strings with the \mpl{label()} macro, and
-have them automatically processed through \LaTeX.  All you have to do is add this 
+have them automatically processed through \LaTeX.  All you have to do is add this
 to the preamble:
 \begin{texcode}
 \mplibtextextlabel{enable}
@@ -3772,7 +3772,7 @@ page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-80pt
         draw (0, -20y) -- (160, -20y) withcolor 3/4[red, white];
     endfor
 
-    string s; s = "Hand gloves"; 
+    string s; s = "Hand gloves";
     draw s infont defaultfont  shifted (0, 0);
     draw s infont "phvr8r"     shifted (0, -20);
     draw TEX(s)                shifted (0, -40);
@@ -3797,14 +3797,14 @@ mplibtextextlabel}}}
 \vss}}
 you get this output:
 $$\includegraphics{neo-labels-tte.pdf}$$
-As you can see, they all come out the same.  
+As you can see, they all come out the same.
 When the magic option is enabled, "luamplib" redefines
-the primitive binary operator \mpl{infont}. 
+the primitive binary operator \mpl{infont}.
 Ordinarily, this command takes two strings (the text you want to show, and the name
 of the font to use) and produces a picture object consisting of the text typeset in
 the given font.
 $$\mptype{string} "infont" \mptype{string} \longrightarrow \mptype{picture}$$
-With the option enabled, 
+With the option enabled,
 the right hand \mptype{string} argument (which names the font) is completely ignored,
 and the left hand \mptype{string} argument (the text to show) is passed to the "TEX()"
 macro. The result is still a \mptype{picture} of course, but instead
@@ -3814,7 +3814,7 @@ constructions.
 
 Note that even with the option enabled, \MP\ will not let you pass a \mptype{string}
 to \mpl{draw}.   You have to put \mpl{infont "somefont"} after the string to get the
-magic to work; the nice thing is that the \mpl{label()} macros do this for you.  
+magic to work; the nice thing is that the \mpl{label()} macros do this for you.
 
 If you experiment a bit, you will find that even though the font name argument is
 completely ignored, you can't leave it out; you have to give at least an empty
@@ -3827,7 +3827,7 @@ If you read "texdoc luamplib" carefully, you will see that you \textit{can} use 
 these new facilities with plain Lua\TeX, but this chapter is about using them with
 Lua\LaTeX, and in particular it assumes some familiarity with the packages
 "fontspec" and "unicode-math" that provide complete support for Unicode and OTF
-fonts; you need this familiarity in order to use "luamplib" properly. 
+fonts; you need this familiarity in order to use "luamplib" properly.
 \mpic{1cm}{unicode}
 
 You also need an editor that will handle Unicode.  \MP\ still restricts you to using
@@ -3838,13 +3838,13 @@ label("café noir £2.50", origin);
 \end{smallcode}
 or even whole paragraphs that use Unicode:
 \begin{smallcode}
-    label(btex \vbox{\hsize 4in 
-     Nous étions à l'Étude, quand le Proviseur entra, suivi d'un \textit{nouveau}
-     habillé en bourgeois et d'un garçon de classe qui portait un grand
-     pupitre. Ceux qui dormaient se réveillèrent, et chacun se leva comme
-     surpris dans son travail. \par} etex, 40 down);
+label(btex \vbox{\hsize 4in
+ Nous étions à l'Étude, quand le Proviseur entra, suivi d'un
+ \textit{nouveau} habillé en bourgeois et d'un garçon de classe
+ qui portait un grand pupitre. Ceux qui dormaient se réveillèrent,
+ et chacun se leva comme surpris dans son travail.
+\par} etex, 40 down);
 \end{smallcode}
-
 But you also need a font that actually supports the Unicode characters you use.
 The default Latin Modern font used by Lua\LaTeX\ has a good range for English and
 most European languages, but is a bit lacking in (say) polytonic Greek.  So you will
@@ -3852,25 +3852,22 @@ need to define a suitable font in your preamble, and turn it on in your labels.
 \begin{texcode}
 \usepackage{fontspec} \newfontface\polytonic{GFS Porson}
 \end{texcode}
-then 
+then a box like this with proper polytonic Homeric Greek source
 \begin{smallcode}
-label(btex \vbox{\polytonic\halign{#\hfil\cr 
-   Μῆνιν ἄειδε, θεά, Πηληϊάδεω Ἀχιλῆος\cr 
-   οὐλομένην, ἣ μυρί\thinspace᾽ Ἀχαιοῖς ἄλγε᾽ ἔθηκε,\cr 
-   πολλὰς δ᾽ ἰφθίμους ψυχὰς Ἄϊδι προΐαψεν\cr 
-   ἡρώων, αὐτοὺς δὲ ἑλώρια τεῦχε κύνεσσιν\cr 
-   οἰωνοῖσί τε πᾶσι· Διὸς δ᾽ ἐτελείετο βουλή·\cr 
-   ἐξ οὗ δὴ τὰ πρῶτα διαστήτην ἐρίσαντε\cr 
-   Ἀτρεΐδης τε ἄναξ ἀνδρῶν καὶ δῖος Ἀχιλλεύς.\cr}} etex, 120 down);
+label(btex \vbox{\polytonic\halign{#\hfil\cr
+   ...
+
+    (polytonic greek source in UTF8 that won't show up in
+    the Latin Modern Typewriter font being used here)
+
+   ... \cr}} etex, 120 down);
 \end{smallcode}
+will produce the first few lines of the Iliad (just in case you wanted them).
+Essentially if you can produce something in \LaTeX, you can produce exactly the same
+in \MP\ using "luamplib".
 
 
-
-This chapter assumes that you
-
-matching fonts
-using UTF8 and OTF fonts (and greek)
-
+\newpage
 \subsection{Multi-line labels}
 
 It is a rule of syntax in \MP\ that a string token has to be given all on one line.
@@ -3882,37 +3879,79 @@ label("\vbox{\hsize 4in It is a truth universally acknowledged,"
      & " must be in want of a wife.\par}", origin);
 \end{code}
 taking care to include the necessary spaces, which can get fiddly.
+\mpic{-2cm}{multi-line-labels}
+
 But this is where the "btex" \dots\ "etex" construction comes into play, even with
 "luamplib".  As we saw in the preceding section the construction fits into the \MP\
 syntax scheme as a special pair of quotation marks that produces a \mptype{picture}.
 Unlike regular string token, a "btex" \dots\ "etex" picture token can span several
 lines of source code, so you can (more easily) write long \TeX\ labels like this:
 \begin{code}
-label(btex \vbox{\hsize 4in 
+label(btex \vbox{\hsize 4in
      It is a truth universally acknowledged,
      that a single man in possession of a good fortune,
      must be in want of a wife.
-     \par} etex, origin);
+     \par} etex, 128 down);
 \end{code}
 Thanks to the backward compatibility of the implementation, this works very well
 even when you have "mplibtextextlabel" enabled.
 
-\subsection{Typographical minus signs for labels}
+You also have full access to your \LaTeX\ environment, so you can get tables in the
+same way in \MP\ using environments like "tabular":
+\begin{code}
+label(btex
+    \begin{tabular}{c}
+        A way to get simple\\
+        two line labels
+    \end{tabular} etex, 256 down);
+\end{code}
+But recall that whatever you ask the \mpl{TEX()} macro to typeset like this is going into
+a restricted horizontal mode box;  so don't try to use floating environments like
+"table" or "figure".  And if you want automatic paragraph wrapping, you will have
+to wrap your text in a suitable "\vbox", as shown above.
 
-This is really easy now, because we can assemble a string
-on the fly:\mpic{0pt}{simple-number-line}
+\subsection{Display maths}
+
+Because the \mpl{TEX()} macro typesets everything in restricted horizontal mode, you
+cannot use "$$ .. $$" to create display maths directly.  This is not a \TeX\
+\textit{v} \LaTeX\ issue, it is just that for compatibility with plain \MP\ (and
+common sense), the designers of "luamplib" chose to typeset labels into
+horizontal-mode boxes This is usually what you want.  If you prefer
+large integral
+operators (etc) in your labels,
+then you should either add
+"\displaystyle" at the beginning of your formula $\longrightarrow$\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+\begin{code}
+...
+label("$\displaystyle \int_0^t 3x^2\, dx$", z0);
+...
+label("\vbox{\hsize 2in $$\int_0^t 3x^2\, dx$$}", z1);
+...
+\end{code}
+}}
+\\
+or wrap the formula in a "\vbox" with a suitable "\hsize".  Using "\displaystyle" is
+probably simpler.
+
+
+\subsection{Typographical minus signs and other dynamic labels}
+
+This is really easy with "mplibtextextlabel" enabled, because we can assemble a string
+on the fly using standard \MP\ syntax:\mpic{0pt}{simple-number-line}
 \begin{code}
 draw (left--right) scaled 2in withcolor 2/3 red;
 for i=-4 upto 4:
-  dotlabel.top("$" & decimal i & "$", (32i, 0);
+  dotlabel.top("$" & decimal i & "$", (32i, 0));
 endfor
 \end{code}
-You will recall that the binary operator "&" concatenates two strings.
-
-\subsection{Dynamic labels}
-
-This is also really easy, for the same reason.  The code to label
-points round a circle is now simple \textit{and} quick:\mpic{0pt}{simple-circle-labels}
+The normal operator precedence rules ensure that the string argument to
+\mpl{dotlabel} is assembled before it is passed to the \mpl{TEX()} macro.
+The individual parts of the string you assemble do not have to be
+valid bits of \TeX\ in themselves; they only have to make sense once they
+are actually passed to the macro.  With "luamplib" there are no slow
+external files being used, so the complexities used above
+(§\ref{sec:old-and-dynamic}) to label points around a
+circle can be simplified without sacrificing speed:\mpic{-80pt}{simple-circle-labels}
 \begin{code}
 path C; C = fullcircle scaled 100; draw C withcolor 2/3 red;
 for i=0 upto 11:
@@ -3921,15 +3960,27 @@ for i=0 upto 11:
 endfor
 \end{code}
 
+\smallskip\noindent\nb But note that you can't do this string concatenation with "btex" \dots\ "etex";
+although they might appear to be special quotation marks, they produce a
+\mptype{picture}, and \mpl{&} only works with strings or paths.
+
+
+\newpage
+\subsection{Bounding boxes for text}
+
+Whether you call the
+"luamplib" \mpl{TEX()} macro explicity, or implicitly using "infont", "btex" \dots\
+"etex", or the "mplibtextextlabel" option, the result is a \mptype{picture} that
+processed like any other.  This means you can pass is to the \mpl{label} macro, or
+just place it directly in your drawing with the \mpl{draw} command; it also means
+you can apply a transformation to it, such as scaling or a rotation.  This section
+attempts to show what happens to the bounding box of the label when you do any of
+these things.
 
 bounding boxes
 
-label vs draw
+rotated labels.
 
-plain TeX?
-
-display maths
-multiline text
 
 \newpage
 \subsection{Markers for annotations}
@@ -3946,7 +3997,7 @@ multiline text
 The PostScript language defines parameters that affect how the ends of each line are
 drawn and how lines are joined together.  Plain \MP\ provides access to these
 parameters through internal variables called "linecap" and "linejoin"; it sets both
-of them to the value "rounded" at the start of each job. 
+of them to the value "rounded" at the start of each job.
 \mpic{0pt}{basic_drawing1}
 
 
@@ -3959,7 +4010,7 @@ observations
 to note:
 \begin{itemize}
     \item When $\id{linecap}=\id{squared}$ then \kw{drawdot} produces diamond-shaped
-        dots, even when you are drawing with the default circular pen. 
+        dots, even when you are drawing with the default circular pen.
 
     \item When $\id{linecap}=\id{butt}$ then \kw{drawdot} produces invisible dots.
         They still count towards the bounding box of the picture but there's no mark
@@ -3969,28 +4020,28 @@ to note:
         unpleasant results; even when $\id{linejoin}=\id{mitered}$, you can still
         see small jaggies on the slopes of the arrows.
 
-    \item The arrows are nice and sharp when 
+    \item The arrows are nice and sharp when
         $\id{linejoin}=\id{mitered}$, but they over shoot the mark slightly.
 
     \item If you zoom in, you can see the effect of $\id{linejoin}$ on the corners of the grey box
         as well as on the arrow heads, but you might not notice the difference when
         the picture is printed unless you have a very high resolution printer.
 
-    \item 
-        This drawing was done with \mpl{pencircle scaled 2}, so that the dots 
-        would be easy to see. This does make the arrows drawn with the 
+    \item
+        This drawing was done with \mpl{pencircle scaled 2}, so that the dots
+        would be easy to see. This does make the arrows drawn with the
         default line modes (rounded caps and rounded joins) looks a bit fat;
         they look better with the usual \mpl{pencircle scaled .5}.
 
 \end{itemize}
 
-There is one more PostScript parameter affecting line joins. \MP\ makes it available as "miterlimit" 
+There is one more PostScript parameter affecting line joins. \MP\ makes it available as "miterlimit"
 and it affects how much a mitered join is allowed to stick out at each corner.  Plain \MP\ sets
 "miterlimit=10;" which is correct for nearly all drawings.  If you set
 "miterlimit:=0;" then the mitered line join mode becomes more or less the same as the
 beveled mode.
 
-\newpage 
+\newpage
 \section{Cycloid and other spiral graphs}
 
 This section examines cycloids; the curves made by points on the circumference of a
@@ -4016,7 +4067,7 @@ scaled up; if we change $θ$, the wheel will appear to have rolled along.
         the end of the path.  With a cyclic path it’s easier because you can just
         put "--cycle" after the "endfor".  The strange numbers here are because
         we are going from a rotation of $-100°$ to $+460°$; $360°$ corresponds to
-        one hop of the cycloid. 
+        one hop of the cycloid.
 
     \item The axes are done in the usual way, except that we use "xpart" and the
         "point .. of .." notation to make the $x$-axis neatly line up with the ends
@@ -4024,8 +4075,8 @@ scaled up; if we change $θ$, the wheel will appear to have rolled along.
 
     \item To label points with dots but no text it’s convenient just to fill a
         circle scaled to "dotlabeldiam"; this internal parameter is the current size
-        to be used for the dots in "dotlabel".  
-    
+        to be used for the dots in "dotlabel".
+
 \end{itemize}}
 
 \mpexternal[xleftmargin=0pt]{cycloids.mp}
@@ -4113,7 +4164,7 @@ gradients
 
 - four box model charts - Tufte charts - venn diagrams
 
-- my workflow 
+- my workflow
 - tex process flow diagrams
 
 - triangle of polygons
