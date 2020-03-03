@@ -1,5 +1,5 @@
 prologues := 3;
-outputtemplate := "%j%c.mps";
+outputtemplate := "%j%c.eps";
 
 beginfig(0);
   % unit
@@ -56,20 +56,23 @@ beginfig(0);
 endfig;
 
 
-stp = 2.50662827463;
-vardef gauss(expr mu,sigma,x) = 
-   if abs(x-mu) < 4sigma:
-     mexp(-128*(((x-mu)/sigma)**2))/stp/sigma
+numeric _sqrtpp; 
+_sqrtpp = 2.50662827463;
+
+vardef gauss(expr mu, sigma, x) = 
+   if abs(x - mu) < 4 sigma:
+     mexp(-128 * (((x - mu) / sigma) ** 2)) / _sqrtpp / sigma
    else: 
      0 
    fi 
    enddef;
 
 vardef gauss_curve(expr mu, sigma, a, b, s) = 
-  (a,gauss(mu,sigma,a)) for x=a+s step s until b: .. (x,gauss(mu,sigma,x)) endfor
+  (a, gauss(mu, sigma, a)) for x = a + s step s until b: .. (x, gauss(mu, sigma, x)) endfor
   enddef;
 
-vardef Z = (-4,0) for x = -3.9 step .1 until 4: .. (x,mexp(-128*(x**2))/2.50663) endfor enddef;
+vardef Z = gauss_curve(0, 1, -4, 4, 1/8) enddef;
+%vardef Z = (-4,0) for x = -3.9 step .1 until 4: .. (x, gauss(0, 1, x)) endfor enddef;
 
 beginfig(1);
 
@@ -171,6 +174,50 @@ beginfig(3);
   l2 = thelabel(btex $99\%$ etex scaled 0.7, point 1/2 of ic);
   fill bbox l1 withcolor .68[red,white]; draw l1;
   unfill bbox l2; draw l2;
+endfig;
+beginfig(4);
+  
+    defaultfont := "texnansi-lmr10";
+    numeric u, v; u = 56; v = 288;
+    
+    path xx,yy, curve;
+    curve = Z xscaled u yscaled v;
+    xx = (left--right) scaled 4 u;
+    yy = (down--up)    scaled 1/2 v;
+  
+    numeric q[];
+    q0 = 0.0000000;
+    q1 = 0.2533471;
+    q2 = 0.5244005;
+    q3 = 0.8416212;
+    q4 = 1.2815516;
+    q5 = 3.4;
+
+    path S[];
+    for i=1 upto 5:
+        show i;
+        S[i] = buildcycle(xx, yy shifted (q[i] * u * right), 
+               reverse curve, yy shifted (q[i-1]*u * right));
+        fill S[i] withcolor (1/2 + i/12)[white, 2/3 red];
+        fill S[i] reflectedabout(up, down) 
+                  withcolor (1/2 - i/12)[white, 2/3 red];
+        undraw S[i];
+        undraw S[i] reflectedabout(up, down);
+        numeric m; m = 1/2(q[i-1]+q[i]);
+        label.top(decimal (5+i), (m*u, gauss(0, 1, m)*v)) withcolor 2/3 red;
+        label.top(decimal (6-i), (-m*u, gauss(0, 1, m)*v)) withcolor 2/3 red;
+      endfor
+
+  drawoptions(withcolor 1/2 white); 
+  draw xx withcolor 1/2 white; 
+  for i=-3 upto 3:
+      draw (down--origin) scaled 2 shifted (i*u, 0);
+      label(decimal i, (i*u, -10));
+  endfor
+  label.lft("Standard deviations", (3.14u, -24));
+  drawoptions();
+  label.rt("Deciles", (u, 1/3 v)) withcolor 2/3 red;
+
 endfig;
 end.
 

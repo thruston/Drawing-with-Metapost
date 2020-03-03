@@ -16,7 +16,7 @@
 \usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – June 2019}
+\date{March 2017 – June 2020}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
@@ -63,6 +63,7 @@ columns=fullflexible,
 keepspaces=true,
 xleftmargin=\parindent,
 showstringspaces=false,
+morekeywords={cmykcolor},
 morestring=[s]{btex}{etex}
 }}
 \lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily}}{}
@@ -113,20 +114,20 @@ Another would be to flick through until you see something that looks like it mig
 be useful and then see how it’s done.
 
 And when I say \textit{plain} \MP\ I mean \MP\ with the default format (as defined
-in the file "plain.mp") loaded and no other external packages (apart from "boxes.mp"
-very occasionally).  Nearly all of the examples here are supposed to be self
+in the file "plain.mp") loaded and only a few simple external packages (like
+"boxes.mp" occasionally).  Nearly all of the examples here are supposed to be self
 contained, and any macros are defined locally so you can get to grips with what’s
-going on.  \MP\ is a very subtle language, and it’s possible to do some
-very clever and completely inscrutable things with it;  in contrast I’ve tried to be
-as clear as possible in my examples.
+going on.  \MP\ is a very subtle language, and it’s possible to do some very clever
+and completely inscrutable things with it;  in contrast I’ve tried to be as clear as
+possible in my examples.
 
 \newpage
 \section{Some features of the syntax}
 
 \begin{itemize}
-    \item Assignment or equation:  the equation "a=3;" means "a" is the same as "3" throughout the
-        current scope; the assignment "a:=3;" means update the value of "a" to the value "3"
-        immediately.  The difference becomes apparent when you try to update a
+    \item Assignment or equation:  the equation "a=3;" means “"a" is the same as "3" throughout the
+        current scope”; the assignment "a:=3;" means “update the value of "a" to the value "3"
+        immediately”.  The difference becomes apparent when you try to update a
         variable in the same scope.
         \mwpic{0pt}{tiling}
 
@@ -151,7 +152,7 @@ as clear as possible in my examples.
 
         —
         \mpl{color} "(r,g,b)",
-        \mpl{color} "(c,m,y,k)"
+        \mpl{cmykcolor} "(c,m,y,k)"
         \mpl{transform} "(x,y,xx,xy,yx,yy)"
 
         —
@@ -207,7 +208,7 @@ directories to the search tree.  Finally, if the file is a new file, then the
 profile loads this template:
 \begin{smallcode}
 prologues := 3;
-outputtemplate := "%j%c.eps";
+outputtemplate := "%j%c.%{outputformat}";
 beginfig(1);
 
 endfig;
@@ -215,8 +216,9 @@ end.
 \end{smallcode}
 The first two lines are important: "prologues := 3;" makes \MP\ put the full font
 details in the output so that the files are self-contained; the "outputtemplate"
-line means that the output will be written to files with an extension of ".eps"
-(suggesting that they are Encapsulated PostScript).
+line means that the output will be written to files with an extension that matches
+the chosen output format, which will be "png", "svg", or more usually "eps", which
+is the default (and suggests that the output is Encapsulated PostScript).
 
 I then add drawing and label commands, using all the traditional facilities for
 typesetting labels described in section \ref{sec:trad-labels}.  I compile the source
@@ -225,8 +227,7 @@ where "!" means “this is an external command” and the "%" picks up the curre
 name.  Usually I need several attempts to get a diagram right, so I open Skim to preview the
 output with ":!open -a Skim %:r1.eps".  I have Skim set up so that when I recompile
 the source, it automatically updates the view of the PostScript output.
-
-\moveright5.4in\vbox to 0pt{\vss\hsize 4in\noindent
+\vadjust{\moveright5.4in\vbox to 0pt{\vss\hsize 4in\noindent
 $$\includegraphics[width=4in]{workflow-plain.pdf}$$
 If I want to use the diagram in a \LaTeX\ document I can include the EPS file
 directly with
@@ -240,7 +241,7 @@ manually but usually I use a small Python script to automate this process: run
 "mpost" with the "-recorder" option; scan the list of files to see what got
 produced; check which ones are PostScript; call "esptopdf" to make each one into a
 PDF file; remove each EPS file if successful.  Your mileage may vary.\par
-}
+}}
 
 \subsection{Stand alone graphics with Lua\LaTeX}\label{sec:sa-lua-flow}
 
@@ -273,7 +274,7 @@ the template I use:
 As you can see, we have \MP\ source code wrapped up in a minimal \LaTeX\ document
 using the \texttt{standlone} class, which automatically adjusts the page size to
 fit the contents of document, so is ideal for single diagrams.  One small
-disadvantage is that you can only produce one PDF output file, so you need to have a
+disadvantage is that you can only produce a single PDF output file, so you need to have a
 separate file for each picture, but the good news is that you get a much simpler and
 more effective integration with \LaTeX, in particular with the font environment.
 Since this only works with "lualatex" you have to use the "fontspec" package, as
@@ -303,7 +304,7 @@ cycle.  This concept is common to most drawing languages but it’s often hidden
 open path might be automatically closed for you when you try to fill it.  \MP\ takes
 a more cautious approach; if you pass an open path to "fill" you will get an error
 that says ‘Not a cycle’.  You can also use "cycle" in a boolean context to test
-whether a path "p" is cyclic:
+whether a path "p" is closed (or cyclic if you prefer):
 $\hbox{\ttfamily if cycle p: ... fi}$.
 
 \medskip\noindent
@@ -317,8 +318,10 @@ There are several closed paths defined for you in plain \MP.
         centered on the origin, then shift it by "-(1/2,1/2)" before you scale it.
 
     \item "fullcircle" which you can use to draw any circle or ellipse with
-        appropriate use of "xscaled" and "yscaled".  Defined so that it is centered
-        at the origin and has unit \textit{diameter} and point 0 is "(1/2,0)".
+        appropriate use of "xscaled" and "yscaled".  It is defined so that it is centered
+        at the origin, and that it has unit \textit{diameter}, and that it starts at 3
+        o’clock; which means \mpl{point 0 of
+        fullcircle = (1/2, 0)} is true.
 
     \item "superellipse()" which creates the shape beloved of the Danish designer Piet Hein.  Unlike the
         other two, this one is a function rather than a path, so you need to call it
@@ -372,7 +375,7 @@ point $n+\hbox{\bf length }p$.  This works with negative numbers too, so we coul
 \begin{code}
 center p -- subpath(-1,1) of p -- cycle
 \end{code}
-to get wedge centered on point 0.
+to get wedge that extends either side of point 0.
 
 \newpage\subsection{Building cycles from parts of other paths}
 
@@ -476,7 +479,7 @@ point "ta" of path "0".
 This implementation of \mpl{buildcycle} works well in most cases, provided that there
 are enough components to the cycle of paths.  If you only have two paths, then the
 two paths need to be running the same direction, and the start of each path must not
-be contains within the other.  This is explored in the next section.
+be contained within the other.  This is explored in the next section.
 
 \newpage
 \subsection{Strange behaviour of \texttt{buildcycle} with two cyclic paths}
@@ -650,13 +653,13 @@ You get 11 iterations in the second but only 10 with the first.
         This can be an irritation if you are trying to plot data with large values,
         but the solution is simple:  scale your values to a reasonable range first.
 
-    \item Intermediate calculations are allowed to be upto 32768 in absolute value
+    \item Intermediate calculations are allowed to be up to 32768 in absolute value
         before an error occurs.  You can sometimes avoid problems by using the
         special Pythagorean addition and subtraction operators, but the general
         approach should be to do your calculations before you scale a path
         for filling or drawing.
 
-    \item You can turn a number upto 32768 into a string using the "decimal"
+    \item You can turn a number up to 32768 into a string using the "decimal"
         command, and then you could append zeros to it using string concatenation.
 
 \end{itemize}
@@ -907,16 +910,17 @@ must remain less than 32767 if you are using the default number system.
 \vpic{7pt}{random-selection1}
 
 \noindent
-\MP\ inherits from \MF a generalized concept of number that includes ordered pairs
-which are primarily used as Cartesian coordinates, but can also be used as complex
-numbers, as discussed below.
-\MP\ extends the this generalization with 3-tuples and 4-tuples.  Just like pairs, the
-elements in these tuples can take any numeric value, so in theory it would be
-possible to use them for three- and four-dimensional coordinates, but there are no
-built-in facilities for this in plain \MP, so some external library is needed. None
-of those available is very easy to use, and they are not discussed in this document.
+\MP\ inherits a generalized concept of number from \MF\ that includes ordered pairs.
+Pairs are primarily used as Cartesian coordinates, but can also be used as complex
+numbers, as discussed below.  \MP\ extends this gener\-al\-ization with 3-tuples and
+4-tuples.  Just like pairs, the elements in these tuples can take any numeric value,
+so in theory it would be possible to use them for three- and four-dimensional
+coordinates, but there are no built-in facilities for this in plain \MP, so some
+external library is needed.  \textit{All of the various attempts at three dimensions
+in \MP\ are rather difficult to use, so none of them is discussed in this document}.
 
-Unlike simple numerics, these extended tuple variables are not automatically
+\smallskip\noindent
+Unlike simple numerics, the extended tuple variables are not automatically
 declared for you, so if you want to define points $A$ and $B$ you need to explicitly
 write `$\kw{pair} \id{A},\id{B};$' before you assign values to them.  Once you have
 declared them, you can equate them to an appropriate tuple using $=$ as normal.
@@ -1098,7 +1102,26 @@ usual operations when they are required\dots
 Since multiplication by $z$ can be thought of as a transformation consisting of
 rotation by the argument of $z$ and scaling by $|z|$, you can define the complex
 inverse and complex square root simply using \mpl{angle} and \mpl{abs}.
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -24pt
+\centerline{\includegraphics{complexities.pdf}}
+The interesting part drawn as follows:
+\begin{smallcode}
+input colorbrewer-rgb
+for i=1 upto 4:
+  z[i] = (3/2 + 1/4 normaldeviate) * dir (16 i + normaldeviate);
+  path a;
+  a = z[i] scaled 42 -- origin -- zinverse(z[i]) scaled 42;
+  drawarrow a cutafter fullcircle scaled 5 shifted point 2 of a
+    withcolor SetTwo[7][1+i]; 
+  drawdot point 0 of a withpen pencircle scaled dotlabeldiam;
+  drawdot point 2 of a withpen pencircle scaled dotlabeldiam;
+  drawdot point 2 of a withpen pencircle scaled 2 withcolor white;
+endfor
+label.ulft("\texttt{zinverse()}", 42 dir 120);
+\end{smallcode}
+\vss}}
 
+\smallskip\noindent
 First an inverse function.  The idea here is to find a function that is the opposite
 of complex multiplication, so we want something that gives
 \begin{code}
@@ -1139,14 +1162,14 @@ enddef;
 
 \MP\ implements colours as simple numerics, or tuples of three or four numeric values.
 Three-tuples (which are type \mpl{color}) represent RGB colours; four-tuples
-(which are type \mpl{cmykcolor} represent CMYK colours.  Simple numerics are used to
+(which are type \mpl{cmykcolor}) represent CMYK colours.  Simple numerics are used to
 represent grey scale colours.
 
-The numeric values can take any \kw{numeric} value, but \MP\ only considers the
-range 0 to 1.  Values less than zero are treated as zero, values greater than 1 are
+The numeric values of the colours can take any \kw{numeric} value, but \MP\ only considers the
+range 0 to 1 ---  values less than zero are treated as zero, values greater than 1 are
 treated as 1.
-So to encode colors, such as British Racing Green with RGB code "(1,66,37)"
-or Pillar Box Red with code "(223,52,57)", you should write:
+So British Racing Green with RGB code "(1,66,37)",
+or Pillar Box Red with code "(223,52,57)", can be defined like this:
 \begin{code}
     color brg, pbr;
     brg = (0.00390625, 0.2578125, 0.14453125);
@@ -1197,7 +1220,7 @@ for y=1 upto N:
   for x=1 upto N:
     fill fullcircle scaled 16 shifted 20(x,y)
       withpen pencircle scaled 2
-      withcolor (n/N/N)[pbr, brg;
+      withcolor (n/N/N)[pbr, brg];
     label(decimal incr n infont "phvr8r", 20(x,y))
       withcolor white;
   endfor
@@ -1470,15 +1493,7 @@ clipped at the end to a neat rectangle again.
 \newpage
 \subsection{Colorbrewer palettes}
 
-\moveright 384pt\vbox to 0pt{\vskip2.2in\raggedright\hsize4in\noindent
-This map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
-London.  The size of the circles represents the votes in each area, and the
-colours show how we voted.  The data is from publicly-available UK
-government sources.  The map was created with a small Python script to
-read the CSV files and write simple lines of \MP\ input.  You \textit{can} read
-CSV files with \MP\ but it's much quicker with Python.
-
-\bigskip\noindent
+\moveright 384pt\vbox to 0pt{\vskip36pt\raggedright\hsize4in\noindent
 Here is the code for the palette used as the legend:
 \begin{smallcode}
 input colorbrewer-rgb
@@ -1494,27 +1509,36 @@ label.top("Leave" infont "phvr8r", (10s, s));
 
 \bigskip
 $$\includegraphics{brexit-palette1.pdf}$$
+
+\vskip72pt
+\noindent
+This map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
+London.  The size of the circles represents the votes in each area, and the
+colours show how we voted.  The data is from publicly-available UK
+government sources.  The map was created with a small Python script to
+read the CSV files and write simple lines of \MP\ input.  You \textit{can} read
+CSV files with \MP\ but it's much quicker with Python.
 \vss}
 
 \noindent
 The well-known Colorbrewer website ("http://colorbrewer2.org") provides a
 useful set of colour palettes that are suitable for a wide range of applications.  They
-were originally written for maps.  You can get my implementation of these palettes
-for \MP\ from
-\begin{itemize}
-    \item CTAN – "https://ctan.org/pkg/metapost-colorbrewer"
-    \item Github – "http://github/thruston/metapost-colorbrewer"
-\end{itemize}
+were originally written for maps, but they have a wide range of applications. 
+If you are using an up-to-date, and complete, \TeX\ distribution, you should find
+that my implementation of them for \MP\ is already installed on your system.
 The package provides two files that define all the colour ranges; one for CMYK and
-another for RGB.  If you are using an up-to-date \TeX\ distribution, you should find
-that they are already installed, but if not you just have to put the files into your local TeX tree so that
-\MP\ will find them.  On my Mac this means putting the files into
-"~/Library/texmf/metapost".
+another for RGB; an example of usage is shown over there~$\longrightarrow$
 
-\vbox to 0pt{$$\includegraphics[width=\textwidth]{brexit-map.pdf}$$\vss}
+$$\includegraphics[width=\textwidth]{brexit-map.pdf}$$
 
 
-
+\smallskip\noindent
+If you need to install the package by hand you can get it from CTAN at:
+\begin{verbatim}
+    https://ctan.org/pkg/metapost-colorbrewer
+\end{verbatim}
+and follow the installtion instructions provided there.
+%--------------------------------------------
 \newpage
 \section{Random numbers}
 
@@ -2711,7 +2735,8 @@ the corresponding points on $A$ and $B$.
 
 \medskip\noindent
 This works well, provided that none of three
-circles $A$, $B$, or $C$, is rotated (that is that point 0 is at 3 o'clock).  But
+circles $A$, $B$, or $C$ has been rotated (that is that point 0 is at 3 o'clock in
+all of them).  But
 this may not always be the case.   For example, you might have written
 \begin{code}
 B = fullcircle scaled 60 shifted 240 right rotated 36;
@@ -2726,7 +2751,7 @@ vardef adjust_time(expr tt, AA, BB) =
        - 1/45 angle (point 0 of BB - center BB)
 enddef;
 \end{code}
-}}
+\vss}}
 The in the figure $t$ was adjusted to $t'$ for $A$ and $t''$ for $B$, using the
 routine shown on the right.  This routine shows the relationship between \mpl{angle}
 and points around a circle:  $360^\circ = 8\:\hbox{points}$.
@@ -2745,7 +2770,6 @@ routines given above; \mpl{tangent_times} from section \ref{sec:tangent-times}, 
 \mpl{adjust_time} from section \ref{sec:adjust-times}.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 \begin{smallcode}
-beginfig(1);
 path A, B;
 A = fullcircle scaled 144 rotated uniformdeviate 360;
 B = fullcircle scaled 60 shifted 240 right rotated 36;
@@ -2789,11 +2813,31 @@ drawoptions(withcolor 1/2[blue, white]);
     label.rt (btex $B$ etex, point 1/2(t''+u''- 2) of B);
     label.urt(btex $C$ etex, point 1/2(t+u-8) of C);
 drawoptions();
-endfig;
 \end{smallcode}\vskip -1in
 }}
 
 \subsection{Axis of similitude}
+
+\bigskip
+\noindent\hbox to \textwidth{\includegraphics[scale=0.95]{axis1}\hss}
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+Given three circles taken in pairs, you can use the techniques of the preceding 
+sections to find the three points where the common external tangents
+intersect (shown here as $E_{12}$, $E_{31}$, and $E_{23}$) and the 
+three points where the common internal tangents intersect ($I_{12}$, 
+$I_{31}$, and $I_{23}$).  These points have a pleasing colinearity.
+The line common to the three $E$ points is known as the \textit{Axis of
+Similitude}.  
+
+The drawing is left as an exercise for the reader, except 
+to note that if $r_1$ and $r_2$ are \mpl{numeric} variables representing
+the radius of the circles centered at the \mpl{pair} variables $C_1$ and $C_2$, 
+then we have:
+$$\vbox{\openup3pt\halign{\hfil$#$&${}=#$\hfil\cr
+E_{12}&({r_1\over r_1 - r_2})[C_1, C_2];\cr
+I_{12}&({r_1\over r_1 + r_2})[C_1, C_2];\cr
+}}$$
+which is a bit quicker than working out all the tangent points.}}
 
 \subsection{Circles tangent to other circles}
 
@@ -3966,16 +4010,19 @@ although they might appear to be special quotation marks, they produce a
 
 
 \newpage
-\subsection{Bounding boxes for text}
+\subsection{Transforming text pictures}
 
-Whether you call the
-"luamplib" \mpl{TEX()} macro explicity, or implicitly using "infont", "btex" \dots\
-"etex", or the "mplibtextextlabel" option, the result is a \mptype{picture} that
-processed like any other.  This means you can pass is to the \mpl{label} macro, or
-just place it directly in your drawing with the \mpl{draw} command; it also means
-you can apply a transformation to it, such as scaling or a rotation.  This section
-attempts to show what happens to the bounding box of the label when you do any of
-these things.
+Whether you call the "luamplib" \mpl{TEX()} macro explicity, or implicitly using
+"infont", "btex" \dots\ "etex", or the "mplibtextextlabel" option, the result is a
+\mptype{picture} that can be processed like any other.  Since \MP\ does not care if
+the text picture you have created came from traditional "infont" or new-fangled
+\mpl{TEX()}, the discussion in §\ref{infontbbox} applies just the same.  But apart
+from adjusting the bounds to work well with \mpl{label} you can also apply a
+transformation to it, such as scaling or a rotation.  This section add to that
+discussion some details of what happens to the bounding box of the text when you do
+any of these things.  
+
+
 
 bounding boxes
 
