@@ -101,8 +101,8 @@ let’s you write a Metapost program, compile it, and include the results in you
 some of the excellent tutorials, including "mpintro.pdf".  If you have already done
 this, please read on.
 
-These notes are based on the many examples I have developed as answers
-to questions about technical drawing on the wonderful \TeX\ StackExchange site.  In
+These notes are partly based on the examples I have developed as answers
+to questions about technical drawing on the \TeX\ Stack Exchange site.  In
 accordance with their terms and conditions, I’ve only included material here that
 I’ve written myself --- if you want other people’s code then visit the site;
 while most answers there focus on writing \LaTeX\ documents, there are a great
@@ -175,7 +175,7 @@ possible in my examples.
         So you can write things like "3a", or even "1/2 a"
         (the space between the number and the variable name is optional). This
         lets you write very readable mathematical expressions. It’s quite
-        additictive after a while.
+        addictive after a while.
 
 \end{itemize}
 
@@ -197,12 +197,12 @@ inefficient; if so please drop me a line and suggest an improvement.
 The common features of each of these workflows are: mac os, the MacVim editor to
 edit \MP\ source code, and
 Skim.app to view PostScript and PDF files.  I have the complete MacTeX distribution
-installed; any commands mentioned below are supplied by MacTex.
+installed; any commands mentioned below are supplied by MacTeX.
 
 \subsection{Stand alone graphics with plain \MP}\label{sec:plain-flow}
 
 \MP\ source files have the extension ".mp", when I open a file in MacVim that
-matches "*.mp", my editor profile sets the filetype to "mp" (which picks up the
+matches "*.mp", my editor profile sets the file type to "mp" (which picks up the
 highlight and indentation rules supplied with MacVim), and adds some relevant
 directories to the search tree.  Finally, if the file is a new file, then the
 profile loads this template:
@@ -272,7 +272,7 @@ the template I use:
 \end{document}
 \end{texcode}
 As you can see, we have \MP\ source code wrapped up in a minimal \LaTeX\ document
-using the \texttt{standlone} class, which automatically adjusts the page size to
+using the \texttt{standalone} class, which automatically adjusts the page size to
 fit the contents of document, so is ideal for single diagrams.  One small
 disadvantage is that you can only produce a single PDF output file, so you need to have a
 separate file for each picture, but the good news is that you get a much simpler and
@@ -315,10 +315,10 @@ There are several closed paths defined for you in plain \MP.
         use of "xscaled" and "yscaled" --- it’s defined so that the bottom left
         corner is point 0 of the shape.  This point is also defined as "(0,0)",
         so the "unitsquare" is centred on point "(1/2,1/2)".  If you want a square
-        centered on the origin, then shift it by "-(1/2,1/2)" before you scale it.
+        centred on the origin, then shift it by "-(1/2,1/2)" before you scale it.
 
     \item "fullcircle" which you can use to draw any circle or ellipse with
-        appropriate use of "xscaled" and "yscaled".  It is defined so that it is centered
+        appropriate use of "xscaled" and "yscaled".  It is defined so that it is centred
         at the origin, and that it has unit \textit{diameter}, and that it starts at 3
         o’clock; which means \mpl{point 0 of
         fullcircle = (1/2, 0)} is true.
@@ -336,9 +336,9 @@ There are several closed paths defined for you in plain \MP.
 \end{itemize}
 
 \newpage\subsection{Points on the standard closed paths}\noindent\mpic{-10pt}{closed1}%
-Here are the three shapes centered on the origin and labelled to show the points
+Here are the three shapes centred on the origin and labelled to show the points
 along them.  \textbf{Note} that the \textit{unitsquare} shape has been shifted so that it is
-centered on the origin in all of these examples.  The small red circle marks the
+centred on the origin in all of these examples.  The small red circle marks the
 \textit{origin}, and the labelled red dots are the points of each path.  The
 \textit{unitsquare} has four points, while the other two shapes both have eight.
 The small
@@ -398,7 +398,7 @@ Note the use of the $y$-axis shifted along by different amounts.
 \smallskip\noindent
 There are similar examples in the \MP\ manual, but "buildcycle" can also
 be useful in more creative graphics.
-Here’s a second example that uses closed paths to give an illlusion of depth to a simple
+Here’s a second example that uses closed paths to give an illusion of depth to a simple
 graphic of the planet Saturn.
 \mpic{0pt}{saturn1}
 \marginpar{\hbox{}\vskip1.3in\raggedright\noindent\textbf{Notes}\begin{itemize}
@@ -596,7 +596,7 @@ implications:
         ${21845\over65536} \simeq 0.333328$, and $1\over10$ as
         ${6554\over65536} \simeq 0.100006$.
         You should bear this in mind particularly when you
- are chosing fractional step-values in a "for" loop, where the errors can accumulate so that
+ choose fractional step-values in a "for" loop; the errors can accumulate so that
  you may miss your expected terminal value.\vadjust{\moveright5.5in\vbox to
  0pt{\kern-2in\hsize4in\noindent
      Compare the following two snippets:
@@ -962,8 +962,8 @@ assign a value to an $\kw{xpart}$ or a $\kw{ypart}$.  So if you want to update o
 part of a pair, you have to do something like this: `$\id{A} \mathrel{:}= (42,
 \kw{ypart}\id{A});$'.
 
-In addition there is a neat macro defintion in plain \MP\ that allows you do deal
-with the $x$- and $y$-parts of pairs rather more succintly.
+In addition there is a neat macro definition in plain \MP\ that allows you do deal
+with the $x$- and $y$-parts of pairs rather more succinctly.
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-140pt
 \includegraphics{somewhat-random-function1}
 \begin{code}
@@ -989,7 +989,7 @@ unused.  For example `\mpl{def ^=dir enddef;}', which would let you write
 
 \smallskip
 Plain \MP\ defines five useful pair variables: \id{origin}, \id{right}, \id{up},
-\id{left}, and \id{down}.  As so often, the Knuthian definitions in "plain.mp" are
+\id{left}, and \id{down}.  As so often, Knuth-Hobby definitions in "plain.mp" are
 quite illuminating
 $\longrightarrow$
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-36pt
@@ -1032,7 +1032,7 @@ You can also use the polar notation shown above to write complex numbers.  For
 $re^{i\theta}$ you can write `\mpl{r dir theta}' where "r" is the modulus and
 "theta" is the argument in degrees.
 
-The predfined constants \mpl{up},
+The predefined constants \mpl{up},
 \mpl{down},
 \mpl{left}, and
 \mpl{right} also provide points on the unit circle corresponding to $i$, $-i$,
@@ -1537,7 +1537,7 @@ If you need to install the package by hand you can get it from CTAN at:
 \begin{verbatim}
     https://ctan.org/pkg/metapost-colorbrewer
 \end{verbatim}
-and follow the installtion instructions provided there.
+and follow the installation instructions provided there.
 %--------------------------------------------
 \newpage
 \section{Random numbers}
@@ -2122,7 +2122,7 @@ $$\includegraphics{torn-edge2}$$
 
 
 \newpage
-\section{Plane geometry and trignonometry}
+\section{Plane geometry and trigonometry}
 
 \noindent\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\kern-9pt\noindent
 Here is the equilateral triangle point macro in action.
@@ -2209,7 +2209,7 @@ but the number before the left bracket does not have to
 be confined to the range $(0,1)$.  If you write "3/2[a,b]" you will get a pair on
 the extension of the line from $a$ to $b$ beyond $b$.  To get a pair going the
 other way you can either reverse $a$ and $b$, or use a negative number; but don't
-get caught out by the \MP\ precendence rules:  "-1/2[a,b]" is interpreted as
+get caught out by the \MP\ precedence rules:  "-1/2[a,b]" is interpreted as
 "-(1/2[a,b])" and not as "(-1/2)[a,b]", so either put in the parentheses or swap
 the order of the pairs: "(3/2)[b,a]". See $\longrightarrow$.
 
@@ -2372,7 +2372,7 @@ If you have line segments defined by their endpoints, then the
 canonical way to find their intersection, is to use
 the mediation syntax with \id{whatever} twice:
 $$\includegraphics[width=0.9\textwidth]{whatever.pdf}$$
-The mediation syntax works even if the interection point does not actually lie on
+The mediation syntax works even if the intersection point does not actually lie on
 either of the two line segments.  The intersection will be the point where the two
 (infinite) lines through the pairs of points meet.  If the two lines are parallel,
 you'll get an `inconsistent equation' error.  If you want to capture the calculated
@@ -2398,7 +2398,7 @@ than straight lines, you need to use the \mpl{intersectiontimes} primitive or th
 \mfbook, with more detail given in the web source for \MF.  The core algorithm works
 on paths of length 1. If you have longer paths, \MP\ works its way along the paths
 applying the core algorithm to successive pairs of unit subpaths.  It does this is
-lexographic order; this means that, if you have two circles $A$ and $B$, and you do this:
+lexicographic order; this means that, if you have two circles $A$ and $B$, and you do this:
 \begin{code}
     (t, u) = A intersectiontimes B;
 \end{code}
@@ -2476,7 +2476,7 @@ But it
 is possible to create quite long paths of unit \mpl{length} and these may intersect
 each other more than once, like so:
 $$\includegraphics{intersectme8}$$
-Here the two paths $A$ and $B$ are Bezier splines of with \mpl{length=1}, so the
+Here the two paths $A$ and $B$ are Bézier splines of with \mpl{length=1}, so the
 normal \MP\ algorithm is only ever going to give you one of the intersections.  In
 the diagram above, the
 red circle marks the point given by \mpl{A intersectiontimes B}.  We can try
@@ -2555,7 +2555,7 @@ The canonical way to draw a circle in plain \MP\ is to use the pre-defined path
 \mpl{fullcircle} with a suitable transformation.
 \mpic{-12pt}{circles1.pdf}
 The path is defined (in
-"plain.mp") using two \MP\ primative commands:
+"plain.mp") using two \MP\ primitive commands:
 \begin{code}
 path fullcircle; fullcircle = makepath pencircle;
 \end{code}
@@ -2563,13 +2563,13 @@ A \kw{pencircle} is the basic nib that is used to draw lines that digitize neatl
 it represents a true circle of diameter 1, passing through the points $(\pm.5, 0)$
 and $(0, \pm.5)$.  When processed with \kw{makepath} it turns into a cyclic
 polygonal path with eight points that closely approximates a circle with diameter
-1\unit{bp} centered on the point $(0, 0)$.  To use it, you can scale it and shift it.
+1\unit{bp} centred on the point $(0, 0)$.  To use it, you can scale it and shift it.
 To draw a circle with radius 2\unit{cm} at the point $(34, 21)$ you would do:
 \begin{code}
 draw fullcircle scaled 4cm shifted (34, 21);
 \end{code}
 Remember to scale before you shift, and that \id{fullcircle} has unit
-\textit{diameter}, not unit \textit{radius}.  To draw a circle centered at point $A$
+\textit{diameter}, not unit \textit{radius}.  To draw a circle centred at point $A$
 that passes through point $B$ [\textcolor{textred}{I}] try:
 \begin{code}
 draw fullcircle scaled 2 abs (B-A) shifted A;
@@ -2613,7 +2613,7 @@ of a path $p$ at any time $t$ along it: \mpl{direction t of p}.
 This returns a pair
 that represents the direction that the path is taking at point $t$.
 \mpic{-32pt}{tang1.pdf}%
-In the language of Bezier
+In the language of Bézier
 cubic curves, the pair is the value of the current control point minus the current
 point on the path. So if you define a path like this $\longrightarrow$
 \begin{code}
@@ -2660,7 +2660,7 @@ The techniques of the preceding section can be used to add a tangent line to a
 given point on a circular path, but not to find the tangent lines from a given point
 outside a circle.  To do this, you need to adapt the standard geometrical
 construction: for a given circle $C$ and a point $p$, find the midpoint of $p$ and
-the center of $C$; draw a circle through $p$, centered on this midpoint; the tangent
+the center of $C$; draw a circle through $p$, centred on this midpoint; the tangent
 points are where this second circle intersects $C$.\mpic{-120pt}{tangents3.pdf}
 Given a suitable \mpl{path C} and \mpl{pair p} you can do this:
 \begin{code}
@@ -2729,7 +2729,7 @@ draw subpath (t, u) of A -- subpath (u-8, t) of B -- cycle;
 \end{code}
 Here $A$ and $B$ are the two circles you want to connect, and $A$ is larger than
 $B$. $R$ is the radius of the larger, $r$ of the smaller. $C$ is an auxiliary circle
-centered at the same point as $A$ and scaled so that its radius is $R-r$.  If we
+centred at the same point as $A$ and scaled so that its radius is $R-r$.  If we
 then find the tangent points on $C$ from the center of $B$, the points we want are
 the corresponding points on $A$ and $B$.
 
@@ -2819,19 +2819,19 @@ drawoptions();
 \subsection{Axis of similitude}
 
 \bigskip
-\noindent\hbox to \textwidth{\includegraphics[scale=0.95]{axis1}\hss}
+\noindent\hbox to \textwidth{\includegraphics[scale=0.92]{axis1}\hss}
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 Given three circles taken in pairs, you can use the techniques of the preceding 
 sections to find the three points where the common external tangents
 intersect (shown here as $E_{12}$, $E_{31}$, and $E_{23}$) and the 
 three points where the common internal tangents intersect ($I_{12}$, 
-$I_{31}$, and $I_{23}$).  These points have a pleasing colinearity.
+$I_{31}$, and $I_{23}$).  These points have a pleasing collinearity.
 The line common to the three $E$ points is known as the \textit{Axis of
 Similitude}.  
 
 The drawing is left as an exercise for the reader, except 
 to note that if $r_1$ and $r_2$ are \mpl{numeric} variables representing
-the radius of the circles centered at the \mpl{pair} variables $C_1$ and $C_2$, 
+the radius of the circles centred at the \mpl{pair} variables $C_1$ and $C_2$, 
 then we have:
 $$\vbox{\openup3pt\halign{\hfil$#$&${}=#$\hfil\cr
 E_{12}&({r_1\over r_1 - r_2})[C_1, C_2];\cr
@@ -3314,7 +3314,7 @@ turns strings into pictures for you using whatever font name is the current valu
 The "label" macro is defined (essentially) to do this:
 \begin{code}
     def *label(expr s, z) =
-      draw s if string s: infont defaulfont
+      draw s if string s: infont defaultfont
                           scaled defaultscale fi shifted z
     enddef;
 \end{code}
@@ -3355,7 +3355,7 @@ x-height, because the \textdemo{\textit{f}} also sticks up, so you need to make 
 numeric xheight; xheight = ypart urcorner ("x" infont "pplri8r");
 \end{code}
 Armed with these measurements you can align your text labels neatly so that they are
-all positioned on the base line or vertically centered on the lower case letters
+all positioned on the base line or vertically centred on the lower case letters
 regardless of any ascenders or descenders.  To draw your label left-aligned with its
 origin at position $(x,y)$ you just need to use: \kw{draw} \id{pp} \kw{shifted} $(x,y)$.
 To draw it right-aligned, you subtract
@@ -3377,7 +3377,7 @@ will make the "label" alignment routines ignore any ascenders or descenders.
 %the text that stick out of the adjusted bounding box will be clipped.
 
 \newpage
-\subsubsection{Setting greek letters with \texttt{infont}}
+\subsubsection{Setting Greek letters with \texttt{infont}}
 
 \leavevmode\hbox{}
 $$\includegraphics[width=0.5\textwidth]{greek-homer.pdf}$$
@@ -3483,7 +3483,7 @@ then they will all have the same vertical size and will all line up
 neatly:\quad\mpl{label(btex \\strut a etex, origin);}
 
 
-\subsubsection{Multiline text labels}
+\subsubsection{Multi-line text labels}
 
 Another consequence of the "hbox" feature is that there is no automatic text
 wrapping done for you, but again you can work round this easily because \TeX\ lets
@@ -3547,7 +3547,7 @@ If you are a maven of programming language syntax you may have noticed that
 "btex ... etex" fits into the type system that \MP\ inherits from \MF\ as a "picture" and
 not as a "string".  Effectively "btex" and "etex" act as a special pair of quotation
 marks that create a picture; however the contents are used verbatim, so that the
-whole contruction is a syntactical atom.  This means that you \textbf{cannot} write
+whole construction is a syntactical atom.  This means that you \textbf{cannot} write
 this sort of thing:
 \begin{code}
 for i=0 upto 4: % this won't work
@@ -3600,7 +3600,7 @@ $$
 $$
 Note that you can't use "decimal" on a "pair" variable, but you can save the pair
 as a "z"-variable and then use the "x" and "y" syntax.  The scaling trick used here
-only works because "c" is centered on the origin.  If "c" were drawn elsewhere, you
+only works because "c" is centred on the origin.  If "c" were drawn elsewhere, you
 would have to write:
 \begin{code}
 ... point i of c shifted -center c
@@ -4012,10 +4012,10 @@ although they might appear to be special quotation marks, they produce a
 \newpage
 \subsection{Transforming text pictures}
 
-Whether you call the "luamplib" \mpl{TEX()} macro explicity, or implicitly using
+Whether you call the "luamplib" \mpl{TEX()} macro explicitly or implicitly using
 "infont", "btex" \dots\ "etex", or the "mplibtextextlabel" option, the result is a
 \mptype{picture} that can be processed like any other.  Since \MP\ does not care if
-the text picture you have created came from traditional "infont" or new-fangled
+the text picture you have created came from traditional "infont" or newfangled
 \mpl{TEX()}, the discussion in §\ref{infontbbox} applies just the same.  But apart
 from adjusting the bounds to work well with \mpl{label} you can also apply a
 transformation to it, such as scaling or a rotation.  This section add to that
@@ -4143,6 +4143,13 @@ case sensitive in \MP.
 
 
 \newpage
+\section{Commutative diagrams}
+
+If you want lots of complex bells and whistles on your commutative diagrams then,
+you probably want to use specialist tools like "tikz-cd" or "xypic", but if your
+needs are simpler, then plain \MP\ is more than capable.  This section presents some ideas and
+approaches, following 
+
 \section{To do...}
 
 
@@ -4174,16 +4181,14 @@ gradients
 - drawing knots, double lines, ropes
 
 
-% done - HSV colours, brewer colours, rainbows, 50\% white etc
-
-- decorating lines, Meccano
+- decorating lines 
 
 
 - finding supremum
 
 - decorated tables
 
-- numberlines
+- number lines
 
 
 - a pulse
@@ -4200,7 +4205,7 @@ gradients
 
 - examining a glyph
 
-- tesellations and tiling (reference title page)
+- tessellations and tiling (reference title page)
 
 - all sorts of arrow, arrows between arrows, arrows next to a path (handles)
 
@@ -4209,10 +4214,7 @@ gradients
 
 - recursive drawings, trees
 
-- four box model charts - Tufte charts - venn diagrams
-
-- my workflow
-- tex process flow diagrams
+- four box model charts - Tufte charts - Venn diagrams
 
 - triangle of polygons
 
