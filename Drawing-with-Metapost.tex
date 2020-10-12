@@ -31,6 +31,7 @@
 \def\vpic#1#2{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}
 \def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
 \def\mwpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=4in]{#2}}\vss}}}
+\def\mxpic#1#2#3{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=#2]{#3}}\vss}}}
 \def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \def\to{\mathrel{\ldotp\ldotp}}
@@ -2246,7 +2247,7 @@ The median is the basis for several beautiful theorems about the geometry of the
 triangle. The theorem shown here was first published in 2014.
 
 \newpage
-\subsection{Bisecting angles}
+\subsection{Bisecting angles}\label{sec:bisect}
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
 \begin{code}
 vardef euclidean_bisector(expr a,b,c,r) =
@@ -2347,7 +2348,7 @@ It might be possible to use the \id{solve} macro to simulate the Neusis construc
 angles is rather easier.
 
 \newpage
-\subsection{Intersections}
+\subsection{Intersections}\label{sec:intersect}
 
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
 \centerline{A puzzle square featuring some intersections}
@@ -2505,11 +2506,11 @@ Note that the \mpl{cutbefore} macro is defined using \mpl{intersectiontimes}.
 }}
 
 
-\subsection{Parallel and orthogonal or whatever}
+\subsection{Parallel and orthogonal or whatever}\label{sec:parallel}
 
 Given five known points --- $A$, $B$, $C$, $D$, and $E$ --- \MP\ can find the point $F$
 on the line $A \to B$, so that $E \to F$ is parallel to $C \to D$ like this:
-\mpic{0pt}{parallel1}
+\mpic{0pt}{parallel}
 \begin{code}
     F = whatever[A, B]; % F is on the line A..B
     E-F = whatever * (C-D) % E..F || C..D
@@ -2521,32 +2522,43 @@ out where $F$ should go.   Note that \mpl{whatever} can take any real value,
 positive or negative, so it does not matter whether you put \mpl{E-F} or \mpl{F-E}.
 Note also that for the same reason, while $F$ will lie on the \textit{line} through
 $A$ and $B$, it might not lie on the \textit{segment} from $A$ to $B$.
+But also note that you \textit{cannot} write the second equation as
+\begin{code}
+    E-G * whatever = (C-D); % <--- gives an error
+\end{code}
+because you can only apply \mpl{whatever} to known quantities.
 
 \smallskip\noindent\llap{\nb}%
-To define a line perpendicular to $C\to D$ rather than parallel, you can write:
+To define a line perpendicular to $C\to D$ rather than parallel, then you can write:
 \begin{code}
     G = whatever[A, B];
     E-G = whatever * (C-D) rotated 90;
 \end{code}
-and obviously the "90" can be adjusted to whatever angle you please.
+and obviously the "90" can be adjusted to whatever angle you please, if you want
+something between parallel and orthogonal.
 
 \smallskip\noindent\llap{\nb}%
-If you need to compute the perpendicular distance from the point $C$ to a line $A\to
-B$, you can use Knuth's ‘slick’ formula:
+To define the line through $E$ that is perpendicular to $A\to B$, you should just  
+use $(A-B)$ instead of $(C-D)$.  The diagram shows $H$, the point on $A\to B$
+that is closest to $E$; you can (I trust) work out how to define that yourself.
+
+\smallskip\noindent\llap{\nb}%
+If you just need to compute the perpendicular distance from the point $E$ to a line $A\to
+B$, rather than defining the point $H$, then you can use Knuth's ‘slick’ formula:
 \begin{code}
-    abs ypart ((C-A) rotated -angle (B-A))
+    abs ypart ((E-A) rotated -angle (B-A))
 \end{code}
-This effectively rotates $C$ about $A$ by the angle of the line, so that the problem
+This effectively rotates $E$ about $A$ by the angle of the line, so that the problem
 is reduced to measuring the height of a point above the $x$-axis, which is what
 \mpl{ypart} does, of course.
 
-\smallskip\noindent\llap{\nb}%
+\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 There are some limitations to what you can do with \MP's linear equations; for one
 thing you can't generally say things like \mpl{length(C-A) = 72}.  If you want to
 find the two points on a line that are a given distance from an external point, it's
 often simpler to find the intersection points of the line with a suitably scaled and
 shifted circle, even if you don't actually then draw the circle.  You can usually
-find the other point by reversing the circle.
+find the other point by reversing the circle.\par}
 
 \newpage
 \subsection{Drawing circles}
@@ -2839,6 +2851,49 @@ I_{12}&({r_1\over r_1 + r_2})[C_1, C_2];\cr
 }}$$
 which is a bit quicker than working out all the tangent points.}}
 
+\subsection{Incircles and excircles of triangles}
+
+The incircle of a triangle is the largest circle contained in the triangle.
+The centre of the incircle lies at the intersection of the internal angle bisectors.
+So we can use ideas from §\ref{sec:bisect} and §\ref{sec:intersect} to define a
+macro that returns the required path given points $A$, $B$, and $C$:
+\mxpic{-1in}{5in}{incircle}
+\begin{code}
+vardef incircle(expr A,B,C) = 
+  save a, b, m, t; pair a, b, m, t;
+  a = A + unitvector (C-A) + unitvector (B-A);
+  b = B + unitvector (A-B) + unitvector (C-B);
+  m = whatever[A,a] = whatever [B,b]; t = whatever[A,B];
+  t-m = whatever * (B-A) rotated 90;
+  fullcircle scaled 2 abs (t-m) shifted m
+enddef;
+\end{code}
+
+\bigskip\noindent
+The excircles of a triangle are the three circles lying outside the triangle and
+tangent to one edge and the extensions of the other two.  The centres of each
+excircle lie at the intersection of one internal angle bisector and the external
+angle bisector of one of the other corners.  
+
+To get the external angle bisector,
+all you have to do is reverse the direction of one of the \mpl{unitvector} calls:
+\mxpic{0pt}{5in}{excircle}
+\begin{code}
+vardef excircle(expr A,B,C) = 
+  save a, b, m, t; pair a, b, m, t;
+  a = A + unitvector (C-A) - unitvector (B-A);
+  b = B + unitvector (A-B) + unitvector (C-B);
+  m = whatever[A,a] = whatever [B,b]; t = whatever[A,B];
+  t-m = whatever * (B-A) rotated 90;
+  fullcircle scaled 2 abs (t-m) shifted m
+enddef;
+\end{code}
+
+\smallskip\noindent
+To get the other excircles, call the macro with the points in a different order.
+
+
+\newpage
 \subsection{Circles tangent to other circles}
 
 
@@ -4171,7 +4226,8 @@ gradients
 
 
 - geometry - constructions, perpendiculars, bisection, tangents, segments and lines,
-  incircle, circumcircle, inversion
+  %incircle, circumcircle, 
+  inversion
 
 - angle marks, including curved angle marks
 
