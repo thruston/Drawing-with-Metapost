@@ -23,7 +23,7 @@
 \ifmmode\mathop{\textbf{#1}}\else\hbox{\bf#1\/}\fi\endgroup}
 \def\op#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
-\ifmmode\mathop{\textrm{#1}}\else\hbox{\rm#1\/}\fi/color\endgroup}
+\ifmmode\mathop{\textrm{#1}}\else\hbox{\rm#1\/}\fi\endgroup}
 \def\id#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textit{#1}}\else\hbox{\it#1\/}\fi\endgroup}
@@ -2123,7 +2123,7 @@ $$\includegraphics{torn-edge2}$$
 
 
 \newpage
-\section{Plane geometry and trigonometry}
+\section{Plane geometry}
 
 \noindent\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\kern-9pt\noindent
 Here is the equilateral triangle point macro in action.
@@ -2154,8 +2154,8 @@ It is tempting to build up your own library of special purpose macros, but
 experience suggests that it is often better to adapt a general technique to the task
 in hand, and to create a specific solution to your current problem.  One of the main
 issues is catching exceptions; since it is hard to write completely general macros,
-the techniques presented here should be adapted as required rather than blindly
-copied.
+I have tried simply to present each technique so that you can understand it and adapt
+it as required.  
 
 The classical constructions from Euclid's \textsl{Elements} are often useful
 sources of inspiration for macros, but they do not always point in the right
@@ -2608,6 +2608,47 @@ complete circle of which they would be part; so if you did “\kw{draw}
 \id{quartercircle} \kw{shifted} $(34, 21)$;”, you would get an quarter-circle arc from
 $(34.5,21)$ to $(34,21.5)$.
 
+\newpage
+\subsection{Incircles and excircles of triangles}
+
+The incircle of a triangle is the largest circle contained in the triangle.
+The centre of the incircle lies at the intersection of the internal angle bisectors.
+So we can use ideas from §\ref{sec:bisect} and §\ref{sec:intersect} to define a
+macro that returns the required path given points $A$, $B$, and $C$:
+\mxpic{-1in}{5in}{incircle}
+\begin{code}
+vardef incircle(expr A,B,C) = 
+  save a, b, m, t; pair a, b, m, t;
+  a = A + unitvector (C-A) + unitvector (B-A);
+  b = B + unitvector (A-B) + unitvector (C-B);
+  m = whatever[A,a] = whatever [B,b]; t = whatever[A,B];
+  t-m = whatever * (B-A) rotated 90;
+  fullcircle scaled 2 abs (t-m) shifted m
+enddef;
+\end{code}
+
+\bigskip\noindent
+The excircles of a triangle are the three circles lying outside the triangle and
+tangent to one edge and the extensions of the other two.  The centres of each
+excircle lie at the intersection of one internal angle bisector and the external
+angle bisector of one of the other corners.  
+
+To get the external angle bisector,
+all you have to do is reverse the direction of one of the \mpl{unitvector} calls:
+\mxpic{0pt}{5in}{excircle}
+\begin{code}
+vardef excircle(expr A,B,C) = 
+  save a, b, m, t; pair a, b, m, t;
+  a = A + unitvector (C-A) - unitvector (B-A);
+  b = B + unitvector (A-B) + unitvector (C-B);
+  m = whatever[A,a] = whatever [B,b]; t = whatever[A,B];
+  t-m = whatever * (B-A) rotated 90;
+  fullcircle scaled 2 abs (t-m) shifted m
+enddef;
+\end{code}
+
+\smallskip\noindent
+To get the other excircles, call the macro with the points in a different order.
 
 
 \newpage
@@ -2851,47 +2892,72 @@ I_{12}&({r_1\over r_1 + r_2})[C_1, C_2];\cr
 }}$$
 which is a bit quicker than working out all the tangent points.}}
 
-\subsection{Incircles and excircles of triangles}
+\newpage
+\subsection{Inversion, pole, and polar}
 
-The incircle of a triangle is the largest circle contained in the triangle.
-The centre of the incircle lies at the intersection of the internal angle bisectors.
-So we can use ideas from §\ref{sec:bisect} and §\ref{sec:intersect} to define a
-macro that returns the required path given points $A$, $B$, and $C$:
-\mxpic{-1in}{5in}{incircle}
-\begin{code}
-vardef incircle(expr A,B,C) = 
-  save a, b, m, t; pair a, b, m, t;
-  a = A + unitvector (C-A) + unitvector (B-A);
-  b = B + unitvector (A-B) + unitvector (C-B);
-  m = whatever[A,a] = whatever [B,b]; t = whatever[A,B];
-  t-m = whatever * (B-A) rotated 90;
-  fullcircle scaled 2 abs (t-m) shifted m
-enddef;
-\end{code}
+Inversion in a circle may be thought of as a generalization of reflection in a line.
+\mpic{-68pt}{pole-and-polar}
+It is a useful technique for certain constructions in geometry, and easy to
+implement as a special sort of transformation in plain \MP.  For given circle, and a
+given point $P$ lying outside the circle, the inverted point $P'$ lies inside the
+circle at the intersection of the line from $P$ to the centre of the circle, and the
+line between the tangent points [§\ref{sec:tangent-times}] from $P$, shown here as
+$Q$ and $R$.
 
-\bigskip\noindent
-The excircles of a triangle are the three circles lying outside the triangle and
-tangent to one edge and the extensions of the other two.  The centres of each
-excircle lie at the intersection of one internal angle bisector and the external
-angle bisector of one of the other corners.  
+But $OPQ$ and $OQP'$ are similar triangles, so we have $r/OP=OP'/r$ and so $OP' =
+r^2/OP$, and $P'$ must lie on the line through $O$ and $P$.  This is enough to
+define a macro to do inversion directly without having to find the tangent points
+every time; given the radius of the circle of inversion as $r$ and the centre as
+$O$, we have 
+$$P'=O + \op{unitvector}(P-O) \kw{scaled}\, (r^2/\op{abs}(P-O)).$$
+This also works when $P$ is not outside the circle, provided only that $P$ is not at
+the centre of the circle (to avoid division by zero). Here is an attempt at a
+slightly more general macro that can invert a \mptype{pair} (or a \mptype{path}) $P$
+in a circle $C$.
+\begin{smallcode}
+vardef invert(expr P, C) = 
+    save o, r; pair o; numeric r;
+    o = 1/2[point 0 of C, point 4 of C];
+    r = abs (o - point 0 of C);
+    if pair P:
+        save p, d; pair p; numeric d;
+        p = P - o; d = abs p;
+        if d > 0:
+            o + unitvector p scaled (r/d*r) 
+        else:
+            errmessage("Inversion undefined at center.")
+        fi
+    elseif path P:
+        for t=0 upto 31: 
+            invert(point t/32 * length P of P, C) .. 
+        endfor
+        if cycle P: cycle else: invert(point infinity of P, C) fi
+    fi
+enddef;  
+\end{smallcode}
+\noindent
+You could make this more efficient by passing $O$ and $r$ as arguments instead of
+$C$.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\noindent
+\noindent\llap{\nb}Inversion is reciprocal, so $P$ is the inverse of $P'$ above. Points 
+on the circle of inversion invert to themselves.
 
-To get the external angle bisector,
-all you have to do is reverse the direction of one of the \mpl{unitvector} calls:
-\mxpic{0pt}{5in}{excircle}
-\begin{code}
-vardef excircle(expr A,B,C) = 
-  save a, b, m, t; pair a, b, m, t;
-  a = A + unitvector (C-A) - unitvector (B-A);
-  b = B + unitvector (A-B) + unitvector (C-B);
-  m = whatever[A,a] = whatever [B,b]; t = whatever[A,B];
-  t-m = whatever * (B-A) rotated 90;
-  fullcircle scaled 2 abs (t-m) shifted m
-enddef;
-\end{code}
+\smallskip
+\noindent\llap{\nb}For any given line, the \textcolor{textblue}{\textit{pole}} of
+the line with respect to a circle, is the inverse of the point on the line closest
+to the centre of the circle.
 
-\smallskip\noindent
-To get the other excircles, call the macro with the points in a different order.
+\smallskip
+\noindent\llap{\nb}For any given point, the \textcolor{textblue}{\textit{polar}} of
+the point with respect to a circle, is the line through the inverse of the point
+perpendicular to the line through the point and the center of the circle of
+inversion.
 
+\smallskip
+\noindent\llap{\nb}The small dotted circle through $O$ and $P'$ above is the inversion
+of the whole polar line (infinitely extended).}}
+
+\newpage
+\subsection{Radical axis and radical centre}
 
 \newpage
 \subsection{Circles tangent to other circles}
@@ -3041,7 +3107,7 @@ endfig;
 \end{code}
 
 \newpage
-\subsection{Trigonometry functions}\label{trig}
+\section{Trigonometry functions}\label{trig}
 
 \MP\ provides only two basic trigonometry functions, "sind" and "cosd";  this lack
 appears to be a deliberate design.  In general it's much easier to use the "rotated"
@@ -3528,7 +3594,7 @@ label(btex $\displaystyle \int_0^t 3x^2\, dx$ etex, (x,y));
 
 \subsubsection{Getting consistent baselines for your labels}
 
-As already discussed (§\ref{infontbbox}), you can fiddle with the
+As already discussed [§\ref{infontbbox}], you can fiddle with the
 bounding box of a text picture to make
 the \mpl{label} macro line things up on a common baseline, but there is a
 much easier way with "btex" and "etex".  Plain \TeX\ provides a "\strut"
@@ -4049,7 +4115,7 @@ The individual parts of the string you assemble do not have to be
 valid bits of \TeX\ in themselves; they only have to make sense once they
 are actually passed to the macro.  With "luamplib" there are no slow
 external files being used, so the complexities used above
-(§\ref{sec:old-and-dynamic}) to label points around a
+[§\ref{sec:old-and-dynamic}] to label points around a
 circle can be simplified without sacrificing speed:\mpic{-80pt}{simple-circle-labels}
 \begin{code}
 path C; C = fullcircle scaled 100; draw C withcolor 2/3 red;
