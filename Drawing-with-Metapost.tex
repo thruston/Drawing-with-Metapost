@@ -40,6 +40,8 @@
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
 \definecolor{textgreen}{rgb}{0,0.43,0}
+\definecolor{squash}{rgb}{0.793, 0.359, 0.05}   
+\definecolor{carrot}{rgb}{0.934, 0.445, 0.082}
 % style for highlighting
 \newcommand\texstyle{\lstset{
     language=[LaTeX]Tex,
@@ -2561,7 +2563,7 @@ shifted circle, even if you don't actually then draw the circle.  You can usuall
 find the other point by reversing the circle.\par}
 
 \newpage
-\subsection{Drawing circles}
+\subsection{Drawing circles}\label{sec:circles}
 
 The canonical way to draw a circle in plain \MP\ is to use the pre-defined path
 \mpl{fullcircle} with a suitable transformation.
@@ -2869,7 +2871,7 @@ drawoptions();
 \end{smallcode}\vskip -1in
 }}
 
-\subsection{Axis of similitude}
+\subsection{Axis of similitude}\label{sec:axosim}
 
 \bigskip
 \noindent\hbox to \textwidth{\includegraphics[scale=0.92]{axis-of-similitude}\hss}
@@ -2893,7 +2895,7 @@ I_{12}&({r_1\over r_1 + r_2})[C_1, C_2];\cr
 which is a bit quicker than working out all the tangent points.}}
 
 \newpage
-\subsection{Inversion, pole, and polar}
+\subsection{Inversion, pole, and polar}\label{sec:inversion}
 
 Inversion in a circle may be thought of as a generalization of reflection in a line.
 \mpic{-68pt}{pole-and-polar}
@@ -2957,10 +2959,95 @@ inversion.
 of the whole polar line (infinitely extended).}}
 
 \newpage
-\subsection{Radical axis and radical centre}
+\subsection{Radical axis and radical centre}\label{sec:radical}
+
+The \textit{radical axis} of two circles is the line, orthogonal to the line between 
+the centres of the two circles which is the locus of points which have equal power
+with respect to both circles; that is the points from which the tangents to each circle
+are of equal length.  A circle centred at any point on the axis, and drawn with radius equal to the
+length of the tangent will cut both circles at right angles.
+
+\medskip\noindent\centerline{\includegraphics{radical-axis}}
+
+\medskip\noindent
+In a system of three circles as shown, the \textit{radical centre} is the
+intersection of the three mutual radical axes.  The tangents from this point to all three circles
+have the same length, so a circle with this radius cuts all three circles at right
+angles.
+
+\moveright5.5in\vbox to 0pt{\vss\hsize 4in\begin{smallcode}
+vardef radical_axis(expr ca, cb) = 
+    numeric t, d, ra, rb;
+    ra = abs(center ca - point 0 of ca);
+    rb = abs(center cb - point 0 of cb);
+    d = abs(center cb - center ca);
+    2t = 1 + (ra+rb) / d * (ra-rb) / d;
+    (up -- down) scaled 89
+        rotated angle (center cb - center ca) 
+        shifted t[center ca, center cb]
+enddef;
+beginfig(1);
+    path c[], a[]; 
+    z1 = origin; z2 = 233 right rotated 4; z3 = 209 right rotated -42;
+    c1 = fullcircle scaled 202 shifted z1;
+    c2 = fullcircle scaled 106 shifted z2;
+    c3 = fullcircle scaled  62 shifted z3;
+    a1 = radical_axis(c1, c2);
+    a2 = radical_axis(c2, c3);
+    a3 = radical_axis(c3, c1);
+    z0 = whatever [point 0 of a1, point 1 of a1] 
+       = whatever [point 0 of a2, point 1 of a2];
+    numeric t; (t, whatever) = tangent_times(c1, z0);
+    drawoptions(withpen pencircle scaled 1 withcolor 3/4[blue, white]);
+    draw c1; draw c2; draw c3;
+    drawoptions(withcolor 3/4[blue, white]);
+    draw z1 -- point t of c1 dashed evenly;
+    drawoptions(withpen pencircle scaled 1/4);
+    draw z1 -- z2 -- z3 -- cycle;
+    drawoptions();
+    draw a1; draw a2; draw a3;
+    drawoptions(withcolor 2/3 red);
+    draw fullcircle scaled 2 abs (point t of c1 - z0) shifted z0;
+    draw z0 -- point t of c1 dashed evenly;
+    drawdot z0 withpen pencircle scaled dotlabeldiam;
+    drawoptions(withcolor 1/4[blue, white]);
+    drawdot z1 withpen pencircle scaled dotlabeldiam;
+    drawdot z2 withpen pencircle scaled dotlabeldiam;
+    drawdot z3 withpen pencircle scaled dotlabeldiam;
+    label.urt(btex $C_1$ etex, point 1 of c1);
+    label.urt(btex $C_2$ etex, point 1 of c2);
+    label.rt (btex $C_3$ etex, point 0 of c3);
+endfig;
+\end{smallcode}\vskip -1in}
 
 \newpage
 \subsection{Circles tangent to other circles}
+\bigskip
+\noindent\hbox to \textwidth{\includegraphics[height=\textheight]{apollonius}\hss}
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+The classical Problem of Apollonius is to find a circle tangent to three others.
+All of the approaches are rather involved, but Gergonne's is probably the simplest
+to follow in \MP.  
+
+\smallskip\noindent For three given circles \textcolor{textblue}{$C_1$, $C_2$, and
+$C_3$}, you first find the external \textcolor{textblue}{axis of similitude}
+[§\ref{sec:axosim}]; then find the \textcolor{carrot}{poles} [§\ref{sec:inversion}] of this line with
+respect to each of the three circles; and thirdly find the
+\textcolor{squash}{radical centre}
+[§\ref{sec:radical}]. 
+
+\smallskip\noindent
+The lines from the radical centre through each of the three
+poles cut each circle in two places.  These six points show the tangent points for
+the two \textcolor{textred}{tangent circles}, and you can draw the circles using the three point circle
+technique [§\ref{sec:circles}].
+
+\smallskip\noindent
+{\small
+The drawing is also left as an exercise for the reader, although you can find my
+version in the source code for this document. You might like to try to make a more
+robust version or to find all the other tangent circles.}
+}}
 
 
 \newpage
