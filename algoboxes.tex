@@ -1,0 +1,70 @@
+\RequirePackage{luatex85}
+\documentclass[border=5mm]{standalone}
+\usepackage{luamplib}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
+% a routine to draw each box.
+% Arguments: name, followed by pairs of strings / numerics
+% 
+vardef algobox(expr name)(text specs) = 
+    save p, s, w, i, j;
+    % step through the spec and save the strings and widths
+    string s[];  numeric w[]; numeric i, j; i = j = 0;
+    for $=specs:
+        if string $: s[incr i] elseif numeric $: w[incr j] fi := $; 
+    endfor
+    numeric x; x = 0; path b;
+    % make a picture to return
+    picture p; p = image(
+        for k=1 upto i:
+            % define the box then fill it and draw it
+            b := unitsquare yscaled dp xscaled (w[k]-gap) shifted (x,0);
+            fill b withcolor 7/8[green+red, white]; draw b;
+            % do the labels with special case for "split" labels
+            if substring (0,1) of s[k] = ":":
+                label(substring (1,infinity) of s[k], (x + 1/4 w[k], 1/2 dp));
+                label(substring (1,infinity) of s[k], (x + 3/4 w[k], 1/2 dp));
+                draw (x + 1/2 w[k], 0) -- (x + 1/2 w[k], dp) dashed evenly scaled 1/2;
+            else:
+                label(s[k], (x + 1/2 w[k], 1/2 dp));
+            fi
+            % advance x
+            x := x + w[k];
+        endfor
+        % add the name
+        label.rt(name, (x, 1/2 dp));
+    ); p
+enddef;
+
+beginfig(1);
+    % some parameters to control the dp of the boxes, the gap between them 
+    % and the values of l, k, and n
+    numeric dp, gap, k, l, n; 
+    l = 40; k = 100;  n = 240; dp = 14; gap = 2;
+
+    % draw the labelled boxes, shifted as desired...
+    draw algobox("Plain ISD",    "$0$", k, "$t$", n-k);
+    draw algobox("Lee-Brickell", "$p$", k, "$t-p$", n-k)                        shifted 25 down;
+    draw algobox("Leon", "$p$", k, "$0$", l, "$t-p$", n-k-l)                    shifted 80 down;
+    draw algobox("Stern", "$p$", 1/2k, "$p$", 1/2k, "$0$", l, "$t-2p$", n-k-l)  shifted 105 down;
+    draw algobox("Finiasz/Sendrier", ":$p$", k+l, "$t-2p$", n-k-l)              shifted 130 down;
+    draw algobox("Bernstein (Ball)", ":$p_1$", k, ":$p_2$", l, "$t-2p_1 - 2p_2$", n-k-l) shifted 155 down;
+
+    % define some paths for the arrows
+    path a[];
+    a1 = (0,24) -- (k-gap,24);
+    a2 = (k,24) -- (n-gap,24);
+    a3 = (k,-56) -- (k+l-gap, -56);
+    a4 = (k+l,-56) -- (n-gap, -56);
+
+    % and draw them (with narrower arrow heads)
+    ahangle := 30;
+    drawdblarrow a1; label.top("$k$", point 1/2 of a1);
+    drawdblarrow a2; label.top("$n-k$", point 1/2 of a2);
+    drawdblarrow a3; label.top("$\ell$", point 1/2 of a3);
+    drawdblarrow a4; label.top("$n-k-\ell$", point 1/2 of a4);
+
+endfig;
+\end{mplibcode}
+\end{document}

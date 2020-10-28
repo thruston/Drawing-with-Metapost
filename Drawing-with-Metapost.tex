@@ -35,7 +35,8 @@
 \def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \def\to{\mathrel{\ldotp\ldotp}}
-\def\mptype#1{\ensuremath{\langle\hbox{#1}\rangle}\thinspace}
+\def\<#1>{\ensuremath{\langle\hbox{#1}\rangle}}
+
 %
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
@@ -150,22 +151,22 @@ possible in my examples.
     \item Variable types:
 
         —
-        \mpl{numeric} "a",
-        \mpl{pair} "(a,b)"
+        \<numeric> "a",
+        \<pair> "(a,b)"
 
         —
-        \mpl{color} "(r,g,b)",
-        \mpl{cmykcolor} "(c,m,y,k)"
-        \mpl{transform} "(x,y,xx,xy,yx,yy)"
+        \<color> "(r,g,b)",
+        \<cmykcolor> "(c,m,y,k)"
+        \<transform> "(x,y,xx,xy,yx,yy)"
 
         —
-        \mpl{string},
-        \mpl{path},
-        \mpl{picture}
+        \<string>,
+        \<path>,
+        \<picture>
 
 
-        If you don’t declare a variable, it’s assumed that it’s a \mpl{numeric}.
-        When you do declare a variable --- \mpl{numeric} or otherwise — any value that it
+        If you don’t declare a variable, it’s assumed that it’s a \<numeric>.
+        When you do declare a variable --- \<numeric> or otherwise — any value that it
        already had in the current scope is removed.
 
     \item Implicit multiplication: \MP\ inherits a rich set of rules about numerical
@@ -257,7 +258,6 @@ used is exactly the same.  Here is
 the template I use:
 \begin{texcode}
 \documentclass[border=5mm]{standalone}
-\usepackage{luatex85}
 \usepackage{luamplib}
 \begin{document}
 \mplibtextextlabel{enable}
@@ -289,7 +289,8 @@ If you are ready to use "lualatex" for processing your entire document, then you
 directly embed your \MP\ drawings in a series of "mplibcode" environments.  Each one
 produces a horizontal-mode box.  For details try "texdoc luamplib".  The only
 drawback of this all-in-one approach is that you have to compile all the drawings
-every time you compile the document, which might slow you down.
+every time you compile the document, which might slow you down --- although on a
+modern machine this is not really an issue any more.
 
 \newpage
 \section{Making and using closed paths}
@@ -951,7 +952,7 @@ More details below, and full details in the \MF\ book.
 
 
 \newpage\subsection{Pairs and coordinates}
-Now \textbf{pairs}:  if you enclose two numerics in parentheses, you get a pair.  A
+Now \textbf{pairs}:  if you enclose two numerics in parentheses, you get a \<pair>.  A
 pair generally represents a particular position in your drawing with normal, orthogonal
 Cartesian $x$- and $y$-coordinates, but you can use a pair variable for other
 purposes if you wish.  As far as \MP\ is concerned it's just a pair of numerics.
@@ -962,8 +963,8 @@ the pair, while `$\kw{ypart} \id{A}$' returns the second.  The names refer to th
 intended usage of pair variable to represent pairs of $x$ and $y$-coordinates.
 Note that they are read-only; you can't
 assign a value to an $\kw{xpart}$ or a $\kw{ypart}$.  So if you want to update only one
-part of a pair, you have to do something like this: `$\id{A} \mathrel{:}= (42,
-\kw{ypart}\id{A});$'.
+part of a pair, you have to do something like this: $\id{A} \mathrel{:}= (42,
+\kw{ypart}\id{A});$
 
 In addition there is a neat macro definition in plain \MP\ that allows you do deal
 with the $x$- and $y$-parts of pairs rather more succinctly.
@@ -980,15 +981,14 @@ refer to them as a pair with "z1".  A common usage is to find the orthogonal poi
 on the axes in graphs, like so $\longrightarrow$
 
 \smallskip
-There is also a simple way to write coordinates using a polar notation.  For the
+There is also a simple way to write coordinates using a polar notation using
+\mpl{dir}.  This macro is defined so that \mpl{dir 30} expands to \mpl{right rotated
+30} and then to \mpl{(1,0) rotated 30}, which becomes \mpl{(cosd(30), sind(30)}
+or \mpl{(0.86603, 0.5)}. So to get the polar notation 
 point $(r,\theta)$, where $r$ is the radius and $\theta$ is the angle in degrees
-counter-clockwise from the positive $x$-axis, you can write `\mpl{r dir
-theta}'.  For example `\mpl{2 dir 30}' provides another way to get the
-point "(sqrt 3,1)".
-And if that's not compact
-enough for you could define a suitable shorthand using a character that's otherwise
-unused.  For example `\mpl{def ^=dir enddef;}', which would let you write
-`\mpl{2^30}'.
+counter-clockwise from the positive $x$-axis, you can write `\mpl{r * dir
+theta}'. As usual, with a constant you can omit the multiplication sign, so `\mpl{2
+dir 30}' provides another way to define§ the point "(sqrt(3),1)".
 
 \smallskip
 Plain \MP\ defines five useful pair variables: \id{origin}, \id{right}, \id{up},
@@ -2148,7 +2148,7 @@ endfig;
 
 $$\includegraphics{geometry3}$$
 \vss}}%
-This section deals with drawing geometrical figures typically involving lines,
+This section deals with drawing geometrical figures that involve lines,
 angles, polygons, and circles.  Plain \MP\ provides very few tools that are
 explicitly designed to help draw geometric figures, but it is usually possible to
 find an elegant construction using these tools and the relevant primitive commands.
@@ -2517,7 +2517,7 @@ on the line $A \to B$, so that $E \to F$ is parallel to $C \to D$ like this:
     F = whatever[A, B]; % F is on the line A..B
     E-F = whatever * (C-D) % E..F || C..D
 \end{code}
-In the second line the expressions \mpl{E-F} and \mpl{C-D} return \mpl{pair}
+In the second line the expressions \mpl{E-F} and \mpl{C-D} return \<pair>
 variables and the equation with \mpl{whatever} says that they must be scalar
 multiples of each other.  With the first equation, this is enough for \MP\ to work
 out where $F$ should go.   Note that \mpl{whatever} can take any real value,
@@ -2914,7 +2914,7 @@ $O$, we have
 $$P'=O + \op{unitvector}(P-O) \kw{scaled}\, (r^2/\op{abs}(P-O)).$$
 This also works when $P$ is not outside the circle, provided only that $P$ is not at
 the centre of the circle (to avoid division by zero). Here is an attempt at a
-slightly more general macro that can invert a \mptype{pair} (or a \mptype{path}) $P$
+slightly more general macro that can invert a \<pair> (or a \<path>) $P$
 in a circle $C$.
 \begin{smallcode}
 vardef invert(expr P, C) = 
@@ -3192,6 +3192,50 @@ label.llft(btex $P$ etex, P);
 label.llft(btex $O$ etex, origin);
 endfig;
 \end{code}
+
+\newpage
+\vpic{1in}{arbelos}
+\moveright5.5in\vbox to 0pt{\hsize4in\noindent This an \mpl{invert} macro, such
+as the one from [§\ref{sec:inversion}].\vss}
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-72pt]
+beginfig(1);
+pair A,B,C; A = origin; C = 244 right;  B = 7/8[A, C];
+path c[];
+c1 = fullcircle scaled 2 abs(A-C); % large circle for the inversions
+c2 = fullcircle scaled abs(A-C) shifted 1/2[A,C];
+c3 = fullcircle scaled abs(A-B) shifted 1/2[A,B];
+c4 = fullcircle scaled abs(B-C) shifted 1/2[B,C];
+c5 = invert(c4,c1);
+numeric d; d = abs(point 0 of c5 - point 4 of c5); % diameter of c5
+
+drawoptions(withcolor 3/4 white);
+draw c4; draw c5;
+draw invert(subpath(0, 3/2) of c2, c1);
+draw invert(subpath(0, 3/2) of c3, c1);
+drawoptions();
+draw subpath(-1/4,1) of c1 withcolor 3/4[1/2 red,white];
+label.bot("\textit{circle of inversion}", point -1/4 of c1) 
+    withcolor 1/4[1/2 red, white];
+
+for i=1 upto 72:
+    path c, c';
+    c = c5 shifted (0, i*d); c' = invert(c, c1);
+    if i < 5: 
+        drawoptions(withcolor 3/4 white);
+        draw c; draw origin -- center c;
+        fill fullcircle scaled dotlabeldiam shifted center c;
+        fill fullcircle scaled dotlabeldiam shifted center c';
+        drawoptions();
+    fi
+    draw c' withpen pencircle scaled 1/4 withcolor 2/3 blue;
+endfor
+forsuffixes $=2,3,4: draw subpath (0,4) of c$ 
+    withpen pencircle scaled 1/4 withcolor 2/3 blue;
+endfor
+draw A--C;
+dotlabel.lft("$A$", A); dotlabel.llft("$B$", B); dotlabel.rt("$C$", C);
+endfig;
+\end{smallcode}
 
 \newpage
 \section{Trigonometry functions}\label{trig}
@@ -4055,16 +4099,16 @@ the primitive binary operator \mpl{infont}.
 Ordinarily, this command takes two strings (the text you want to show, and the name
 of the font to use) and produces a picture object consisting of the text typeset in
 the given font.
-$$\mptype{string} "infont" \mptype{string} \longrightarrow \mptype{picture}$$
+$$\<string> \mathbin{"infont"} \<string> \longrightarrow \<picture>$$
 With the option enabled,
-the right hand \mptype{string} argument (which names the font) is completely ignored,
-and the left hand \mptype{string} argument (the text to show) is passed to the "TEX()"
-macro. The result is still a \mptype{picture} of course, but instead
+the right hand \<string> argument (which names the font) is completely ignored,
+and the left hand \<string> argument (the text to show) is passed to the "TEX()"
+macro. The result is still a \<picture> of course, but instead
 of a simple rendering in a single font, the string will have been passed through
 \LaTeX, so it can include maths, bold text, or any arbitrary typesetting
 constructions.
 
-Note that even with the option enabled, \MP\ will not let you pass a \mptype{string}
+Note that even with the option enabled, \MP\ will not let you pass a \<string>
 to \mpl{draw}.   You have to put \mpl{infont "somefont"} after the string to get the
 magic to work; the nice thing is that the \mpl{label()} macros do this for you.
 
@@ -4135,7 +4179,7 @@ taking care to include the necessary spaces, which can get fiddly.
 
 But this is where the "btex" \dots\ "etex" construction comes into play, even with
 "luamplib".  As we saw in the preceding section the construction fits into the \MP\
-syntax scheme as a special pair of quotation marks that produces a \mptype{picture}.
+syntax scheme as a special pair of quotation marks that produces a \<picture>.
 Unlike regular string token, a "btex" \dots\ "etex" picture token can span several
 lines of source code, so you can (more easily) write long \TeX\ labels like this:
 \begin{code}
@@ -4214,7 +4258,7 @@ endfor
 
 \smallskip\noindent\nb But note that you can't do this string concatenation with "btex" \dots\ "etex";
 although they might appear to be special quotation marks, they produce a
-\mptype{picture}, and \mpl{&} only works with strings or paths.
+\<picture>, and \mpl{&} only works with strings or paths.
 
 
 \newpage
@@ -4222,7 +4266,7 @@ although they might appear to be special quotation marks, they produce a
 
 Whether you call the "luamplib" \mpl{TEX()} macro explicitly or implicitly using
 "infont", "btex" \dots\ "etex", or the "mplibtextextlabel" option, the result is a
-\mptype{picture} that can be processed like any other.  Since \MP\ does not care if
+\<picture> that can be processed like any other.  Since \MP\ does not care if
 the text picture you have created came from traditional "infont" or newfangled
 \mpl{TEX()}, the discussion in §\ref{infontbbox} applies just the same.  But apart
 from adjusting the bounds to work well with \mpl{label} you can also apply a
@@ -4349,6 +4393,8 @@ case sensitive in \MP.
 
 \noindent The output\mpic{-122pt}{cycloids-extra1} is repeated at the right to save you flicking pages.
 
+\newpage
+\subsection{Cycloid through a point}
 
 \newpage
 \section{Commutative diagrams}
@@ -4363,7 +4409,9 @@ approaches, following
 
 filling shapes
 gradients
+
 - faking transparency, overlaying colours, clipping to shapes, filling with patterns
+
 - making waves
 
 - paths, points, directions, subpaths, reversed paths
@@ -4374,39 +4422,21 @@ gradients
 
 - dots, dotlabeldiam, coloured dots, hollow dots
 
-
 - graphs, axes, grids, number labels, jitter, sketch graphs
-
-
-- geometry - constructions, perpendiculars, bisection, tangents, segments and lines,
-  %incircle, circumcircle, 
-  inversion
 
 - angle marks, including curved angle marks
 
-- intersections, buildcycle, eggs, ellipses
-
+- eggs, ellipses
 
 - drawing knots, double lines, ropes
 
-
 - decorating lines 
-
-
-- finding supremum
-
-- decorated tables
-
-- number lines
-
 
 - a pulse
 
 - reuleaux polygons
 
 - the eye
-
-- feynman diagrams the easy way
 
 - physics diagrams, light rays, pendulum, indicating movement and vibration
 
@@ -4419,7 +4449,6 @@ gradients
 - all sorts of arrow, arrows between arrows, arrows next to a path (handles)
 
 - faking 3d
-
 
 - recursive drawings, trees
 
