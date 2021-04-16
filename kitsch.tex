@@ -1,0 +1,32 @@
+\documentclass[border=5mm]{standalone}
+\usepackage{luamplib}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
+
+input hands
+input picture_frame
+
+beginfig(1);
+
+draw right_hand(hand_skin1);
+
+path a[]; 
+a1 = origin -- 80 up;
+a2 = origin -- 120 up rotated 50;
+a3 = origin -- 120 up rotated 80;
+for i=1 upto 3:
+    drawarrow a[i] dashed withdots scaled 1/4 withcolor 2/3 red;
+endfor
+label.top (btex $a \times b$ etex, point 1 of a1);
+label.ulft(btex $a$ etex, point 1 of a2);
+label.lft (btex $b$ etex, point 1 of a3);
+
+interim bboxmargin := 6;
+draw bbox currentpicture withpen pencircle scaled 1/4;
+interim bboxmargin := 36; interim pf_width := 17;
+draw frame currentpicture;
+
+endfig;
+\end{mplibcode}
+\end{document}

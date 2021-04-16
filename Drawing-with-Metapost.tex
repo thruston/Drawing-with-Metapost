@@ -4327,17 +4327,40 @@ although they might appear to be special quotation marks, they produce a
 \section{Working with pictures}
 
 \MP\ inherits the mechanism of \<picture> variables directly from \MF, except that
-the contents of these variables are a bit more complicated that a pattern of pixels
-for a font.  Like \MF, \MP\ keeps track of the picture it is working on in a
-variable called \mpl{currentpicture}, which can be copied to your own variables, or
-manipulated in various useful ways.  This section reviews some of the things you can 
-do with a \<picture> variable.
+the contents of these variables are a bit more complicated.  The system keep track
+of the picture it is working on in a variable called \mpl{currentpicture}, which can
+be copied to your own variables, or manipulated in various useful ways.  In \MF\ the
+contents of the variable is a pattern of pixels for a font, in \MP\ the contents are
+vector graphics commands.  This section reviews some of the things you can do with a
+\<picture> variable (including putting it in a frame $\longrightarrow$).
+\mpic{-96pt}{kitsch}
+
+\bigskip\noindent
+Plain \MP\ provides two built-in \<picture> variables: \mpl{nullpicture}, which is
+empty, and \mpl{currentpicture}, which accumulates the results of drawing
+commands. When you compile your program, the \mpl{beginfig} macro will
+set \mpl{currentpicture} to blank, and the \mpl{endfig} macro will make \MP\ write
+the accumulated contents of the picture to an output file, usually as PostScript.
+You can also do these things yourself at any point in a program, using these
+macros from "plain.mp":
+\begin{code}
+def clearit = currentpicture := nullpicture enddef;
+def shipit = shipout currentpicture enddef;
+\end{code}
+
+
+
 
 \centerline{Work in progress}
 \begin{verbatim}
 currentpicture       picture    †  Accumulate results 
                                    of draw and fill commands
 nullpicture          picture    @  Empty picture
+
+
+clip
+setbounds
+draw
 
 center picture                   --> pair
 llcorner picture                 --> pair
