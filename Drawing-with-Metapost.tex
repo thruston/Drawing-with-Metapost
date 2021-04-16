@@ -13,6 +13,7 @@
 \def\mfbook{\textsl{The \MF\kern1pt book}}
 \def\texbook{\textsl{The \TeX\kern1pt book}}
 \usepackage{shortvrb}\MakeShortVerb{"}
+%\DefineShortVerb{\"}
 \usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
@@ -3256,7 +3257,7 @@ endfig;
 
 \newpage
 \vpic{1in}{arbelos}
-\moveright5.5in\vbox to 0pt{\hsize4in\noindent This an \mpl{invert} macro, such
+\moveright5.5in\vbox to 0pt{\hsize4in\noindent This needs an \mpl{invert} macro, such
 as the one from [§\ref{sec:inversion}].\vss}
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-72pt]
 beginfig(1);
@@ -4323,7 +4324,69 @@ although they might appear to be special quotation marks, they produce a
 
 
 \newpage
-\subsection{Transforming text pictures}
+\section{Working with pictures}
+
+\MP\ inherits the mechanism of \<picture> variables directly from \MF, except that
+the contents of these variables are a bit more complicated that a pattern of pixels
+for a font.  Like \MF, \MP\ keeps track of the picture it is working on in a
+variable called \mpl{currentpicture}, which can be copied to your own variables, or
+manipulated in various useful ways.  This section reviews some of the things you can 
+do with a \<picture> variable.
+
+\centerline{Work in progress}
+\begin{verbatim}
+currentpicture       picture    †  Accumulate results 
+                                   of draw and fill commands
+nullpicture          picture    @  Empty picture
+
+center picture                   --> pair
+llcorner picture                 --> pair
+lrcorner picture                 --> pair
+ulcorner picture                 --> pair
+urcorner picture                 --> pair
+bbox picture                     --> path
+
+picture rotated numeric          --> picture
+picture shifted pair             --> picture
+picture slanted numeric          --> picture
+picture scaled numeric           --> picture
+picture xscaled numeric          --> picture
+picture yscaled numeric          --> picture
+picture zscaled pair             --> picture
+picture transformed transform    --> picture
+
+string infont string             --> picture
+textext(string)  --> picture
+image(string)                    --> picture
+
+thelabel.suffix(picture, pair)   --> picture
+thelabel.suffix(string, pair)    --> picture
+
+dotlabel.suffix(picture, pair)   --> –
+label.suffix(picture, pair)      --> –
+\end{verbatim}
+
+
+Making a large pic out of pieces / nb they are transparent
+
+Aligning them with labels
+
+Adding labels to current picture
+
+Drawing with color and pen
+
+Drawing a negative
+
+Drawing with "string"
+
+Adding a background after finishing
+Adding a border
+
+Including an image file
+
+\bigskip
+
+
 
 Whether you call the "luamplib" \mpl{TEX()} macro explicitly or implicitly using
 "infont", "btex" \dots\ "etex", or the "mplibtextextlabel" option, the result is a

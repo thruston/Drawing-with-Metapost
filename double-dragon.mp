@@ -37,7 +37,6 @@ beginfig(1);
         fill fullcircle scaled t shifted (fizz(n) scaled s)
             withcolor (1/2 + 1/8 v)[white, shade[h]];
     endfor;
-
     path xx, yy;
     xx = (left--right) scaled (s+8);
     yy = xx rotated 90;
