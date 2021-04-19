@@ -4333,7 +4333,7 @@ be copied to your own variables, or manipulated in various useful ways.  In \MF\
 contents of the variable is a pattern of pixels for a font, in \MP\ the contents are
 vector graphics commands.  This section reviews some of the things you can do with a
 \<picture> variable (including putting it in a frame $\longrightarrow$).
-\mpic{-96pt}{kitsch}
+\mpic{-96pt}{youth}
 
 \bigskip\noindent
 Plain \MP\ provides two built-in \<picture> variables: \mpl{nullpicture}, which is
@@ -4348,9 +4348,28 @@ def clearit = currentpicture := nullpicture enddef;
 def shipit = shipout currentpicture enddef;
 \end{code}
 
+\smallskip\noindent
+When you are creating a diagram with several independent elements, it is often
+helpful to save the \mpl{currentpicture} in a \<picture> variable and start again.
+In fact it is so useful that plain \MP\ includes an \mpl{image} macro that uses the
+magic of macro grouping to make it easier.
+\begin{code}
+vardef image(text t) =
+  save currentpicture;
+  picture currentpicture;
+  currentpicture := nullpicture;
+  t; currentpicture
+enddef;
+\end{code}
+The general idea is that you declare a variable and then save a drawing into it:
+\begin{code}
+picture P; P = image(...);
+\end{code}
+and then you have a picture element that can be manipulated or copied as needed.
+The rows of decorative beads in the frame on the right were created like this.
 
 
-
+\newpage
 \centerline{Work in progress}
 \begin{verbatim}
 currentpicture       picture    †  Accumulate results 
