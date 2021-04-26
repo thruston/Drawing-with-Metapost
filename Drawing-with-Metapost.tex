@@ -4370,43 +4370,80 @@ The rows of decorative beads in the frame on the right were created like this.
 
 
 \newpage
-\centerline{Work in progress}
-\begin{verbatim}
-currentpicture       picture    †  Accumulate results 
-                                   of draw and fill commands
-nullpicture          picture    @  Empty picture
+\subsection{Creating and transforming pictures}
 
+After you have declared a variable with \mpl{picture P;} you can give it some contents
+in a number of ways:
+\begin{itemize}
+    \item \mpl{P = nullpicture;} --- this makes $P$ empty.
+    \item \mpl{P = currentpicture;} --- save a copy of your current picture (if any).
+    \item \mpl{P = image(... MP tokens ...);} --- capture some drawing commands.
+    \item \mpl{P = "string" infont "font-name";} --- capture an image of "string" set in the given font.
+    \item \mpl{P = btex ... TeX tokens ... etex;} --- capture the result of passing some arbitrary
+        tokens through \TeX.  
+    \item \mpl{P = TEX("string");} --- capture the result of passing some arbitrary
+        string of tokens through \TeX, using the "TEX" macro.
+\end{itemize}
+You can read more about the details of type setting in §\ref{sec:trad-labels} and
+§\ref{sec:neo-labels}, but the point here is that the results are normal \<picture>
+variables that you can manipulate and use like any other.  You can apply any of the
+normal \MP\ transformations to a picture, so it can be slanted, scaled, rotated, or
+shifted like any \<pair> or \<path>. Each picture has a reference point that is the
+position of the origin for pictures created with \mpl{image} or by saving
+\mpl{currentpicture} directly, and is usually the bottom left-hand corner of a
+typeset picture created by \TeX.  So to add three copies of $P$ to your current
+picture, you could do:
+\begin{code}
+    for i=1 upto 3: draw P shifted (20i, 0); endfor
+\end{code}
+and \MP\ will add a copies of $P$ with the reference points shifted to $(20,0)$,
+$(40,0)$ and $(60,0)$. A selection of other transformations is shown on the right $\longrightarrow$
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-240pt\centerline{\includegraphics[width=4in]{twister}}\par
+\centerline{\textsl{\small The reference point for each compass is the small dot in the middle.}}
+\vss}}
 
-clip
-setbounds
-draw
+\smallskip\noindent
+If you need to measure the size of your picture, you can get the coordinates of the
+corners with the built-in corner commands, and do some arithmetic like this:
+\begin{code}
+    (wd, ht) = urcorner P - llcorner P;
+\end{code}
+You also get \mpl{ulcorner}, \mpl{lrcorner}, and \mpl{center}; plus \mpl{bbox} which
+returns the rectangular path round the four corners, expanded by the current value
+of \mpl{bboxmargin}.
 
-center picture                   --> pair
-llcorner picture                 --> pair
-lrcorner picture                 --> pair
-ulcorner picture                 --> pair
-urcorner picture                 --> pair
-bbox picture                     --> path
+\newpage
+\subsection{Clipping and bounding boxes}
 
-picture rotated numeric          --> picture
-picture shifted pair             --> picture
-picture slanted numeric          --> picture
-picture scaled numeric           --> picture
-picture xscaled numeric          --> picture
-picture yscaled numeric          --> picture
-picture zscaled pair             --> picture
-picture transformed transform    --> picture
+Once you have got your \<picture> variable, and possibly transformed it, the main
+thing you can do with it is to use \mpl{draw} to add it to the current picture.  But
+there are two other commands that are sometimes helpful that allow you to alter the
+apparent size of the picture.  
+\begin{itemize}
+    \item $\kw{setbounds}\ \<picture> \kw{to}\  \<path expression>$
+    \item $\kw{clip}\ \<picture> \kw{to}\  \<path expression>$
+\end{itemize}
+Both commands set the boundary of your picture to the arbitrary path expression, and 
+then the \mpl{clip} command also erases all of the picture that lies outside the
+boundary.
+(Note that this is not the same as setting the bounding box.  The arbitrary path does
+not have to be a rectangle; after either of these commands the bounding box will be
+the rectangle that fits around the arbitrary path).
 
-string infont string             --> picture
-textext(string)  --> picture
-image(string)                    --> picture
+Why would you ever want to use \mpl{setbounds}?  Mainly to help with aligning type set labels,
+as discussed in §\ref{infontbbox}, or if you want to make boundaries of different
+picture elements consistent in order to line them up more easily.  Or perhaps to set
+a margin for the whole image by using something like this just before the
+\mpl{endfig}.
+\begin{code}
+setbounds currentpicture to bbox currentpicture; 
+\end{code}
+This has the effect of adding a \mpl{bboxmargin} wide strip all round.
 
-thelabel.suffix(picture, pair)   --> picture
-thelabel.suffix(string, pair)    --> picture
+\MP\ inherits the \mpl{clip} command from PostScript; there is no equivalent in \MF.
+It is useful primarily for trimming a repeating pattern to a particular shape
 
-dotlabel.suffix(picture, pair)   --> –
-label.suffix(picture, pair)      --> –
-\end{verbatim}
+\newpage
 
 
 Making a large pic out of pieces / nb they are transparent
@@ -4418,6 +4455,8 @@ Adding labels to current picture
 Drawing with color and pen
 
 Drawing a negative
+
+Simulating transparency
 
 Drawing with "string"
 
