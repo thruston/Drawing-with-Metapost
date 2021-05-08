@@ -61,6 +61,8 @@ showstringspaces=false,
 language=Metapost,
 basicstyle=\ttfamily,
 keywordstyle=\color{textblue},
+keywordstyle=[5]\color{squash},
+keywordstyle=[6]\color{carrot},
 commentstyle=\color{textred},    % Custom highlighting style
 stringstyle=\color{textgreen},
 frame=none,                      % Any extra options here
@@ -3686,9 +3688,11 @@ and \id{xheight} is set correctly for the current font, then
     setbounds pp to unitsquare xscaled wd yscaled xheight;
 \end{code}
 will make the "label" alignment routines ignore any ascenders or descenders.
-%Beware
-%that if the resulting label is right at the edge of your drawing then any parts of
-%the text that stick out of the adjusted bounding box will be clipped.
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in \vss \small 
+\noindent\llap{\nb}Beware that if the resulting label is right at the edge of your
+drawing then any parts of the text that stick out of the adjusted bounding box will
+be clipped.  See also §\ref{sec:rotated-boxes} for more on what happens if you
+rotate the text.}}
 
 \newpage
 \subsubsection{Setting Greek letters with \texttt{infont}}
@@ -4410,7 +4414,7 @@ corners with the built-in corner commands, and do some arithmetic like this:
 \end{code}
 You also get \mpl{ulcorner}, \mpl{lrcorner}, and \mpl{center}; plus \mpl{bbox} which
 returns the rectangular path round the four corners, expanded by the current value
-of \mpl{bboxmargin}.
+of \mpl{bboxmargin}. (See also §\ref{sec:rotated-boxes}).
 
 \newpage
 \subsection{Clipping and bounding boxes}
@@ -4429,7 +4433,50 @@ boundary.
 (Note that this is not the same as setting the bounding box.  The arbitrary path does
 not have to be a rectangle; after either of these commands the bounding box will be
 the rectangle that fits around the arbitrary path).
+\MP\ inherits the \mpl{clip} command from PostScript; there is no equivalent in \MF.
+It is useful as an alternative to \mpl{buildcycle}, but most commonly used
+for trimming a repeating pattern to a particular shape.  
 
+The usual approach is to define a particular shape, $s$, then draw your pattern over
+a large area that covers the shape, and finally call \mpl{clip currentpicture to s}
+to trim the pattern to the shape.  This is best done after you define all your
+shapes, but before you draw any others or add any labels.  The example on the right
+shows this approach in action.  
+
+But you can apply \mpl{clip} to any picture, so you might prefer to capture your
+pattern in \<picture> variable with \mpl{image}, apply \mpl{clip} to that, and
+then \mpl{draw}. This works nicely if you want to repeat the clipped image.
+
+\moveright 5.5in\vbox to 0pt{\hsize 4.2in \vss
+\noindent\includegraphics[width=4in]{shady-circles}
+
+\medskip
+\begin{smallcode}
+path c, C; numeric r; r = 60;
+c = fullcircle scaled 2r shifted (-r, 0);
+C = fullcircle scaled 4r shifted (2r, 0);
+
+numeric t, u;
+(t, whatever) = C intersectiontimes 
+                               C shifted (center c - center C);
+(u, whatever) = c intersectiontimes (point t of C -- center c);
+
+path s;
+s = subpath (0, u) of c -- subpath (t, 4) of C -- cycle;
+for i=0 upto r:
+    draw (left--right) scaled 2r rotated -42 shifted (3i, 0) 
+        withpen pencircle scaled 1/4 withcolor 2/3 blue;
+endfor
+clip currentpicture to s;
+
+draw c; draw C; 
+draw center c -- center C -- point t of C -- cycle;
+\end{smallcode}
+\vskip -126pt
+}
+
+
+\vfill\noindent
 Why would you ever want to use \mpl{setbounds}?  Mainly to help with aligning type set labels,
 as discussed in §\ref{infontbbox}, or if you want to make boundaries of different
 picture elements consistent in order to line them up more easily.  Or perhaps to set
@@ -4440,25 +4487,132 @@ setbounds currentpicture to bbox currentpicture;
 \end{code}
 This has the effect of adding a \mpl{bboxmargin} wide strip all round.
 
-\MP\ inherits the \mpl{clip} command from PostScript; there is no equivalent in \MF.
-It is useful primarily for trimming a repeating pattern to a particular shape
+\newpage
+\subsection{Bounding boxes of transformed pictures}\label{sec:rotated-boxes}
+
+When you rotate a text label, or otherwise transform a picture, the corner-points
+also change, but not quite in the way you might think.  It turns out that
+the \mpl{bbox} is always a rectangle aligned to the edges of your page.
+Effectively the corners are determined \textit{after} any transformation, 
+and the \mpl{center} is strictly the intersection of the lines between opposite
+corners.
+$$\includegraphics[width=5in]{corners}$$
+You will notice this if you use the technique given on p.29 of the \MP\ manual to draw a
+label on a coloured (or erased) background;  if you have rotated the label, the
+\mpl{bbox} may be larger than you want. The solution is to define your label
+untransformed and then apply the transformation twice: first when you fill the bounding box 
+and then again when you draw the label, for example:
+\begin{code}
+picture p; p = thelabel.top("Correctly", origin);
+unfill bbox p rotated 30 shifted z0;
+draw p rotated 30 shifted z0;
+\end{code}
+
+\vfill
+\subsection{Using pictures to assemble a complex diagram}
+
+If you have a diagram with several independent parts, like the comparison above then
+there is a useful general technique: declare a subscripted \<picture> variable, and
+then use \mpl{image} to draw each part separately.  The advantage of this is that do
+you not have to worry about where the \mpl{origin} is, which often makes a drawing
+simpler (for example because you can use \mpl{rotated} rather than
+\mpl{rotatedaround}).  Once you have created all the parts you can then add them to
+the final image using \mpl{draw} or \mpl{label} as shown on the right
+$\longrightarrow$
+
+\moveright 396pt\vbox to 0pt{\hsize 4in \vss
+\noindent The comparison picture above was drawn using this general sub-picture
+technique, approximately like this:
+\begin{code}
+picture P[];
+P1 = image(
+    % first drawing... 
+);
+P2 = image(
+    % second drawing...
+);
+draw P1 shifted 100 left; draw P2 shifted 100 right;
+\end{code}
+Sometimes it is more convenient to use \mpl{label} to place the pictures, taking
+advantage of the automatic alignment provided.  
+
+Note also that the blank parts of each
+picture are really transparent, unless you have explicitly filled them with
+\mpl{white} colour, so you can overlap them when appropriate.
+}
 
 \newpage
+\subsection{Adding a caption to the current picture}
+
+When you have finished a complicated picture, you may want
+to add a caption or some other label which would look neat if it 
+were exactly centred at the bottom of the everything else. You could 
+keep track of exactly how wide and deep you have made the picture to do this, but
+there is an easier way, that will adjust itself automatically if you change the
+contents of the picture later. 
+\begin{code}
+beginfig(1);
+% ... complete drawing that needs a caption ...
+label.bot("This picture needs a label at the bottom", 
+                           point 1/2 of bbox currentpicture);
+endfig;
+\end{code}
+Through the automatic alignment routines in \mpl{label} this 
+will produce a label neatly centred at the at the bottom.  If it is too close
+you can either set a larger \id{bboxmargin} or use
+\begin{code}
+label.bot("This picture needs a label at the bottom", 
+              point 1/2 of bbox currentpicture shifted 42 down);
+\end{code}
+Note that in both cases the addition of the label will move
+the corner points of the picture, so that the bounding box
+will have been expanded to include the new label.  You can use this feature to 
+add a series of centered labels.  
+But if this is not what you want, perhaps because you want to add two labels
+side by side at bottom, then you can “freeze” the current bounding box like this:
+\begin{code}
+    picture bb; bb = bbox currentpicture;
+    label.bot("Left label", point 1/4 of bb);
+    label.bot("Right label", point 3/4 of bb);
+\end{code}
+
+\noindent
+The path returned by \mpl{bbox} has four points starting at
+the lower left and proceding clockwise like a \mpl{unitsquare}. So 
+\mpl{point 1/2 of bbox currentpicture} is half way between lower left 
+and lower right,
+while \mpl{point 5/2 of bbox currentpicture} is half-way from
+upper right to upper left.
+
+Note that the path is defined even if the current picture is empty.  If you call 
+\mpl{bbox currentpicture} at the start of a picture you will get a square path
+centered on the origin and scaled to \id{bboxmargin}.
+
+\moveright5.5in\vbox to 0pt{\hsize 4in \vss
+\noindent
+Here is an example.
+$$\includegraphics[width=4in]{double-angle}$$
+The labels at the bottom where added like this:
+\begin{smallcode}
+label.bot("$\triangle ACD \sim \triangle ABC$", 
+                 point 1/2 of bbox currentpicture shifted 24 down);
+
+path bb; bb = bbox currentpicture shifted 12 down;
+label.bot(btex \vbox{....} etex, point 1/4 of bb);
+label.bot(btex \vbox{....} etex, point 3/4 of bb);
+\end{smallcode}
+The second call to \mpl{bbox currentpicture} gets the bounding box 
+that includes the first centered label.}
 
 
-Making a large pic out of pieces / nb they are transparent
-
-Aligning them with labels
-
-Adding labels to current picture
-
+\newpage
 Drawing with color and pen
 
 Drawing a negative
 
-Simulating transparency
-
 Drawing with "string"
+
+Simulating transparency
 
 Adding a background after finishing
 Adding a border
