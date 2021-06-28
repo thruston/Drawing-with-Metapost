@@ -28,8 +28,8 @@ beginfig(1);
         );
     endfor
     labeloffset := 20;
-    label.lft(P1, origin);
-    label.rt(P2, origin);
+    label.top(P1, origin);
+    label.bot(P2, origin);
 endfig;
 \end{mplibcode}
 \end{document}

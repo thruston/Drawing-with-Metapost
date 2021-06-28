@@ -1,5 +1,5 @@
 prologues := 3;
-outputtemplate := "%j%c.mps";
+outputtemplate := "%j%c.eps";
 
 beginfig(1);
 

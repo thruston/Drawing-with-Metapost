@@ -13,7 +13,6 @@
 \def\mfbook{\textsl{The \MF\kern1pt book}}
 \def\texbook{\textsl{The \TeX\kern1pt book}}
 \usepackage{shortvrb}\MakeShortVerb{"}
-%\DefineShortVerb{\"}
 \usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
@@ -37,7 +36,8 @@
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \def\to{\mathrel{\ldotp\ldotp}}
 \def\<#1>{\ensuremath{\langle\hbox{#1}\rangle}}
-
+\newfontface\ding{Zapf Dingbats}
+\def\hey{\llap{\ding ☞\ }}
 %
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
@@ -3863,7 +3863,7 @@ the text into two separate labels and position them independently.
 
 If you are a maven of programming language syntax you may have noticed that
 "btex ... etex" fits into the type system that \MP\ inherits from \MF\ as a "picture" and
-not as a "string".  Effectively "btex" and "etex" act as a special pair of quotation
+not as a "string".  Effectively, "btex" and "etex" act as a special pair of quotation
 marks that create a picture; however the contents are used verbatim, so that the
 whole construction is a syntactical atom.  This means that you \textbf{cannot} write
 this sort of thing:
@@ -4331,11 +4331,11 @@ although they might appear to be special quotation marks, they produce a
 \section{Working with pictures}
 
 \MP\ inherits the mechanism of \<picture> variables directly from \MF, except that
-the contents of these variables are a bit more complicated.  The system keep track
-of the picture it is working on in a variable called \mpl{currentpicture}, which can
-be copied to your own variables, or manipulated in various useful ways.  In \MF\ the
-contents of the variable is a pattern of pixels for a font, in \MP\ the contents are
-vector graphics commands.  This section reviews some of the things you can do with a
+the contents of these variables are a bit more complex.  The system keeps track
+of the active picture in a variable called \mpl{currentpicture}, which can be copied
+to your own variables, or manipulated in various useful ways.  In \MF\ the contents
+of the variable is a pattern of pixels for a font, in \MP\ the contents are vector
+graphics commands.  This section reviews some of the things you can do with a
 \<picture> variable (including putting it in a frame $\longrightarrow$).
 \mpic{-96pt}{youth}
 
@@ -4400,8 +4400,8 @@ picture, you could do:
 \begin{code}
     for i=1 upto 3: draw P shifted (20i, 0); endfor
 \end{code}
-and \MP\ will add a copies of $P$ with the reference points shifted to $(20,0)$,
-$(40,0)$ and $(60,0)$. A selection of other transformations is shown on the right $\longrightarrow$
+and \MP\ will add copies of $P$ with the reference points shifted to $(20,0)$,
+$(40,0)$, and $(60,0)$. A selection of other transformations is shown on the right $\longrightarrow$
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-240pt\centerline{\includegraphics[width=4in]{twister}}\par
 \centerline{\textsl{\small The reference point for each compass is the small dot in the middle.}}
 \vss}}
@@ -4433,15 +4433,15 @@ boundary.
 (Note that this is not the same as setting the bounding box.  The arbitrary path does
 not have to be a rectangle; after either of these commands the bounding box will be
 the rectangle that fits around the arbitrary path).
-\MP\ inherits the \mpl{clip} command from PostScript; there is no equivalent in \MF.
-It is useful as an alternative to \mpl{buildcycle}, but most commonly used
-for trimming a repeating pattern to a particular shape.  
 
-The usual approach is to define a particular shape, $s$, then draw your pattern over
-a large area that covers the shape, and finally call \mpl{clip currentpicture to s}
-to trim the pattern to the shape.  This is best done after you define all your
-shapes, but before you draw any others or add any labels.  The example on the right
-shows this approach in action.  
+\MP\ inherits the \mpl{clip} command from PostScript; there is no equivalent in \MF.
+It can be useful as an alternative to \mpl{buildcycle}, but it is most commonly used
+for trimming a repeating pattern to a particular shape.  The usual approach is to
+define a particular shape, $s$, then draw your pattern over a large area that covers
+the shape, and finally call \mpl{clip currentpicture to s} to trim the pattern to
+the shape.  This is best done after you define all your shapes, but before you draw
+any others or add any labels.  The example on the right shows this approach in
+action.  
 
 But you can apply \mpl{clip} to any picture, so you might prefer to capture your
 pattern in \<picture> variable with \mpl{image}, apply \mpl{clip} to that, and
@@ -4475,9 +4475,8 @@ draw center c -- center C -- point t of C -- cycle;
 \vskip -126pt
 }
 
-
 \vfill\noindent
-Why would you ever want to use \mpl{setbounds}?  Mainly to help with aligning type set labels,
+\hey Why would you ever want to use \mpl{setbounds}?  Mainly to help with aligning type set labels,
 as discussed in §\ref{infontbbox}, or if you want to make boundaries of different
 picture elements consistent in order to line them up more easily.  Or perhaps to set
 a margin for the whole image by using something like this just before the
@@ -4493,13 +4492,13 @@ This has the effect of adding a \mpl{bboxmargin} wide strip all round.
 When you rotate a text label, or otherwise transform a picture, the corner-points
 also change, but not quite in the way you might think.  It turns out that
 the \mpl{bbox} is always a rectangle aligned to the edges of your page.
-Effectively the corners are determined \textit{after} any transformation, 
+Effectively, the corners are determined \textit{after} any transformation, 
 and the \mpl{center} is strictly the intersection of the lines between opposite
-corners.
-$$\includegraphics[width=5in]{corners}$$
-You will notice this if you use the technique given on p.29 of the \MP\ manual to draw a
+corners.\mpic{-68pt}{corners}
+
+You will notice this if you use the technique given on p.\thinspace29 of the \MP\ manual to draw a
 label on a coloured (or erased) background;  if you have rotated the label, the
-\mpl{bbox} may be larger than you want. The solution is to define your label
+\mpl{bbox} may be larger than you want. One solution is to define your label
 untransformed and then apply the transformation twice: first when you fill the bounding box 
 and then again when you draw the label, for example:
 \begin{code}
@@ -4517,11 +4516,9 @@ then use \mpl{image} to draw each part separately.  The advantage of this is tha
 you not have to worry about where the \mpl{origin} is, which often makes a drawing
 simpler (for example because you can use \mpl{rotated} rather than
 \mpl{rotatedaround}).  Once you have created all the parts you can then add them to
-the final image using \mpl{draw} or \mpl{label} as shown on the right
-$\longrightarrow$
-
-\moveright 396pt\vbox to 0pt{\hsize 4in \vss
-\noindent The comparison picture above was drawn using this general sub-picture
+the final image using \mpl{draw} as shown on the right
+$\longrightarrow$\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in \vskip -81pt
+\noindent The illustration above was drawn using this general sub-picture
 technique, approximately like this:
 \begin{code}
 picture P[];
@@ -4531,15 +4528,14 @@ P1 = image(
 P2 = image(
     % second drawing...
 );
-draw P1 shifted 100 left; draw P2 shifted 100 right;
+draw P1 shifted 100 up; draw P2 shifted 100 down;
 \end{code}
-Sometimes it is more convenient to use \mpl{label} to place the pictures, taking
-advantage of the automatic alignment provided.  
+\vss}}
 
-Note also that the blank parts of each
-picture are really transparent, unless you have explicitly filled them with
+Sometimes it is more convenient to use \mpl{label} to place the pictures, taking
+advantage of the automatic alignment provided.  Note also that the blank parts of
+each picture are really transparent, unless you have explicitly filled them with
 \mpl{white} colour, so you can overlap them when appropriate.
-}
 
 \newpage
 \subsection{Adding a caption to the current picture}
@@ -4557,7 +4553,7 @@ label.bot("This picture needs a label at the bottom",
                            point 1/2 of bbox currentpicture);
 endfig;
 \end{code}
-Through the automatic alignment routines in \mpl{label} this 
+Through the automatic alignment routines in \mpl{label}, this 
 will produce a label neatly centred at the at the bottom.  If it is too close
 you can either set a larger \id{bboxmargin} or use
 \begin{code}
@@ -4586,7 +4582,7 @@ upper right to upper left.
 
 Note that the path is defined even if the current picture is empty.  If you call 
 \mpl{bbox currentpicture} at the start of a picture you will get a square path
-centered on the origin and scaled to \id{bboxmargin}.
+centered on the origin and scaled to $2 \id{bboxmargin}$.
 
 \moveright5.5in\vbox to 0pt{\hsize 4in \vss
 \noindent
@@ -4606,15 +4602,132 @@ that includes the first centered label.}
 
 
 \newpage
-Drawing with color and pen
+\subsection{Drawing with various colours and pens}
 
-Drawing a negative
+Consider the \<picture> with different colours and pens in the example here
+$\longrightarrow$
+\vadjust{\moveright5.5in\vbox to 0pt{\vskip
+-1.5\baselineskip
+\begin{smallcode}
+numeric s; s = 21;
+path alpha;
+alpha = ((-2s, s) {right} 
+    .. halfcircle rotated -90 scaled 2s shifted (2s, 0)
+    .. {left} (-2s, -s)) shifted (s*left);
 
-Drawing with "string"
+vardef overdraw(expr a, b, r, P, shade) =
+    linecap := butt;
+    undraw subpath (a+r, b-r) of P withpen pencircle scaled 2;
+    draw subpath (a, b) of P withcolor shade;
+enddef;
 
-Simulating transparency
+picture cb; cb = image(
+    draw alpha withcolor 2/3 red;
+    undraw alpha rotated 180 withpen pencircle scaled 2;
+    draw alpha rotated 180 withcolor 2/3 blue;
+    overdraw(0.21, 0.36, 0.02, alpha, 2/3 red);
+    overdraw(0.67, 0.86, 0.02, alpha, 2/3 red);
+    overdraw(3.4,  4.3,  0.1,  alpha, 2/3 red);
+    overdraw(5.4,  5.6,  0.02, alpha, 2/3 red);
+    overdraw(5.4,  5.6,  0.02, alpha rotated 180, 2/3 blue);
+);
+\end{smallcode}
+
+\vskip 48pt\noindent
+\begin{minipage}{4in}
+\begin{itemize}
+    \item Example 1 shows that by default \mpl{draw} uses the colours and pens
+        defined in the picture
+
+    \item Examples 2, 3, and 4 show what happens if you change the pen, or the
+        colour, or both. 
+
+    \item Example 5 shows you how to make a bagel in \MP.
+
+    \item Example 6 shows you the slightly tricky syntax to extract the paths, pens,
+        and colours from the \<picture> and adjust them as needed.
+\end{itemize}
+\end{minipage}
+\vss}} 
+With this captured in a \<picture> variable, you can \mpl{draw} it with
+different colours and pens to obtain a variety of effects:
+$$\includegraphics[width=\textwidth]{draw-picture.pdf}$$
+The picture is supposed to represent a fancy knot (a “Carrick bend”), and to show
+the red and blue strands crossing each other.  The \mpl{overdraw} macro tries to do
+this by undrawing with a thick pen, then redrawing the upper strand on top.
+
+\newpage
+\subsection{Simulating transparency}
+
+Filling with transparent colour can sometimes be a very effective graphic technique, but the
+underlying technical implementation is often dauntingly complex.  Plain \MP\
+provides no colour model that directly supports transparency for any output format,
+so if you need it you will have to resort to layering and managing the colour
+blending yourself.  This page presents an example of the basic technique, that can
+be adapted to more general purpose macros as required.  The technique is included in
+this section, because it involves more manipulation of \<picture> variables.
+\vadjust{\moveright5.5in\vbox to 0pt{\vskip -128pt
+$$\includegraphics[width=3in]{fake-transparency}$$
+Omitting the simple grid, this drawing was produced like this:
+\begin{smallcode}
+% Large A
+label.urt("A" infont defaultfont scaled 8, origin) withcolor 1/4 green;
+% An arbitrary shape
+path shape; shape = (superellipse(right, up, left, down, 0.81)) 
+    shifted 1/2 right scaled 30 rotated 30;
+% Parameters 
+alpha = 5/8;  % alpha: 0=invisible, 1=opaque
+color filler; filler = .95[red,white];
+picture fg, bg;
+bg = currentpicture; % capture the current drawing
+fg = image( 
+  for e within bg: % redraw everything in blended color
+    draw e withcolor alpha[colorpart e, filler];
+  endfor  % and add some decorations
+  draw shape withpen pencircle scaled 2 withcolor 3/4;
+  draw subpath (2.718, 3.1415) of shape
+      shifted - center shape scaled 7/8 shifted + center shape
+      withpen pencircle scaled 2 withcolor white;
+);
+clip fg to shape;  % now clip the fg drawing to the shape
+fill shape withcolor filler;  % fill the shape
+draw fg; % and put the fg drawing on top
+draw shape withcolor 3/4 blue; % make a nice edge
+\end{smallcode}
+\vss}}%
+The two useful tools in the plain \MP\ kit bag are:
+\begin{itemize}
+    \item The ability to loop through all the elements of a picture
+    \item The ability to blend colours using the mediation syntax
+\end{itemize}
+The example drawing on the right consists of a regular grid and a text picture, with 
+a bubble drawn over the top.   The bubble can be made to look transparent like this:
+\begin{enumerate}
+    \item Define the shape that you want to be transparent, decide on how opaque
+        you want it, and the colour to use.
+    \item Capture the current drawing in a \<picture> variable.
+    \item Loop over all the elements in that picture, redrawing each one with 
+        a blended color, and capture all this in another \<picture>.
+    \item Add some decoration; here there is an internal margin, and a hint of a
+        reflection line to make it look shiny.
+    \item Clip the new blended-colour picture to the shape.
+    \item Fill the shape with the filler colour.
+    \item Draw the blended-colour parts on top.
+    \item Finally, add a neat edge (if needed).
+\end{enumerate}
+As you may appreciate, with this approach, you need to do the transparent parts
+after you have drawn everything else in your drawing.
+
+
+
+\newpage
+\subsection{Adding a background and other post-processing}
 
 Adding a background after finishing
+Or just something on the lowest layer.
+
+Adding a ruler
+
 Adding a border
 
 Including an image file
