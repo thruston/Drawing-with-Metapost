@@ -16,7 +16,7 @@
 \usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – June 2020}
+\date{March 2017 – July 2021}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
@@ -42,7 +42,7 @@
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
 \definecolor{textgreen}{rgb}{0,0.43,0}
-\definecolor{squash}{rgb}{0.793, 0.359, 0.05}   
+\definecolor{squash}{rgb}{0.793, 0.359, 0.05}
 \definecolor{carrot}{rgb}{0.934, 0.445, 0.082}
 % style for highlighting
 \newcommand\texstyle{\lstset{
@@ -987,7 +987,7 @@ on the axes in graphs, like so $\longrightarrow$
 There is also a simple way to write coordinates using a polar notation using
 \mpl{dir}.  This macro is defined so that \mpl{dir 30} expands to \mpl{right rotated
 30} and then to \mpl{(1,0) rotated 30}, which becomes \mpl{(cosd(30), sind(30)}
-or \mpl{(0.86603, 0.5)}. So to get the polar notation 
+or \mpl{(0.86603, 0.5)}. So to get the polar notation
 point $(r,\theta)$, where $r$ is the radius and $\theta$ is the angle in degrees
 counter-clockwise from the positive $x$-axis, you can write `\mpl{r * dir
 theta}'. As usual, with a constant you can omit the multiplication sign, so `\mpl{2
@@ -1115,7 +1115,7 @@ for i=1 upto 3:
   path a;
   a = z[i] scaled 42 -- origin -- zinverse(z[i]) scaled 42;
   drawarrow a cutafter fullcircle scaled 5 shifted point 2 of a
-    withcolor SetTwo[7][2+i]; 
+    withcolor SetTwo[7][2+i];
   drawdot point 0 of a withpen pencircle scaled dotlabeldiam;
   drawdot point 2 of a withpen pencircle scaled dotlabeldiam;
   drawdot point 2 of a withpen pencircle scaled 2 withcolor white;
@@ -1184,7 +1184,7 @@ vardef fizz(expr X) =
     n
 enddef;
 input colorbrewer-rgb
-color shade[]; 
+color shade[];
 shade0 = Reds 5 4; shade1 = Oranges 5 4;
 shade2 = Greens 5 4; shade3 = Blues 5 4;
 
@@ -1587,7 +1587,7 @@ CSV files with \MP\ but it's much quicker with Python.
 \noindent
 The well-known Colorbrewer website ("http://colorbrewer2.org") provides a
 useful set of colour palettes that are suitable for a wide range of applications.  They
-were originally written for maps, but they have a wide range of applications. 
+were originally written for maps, but they have a wide range of applications.
 If you are using an up-to-date, and complete, \TeX\ distribution, you should find
 that my implementation of them for \MP\ is already installed on your system.
 The package provides two files that define all the colour ranges; one for CMYK and
@@ -1997,12 +1997,12 @@ desired_length = 180; n = 30; s = 80;
 for r=0 upto 8:
 
   path shape;
-  shape = for i=1 upto n: 
+  shape = for i=1 upto n:
     (s + r * normaldeviate, 0) rotated (360/n*i) ..
-  endfor cycle;  
+  endfor cycle;
 
   shape := shape scaled (desired_length/arclength shape);
-  
+
   draw shape shifted (r*s, 0) withcolor (r/8)[black,red];
   label(decimal r, (r*s, 0));
 
@@ -2224,7 +2224,7 @@ experience suggests that it is often better to adapt a general technique to the 
 in hand, and to create a specific solution to your current problem.  One of the main
 issues is catching exceptions; since it is hard to write completely general macros,
 I have tried simply to present each technique so that you can understand it and adapt
-it as required.  
+it as required.
 
 The classical constructions from Euclid's \textsl{Elements} are often useful
 sources of inspiration for macros, but they do not always point in the right
@@ -2607,7 +2607,7 @@ and obviously the "90" can be adjusted to whatever angle you please, if you want
 something between parallel and orthogonal.
 
 \smallskip\noindent\llap{\nb}%
-To define the line through $E$ that is perpendicular to $A\to B$, you should just  
+To define the line through $E$ that is perpendicular to $A\to B$, you should just
 use $(A-B)$ instead of $(C-D)$.  The diagram shows $H$, the point on $A\to B$
 that is closest to $E$; you can (I trust) work out how to define that yourself.
 
@@ -2686,7 +2686,7 @@ So we can use ideas from §\ref{sec:bisect} and §\ref{sec:intersect} to define 
 macro that returns the required path given points $A$, $B$, and $C$:
 \mxpic{-1in}{5in}{incircle}
 \begin{code}
-vardef incircle(expr A,B,C) = 
+vardef incircle(expr A,B,C) =
   save a, b, m, t; pair a, b, m, t;
   a = A + unitvector (C-A) + unitvector (B-A);
   b = B + unitvector (A-B) + unitvector (C-B);
@@ -2700,13 +2700,13 @@ enddef;
 The excircles of a triangle are the three circles lying outside the triangle and
 tangent to one edge and the extensions of the other two.  The centres of each
 excircle lie at the intersection of one internal angle bisector and the external
-angle bisector of one of the other corners.  
+angle bisector of one of the other corners.
 
 To get the external angle bisector,
 all you have to do is reverse the direction of one of the \mpl{unitvector} calls:
 \mxpic{0pt}{5in}{excircle}
 \begin{code}
-vardef excircle(expr A,B,C) = 
+vardef excircle(expr A,B,C) =
   save a, b, m, t; pair a, b, m, t;
   a = A + unitvector (C-A) - unitvector (B-A);
   b = B + unitvector (A-B) + unitvector (C-B);
@@ -2943,17 +2943,17 @@ drawoptions();
 \bigskip
 \noindent\hbox to \textwidth{\includegraphics[scale=0.92]{axis-of-similitude}\hss}
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
-Given three circles taken in pairs, you can use the techniques of the preceding 
+Given three circles taken in pairs, you can use the techniques of the preceding
 sections to find the three points where the common external tangents
-intersect (shown here as $E_{12}$, $E_{31}$, and $E_{23}$) and the 
-three points where the common internal tangents intersect ($I_{12}$, 
+intersect (shown here as $E_{12}$, $E_{31}$, and $E_{23}$) and the
+three points where the common internal tangents intersect ($I_{12}$,
 $I_{31}$, and $I_{23}$).  These points have a pleasing collinearity.
 The line common to the three $E$ points is known as the \textit{Axis of
-Similitude}.  
+Similitude}.
 
-The drawing is left as an exercise for the reader, except 
+The drawing is left as an exercise for the reader, except
 to note that if $r_1$ and $r_2$ are \mpl{numeric} variables representing
-the radius of the circles centred at the \mpl{pair} variables $C_1$ and $C_2$, 
+the radius of the circles centred at the \mpl{pair} variables $C_1$ and $C_2$,
 then we have:
 $$\vbox{\openup3pt\halign{\hfil$#$&${}=#$\hfil\cr
 E_{12}&({r_1\over r_1 - r_2})[C_1, C_2];\cr
@@ -2977,14 +2977,14 @@ But $OPQ$ and $OQP'$ are similar triangles, so we have $r/OP=OP'/r$ and so $OP' 
 r^2/OP$, and $P'$ must lie on the line through $O$ and $P$.  This is enough to
 define a macro to do inversion directly without having to find the tangent points
 every time; given the radius of the circle of inversion as $r$ and the centre as
-$O$, we have 
+$O$, we have
 $$P'=O + \op{unitvector}(P-O) \kw{scaled}\, (r^2/\op{abs}(P-O)).$$
 This also works when $P$ is not outside the circle, provided only that $P$ is not at
 the centre of the circle (to avoid division by zero). Here is an attempt at a
 slightly more general macro that can invert a \<pair> (or a \<path>) $P$
 in a circle $C$.
 \begin{smallcode}
-vardef invert(expr P, C) = 
+vardef invert(expr P, C) =
     save o, r; pair o; numeric r;
     o = 1/2[point 0 of C, point 4 of C];
     r = abs (o - point 0 of C);
@@ -2992,22 +2992,22 @@ vardef invert(expr P, C) =
         save p, d; pair p; numeric d;
         p = P - o; d = abs p;
         if d > 0:
-            o + unitvector p scaled (r/d*r) 
+            o + unitvector p scaled (r/d*r)
         else:
             errmessage("Inversion undefined at center.")
         fi
     elseif path P:
-        for t=0 upto 31: 
-            invert(point t/32 * length P of P, C) .. 
+        for t=0 upto 31:
+            invert(point t/32 * length P of P, C) ..
         endfor
         if cycle P: cycle else: invert(point infinity of P, C) fi
     fi
-enddef;  
+enddef;
 \end{smallcode}
 \noindent
 You could make this more efficient by passing $O$ and $r$ as arguments instead of
 $C$.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\noindent
-\noindent\llap{\nb}Inversion is reciprocal, so $P$ is the inverse of $P'$ above. Points 
+\noindent\llap{\nb}Inversion is reciprocal, so $P$ is the inverse of $P'$ above. Points
 on the circle of inversion invert to themselves.
 
 \smallskip
@@ -3028,7 +3028,7 @@ of the whole polar line (infinitely extended).}}
 \newpage
 \subsection{Radical axis and radical centre}\label{sec:radical}
 
-The \textit{radical axis} of two circles is the line, orthogonal to the line between 
+The \textit{radical axis} of two circles is the line, orthogonal to the line between
 the centres of the two circles which is the locus of points which have equal power
 with respect to both circles; that is the points from which the tangents to each circle
 are of equal length.  A circle centred at any point on the axis, and drawn with radius equal to the
@@ -3043,18 +3043,18 @@ have the same length, so a circle with this radius cuts all three circles at rig
 angles.
 
 \moveright5.5in\vbox to 0pt{\vss\hsize 4in\begin{smallcode}
-vardef radical_axis(expr ca, cb) = 
+vardef radical_axis(expr ca, cb) =
     numeric t, d, ra, rb;
     ra = abs(center ca - point 0 of ca);
     rb = abs(center cb - point 0 of cb);
     d = abs(center cb - center ca);
     2t = 1 + (ra+rb) / d * (ra-rb) / d;
     (up -- down) scaled 89
-        rotated angle (center cb - center ca) 
+        rotated angle (center cb - center ca)
         shifted t[center ca, center cb]
 enddef;
 beginfig(1);
-    path c[], a[]; 
+    path c[], a[];
     z1 = origin; z2 = 233 right rotated 4; z3 = 209 right rotated -42;
     c1 = fullcircle scaled 202 shifted z1;
     c2 = fullcircle scaled 106 shifted z2;
@@ -3062,7 +3062,7 @@ beginfig(1);
     a1 = radical_axis(c1, c2);
     a2 = radical_axis(c2, c3);
     a3 = radical_axis(c3, c1);
-    z0 = whatever [point 0 of a1, point 1 of a1] 
+    z0 = whatever [point 0 of a1, point 1 of a1]
        = whatever [point 0 of a2, point 1 of a2];
     numeric t; (t, whatever) = tangent_times(c1, z0);
     drawoptions(withpen pencircle scaled 1 withcolor 3/4[blue, white]);
@@ -3094,14 +3094,14 @@ endfig;
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 The classical Problem of Apollonius is to find a circle tangent to three others.
 All of the approaches are rather involved, but Gergonne's is probably the simplest
-to follow in \MP.  
+to follow in \MP.
 
 \smallskip\noindent For three given circles \textcolor{textblue}{$C_1$, $C_2$, and
 $C_3$}, you first find the external \textcolor{textblue}{axis of similitude}
 [§\ref{sec:axosim}]; then find the \textcolor{carrot}{poles} [§\ref{sec:inversion}] of this line with
 respect to each of the three circles; and thirdly find the
 \textcolor{squash}{radical centre}
-[§\ref{sec:radical}]. 
+[§\ref{sec:radical}].
 
 \smallskip\noindent
 The lines from the radical centre through each of the three
@@ -3281,13 +3281,13 @@ draw invert(subpath(0, 3/2) of c2, c1);
 draw invert(subpath(0, 3/2) of c3, c1);
 drawoptions();
 draw subpath(-1/4,1) of c1 withcolor 3/4[1/2 red,white];
-label.bot("\textit{circle of inversion}", point -1/4 of c1) 
+label.bot("\textit{circle of inversion}", point -1/4 of c1)
     withcolor 1/4[1/2 red, white];
 
 for i=1 upto 72:
     path c, c';
     c = c5 shifted (0, i*d); c' = invert(c, c1);
-    if i < 5: 
+    if i < 5:
         drawoptions(withcolor 3/4 white);
         draw c; draw origin -- center c;
         fill fullcircle scaled dotlabeldiam shifted center c;
@@ -3296,7 +3296,7 @@ for i=1 upto 72:
     fi
     draw c' withpen pencircle scaled 1/4 withcolor 2/3 blue;
 endfor
-forsuffixes $=2,3,4: draw subpath (0,4) of c$ 
+forsuffixes $=2,3,4: draw subpath (0,4) of c$
     withpen pencircle scaled 1/4 withcolor 2/3 blue;
 endfor
 draw A--C;
@@ -3392,7 +3392,7 @@ point.
 \moveright384pt\vbox to 0pt{\hsize 4.2in\vss\textcolor{blue}{\itshape This section describes labels and
 annotations in what can be called the traditional \MP\ environment, where your
 figures are compiled with "mpost".  The following section describes labels and
-annotations in the new-fangled (but rather better) world of "lualatex" and the
+annotations in the newfangled (but rather better) world of "lualatex" and the
 "luamplib" package.}\par\kern 16pt}
 
 \noindent
@@ -3691,7 +3691,7 @@ and \id{xheight} is set correctly for the current font, then
     setbounds pp to unitsquare xscaled wd yscaled xheight;
 \end{code}
 will make the "label" alignment routines ignore any ascenders or descenders.
-\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in \vss \small 
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in \vss \small
 \noindent\llap{\nb}Beware that if the resulting label is right at the edge of your
 drawing then any parts of the text that stick out of the adjusted bounding box will
 be clipped.  See also §\ref{sec:rotated-boxes} for more on what happens if you
@@ -4042,7 +4042,7 @@ This section is a re-working of the previous section, that attempts to show how 
 nicer it is to handle labels in the new world of "luamplib".  If this is all new
 to you, you probably should start by doing "texdoc luamplib" on your system
 and reading the documentation provided with the package.  In order to use these
-new-fangled facilities you need to create your \MP\ diagrams inside a \TeX-wrapper
+newfangled facilities you need to create your \MP\ diagrams inside a \TeX-wrapper
 as explained above in §\ref{sec:sa-lua-flow}.
 
 \medskip\noindent
@@ -4387,7 +4387,7 @@ in a number of ways:
     \item \mpl{P = image(... MP tokens ...);} --- capture some drawing commands.
     \item \mpl{P = "string" infont "font-name";} --- capture an image of "string" set in the given font.
     \item \mpl{P = btex ... TeX tokens ... etex;} --- capture the result of passing some arbitrary
-        tokens through \TeX.  
+        tokens through \TeX.
     \item \mpl{P = TEX("string");} --- capture the result of passing some arbitrary
         string of tokens through \TeX, using the "TEX" macro.
 \end{itemize}
@@ -4425,12 +4425,12 @@ of \mpl{bboxmargin}. (See also §\ref{sec:rotated-boxes}).
 Once you have got your \<picture> variable, and possibly transformed it, the main
 thing you can do with it is to use \mpl{draw} to add it to the current picture.  But
 there are two other commands that are sometimes helpful that allow you to alter the
-apparent size of the picture.  
+apparent size of the picture.
 \begin{itemize}
     \item $\kw{setbounds}\ \<picture> \kw{to}\  \<path expression>$
     \item $\kw{clip}\ \<picture> \kw{to}\  \<path expression>$
 \end{itemize}
-Both commands set the boundary of your picture to the arbitrary path expression, and 
+Both commands set the boundary of your picture to the arbitrary path expression, and
 then the \mpl{clip} command also erases all of the picture that lies outside the
 boundary.
 (Note that this is not the same as setting the bounding box.  The arbitrary path does
@@ -4444,7 +4444,7 @@ define a particular shape, $s$, then draw your pattern over a large area that co
 the shape, and finally call \mpl{clip currentpicture to s} to trim the pattern to
 the shape.  This is best done after you define all your shapes, but before you draw
 any others or add any labels.  The example on the right shows this approach in
-action.  
+action.
 
 But you can apply \mpl{clip} to any picture, so you might prefer to capture your
 pattern in \<picture> variable with \mpl{image}, apply \mpl{clip} to that, and
@@ -4460,19 +4460,19 @@ c = fullcircle scaled 2r shifted (-r, 0);
 C = fullcircle scaled 4r shifted (2r, 0);
 
 numeric t, u;
-(t, whatever) = C intersectiontimes 
+(t, whatever) = C intersectiontimes
                                C shifted (center c - center C);
 (u, whatever) = c intersectiontimes (point t of C -- center c);
 
 path s;
 s = subpath (0, u) of c -- subpath (t, 4) of C -- cycle;
 for i=0 upto r:
-    draw (left--right) scaled 2r rotated -42 shifted (3i, 0) 
+    draw (left--right) scaled 2r rotated -42 shifted (3i, 0)
         withpen pencircle scaled 1/4 withcolor 2/3 blue;
 endfor
 clip currentpicture to s;
 
-draw c; draw C; 
+draw c; draw C;
 draw center c -- center C -- point t of C -- cycle;
 \end{smallcode}
 \vskip -126pt
@@ -4485,7 +4485,7 @@ picture elements consistent in order to line them up more easily.  Or perhaps to
 a margin for the whole image by using something like this just before the
 \mpl{endfig}.
 \begin{code}
-setbounds currentpicture to bbox currentpicture; 
+setbounds currentpicture to bbox currentpicture;
 \end{code}
 This has the effect of adding a \mpl{bboxmargin} wide strip all round.
 
@@ -4495,14 +4495,14 @@ This has the effect of adding a \mpl{bboxmargin} wide strip all round.
 When you rotate a text label, or otherwise transform a picture, the corner-points
 also change, but not quite in the way you might think.  It turns out that
 the \mpl{bbox} is always a rectangle aligned to the edges of your page.
-Effectively, the corners are determined \textit{after} any transformation, 
+Effectively, the corners are determined \textit{after} any transformation,
 and the \mpl{center} is strictly the intersection of the lines between opposite
 corners.\mpic{-68pt}{corners}
 
 You will notice this if you use the technique given on p.\thinspace29 of the \MP\ manual to draw a
 label on a coloured (or erased) background;  if you have rotated the label, the
 \mpl{bbox} may be larger than you want. One solution is to define your label
-untransformed and then apply the transformation twice: first when you fill the bounding box 
+untransformed and then apply the transformation twice: first when you fill the bounding box
 and then again when you draw the label, for example:
 \begin{code}
 picture p; p = thelabel.top("Correctly", origin);
@@ -4526,7 +4526,7 @@ technique, approximately like this:
 \begin{code}
 picture P[];
 P1 = image(
-    % first drawing... 
+    % first drawing...
 );
 P2 = image(
     % second drawing...
@@ -4544,29 +4544,29 @@ each picture are really transparent, unless you have explicitly filled them with
 \subsection{Adding a caption to the current picture}
 
 When you have finished a complicated picture, you may want
-to add a caption or some other label which would look neat if it 
-were exactly centred at the bottom of the everything else. You could 
+to add a caption or some other label which would look neat if it
+were exactly centred at the bottom of the everything else. You could
 keep track of exactly how wide and deep you have made the picture to do this, but
 there is an easier way, that will adjust itself automatically if you change the
-contents of the picture later. 
+contents of the picture later.
 \begin{code}
 beginfig(1);
 % ... complete drawing that needs a caption ...
-label.bot("This picture needs a label at the bottom", 
+label.bot("This picture needs a label at the bottom",
                            point 1/2 of bbox currentpicture);
 endfig;
 \end{code}
-Through the automatic alignment routines in \mpl{label}, this 
+Through the automatic alignment routines in \mpl{label}, this
 will produce a label neatly centred at the at the bottom.  If it is too close
 you can either set a larger \id{bboxmargin} or use
 \begin{code}
-label.bot("This picture needs a label at the bottom", 
+label.bot("This picture needs a label at the bottom",
               point 1/2 of bbox currentpicture shifted 42 down);
 \end{code}
 Note that in both cases the addition of the label will move
 the corner points of the picture, so that the bounding box
-will have been expanded to include the new label.  You can use this feature to 
-add a series of centered labels.  
+will have been expanded to include the new label.  You can use this feature to
+add a series of centered labels.
 But if this is not what you want, perhaps because you want to add two labels
 side by side at bottom, then you can “freeze” the current bounding box like this:
 \begin{code}
@@ -4576,14 +4576,13 @@ side by side at bottom, then you can “freeze” the current bounding box like 
 \end{code}
 
 \noindent
-The path returned by \mpl{bbox} has four points starting at
-the lower left and proceding clockwise like a \mpl{unitsquare}. So 
-\mpl{point 1/2 of bbox currentpicture} is half way between lower left 
-and lower right,
-while \mpl{point 5/2 of bbox currentpicture} is half-way from
-upper right to upper left.
+The path returned by \mpl{bbox} has four points starting at the lower left and
+proceeding clockwise like a \mpl{unitsquare}.
+So \mpl{point 1/2 of bbox currentpicture} is half way between lower left and lower
+right, while \mpl{point 5/2 of bbox currentpicture} is half-way from upper right to
+upper left.
 
-Note that the path is defined even if the current picture is empty.  If you call 
+Note that the path is defined even if the current picture is empty.  If you call
 \mpl{bbox currentpicture} at the start of a picture you will get a square path
 centered on the origin and scaled to $2 \id{bboxmargin}$.
 
@@ -4593,14 +4592,14 @@ Here is an example.
 $$\includegraphics[width=4in]{double-angle}$$
 The labels at the bottom where added like this:
 \begin{smallcode}
-label.bot("$\triangle ACD \sim \triangle ABC$", 
+label.bot("$\triangle ACD \sim \triangle ABC$",
                  point 1/2 of bbox currentpicture shifted 24 down);
 
 path bb; bb = bbox currentpicture shifted 12 down;
 label.bot(btex \vbox{....} etex, point 1/4 of bb);
 label.bot(btex \vbox{....} etex, point 3/4 of bb);
 \end{smallcode}
-The second call to \mpl{bbox currentpicture} gets the bounding box 
+The second call to \mpl{bbox currentpicture} gets the bounding box
 that includes the first centered label.}
 
 
@@ -4614,7 +4613,7 @@ $\longrightarrow$
 \begin{smallcode}
 numeric s; s = 21;
 path alpha;
-alpha = ((-2s, s) {right} 
+alpha = ((-2s, s) {right}
     .. halfcircle rotated -90 scaled 2s shifted (2s, 0)
     .. {left} (-2s, -s)) shifted (s*left);
 
@@ -4643,7 +4642,7 @@ picture cb; cb = image(
         defined in the picture
 
     \item Examples 2, 3, and 4 show what happens if you change the pen, or the
-        colour, or both. 
+        colour, or both.
 
     \item Example 5 shows you how to make a bagel in \MP.
 
@@ -4651,7 +4650,7 @@ picture cb; cb = image(
         and colours from the \<picture> and adjust them as needed.
 \end{itemize}
 \end{minipage}
-\vss}} 
+\vss}}
 With this captured in a \<picture> variable, you can \mpl{draw} it with
 different colours and pens to obtain a variety of effects:
 $$\includegraphics[width=\textwidth]{draw-picture.pdf}$$
@@ -4676,14 +4675,14 @@ Omitting the simple grid, this drawing was produced like this:
 % Large A
 label.urt("A" infont defaultfont scaled 8, origin) withcolor 1/4 green;
 % An arbitrary shape
-path shape; shape = (superellipse(right, up, left, down, 0.81)) 
+path shape; shape = (superellipse(right, up, left, down, 0.81))
     shifted 1/2 right scaled 30 rotated 30;
-% Parameters 
+% Parameters
 alpha = 5/8;  % alpha: 0=invisible, 1=opaque
 color filler; filler = .95[red,white];
 picture fg, bg;
 bg = currentpicture; % capture the current drawing
-fg = image( 
+fg = image(
   for e within bg: % redraw everything in blended color
     draw e withcolor alpha[colorpart e, filler];
   endfor  % and add some decorations
@@ -4703,13 +4702,13 @@ The two useful tools in the plain \MP\ kit bag are:
     \item The ability to loop through all the elements of a picture
     \item The ability to blend colours using the mediation syntax
 \end{itemize}
-The example drawing on the right consists of a regular grid and a text picture, with 
+The example drawing on the right consists of a regular grid and a text picture, with
 a bubble drawn over the top.   The bubble can be made to look transparent like this:
 \begin{enumerate}
     \item Define the shape that you want to be transparent, decide on how opaque
         you want it, and the colour to use.
     \item Capture the current drawing in a \<picture> variable.
-    \item Loop over all the elements in that picture, redrawing each one with 
+    \item Loop over all the elements in that picture, redrawing each one with
         a blended color, and capture all this in another \<picture>.
     \item Add some decoration; here there is an internal margin, and a hint of a
         reflection line to make it look shiny.
@@ -4729,7 +4728,7 @@ other post-processing on your drawing.  The advantage is that you do not have to
 work out the size of your drawing before you start.
 
 \moveright5.5in\vbox to 0pt{\vskip -43pt
-Here is an example that adds graph paper behind 
+Here is an example that adds graph paper behind
 a drawing.
 $$\includegraphics{graph-paper}$$
 \begin{smallcode}
@@ -4738,7 +4737,7 @@ path C; C = fullcircle scaled 120 shifted 12 up rotated 6;
 for t=0,1.2,4: draw center C -- point t of C withcolor Blues 8 8; endfor
 draw C withcolor Reds 8 8; dotlabel.urt("Start", point 0 of C);
 
-vardef grid(expr ll, ur, grid_unit) = 
+vardef grid(expr ll, ur, grid_unit) =
   save llx, lly, urx, ury, G; numeric llx, lly, urx, ury;
   (llx, lly) = ll; (urx, ury) = ur;
   picture G; G = image(
@@ -4774,10 +4773,10 @@ picture P; P = currentpicture; currentpicture := nullpicture;
 clip currentpicture to bbox P; draw P;
 \end{smallcode}
 Or you can do things like make automatic adjustments to the scale.  If you wanted
-to be sure that your drawing was not more than 5 inches wide, you could try this 
+to be sure that your drawing was not more than 5 inches wide, you could try this
 just before the \mpl{endfig}:
 \begin{smallcode}
-numeric wd; wd = xpart (urcorner currentpicture 
+numeric wd; wd = xpart (urcorner currentpicture
                                         - llcorner currentpicture);
 if wd > 360: currentpicture := currentpicture scaled (360/wd); fi
 \end{smallcode}
@@ -4786,10 +4785,10 @@ if wd > 360: currentpicture := currentpicture scaled (360/wd); fi
 If you wanted to apply one of these changes to all the figures in your "mpost" input file then
 you can use the hook provided by plain \MP:
 \begin{smallcode}
-extra_endfig := "picture P; P = currentpicture;" & 
+extra_endfig := "picture P; P = currentpicture;" &
                 "fill bbox P withcolor (1,1,31/32); draw P;";
 \end{smallcode}
-The definition of \mpl{endfig}, includes the line \mpl{scantokens extra_endfig;} so 
+The definition of \mpl{endfig}, includes the line \mpl{scantokens extra_endfig;} so
 that any contents of the string variable \mpl{extra_endfig} are automatically
 processed before the figure is produced.
 If you are using "luamplib" then you can use the alternative hook that it provides
@@ -4818,7 +4817,7 @@ the text picture you have created came from traditional "infont" or newfangled
 from adjusting the bounds to work well with \mpl{label} you can also apply a
 transformation to it, such as scaling or a rotation.  This section adds to that
 discussion some details of what happens to the bounding box of the text when you do
-any of these things.  
+any of these things.
 
 
 
@@ -4945,7 +4944,7 @@ case sensitive in \MP.
 If you want lots of complex bells and whistles on your commutative diagrams then,
 you probably want to use specialist tools like "tikz-cd" or "xypic", but if your
 needs are simpler, then plain \MP\ is more than capable.  This section presents some ideas and
-approaches, following 
+approaches, following
 
 \section{To do...}
 
@@ -4973,7 +4972,7 @@ gradients
 
 - drawing knots, double lines, ropes
 
-- decorating lines 
+- decorating lines
 
 - a pulse
 
