@@ -1049,7 +1049,8 @@ you can write constants like "4i" directly, but this is not very helpful, becaus
 However \MP\ does let you add (and subtract) two pairs, so complex addition and
 subtraction are just done with the
 normal operators.
-\vadjust{\moveright 384pt\vbox to 0pt{\vss
+\vadjust{\moveright 384pt\vbox to 0pt{\vskip -3.74in
+$$\includegraphics{complex-operators}$$
 \begin{code}
 beginfig(1);
     numeric u; u = 1cm;
@@ -1077,10 +1078,6 @@ beginfig(1);
     dotlabel.rt (btex $\bar{A}$ etex, z5);
 endfig;
 \end{code}
-\smallskip
-$$\includegraphics{complex1.mps}$$
-
-\kern 2cm
 \vss}}%
 To get the complex conjugate you
 could use "reflectedabout(left,right)", but it's probably easier just to write
@@ -1109,22 +1106,22 @@ Since multiplication by $z$ can be thought of as a transformation consisting of
 rotation by the argument of $z$ and scaling by $|z|$, you can define the complex
 inverse and complex square root simply using \mpl{angle} and \mpl{abs}.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -24pt
-\centerline{\includegraphics{complexities.pdf}}
-The interesting part drawn as follows:
+\centerline{\includegraphics{complex-inverse-and-sqrt}}
+The interesting part of the left hand figure was drawn as follows:
 \begin{smallcode}
 input colorbrewer-rgb
-for i=1 upto 4:
+for i=1 upto 3:
   z[i] = (3/2 + 1/4 normaldeviate) * dir (16 i + normaldeviate);
   path a;
   a = z[i] scaled 42 -- origin -- zinverse(z[i]) scaled 42;
   drawarrow a cutafter fullcircle scaled 5 shifted point 2 of a
-    withcolor SetTwo[7][1+i]; 
+    withcolor SetTwo[7][2+i]; 
   drawdot point 0 of a withpen pencircle scaled dotlabeldiam;
   drawdot point 2 of a withpen pencircle scaled dotlabeldiam;
   drawdot point 2 of a withpen pencircle scaled 2 withcolor white;
 endfor
-label.ulft("\texttt{zinverse()}", 42 dir 120);
 \end{smallcode}
+The only difference on the right is that the drawing used "zsqrt()".
 \vss}}
 
 \smallskip\noindent
@@ -1988,42 +1985,48 @@ $$\includegraphics{freehand3}$$
 
 If you want a random-looking shape, the general approach is to find a method to make
 a path that allows you to inject some random noise at each point of the path.
-$$\hbox to \textwidth{\includegraphics{random-simple2}\hss}$$
+$$\hbox to \textwidth{\includegraphics{random-shapes}\hss}$$
 For these shapes the objective was to make them increasingly random, but to keep
 them all the same length.\vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in
 \begin{code}
 beginfig(1);
-desired_length := 180; n := 30; s := 80;
-path shape;
+numeric desired_length, n, s;
+desired_length = 180; n = 30; s = 80;
+
 for r=0 upto 8:
-  shape := for i=0 upto n-1:
-             (s + r * normaldeviate, 0) rotated (360/n*i) ..
-           endfor cycle;
+
+  path shape;
+  shape = for i=1 upto n: 
+    (s + r * normaldeviate, 0) rotated (360/n*i) ..
+  endfor cycle;  
+
   shape := shape scaled (desired_length/arclength shape);
-  shape := shape shifted (r*s,0);
-  draw shape withcolor (r/8)[black,red];
-  label(decimal r, center shape);
+  
+  draw shape shifted (r*s, 0) withcolor (r/8)[black,red];
+  label(decimal r, (r*s, 0));
+
 endfor
 endfig;
 \end{code}
 \vss}}
-The basic path was a circle with radius "s" drawn by a loop with "n" steps like
+Each time round the outer loop the \id{shape} is redeclared to clear it, and
+then redefined by an inline-loop with $n$ steps like
 this:
 \begin{code}
-for i=0 upto n-1: (s,0) rotated (360/n*i) .. endfor cycle
+shape = for i=1 upto n: (s,0) rotated (360/n*i) .. endfor cycle;
 \end{code}
-The random noise is then added to the $x$-coordinate at each step: when the noise is
+except that some random noise is added to the $s$ at each step: when the noise is
 zero ($\id{r}=0$) you get a circle; as the noise increases the circle is
 increasingly distorted.
 
-The scaling is done using the "arclength" operator.  This works like "length" but
-instead of telling you the number of points in a path, it returns the actual length
-as a dimension.  Dividing the desired length by this dimension gives the required
-scaling factor for the random shape just defined.
+The scaling is done using the \mpl{arclength} operator.  This works like
+\mpl{length} but instead of telling you the number of points in a path, it returns
+the actual length as a dimension.  Dividing the desired length by this dimension
+gives the required scaling factor for the random shape just defined.  Notice that
+you have to do this in two steps, and update the shape using ":=".  This is because
+you need to have defined \id{shape} before you can refer to it.
 
-Note that since we assign to "shape" each time round the loop, we have to use ":="
-to update the value instead of "=".
 
 \newpage\subsection{Explosions and splashes}
 
@@ -3751,7 +3754,7 @@ normal ASCII positions, so you do not have to muck about with "char xx".
 
 
 \newpage
-\subsection{Setting text with \texttt{btex} and \texttt{etex}}\label{btex}
+\subsection{Setting text with \texttt{btex ... etex}}\label{btex}
 
 As soon as you need anything complicated in a label, like multiple fonts, multiple
 lines, or mathematics, you will find it easier to switch from "infont" to the
@@ -4718,14 +4721,85 @@ a bubble drawn over the top.   The bubble can be made to look transparent like t
 As you may appreciate, with this approach, you need to do the transparent parts
 after you have drawn everything else in your drawing.
 
-
-
 \newpage
 \subsection{Adding a background and other post-processing}
 
-Adding a background after finishing
-Or just something on the lowest layer.
+The \<picture> capture technique provides a simple way to add a background or do
+other post-processing on your drawing.  The advantage is that you do not have to
+work out the size of your drawing before you start.
 
+\moveright5.5in\vbox to 0pt{\vskip -43pt
+Here is an example that adds graph paper behind 
+a drawing.
+$$\includegraphics{graph-paper}$$
+\begin{smallcode}
+input colorbrewer-rgb
+path C; C = fullcircle scaled 120 shifted 12 up rotated 6;
+for t=0,1.2,4: draw center C -- point t of C withcolor Blues 8 8; endfor
+draw C withcolor Reds 8 8; dotlabel.urt("Start", point 0 of C);
+
+vardef grid(expr ll, ur, grid_unit) = 
+  save llx, lly, urx, ury, G; numeric llx, lly, urx, ury;
+  (llx, lly) = ll; (urx, ury) = ur;
+  picture G; G = image(
+  for x = floor(llx / grid_unit) + 1 upto floor(urx / grid_unit):
+    draw (x * grid_unit, lly) -- (x * grid_unit, ury);
+  endfor
+  for y = floor(lly / grid_unit) + 1 upto floor(ury / grid_unit):
+    draw (llx, y * grid_unit) -- (urx, y * grid_unit);
+  endfor
+  fill fullcircle; % <-- show the origin
+  ); G enddef;
+
+picture P; P = currentpicture; currentpicture := nullpicture;
+drawoptions(withpen pencircle scaled 1/4);
+draw grid(llcorner P, urcorner P, 1mm) withcolor Blues 8 1;
+draw grid(llcorner P, urcorner P, 10mm) withcolor Blues 8 2;
+drawoptions();
+draw P;
+\end{smallcode}
+\vss}
+
+\smallskip\noindent
+You could add a subtle off-white background fill like this:
+\begin{smallcode}
+picture P; P = currentpicture; fill bbox P withcolor (1,1,31/32); draw P;
+\end{smallcode}
+Or you can be more ambitious, as shown in the example on the right
+\rightarrowfill\break
+In general, you draw any background you want, like this:
+\begin{smallcode}
+picture P; P = currentpicture; currentpicture := nullpicture;
+% do complex background drawing...
+clip currentpicture to bbox P; draw P;
+\end{smallcode}
+Or you can do things like make automatic adjustments to the scale.  If you wanted
+to be sure that your drawing was not more than 5 inches wide, you could try this 
+just before the \mpl{endfig}:
+\begin{smallcode}
+numeric wd; wd = xpart (urcorner currentpicture 
+                                        - llcorner currentpicture);
+if wd > 360: currentpicture := currentpicture scaled (360/wd); fi
+\end{smallcode}
+
+\bigskip\noindent
+If you wanted to apply one of these changes to all the figures in your "mpost" input file then
+you can use the hook provided by plain \MP:
+\begin{smallcode}
+extra_endfig := "picture P; P = currentpicture;" & 
+                "fill bbox P withcolor (1,1,31/32); draw P;";
+\end{smallcode}
+The definition of \mpl{endfig}, includes the line \mpl{scantokens extra_endfig;} so 
+that any contents of the string variable \mpl{extra_endfig} are automatically
+processed before the figure is produced.
+If you are using "luamplib" then you can use the alternative hook that it provides
+so that you do not even have to type \mpl{endfig}:
+\begin{smallcode}
+\everyendmplib{picture P; P = currentpicture;
+fill bbox P withcolor (1,1,31/32); draw P; endfig;}
+\end{smallcode}
+
+\newpage
 Adding a ruler
 
 Adding a border
@@ -4748,9 +4822,6 @@ any of these things.
 
 
 
-bounding boxes
-
-rotated labels.
 
 
 \newpage
