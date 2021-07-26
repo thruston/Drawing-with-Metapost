@@ -972,10 +972,14 @@ part of a pair, you have to do something like this: $\id{A} \mathrel{:}= (42,
 In addition there is a neat macro definition in plain \MP\ that allows you do deal
 with the $x$- and $y$-parts of pairs rather more succinctly.
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-140pt
-\includegraphics{somewhat-random-function1}
+\noindent Plain \MP\ provides this definition
 \begin{code}
 vardef z@#=(x@#,y@#) enddef;
 \end{code}
+which you can use to find orthogonal points.
+
+\bigskip\noindent
+\includegraphics{random-function}
 \vss}}%
 The deceptively simple definition of $\id{z}$ as a subscripted macro allows you to
 write "z1 = (10,20);" and have it automatically expanded into the equivalent of
