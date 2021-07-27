@@ -1309,7 +1309,7 @@ Beware however that the constants, \mpl{white} and \mpl{black} are defined in
 "plain.mp" as RGB colours, and you can't mix the two models, so anything like
 \mpl{1/2[(1,1,0,0), white]} will not work.  If you want to do lots of work with CMYK colours
 you might like to redefine the color constants.
-$$\includegraphics[width=0.7\textwidth]{color-wheel1}$$
+$$\includegraphics[width=0.7\textwidth]{blended-color-circles}$$
 Note that the apparent blending of colours here is done by calculating the overlaps
 and filling them in order.  There is no support for transparency in any of the
 colour models; this is because they are inherited directly from PostScript.
@@ -4063,7 +4063,6 @@ So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsi
 \documentclass[border=5mm]{standalone}
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Pagella} % <-- note chosen font
-\usepackage{luatex85}
 \usepackage{luamplib}
 \begin{document}
 \begin{mplibcode}
@@ -4125,7 +4124,6 @@ page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-80pt
 \documentclass[border=5mm]{standalone}
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Pagella}
-\usepackage{luatex85}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}  % <--- added option
 \begin{document}
@@ -4142,7 +4140,7 @@ page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-80pt
     endfor
 
     string s; s = "Hand gloves";
-    draw s infont defaultfont  shifted (0, 0);
+    draw s infont defaultfont  shifted (0, 0)0
     draw s infont "phvr8r"     shifted (0, -20);
     draw TEX(s)                shifted (0, -40);
     draw btex Hand gloves etex shifted (0, -60);
@@ -4248,7 +4246,7 @@ label("\vbox{\hsize 4in It is a truth universally acknowledged,"
      & " must be in want of a wife.\par}", origin);
 \end{code}
 taking care to include the necessary spaces, which can get fiddly.
-\mpic{-2cm}{multi-line-labels}
+\mpic{-15mm}{multi-line-labels}
 
 But this is where the "btex" \dots\ "etex" construction comes into play, even with
 "luamplib".  As we saw in the preceding section the construction fits into the \MP\
