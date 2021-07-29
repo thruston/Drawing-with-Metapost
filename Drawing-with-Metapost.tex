@@ -1561,7 +1561,14 @@ clipped at the end to a neat rectangle again.
 \newpage
 \subsection{Colorbrewer palettes}
 
-\moveright 384pt\vbox to 0pt{\vskip36pt\raggedright\hsize4in\noindent
+\moveright 384pt\vbox to 0pt{\vskip144pt\raggedright\hsize4in\noindent
+This map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
+London.  The outlines are the 33 London boroughs, and the colours show how we voted,
+faded by turnout.  The data and the outlines are from publicly-available UK
+government sources.  They were prepared for \MP\ using various Python scripts, and
+they are available in the source for this document.
+
+\vskip 72pt
 Here is the code for the palette used as the legend:
 \begin{smallcode}
 input colorbrewer-rgb
@@ -1571,41 +1578,24 @@ for i = 1 upto 9:
     if i > 1: draw (i*s, 0) -- (i*s, s); fi
 endfor
 draw unitsquare xscaled 9s yscaled s shifted (s,0);
-label.top("Remain" infont "phvr8r", (s, s));
-label.top("Leave" infont "phvr8r", (10s, s));
+label.top("Leave" infont "phvr8r", (s, s));
+label.top("Remain" infont "phvr8r", (10s, s));
 \end{smallcode}
-
-\bigskip
-$$\includegraphics{brexit-palette1.pdf}$$
-
-\vskip72pt
-\noindent
-This map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
-London.  The size of the circles represents the votes in each area, and the
-colours show how we voted.  The data is from publicly-available UK
-government sources.  The map was created with a small Python script to
-read the CSV files and write simple lines of \MP\ input.  You \textit{can} read
-CSV files with \MP\ but it's much quicker with Python.
 \vss}
 
 \noindent
-The well-known Colorbrewer website ("http://colorbrewer2.org") provides a
-useful set of colour palettes that are suitable for a wide range of applications.  They
-were originally written for maps, but they have a wide range of applications.
+The well-known Colorbrewer website ("http://colorbrewer2.org") provides a useful set
+of colour palettes that are suitable for a wide range of applications.  They were
+originally written for maps, but they are useful for many other types of drawing.
 If you are using an up-to-date, and complete, \TeX\ distribution, you should find
-that my implementation of them for \MP\ is already installed on your system.
-The package provides two files that define all the colour ranges; one for CMYK and
-another for RGB; an example of usage is shown over there~$\longrightarrow$
+that my implementation of them for \MP\ is already installed on your system,
+otherwise you can get it from "https://ctan.org/pkg/metapost-colorbrewer".  The
+package provides two files that define all the colour ranges; one for CMYK and
+another for RGB; an example of usage is shown below on the right.
 
 $$\includegraphics[width=\textwidth]{brexit-map.pdf}$$
 
 
-\smallskip\noindent
-If you need to install the package by hand you can get it from CTAN at:
-\begin{verbatim}
-    https://ctan.org/pkg/metapost-colorbrewer
-\end{verbatim}
-and follow the installation instructions provided there.
 %--------------------------------------------
 \newpage
 \section{Random numbers}
@@ -3737,14 +3727,14 @@ draw ab infont "eurm10" shifted 32 down;
 draw AB infont "eurm10" shifted 44 down;
 endfig;
 \end{code}
-\centerline{\includegraphics{greek1}}
+\centerline{\includegraphics{greek-default-encoding}}
 
 \begin{code}
 string ab, AB;
 ab = "abgdezhjiklmnoxprstufqyw";
 AB = "ABGDEZHJIKLMNOXPRSTUFQYW";
 \end{code}
-\centerline{\includegraphics{greek2}}
+\centerline{\includegraphics{greek-gfs-encoding}}
 \vss}}
 
 \medskip\noindent
