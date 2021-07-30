@@ -2727,7 +2727,7 @@ of a path $p$ at any time $t$ along it: \mpl{direction t of p}.
 \smallskip\noindent
 This returns a pair
 that represents the direction that the path is taking at point $t$.
-\mpic{-32pt}{tang1.pdf}%
+\mwpic{0pt}{tangents-on-path}%
 In the language of Bézier
 cubic curves, the pair is the value of the current control point minus the current
 point on the path. So if you define a path like this $\longrightarrow$
@@ -2744,7 +2744,7 @@ control point just before a node, the post-control is the one after.  Unless the
 cyclic, there won't be a control point before the first node or after the last one,
 so \MP\ defines them to be the same as the coordinates of the node, so with:
 \begin{code}
-for t=0 upto length(p):
+for t=0 upto length p:
     drawarrow precontrol t of p -- postcontrol t of p;
 endfor
 \end{code}
