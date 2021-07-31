@@ -2780,7 +2780,8 @@ given point on a circular path, but not to find the tangent lines from a given p
 outside a circle.  To do this, you need to adapt the standard geometrical
 construction: for a given circle $C$ and a point $p$, find the midpoint of $p$ and
 the center of $C$; draw a circle through $p$, centred on this midpoint; the tangent
-points are where this second circle intersects $C$.\mpic{-120pt}{tangents3.pdf}
+points are where this second circle intersects $C$. %
+\mpic{-120pt}{tangents-point-to-circle.pdf}
 Given a suitable \mpl{path C} and \mpl{pair p} you can do this:
 \begin{code}
 pair t, t';
@@ -2821,7 +2822,7 @@ Having obtained the two times $a$ and $b$ from the macro, the dashed line
 was drawn along a path that was composed with:
 \vrule depth 20pt width 0pt height 2pt
 \mpl{p -- subpath (a,b) of C -- cycle}
-}{tangents4.pdf}
+}{tangent-times-on-circle}
 
 \newpage
 \subsection{Lines tangent to two circles (exterior)}\label{sec:adjust-times}
