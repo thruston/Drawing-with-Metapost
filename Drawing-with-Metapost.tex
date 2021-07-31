@@ -2474,21 +2474,25 @@ first intersection is found.  The upshot of this is that the intersection point
 found will always be as early as possible on $A$.  Note that after the call above
 point $t$ of $A$ will be very close to point $u$ of $B$, as they both refer to the
 same intersection point.  If there is an alternative point that is earlier on $B$,
-then use `$B \mathbin{\textrm{intersectiontimes}} A$' instead.\mpic{-222pt}{intersectme1}
-$$\vbox{\halign{$\vcenter{\hbox{#}}$&&\quad$\to\vcenter{\hbox{#}}$\cr
-\includegraphics{intersectme0}&\includegraphics{intersectme2}&\includegraphics{intersectme3}\cr
-}}$$
-When we get down to paths of length 1, the core algorithm works as shown above.  The
-two paths are represented as rectangles that enclose the end points and the control
-points for each path.  If these rectangles don't overlap then there is certainly no
-intersection. Otherwise \MP\ bisects each path and considers four smaller rectangles,
-in the order $(1,2)$, $(1,4)$, $(3,2)$, $(3,4)$ (as shown above on the right).
-It carries on doing this recursively (well actually using a stack to back track)
-until it finds sufficiently small overlapping rectangles.  The two times returned by
-\mpl{intersectiontimes} are the midpoints of these two tiny rectangles.
-$$\vbox{\halign{$\vcenter{\hbox{#}}$&&\quad$\to\vcenter{\hbox{#}}$\cr
-\includegraphics{intersectme4}&\includegraphics{intersectme5}&\includegraphics{intersectme6}&\quad$\cdots$\cr
-}}$$
+then use `$B \mathbin{\textrm{intersectiontimes}} A$'
+instead.\mpic{-222pt}{intersection-AB-or-BA}
+
+\vfill\noindent
+When we get down to paths of length 1, the algorithm works something like this:
+
+$$
+\includegraphics{intersection-algorithm}
+$$
+\vadjust{\moveright 384pt\vbox to 0pt{\hsize 4.2in\vss \noindent
+The two paths are represented as rectangles that enclose the end points and the
+control points for each path.  If these rectangles don't overlap then there is
+certainly no intersection. Otherwise \MP\ bisects each path and considers four
+smaller rectangles, in the order $(1,2)$, $(1,4)$, $(3,2)$, $(3,4)$ (as shown).  In
+this case it will pick $(1,2)$, discard 4, and push 3 onto a stack.  It carries on
+doing this, back tracking as required, until it finds sufficiently small overlapping
+rectangles.  The two times returned by \mpl{intersectiontimes} are the midpoints of
+these two tiny rectangles, which is why they do not always refer to exactly the same
+point.}}
 
 
 \subsubsection{Finding all intersection points}
@@ -2539,17 +2543,17 @@ both of the paths are close together, so that the unit subpaths are short;
 But it
 is possible to create quite long paths of unit \mpl{length} and these may intersect
 each other more than once, like so:
-$$\includegraphics{intersectme8}$$
+$$\includegraphics{intersection-only-two}$$
 Here the two paths $A$ and $B$ are Bézier splines of with \mpl{length=1}, so the
 normal \MP\ algorithm is only ever going to give you one of the intersections.  In
 the diagram above, the
 red circle marks the point given by \mpl{A intersectiontimes B}.  We can try
-reversing one of the paths, and in this case you get the point marked in blue,
+reversing the first path, and in this case you get the point marked in blue,
 but what about the one in the middle?
 
 The most reliable approach is to take a copy of one of the paths, and snip it off at
 the intersection and try again until there is nothing left to snip.
-$$\includegraphics{intersectme9.pdf}$$
+$$\includegraphics{intersection-all-three}$$
 The three points marked here were captured like this:
 \begin{code}
 pair P[]; numeric n; n=0;
