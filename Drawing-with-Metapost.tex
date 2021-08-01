@@ -1779,7 +1779,7 @@ for i=1 upto 8:
     numeric y; y = 0;
     walk[i] = origin for x=w/n step w/n until w: 
         hide(
-            y := y + normaldeviate;
+            y := y if uniformdeviate 1 < 1/2: + else: - fi 1;
             if y > ypart zenith: zenith := (x,y) ; fi
             if y < ypart nadir:  nadir  := (x,y) ; fi
         ) 
@@ -1792,8 +1792,12 @@ drawarrow (12 up -- 2 up) shifted zenith withcolor blue;
 drawarrow (12 down -- 2 down) shifted nadir withcolor red;
 endfig;
 \end{code}
+
+\smallskip\noindent
+\hey Note the \mpl{undraw} line using a slightly thicker pen; this makes it 
+easier to follow the lines as they cross each other.
 \vss}}
-$$\includegraphics[width=\textwidth]{brownian-walks-red-blue}$$
+$$\includegraphics[width=\textwidth]{random-walks-red-blue}$$
 In this example the random walk lines are coloured according to the final $y$-value,
 and the global maximum and minimum points are marked.
 
@@ -1803,15 +1807,15 @@ pairs.  Inside the loop you can conceal yet more instructions in a `\kw{hide}' b
 These instructions contribute nothing to the assignment, but can change the values
 of variables outside the block.
 
-Note the first line of the \kw{hide} block adds a normal random value to $y$.
+Note the first line of the \kw{hide} block adds $\pm1$ to $y$ with equal probability.
 You can (of course) create different kinds of random walks, by changing the way you
 set this delta value, for example by using a different type of random variate, or scaling
 the value, or changing the odds in favour of one direction or the other.  For
 example:
 \begin{code}
-y := y if p > uniformdeviate 1: + else: - fi 1; 
+y := y if uniformdeviate 1 < p: + 2 else: - 1 fi; 
 \end{code}
-will set the delta positive with probability $p$ and negative with probability $1-p$.
+will set the delta to $+2$ with probability $p$ and and to $-1$ with probability $1-p$.
 
 \newpage\subsection{Brownian motion}
 
