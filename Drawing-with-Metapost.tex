@@ -2828,11 +2828,11 @@ was drawn along a path that was composed with:
 \subsection{Lines tangent to two circles (exterior)}\label{sec:adjust-times}
 
 The same \mpl{tangent_times} macro can be reused to find the tangents that touch two
-circles, using an approach like this: \mwpic{-12pt}{tangents5.pdf}
+circles, using an approach like this: \mwpic{-12pt}{tangents-two-circles-exterior}
 \begin{code}
 path A, B;
 A = fullcircle scaled 144;
-B = fullcircle scaled 60 shifted (240, 80);
+B = fullcircle scaled 60 shifted (200, 140);
 
 numeric R, r;
 R = abs (point 0 of A - center A);
@@ -2882,7 +2882,7 @@ and points around a circle:  $360^\circ = 8\:\hbox{points}$.
 To find the interior tangents, you just need to add the smaller radius rather than
 subtract it, and add 4 to the times on the smaller circles, so that they are on the
 other side:
-$$\includegraphics[width=\textwidth]{tangents55.pdf}$$
+$$\includegraphics[width=\textwidth]{tangents-two-circles-interior}$$
 
 \bigskip\noindent
 The complete code for this is shown on the right.  It uses the same
