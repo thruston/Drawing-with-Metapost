@@ -1769,34 +1769,31 @@ random walks, with various levels of analysis.
 \vadjust{\moveright5.5in\vbox to 0pt{\kern -2\baselineskip
 \begin{code}
 beginfig(1);
-w = 377; h = 233; n = 500;
+numeric w, h, n; w = 377; h = 80; n = 500;
+draw (origin--right) scaled w;
+draw (origin--right) scaled w shifted (0,+h/2) withcolor 3/4;
+draw (origin--right) scaled w shifted (0,-h/2) withcolor 3/4;
 pair zenith, nadir; zenith = nadir = origin;
 path walk[];
-for i=1 upto 16:
-  y := 0;
-  walk[i] = origin for x=0 step w/n until w:
-     hide(
-       d := floor uniformdeviate 2 * 2 - 1;
-       y := y + d;
-       if y > ypart zenith: zenith := (x,y) ; fi
-       if y < ypart nadir:  nadir  := (x,y) ; fi
-     )
-     -- (x,y)
-  endfor;
-  draw walk[i] withcolor ((y+h/4)/(h/2))[red,blue];
-  endfor
-
-draw (origin--right) scaled w;
-draw (origin--right) scaled w shifted (0,+h/4) withcolor 3/4;
-draw (origin--right) scaled w shifted (0,-h/4) withcolor 3/4;
-
-drawarrow (12 up   -- 2 up  ) shifted zenith withcolor blue;
-drawarrow (12 down -- 2 down) shifted nadir  withcolor red;
-
+for i=1 upto 8:
+    numeric y; y = 0;
+    walk[i] = origin for x=w/n step w/n until w: 
+        hide(
+            y := y + normaldeviate;
+            if y > ypart zenith: zenith := (x,y) ; fi
+            if y < ypart nadir:  nadir  := (x,y) ; fi
+        ) 
+        -- (x,y) 
+    endfor;
+    undraw walk[i] withpen pencircle scaled 3/4;
+    draw walk[i] withcolor (1/2+y/h)[red, blue]
+endfor
+drawarrow (12 up -- 2 up) shifted zenith withcolor blue;
+drawarrow (12 down -- 2 down) shifted nadir withcolor red;
 endfig;
 \end{code}
 \vss}}
-$$\includegraphics[width=\textwidth]{brown2}$$
+$$\includegraphics[width=\textwidth]{brownian-walks-red-blue}$$
 In this example the random walk lines are coloured according to the final $y$-value,
 and the global maximum and minimum points are marked.
 
@@ -1806,13 +1803,15 @@ pairs.  Inside the loop you can conceal yet more instructions in a `\kw{hide}' b
 These instructions contribute nothing to the assignment, but can change the values
 of variables outside the block.
 
-Note the first line of the \kw{hide} block sets "d" to $-1$ or $+1$.
+Note the first line of the \kw{hide} block adds a normal random value to $y$.
 You can (of course) create different kinds of random walks, by changing the way you
-set this delta value, for example by removing the \kw{floor} instruction, or scaling
+set this delta value, for example by using a different type of random variate, or scaling
 the value, or changing the odds in favour of one direction or the other.  For
 example:
-$$d\gets\null\kw{if}\ p > \kw{uniformdeviate}\ 1: +1 \:\kw{else}: -1 \kw{fi};$$
-will set $d$ positive with probability $p$ and negative with probability $1-p$.
+\begin{code}
+y := y if p > uniformdeviate 1: + else: - fi 1; 
+\end{code}
+will set the delta positive with probability $p$ and negative with probability $1-p$.
 
 \newpage\subsection{Brownian motion}
 
