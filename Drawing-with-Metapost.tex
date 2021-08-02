@@ -1759,14 +1759,15 @@ this yourself if you need the same sequence each time.  At the start of your pro
 you should put "randomseed:=3.14;" (or whatever value you prefer). According to
 \textsl{The Metafont Book}, the default value is
 $\id{day}+\id{time}\ast\id{epsilon}$, but in \MP\ the exact value used depends on
-the resolution of the timers available on your system.
+the resolution of the timers available on your system; essentially the value
+should be different every time you run \MP.
 
 
 \newpage\subsection{Random walks}
 
 You can use the random number generation routines to produce visualizations of
 random walks, with various levels of analysis.
-\vadjust{\moveright5.5in\vbox to 0pt{\kern -2\baselineskip
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.4in\kern -2\baselineskip
 \begin{code}
 beginfig(1);
 numeric w, h, n; w = 377; h = 80; n = 500;
@@ -1840,17 +1841,18 @@ endfig;
 
 \kern 120pt
 \noindent
-One of the features of using these random number generators is that the output is
+Using these random number generators means that the output is
 different each time because \MP\ produces a different sequence of numbers.  You may
 find yourself running the program a few times until you find one you like. At this
 point you will wish that you knew what "randomseed" had been used, so that you can
-re-create picture.  Unfortunately \MP\ does not log the value unless you set it
+re-create picture.  Unfortunately \MP\ does not log the value used, unless you set it
 manually.  So here's a trick to use in this situation: set your own random seed
 using a random number at the top of your program.
 \begin{code}
     randomseed := uniformdeviate infinity;
 \end{code}
-Now you will find \MP\ writes the value it used in the log.
+Now you will find \MP\ writes the value it used in the log. (If you are using
+"luamplib" you need to enable the "\mplibshowlog" option to get this).
 \vss}}
 If you also allow the $x$-coordinates to
 wander at random as well as the $y$-coordinates you get two-dimensional random
@@ -4938,7 +4940,56 @@ case sensitive in \MP.
 \noindent The output\mpic{-122pt}{cycloids-extra1} is repeated at the right to save you flicking pages.
 
 \newpage
-\subsection{Cycloid through a point}
+\subsection{The cycloid compared to other curves}
+
+\noindent\textsc{You can't easily} draw a cycloid through two arbitrary points, but
+if you get the size of the generating circle right, you can make it pass through 
+points at each end of a quarter circle, and then it's easy to draw other curves
+between the two points.  \vadjust{\moveright5.25in\vbox to 0pt{\vskip-48pt\begin{smallcode}
+numeric r; r = 164;
+path Y, L, C, P, S;
+
+Y = origin for t=5 step 5 until 140:
+    -- (0, r) rotated t shifted (t/57.29577951308232*r, -r)
+endfor cutafter (origin -- (4r, 0) rotated -45);
+
+z0 = point 0 of Y;
+z1 = point infinity of Y;
+
+L = z0 -- z1;  
+C = quartercircle rotated 180 scaled 2x1 shifted (x1, y0);
+% The idea here is to use the derivative as the direction at each point.
+% If you treat A as x=-1, and B as x=0 and used x=-1/2 in the middle, 
+% then three points are enough to make the curves look realistic.
+% parabola f = x^2, f' = 2x
+P = z0{1,-2} 
+    ... (xpart 1/2[z1, z0], ypart 1/4[z1, z0]){1,-1} ... z1 {1, 0};
+% sixth degree f = x^6, f' = 6x^5 
+S = z0{1,-6} 
+    ... (xpart 1/2[z1, z0], ypart 1/64[z1, z0]){1, -6/32} ... z1 {1, 0};
+
+draw z0 -- (x0,y1) -- z1 withcolor 3/4;
+
+drawoptions(withcolor 2/3 red);         
+    draw L; dotlabel.urt("Line", point 1/4 of L);
+drawoptions(withcolor 1/2 green);       
+    draw C; dotlabel.urt("Circle", point 1 of C);
+drawoptions(withcolor 1/4[red, green]); 
+    draw P; dotlabel.urt("Parabola", point 1/2 of P);
+drawoptions(withcolor 3/4[red, green]); 
+    draw S; dotlabel.llft("Sixth degree", point 3/4 of S);
+drawoptions(withcolor 1/2 blue);        
+    draw Y; dotlabel.urt("Cycloid", point 22 of Y);
+drawoptions();
+dotlabel.ulft(btex $A$ etex, z0);
+dotlabel.urt(btex $B$ etex, z1);
+\end{smallcode}\vss}}
+Here is an example with an inverted cycloid, the
+so-called \textit{brachistochrone} (the curve joining two points such that a body
+travelling along it under gravity takes a shorter time than is possible along any
+other curve between the points).
+$$\includegraphics{brachisto}$$
+
 
 \newpage
 \section{Commutative diagrams}
