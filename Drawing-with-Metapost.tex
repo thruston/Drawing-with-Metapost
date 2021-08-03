@@ -4363,7 +4363,8 @@ def shipit = shipout currentpicture enddef;
 When you are creating a diagram with several independent elements, it is often
 helpful to save the \mpl{currentpicture} in a \<picture> variable and start again.
 In fact it is so useful that plain \MP\ includes an \mpl{image} macro that uses the
-magic of macro grouping to make it easier.
+magic of macro grouping to make the process a bit easier.
+
 \begin{code}
 vardef image(text t) =
   save currentpicture;
@@ -4507,7 +4508,7 @@ You will notice this if you use the technique given on p.\thinspace29 of the \MP
 label on a coloured (or erased) background;  if you have rotated the label, the
 \mpl{bbox} may be larger than you want. One solution is to define your label
 untransformed and then apply the transformation twice: first when you fill the bounding box
-and then again when you draw the label, for example:
+and again when you draw the label, for example:
 \begin{code}
 picture p; p = thelabel.top("Correctly", origin);
 unfill bbox p rotated 30 shifted z0;
@@ -4519,12 +4520,12 @@ draw p rotated 30 shifted z0;
 
 If you have a diagram with several independent parts, like the comparison above then
 there is a useful general technique: declare a subscripted \<picture> variable, and
-then use \mpl{image} to draw each part separately.  The advantage of this is that do
-you not have to worry about where the \mpl{origin} is, which often makes a drawing
-simpler (for example because you can use \mpl{rotated} rather than
+then use \mpl{image} to draw each part separately.  The advantage of this is that
+you do not have to worry about where the \mpl{origin} is, which often makes a
+drawing simpler (for example because you can use \mpl{rotated} rather than
 \mpl{rotatedaround}).  Once you have created all the parts you can then add them to
-the final image using \mpl{draw} as shown on the right
-$\longrightarrow$\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in \vskip -81pt
+the final image using \mpl{draw} as shown on the right $\longrightarrow$
+\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in \vskip -81pt
 \noindent The illustration above was drawn using this general sub-picture
 technique, approximately like this:
 \begin{code}
@@ -4540,9 +4541,9 @@ draw P1 shifted 100 up; draw P2 shifted 100 down;
 \vss}}
 
 Sometimes it is more convenient to use \mpl{label} to place the pictures, taking
-advantage of the automatic alignment provided.  Note also that the blank parts of
-each picture are really transparent, unless you have explicitly filled them with
-\mpl{white} colour, so you can overlap them when appropriate.
+advantage of the automatic alignment provided.  Note also that, unless you have
+explicitly filled them with \mpl{white} colour, the blank parts of each picture are
+really transparent so you can overlap them when appropriate.
 
 \newpage
 \subsection{Adding a caption to the current picture}
@@ -4803,8 +4804,58 @@ fill bbox P withcolor (1,1,31/32); draw P; endfig;}
 \end{smallcode}
 
 \newpage
-Adding a ruler
+\subsection{Adding a ruler}
 
+\textsc{If you wish} to check the dimensions of your drawing, it can be useful to
+add a temporary ruler that shows you the dimensions of the bounding box like this:
+$$\includegraphics{dodecagon}$$
+The red rulers were added by putting \mpl{input ruler-cm} at the end of the figure.
+\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\raggedright\noindent
+Here is the impementation of "ruler.mp":
+\begin{code}
+% add a ruler along the left hand and lower edges 
+% of the bounding box of the currentpicture
+path B; B = bbox currentpicture;
+for s=0, 1:
+    path p; numeric a; pair o;
+    p = subpath (0, 1) of if s=0: reverse fi B;
+    a = arclength p;
+    o = if s=0: left else: down fi;
+    for i=0 upto 3:
+        exitif not known u[i];
+        for j=0 upto floor(a/u[i]):
+            pair t; t = point arctime j*u[i] of p of p;
+            draw (origin -- (6 - 2i) * o) shifted t;
+            if i=0: label(decimal j, t shifted 12 o); fi
+        endfor
+    endfor
+    draw p;
+endfor
+\end{code}
+The inner loop draws successively shorter lines at each of the
+minor units, and numbers at the major units.
+\vss}}
+They are drawn round the bounding box, set here with the default
+margin of 2\thinspace bp.
+The "ruler-cm.mp" file looks like this:
+\begin{code}
+numeric u[]; u0 = 1 cm; u1 = 1 mm;
+drawoptions(withcolor 0.54 red);
+input ruler
+drawoptions();
+\end{code}
+and there is a companion "ruler-inch.mp" file that looks like this:
+\begin{code}
+numeric u[]; u0 = 1 in; u1 = 1/4 in; u2 = 1/12 in;
+drawoptions(withcolor 3/4 blue);
+input ruler
+drawoptions();
+\end{code}
+The idea is that you set a subscripted variable \mpl{u[]} to a number of unit sizes
+where you want markers and then call \mpl{input ruler}.  
+
+
+\newpage
 Adding a border
 
 Including an image file
