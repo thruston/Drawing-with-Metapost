@@ -1,18 +1,18 @@
-% add a ruler along the lowe edge of the bounding box of the currentpicture
-%
-    save p, a; path p; numeric a;
-    p = subpath(0,1) of bbox currentpicture;
+% add a ruler along the left hand and lower edges 
+% of the bounding box of the currentpicture
+path B; B = bbox currentpicture;
+for s=0, 1:
+    path p; numeric a; pair o;
+    p = subpath (0, 1) of if s=0: reverse fi B;
     a = arclength p;
-    for t=0 step 1/2 until a / in:
-        if t = floor t:
-            draw (origin --      4 up) shifted point arctime t * in of p of p; 
-            label.top(decimal t, 4 up  shifted point arctime t * in of p of p); 
-        else:
-            draw (origin --      2 up) shifted point arctime t * in of p of p; 
-        fi
-    endfor
-    for t=0 upto a / cm:
-        draw (origin --      4 down) shifted point arctime t * cm of p of p; 
-        label.bot(decimal t, 4 down  shifted point arctime t * cm of p of p); 
+    o = if s=0: left else: down fi;
+    for i=0 upto 3:
+        exitif not known u[i];
+        for j=0 upto floor(a/u[i]):
+            pair t; t = point arctime j*u[i] of p of p;
+            draw (origin -- (6 - 2i) * o) shifted t;
+            if i=0: label(decimal j, t shifted 12 o); fi
+        endfor
     endfor
     draw p;
+endfor
