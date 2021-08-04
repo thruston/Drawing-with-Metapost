@@ -36,7 +36,6 @@ beginfig(1);
     dotlabel.ulft("$A$", z0);
     dotlabel.urt("$B$", z1);
 
-    input ruler-inch
 endfig;
 \end{mplibcode}
 \end{document}
