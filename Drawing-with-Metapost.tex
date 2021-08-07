@@ -6,7 +6,6 @@
 \usepackage[inner=1in,textwidth=5in,textheight=6in, marginparsep=0.5in, marginparwidth=4.2in]{geometry}
 \usepackage{sectsty}
 \allsectionsfont{\normalfont\sffamily\bfseries}
-\usepackage{fancyvrb}\fvset{fontsize=\small}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{mflogo}
@@ -16,7 +15,7 @@
 \usepackage{listings}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – July 2021}
+\date{March 2017 – }
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em
     \vbox{\hrule width.3em height .6pt}\kern.08em}%
@@ -238,9 +237,9 @@ the source, it automatically updates the view of the PostScript output.
 $$\includegraphics[width=4in]{workflow-plain.pdf}$$
 If I want to use the diagram in a \LaTeX\ document I can include the EPS file
 directly with
-\begin{Verbatim}
+\begin{texcode}
     \includegraphics{some-diagram1.eps}
-\end{Verbatim}
+\end{texcode}
 but usually I prefer to convert the EPS to PDF using "epstopdf" rather than rely on
 the automatic conversion.  This is mainly because the PDFs are generally more useful
 files to have about (I can include them in presentations etc).  Sometimes I do this
@@ -3937,7 +3936,7 @@ would have to write:
 }}
 
 \newpage
-\subsubsection{Matching the fonts with plain \TeX}
+\subsection{Matching fonts}
 
 Despite the apparent restriction of using plain \TeX\ it is almost always possible
 to match the font and format of an enclosing \LaTeX\ document.
@@ -3969,8 +3968,6 @@ documentation.
 $$\includegraphics{font-sampler3}$$
 }}
 
-\subsubsection{Matching fonts using \LaTeX}
-
 If you still can't get your labels to match, you can force \MP\ to use \LaTeX\
 instead of plain \TeX.  You need to use the "-tex" command line switch:
 \begin{code}
@@ -3998,6 +3995,15 @@ longer because you have to load rather more `infrastructure' for \LaTeX, and you
 are limited to whatever font packages you have that work with the traditional
 \LaTeX\ engine.  For a more modern approach, read on into section
 \ref{sec:neo-labels}.
+
+\newpage
+\subsection{Setting verbatim listings}
+
+\textsc{There is a good} chance that you will never need to set a verbatim 
+listing in a \MP\ drawing, but if you do there are a couple of things to think
+about. Firstly, it may be that you all you really want is to use a monospace font,
+if that is the case, then 
+
 
 %% \subsubsection{Getting full access to your system fonts}
 %%
@@ -4233,7 +4239,7 @@ label(btex \vbox{\polytonic\halign{#\hfil\cr
 \end{smallcode}
 will produce the first few lines of the Iliad (just in case you wanted them).
 Essentially if you can produce something in \LaTeX, you can produce exactly the same
-in \MP\ using "luamplib".
+in \MP\ using "luamplib" (but see also §\ref{sec:verbatim}).
 
 
 \newpage
@@ -4894,7 +4900,7 @@ The inner loop draws successively shorter lines at each of the
 minor units, and numbers at the major units.
 \vss}}
 They are drawn round the bounding box, set here with the default
-margin of 2\thinspace bp.
+margin of 2\unit{bp}.
 The "ruler-cm.mp" file looks like this:
 \begin{code}
 numeric u[]; u0 = 1 cm; u1 = 1 mm;
