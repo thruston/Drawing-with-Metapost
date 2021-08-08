@@ -3469,7 +3469,8 @@ one of these:
 \end{itemize}
 
 \newpage
-\subsubsection{Character sets used by \texttt{infont} to set text}
+\subsubsection{Character sets used by \texttt{infont} to set
+text}\label{sec:charsets}
 
 Standard \MP\ is configured to accept as input only space and the usual 94 visible
 ASCII characters (that is the characters numbered 32 to 126 in the tables at the
@@ -3936,7 +3937,7 @@ would have to write:
 }}
 
 \newpage
-\subsection{Matching fonts}
+\subsection{Matching fonts}\label{sec:fonts}
 
 Despite the apparent restriction of using plain \TeX\ it is almost always possible
 to match the font and format of an enclosing \LaTeX\ document.
@@ -3985,7 +3986,7 @@ verbatimtex
  \begin{document}
 etex
 \end{smallcode}
-Note that the "\documentclass" and the "\begin{document}" lines are required, but
+Note that the "\documentclass" aggnd the "\begin{document}" lines are required, but
 \MP\ is smart enough to add an "\end{document}" for you.\vss}}
 
 Plain "mpost" needs an old-fashioned ".dvi" file to work with, so you can only use
@@ -3997,12 +3998,63 @@ are limited to whatever font packages you have that work with the traditional
 \ref{sec:neo-labels}.
 
 \newpage
-\subsection{Setting verbatim listings}
+\subsection{Setting verbatim listings}\label{sec:verbatim}
 
-\textsc{There is a good} chance that you will never need to set a verbatim 
+\textsc{There is a good chance} that you will never need to set a verbatim 
 listing in a \MP\ drawing, but if you do there are a couple of things to think
-about. Firstly, it may be that you all you really want is to use a monospace font,
-if that is the case, then 
+about. The issue about setting text verbatim with \TeX\ is that turning off the
+control characters can be tricky, so if you have text for a label with characters
+that are special in \TeX\ like the backslash or the underscore, then the simplest
+thing to do is to avoid \TeX\ completely and use \mpl{infont} instead.
+\mpic{-36pt}{verbatim-with-infont}
+\begin{code}
+string s; s = "\TeX\ sets maths like this $e=mc^2$";
+draw ("1. " & s) infont defaultfont;
+draw ("2. " & s) infont "texnansi-lmr10"  shifted 20 down;
+draw ("3. " & s) infont "cmtt10"          shifted 40 down;
+draw ("4. " & s) infont "texnansi-lmtt10" shifted 60 down;
+\end{code}
+But as you can see, (1) this is a bit of a disaster with the default font "cmr10"
+because it does not have all the glyphs in the usual ASCII positions (as noted
+above §\ref{sec:charsets}).  The solution is to use the version of the font
+with the "texnansi" encoding (2), but you probably want it in the monofont (3) and
+as you can see "cmtt10" has the “visible space” character instead of a regular
+space.  If this is not what you want then use the alternative encoding (4).
+
+If you want more than this, then you really need to use \LaTeX\ to process the
+label, as discussed in §\ref{sec:fonts}, and load the appropriate preamble. \rightarrowfill\break
+\vadjust{\moveright5.5in\vbox to 0pt{\vskip -72pt\begin{smallcode}
+prologues := 3; outputtemplate := "%j.eps";
+verbatimtex
+\documentclass{article}
+\usepackage{listings}
+\newcommand\mpstyle{\lstset{language=Metapost, basicstyle=\ttfamily,
+columns=fullflexible, keepspaces=true, showstringspaces=false}}
+\lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
+\begin{document}
+etex
+beginfig(1);
+picture P;
+P = thelabel(btex \vbox{\begin{code}
+  % special operators
+  vardef incr suffix $ = $:=$+1; $ enddef;
+  vardef decr suffix $ = $:=$-1; $ enddef;
+
+  def reflectedabout(expr w,z) = % reflects about the line w..z
+   transformed begingroup transform T_;
+     w transformed T_ = w;  
+     z transformed T_ = z;
+     xxpart T_ = -yypart T_; 
+     xypart T_ = yxpart T_; % T_ is a reflection
+   T_ endgroup enddef;
+\end{code}} etex, origin);
+fill bbox P withcolor (1,1,31/32); draw P; draw bbox P;
+endfig; end.
+\end{smallcode}\vss}}
+
+\bigskip
+$$\includegraphics[width=0.9\textwidth]{verbatim-listing}$$
+
 
 
 %% \subsubsection{Getting full access to your system fonts}
