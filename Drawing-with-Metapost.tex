@@ -1023,7 +1023,7 @@ write `$(2\id{in},0)$' or even just `$(144,0)$'.
 
 
 \newpage
-\subsection{Complex numbers}
+\subsection{Pairs as complex numbers}
 
 As you might expect in a language designed by mathematicians, \MP's pair variables
 work rather well as complex numbers.  To represent the number $3+4i$ you can write
@@ -1413,7 +1413,7 @@ drawarrow (-15, -52) -- (-15,-76);
 \end{code}}
 
 \newpage
-\subsection{An HSV example of a graduated scale}
+\subsubsection{An HSV example of a graduated scale}
 
 \noindent
 This example requires the \mpl{hsv_color} routine from the previous page.
@@ -4459,7 +4459,8 @@ of the active picture in a variable called \mpl{currentpicture}, which can be co
 to your own variables, or manipulated in various useful ways.  In \MF\ the contents
 of the variable is a pattern of pixels for a font, in \MP\ the contents are vector
 graphics commands.  This section reviews some of the things you can do with a
-\<picture> variable (including putting it in a frame $\longrightarrow$).
+\<picture> variable — including putting one in a frame (see §\ref{sec:pictureframe})
+like so\rlap{\ $\longrightarrow$}
 \mpic{-96pt}{youth}
 
 \bigskip\noindent
@@ -4974,12 +4975,151 @@ where you want markers and then call \mpl{input ruler}.
 \newpage
 \subsection{Adding a border}
 
+\textsc{In most documents} the drawings look just fine without any decoration, but sometimes
+you might want to add emphasis or pick out part of a drawing.  The examples here can
+be applied to \mpl{currentpicture} or any other \<picture>
+variable.\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in\vskip -36pt
+$$\includegraphics{border.pdf}$$
+\begin{smallcode}
+% don't take this one too seriously...
+vardef rope expr c = 
+save hemp; color hemp; hemp = 1/256 (224, 202, 169);      
+image(draw c withpen pencircle scaled 2.16 withcolor hemp;
+for t=0 step 2 until arclength c: draw
+    up rotated angle direction arctime t-3 of c of c 
+                 shifted point arctime t-3 of c of c
+ .. up rotated angle direction arctime t-1 of c of c 
+                 shifted point arctime t-1 of c of c
+ .. down rotated angle direction arctime t+1 of c of c 
+                   shifted point arctime t+1 of c of c
+ .. down rotated angle direction arctime t+3 of c of c 
+                   shifted point arctime t+3 of c of c
+    withpen pencircle scaled 1/4;
+endfor) enddef;
 
+interim bboxmargin := 16;
+draw rope rounded_corners bbox currentpicture;
+\end{smallcode}\vss}}
 
+$$\vbox{\halign{$\vcenter{\hbox{\includegraphics[width=150bp]{#}}}$&\quad$\vcenter{\hbox{#}}$\cr
+border-shadow&
+\begin{smallcode}
+picture P; P = currentpicture;
+fill bbox P shifted (3,-3) withcolor 3/4;
+unfill bbox P; draw bbox P;
+draw P; 
+\end{smallcode}\cr
+border-dashed&
+\begin{smallcode}
+vardef rounded_corners expr p = 
+    for i=1 upto length p:
+        subpath (i-15/16, i-1/16) of p ..
+    endfor cycle
+enddef;
 
+interim bboxmargin := 16;
+draw rounded_corners bbox currentpicture 
+    dashed evenly scaled 3/4;
+\end{smallcode}\cr
+}}$$
 
+\newpage
+\subsection{Adding a frame}\label{sec:pictureframe}
 
+As promised at the start of this section, here is the code for the picture
+frame drawn round Raphael's young man.
+\begin{code}
+input picture_frame
+beginfig(1);
+  picture F; 
+  F = thelabel(TEX("\includegraphics{youth.jpg}"), origin);
+  draw F; draw frame bbox F; 
+endfig;
+\end{code}
+All the heavy lifting is done by "frame" macro defined in
+"picture_frame.mp" $\longrightarrow$
+\vadjust{\moveright5.2in\vbox to 0pt{\hsize 4in\vskip-184pt
+\begin{smallcode}
+vardef frame expr P = 
+  save base, side, f, t, u, xx; 
+  picture base, side; path f; numeric t, u, xx;
+  % work out some measurements
+  t = arclength subpath (0,1) of P;
+  u = arclength subpath (1,2) of P;
+  xx = max(t, u) + 2 pf_wd;
+  f = unitsquare xscaled xx yscaled pf_wd;
+  % convenience / nonce function
+  vardef paint_strip(expr y, wd, shade) =
+    draw subpath (0, 1) of f 
+         shifted (0, if y < 0: pf_wd + fi y)
+         withpen pencircle scaled wd
+         withcolor shade
+  enddef;
+  base = image(
+    % background colour
+    fill f withcolor gold;
+    % grey strips
+    paint_strip(2,    3,   5/4 grey);
+    paint_strip(3.5,  1/4, grey);
+    paint_strip(5,    1/4, 1/2[gold, dark]);
+    paint_strip(-6.5, 1/4, 1/2[gold, dark]);
+    paint_strip(-6,   1/4, 1/2[gold, dark]);
+    paint_strip(-2,   2,   5/4 grey);
+    % spatter with random spots
+    for i=0 upto 4 * arclength(subpath (0,1) of f):
+      fill fullcircle scaled uniformdeviate 3/4
+        shifted (uniformdeviate xx, uniformdeviate pf_wd)
+        withcolor dark;
+    endfor
+    % decorative balls
+    for x = 2 step 3 until xx:
+      draw ball shifted (x, 2);
+    endfor
+  );
+  % make two trapezium shapes
+  side = base;
+  clip side to (pf_wd, 0) -- (pf_wd + u, 0) 
+            -- (2 pf_wd + u, pf_wd) -- (0, pf_wd) -- cycle;
+  clip base to (pf_wd, 0) -- (pf_wd + t, 0) 
+            -- (2 pf_wd + t, pf_wd) -- (0, pf_wd) -- cycle;
+  % arrange the pieces around path P
+  image(
+    draw base rotated 180 shifted point 1 of P shifted (+pf_wd, 0);
+    draw base rotated   0 shifted point 3 of P shifted (-pf_wd, 0);
+    draw side rotated  90 shifted point 0 of P shifted (0, -pf_wd);
+    draw side rotated 270 shifted point 2 of P shifted (0, +pf_wd);
+  )
+enddef;
+\end{smallcode}
+\vss}}
 
+\noindent This macro also needs some colours:
+\begin{smallcode}
+color gold, dark, grey;
+gold = 1/256(243, 197, 127);
+dark = 1/256(144, 87, 50);
+grey = 1/256(156, 147, 138);
+\end{smallcode}
+a picture of a small silvery-gold ball:
+\begin{smallcode}
+picture ball; ball = image(for i=0 upto 16:
+  fill interpath(i/16, 
+      fullcircle scaled 10, 
+      fullcircle scaled 3 shifted (-2, 2)
+  ) withcolor (i/16)[gold, 15/16 white];
+endfor) scaled 1/4;
+\end{smallcode}
+and an internal variable that defines the width of the frame:
+\begin{smallcode}
+newinternal pf_wd; pf_wd := 21;
+\end{smallcode}
+The macro takes a rectangular path $P$ as an argument, and 
+makes a thin rectangle $f$ that is scaled to the desired width and
+the longer of the two sides of the path.  This thin rectangle is then
+decorated with background colour, strips of colour to suggest depth, a random
+spatter-pattern, and a row of little balls.  The macro then makes two trapezium
+shaped copies of the decorated rectangle, pieces them together around $P$, and returns the result as a
+\<picture>.
 
 \newpage
 \section{Annotations}
