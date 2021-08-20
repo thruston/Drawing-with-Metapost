@@ -4978,25 +4978,30 @@ where you want markers and then call \mpl{input ruler}.
 \textsc{In most documents} the drawings look just fine without any decoration, but sometimes
 you might want to add emphasis or pick out part of a drawing.  The examples here can
 be applied to \mpl{currentpicture} or any other \<picture>
-variable.\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in\vskip -36pt
+variable.\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in\vskip -42pt
 $$\includegraphics{border.pdf}$$
 \begin{smallcode}
 % don't take this one too seriously...
 vardef rope expr c = 
-save hemp; color hemp; hemp = 1/256 (224, 202, 169);      
-image(draw c withpen pencircle scaled 2.16 withcolor hemp;
-for t=0 step 2 until arclength c: draw
-    up rotated angle direction arctime t-3 of c of c 
-                 shifted point arctime t-3 of c of c
- .. up rotated angle direction arctime t-1 of c of c 
-                 shifted point arctime t-1 of c of c
- .. down rotated angle direction arctime t+1 of c of c 
-                   shifted point arctime t+1 of c of c
- .. down rotated angle direction arctime t+3 of c of c 
-                   shifted point arctime t+3 of c of c
-    withpen pencircle scaled 1/4;
+save hemp, s, w, n, A, a, b; 
+color hemp; hemp = 1/256 (224, 202, 169);      
+numeric s, w, n, A; 
+A = arclength c; s = A/floor(A/2); w = -1; n = -1; 
+path a[]; for t=0 step s until A + 1: a[incr n] = 
+   (0,+w) rotated angle direction arctime t-3/2s of c of c 
+                    shifted point arctime t-3/2s of c of c
+.. (0,+w) rotated angle direction arctime t-1/2s of c of c 
+                    shifted point arctime t-1/2s of c of c
+.. (0,-w) rotated angle direction arctime t+1/2s of c of c 
+                    shifted point arctime t+1/2s of c of c
+.. (0,-w) rotated angle direction arctime t+3/2s of c of c 
+                    shifted point arctime t+3/2s of c of c;
+endfor
+image(for i=1 upto n:
+  path b; b = buildcycle(a[i-1], reverse a[i]);
+  fill b withcolor hemp;
+  draw b withpen pencircle scaled 1/8;
 endfor) enddef;
-
 interim bboxmargin := 16;
 draw rope rounded_corners bbox currentpicture;
 \end{smallcode}\vss}}
