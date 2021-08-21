@@ -3317,7 +3317,7 @@ functions they are not hard to implement.
 
 First you might want versions that accept arguments in radians instead of degrees.
 For this you need to know the value of $\pi$, but this is not built into plain \MP.
-If you are using the default number system then it's enough to define to five
+If you are using the default number system then it's enough to define it to five
 decimal digits,%
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-144pt
 \begin{code}
@@ -3393,8 +3393,8 @@ point.
 
 \moveright384pt\vbox to 0pt{\hsize 4.2in\vss\textcolor{blue}{\itshape This section describes labels and
 annotations in what can be called the traditional \MP\ environment, where your
-figures are compiled with "mpost".  The following section describes labels and
-annotations in the newfangled (but rather better) world of "lualatex" and the
+figures are compiled with "mpost".  The next section describes labels and
+annotations in the newfangled (but generally better) world of "lualatex" and the
 "luamplib" package.}\par\kern 16pt}
 
 \noindent
@@ -4392,7 +4392,7 @@ although they might appear to be special quotation marks, they produce a
 \<picture>, and \mpl{&} only works with strings or paths.
 
 \newpage
-\subsection{Drawing on an external image}
+\subsection{Drawing on an external image}\label{sec:extimage}
 
 One of the limitations of the way that plain "mpost" uses \TeX\ is that 
 any "\special" commands are removed from the intermediate file that \MP\ translates
@@ -4568,11 +4568,10 @@ the shape.  This is best done after you define all your shapes, but before you d
 any others or add any labels.  The example on the right shows this approach in
 action.
 
-But you can apply \mpl{clip} to any picture, so you might prefer to capture your
+You can apply \mpl{clip} to any picture, so you might prefer to capture your
 pattern in \<picture> variable with \mpl{image}, apply \mpl{clip} to that, and
 then \mpl{draw}. This works nicely if you want to repeat the clipped image.
-
-\moveright 5.5in\vbox to 0pt{\hsize 4.2in \vss
+\vadjust{\moveright 5.5in\vbox to 0pt{\hsize 4.2in \vss
 \noindent\includegraphics[width=4in]{shady-circles}
 
 \medskip
@@ -4597,8 +4596,11 @@ clip currentpicture to s;
 draw c; draw C;
 draw center c -- center C -- point t of C -- cycle;
 \end{smallcode}
-\vskip -126pt
-}
+\vskip -126pt}}
+
+You can also use this technique to fill with a gradient: just reduce the gap
+between each line and use the index variable to blend between two colours.
+Something like \mpl{withcolor (i/r)[blue, white]} in the example shown.
 
 \vfill\noindent
 \hey Why would you ever want to use \mpl{setbounds}?  Mainly to help with aligning type set labels,
@@ -5129,8 +5131,61 @@ shaped copies of the decorated rectangle, pieces them together around $P$, and r
 \newpage
 \section{Annotations}
 
-Call outss - overbrace, underbrace, length arrows etc, ahangle trick
+\textsc{In some awkward corners}, you may find that you just can't get your label in
+the right place with \mpl{dotlabel} even if you adjust \mpl{labeloffset}.  In these
+cases there are two simple techniques you can use.  First, you could separate
+drawing the dot from placing the label; given a point $P$ you can try:\mpic{0pt}{callout}
+\begin{code}
+drawdot P withpen pencircle scaled dotlabeldiam;
+label("$P$", P shifted 10 dir 68);
+\end{code}
+Using \mpl{dotlabeldiam} ensures that your dots match any others done with
+\mpl{dotlabel}.
+Secondly, if that's not enough, use a temporary pair to create a call out line:
+\begin{code}
+z0 = P + 20 dir -20; 
+draw z0 -- P 
+    cutafter fullcircle scaled 8 shifted P
+    withpen pencircle scaled 1/4;
+label.rt("\textit{pole}", z0);
+\end{code}
+If you want to do this sort of thing often, then it might be worth making a macro,
+but it is hard to write anything completely general (but see §\ref{sec:extimage} for an
+example).
 
+\medskip\noindent
+\textsc{You might also want} to mark a straight line between two points.  
+\vadjust{\moveright5.3in\vbox to 0pt{\hsize 4.2in
+\begin{smallcode}
+vardef do_brace(expr a,b,m,r) =
+  save d, e, n, bb; numeric d, n; pair e; path bb;
+  n = 1/2 m; d = angle (b-a); 
+  e = up scaled m rotated d shifted r[a,b];
+  bb = ((origin {0,n} .. {right} (abs n,n)) 
+          rotated d shifted a --
+        ((-abs n,-n){right} .. {0,n} origin {0,-n} .. {right}(abs n,-n)) 
+          rotated d shifted e --
+        ((-abs n,n){right} .. {0,-n} origin) 
+          rotated d shifted b
+       ) shifted (up scaled n rotated d);
+   draw bb withpen pencircle yscaled .6 xscaled .1666 rotated d;
+   point 3 of bb
+enddef;
+
+label.lrt("Here",do_brace(z1, z2, -12, 3/4)); 
+\end{smallcode}
+Note that, as well as drawing the braces, the macro uses the grouping provided by \mpl{vardef} to return the 
+mid point so that you can put a label next to it.
+\vss}}
+The simplest way to do this is just to use \mpl{drawdblarrow} on a copy of your straight
+path shifted to one side, like so:
+\begin{code}
+drawdblarrow (z1--z2) shifted (12 up rotated angle (z2-z1));
+\end{code}
+If you combine this with temporarily setting \mpl{ahangle:=180}, you get the simple
+dimension line shown in blue.
+$$\includegraphics{braces}$$
+The red braces are a more complex variation on this theme $\longrightarrow$
 
 \newpage
 \section{Line caps and line joins}
@@ -5297,21 +5352,9 @@ approaches, following
 
 \section{To do...}
 
-
-filling shapes
-gradients
-
-- faking transparency, overlaying colours, clipping to shapes, filling with patterns
-
 - making waves
 
-- paths, points, directions, subpaths, reversed paths
-
 - boxen, fitting, corners and centres, cutbefore cutafter
-
-- inline if and for and range, loops exitif upto downto
-
-- dots, dotlabeldiam, coloured dots, hollow dots
 
 - graphs, axes, grids, number labels, jitter, sketch graphs
 
