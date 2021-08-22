@@ -5388,7 +5388,36 @@ approaches, following
 
 - four box model charts - Tufte charts - Venn diagrams
 
-- triangle of polygons
+\newpage
+\section{A triangle of Schläfli polygons}
+
+Apart from the curious patterns in the display, the only \MP\ point of interest
+is the recursive "gcd" macro.\mpic{-108pt}{gons}
+
+\begin{code}
+input colorbrewer-rgb
+
+vardef gcd(expr a, b) = 
+    if b = 0: a else: gcd(b, a mod b) fi 
+enddef;
+
+beginfig(1);
+for n=2 upto 24: 
+    for s=1 upto floor n/2:
+        pair p; p = (12n - 24s, -24n);
+        path gon; gon = 
+            for t=0 upto n/gcd(s,n) - 1:
+                10 up rotated (360/n * s * t) -- 
+            endfor cycle;
+        if (n mod s = 0): 
+            fill gon shifted p withcolor Blues 9 2;
+            label("$" & decimal (n/s) & "$", p);
+        fi
+        draw gon shifted p withpen pencircle scaled 1/8;
+    endfor
+endfor
+endfig;
+\end{code}
 
 \newpage
 \section{A tour of the plain format}
