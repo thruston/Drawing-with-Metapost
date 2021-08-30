@@ -5350,49 +5350,11 @@ you probably want to use specialist tools like "tikz-cd" or "xypic", but if your
 needs are simpler, then plain \MP\ is more than capable.  This section presents some ideas and
 approaches, following
 
-\section{To do...}
-
-- making waves
-
-- boxen, fitting, corners and centres, cutbefore cutafter
-
-- graphs, axes, grids, number labels, jitter, sketch graphs
-
-- angle marks, including curved angle marks
-
-- eggs, ellipses
-
-- drawing knots, double lines, ropes
-
-- decorating lines
-
-- a pulse
-
-- reuleaux polygons
-
-- the eye
-
-- physics diagrams, light rays, pendulum, indicating movement and vibration
-
-- parametric equations, folium of Descartes
-
-- examining a glyph
-
-- tessellations and tiling (reference title page)
-
-- all sorts of arrow, arrows between arrows, arrows next to a path (handles)
-
-- faking 3d
-
-- recursive drawings, trees
-
-- four box model charts - Tufte charts - Venn diagrams
-
 \newpage
 \section{A triangle of Schläfli polygons}
 
-Apart from the curious patterns in the display, the only \MP\ point of interest
-is the recursive "gcd" macro.\mpic{-108pt}{gons}
+Apart from the curious patterns in the display, the main \MP\ point of interest
+is the recursive "gcd" macro to find the greatest common divisor.\mpic{-108pt}{gons}
 
 \begin{code}
 input colorbrewer-rgb
@@ -5419,8 +5381,55 @@ endfor
 endfig;
 \end{code}
 
+\noindent
+The macro also leads directly to an efficient way to find the least common multiple:
+\begin{code}
+vardef lcm(expr a, b) = a / gcd(a, b) * b enddef;
+\end{code}
+As always in \MP, it is safer to divide as early as possible to reduce the chance of arithmetic
+overflow.
+
 \newpage
 \section{A tour of the plain format}
 \newpage
 \tableofcontents
+
+\newpage
+\section*{To do...}
+
+- making waves
+- a pulse
+
+- boxen, fitting, corners and centres, cutbefore cutafter
+
+- angle marks, including curved angle marks
+
+- eggs, ellipses
+
+- drawing knots, double lines, ropes
+
+- decorating lines
+
+
+- reuleaux polygons
+
+- the eye
+
+- physics diagrams, light rays, pendulum, indicating movement and vibration
+
+
+- examining a glyph
+
+- tessellations and tiling (reference title page)
+
+- all sorts of arrow, arrows between arrows, arrows next to a path (handles)
+
+- faking 3d
+
+- recursive drawings, trees
+
+- four box model charts - Tufte charts - Venn diagrams
+- graphs, axes, grids, number labels, jitter, sketch graphs
+- parametric equations, folium of Descartes
+
 \end{document}

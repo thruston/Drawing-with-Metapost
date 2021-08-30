@@ -16,7 +16,7 @@ for n=2 upto 24:
                 10 up rotated (360/n * s * t) -- 
             endfor cycle);
         if (n mod s = 0): 
-            fill gon shifted p withcolor Blues 9 2;
+            fill gon shifted p withcolor PuBuGn[9][1+floor (n/s/6)];
             label("$" & decimal (n/s) & "$", p);
         fi
         draw gon shifted p withpen pencircle scaled 1/8;
