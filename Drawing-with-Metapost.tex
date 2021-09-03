@@ -5149,9 +5149,9 @@ draw z0 -- P
     withpen pencircle scaled 1/4;
 label.rt("\textit{pole}", z0);
 \end{code}
-If you want to do this sort of thing often, then it might be worth making a macro,
-but it is hard to write anything completely general (but see §\ref{sec:extimage} for an
-example).
+If you want to do this sort of thing often, then it might be worth making a macro.
+It is hard to write anything completely general, but see §\ref{sec:extimage} for an
+example.
 
 \medskip\noindent
 \textsc{You might also want} to mark a straight line between two points.  
@@ -5347,8 +5347,69 @@ $$\includegraphics{brachisto}$$
 
 If you want lots of complex bells and whistles on your commutative diagrams then,
 you probably want to use specialist tools like "tikz-cd" or "xypic", but if your
-needs are simpler, then plain \MP\ is more than capable.  This section presents some ideas and
-approaches, following
+needs are simpler, then plain \MP\ is more than capable, and if you are already
+using it for other illustrations there is one less thing to learn.
+
+\parshape=1 0pt 216pt
+Here is an example to illustrate some general techniques. 
+\vadjust{\moveright 200pt\vbox to 0pt{\kern -28pt\includegraphics{xypic-example}\vss}}
+It may be familiar to users
+of "xypic". The code used to generate this picture
+is shown on the right.
+\vadjust{\moveright5.5in\vbox to 0pt{\kern-100pt
+\begin{smallcode}
+picture U, XY, X, Y, Z;
+z1 = -z2 = (-61, 42);
+
+U  = thelabel("$U$", z1);
+XY = thelabel("$X\times_ZY$", origin);
+X  = thelabel("$X$", (x2, 0));
+Y  = thelabel("$Y$", (0, y2));
+Z =  thelabel("$Z$", z2);
+
+forsuffixes @=U, XY, X, Y, Z: draw @; endfor
+
+ahangle := 20;
+vardef curved_connect@#(expr s, a, b, d) = 
+    save line, mark; 
+    
+    path line; 
+    line = center a {d} .. center b;
+    interim bboxmargin := 4;
+    drawarrow line cutbefore bbox a cutafter bbox b;
+
+    picture mark;
+    mark = thelabel@#("$\scriptstyle " & s & "$", point 1/2 of line);
+    interim bboxmargin := 1;
+    unfill bbox mark; draw mark;
+enddef;
+
+vardef connect@#(expr s, a, b) = 
+    curved_connect@#(s, a, b, center b - center a)
+enddef;
+
+connect.bot("p", XY, X);
+connect.rt ("q", XY, Y);
+connect.top("g", Y, Z);
+connect.lft("f", X, Z);
+
+curved_connect.urt("x", U, X, right);
+curved_connect.llft("y", U, Y, dir -80);
+
+drawoptions(dashed withdots scaled 1/2);
+connect("(x,y)", U, XY);
+drawoptions();
+\end{smallcode}
+\vss}}
+The approach taken here is to define the node labels first as pictures
+placed as needed, and then to use \mpl{bbox} and \mpl{center} to connect them.
+The "curved_connect" macro takes a string for the label, the two nodes
+to be connected, and the initial direction for the curved path to connect them.
+
+You can't have optional macro arguments in \MP\ but you can call macros from inside 
+another macro, so here a second simpler macro "connect" is defined to do straight
+connections.  To avoid repetition, this macro simply calls "curved_connect" with the 
+required direction from $a$ to $b$.
 
 \newpage
 \section{A triangle of Schläfli polygons}
