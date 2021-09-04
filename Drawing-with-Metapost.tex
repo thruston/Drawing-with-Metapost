@@ -4169,7 +4169,7 @@ makes it easier to construct dynamic labels.  "TEX()" also has the synonym
 But this isn't the clever bit\dots
 
 \clearpage
-\subsection{The magic of the \texttt{textextlabel} option}
+\subsection{The magic of the \texttt{textextlabel} option}\label{ttlabel}
 
 The clever bit is that "luamplib" allows us to turn on the "TEX()" behaviour by
 default, so that you can just use plain strings with the \mpl{label()} macro, and
@@ -5345,18 +5345,21 @@ $$\includegraphics{brachisto}$$
 \newpage
 \section{Commutative diagrams}
 
-If you want lots of complex bells and whistles on your commutative diagrams then,
+If you want lots of complex bells and whistles on your commutative diagrams, then
 you probably want to use specialist tools like "tikz-cd" or "xypic", but if your
-needs are simpler, then plain \MP\ is more than capable, and if you are already
-using it for other illustrations there is one less thing to learn.
+needs are simpler, plain \MP\ is more than capable, and if you are already
+using it for other illustrations, there is one less thing to learn.
 
-\parshape=1 0pt 216pt
-Here is an example to illustrate some general techniques. 
-\vadjust{\moveright 200pt\vbox to 0pt{\kern -28pt\includegraphics{xypic-example}\vss}}
-It may be familiar to users
-of "xypic". The code used to generate this picture
-is shown on the right.
-\vadjust{\moveright5.5in\vbox to 0pt{\kern-100pt
+Here are two examples to illustrate some general techniques. They may be familiar to
+readers of the manuals for the tools referred to above.
+$$
+\includegraphics{tikzcd-example}
+\qquad
+\includegraphics{xypic-example}
+$$
+The complete code used to generate the right-hand picture is shown on the
+right.\rlap{\rightarrow}%
+\vadjust{\moveright5.5in\vbox to 0pt{\kern-218pt
 \begin{smallcode}
 picture U, XY, X, Y, Z;
 z1 = -z2 = (-61, 42);
@@ -5400,16 +5403,32 @@ drawoptions(dashed withdots scaled 1/2);
 connect("(x,y)", U, XY);
 drawoptions();
 \end{smallcode}
+\noindent\textit{\small This example assumes you are using "mplibtextextlabel" – §\ref{ttlabel}}
 \vss}}
-The approach taken here is to define the node labels first as pictures
-placed as needed, and then to use \mpl{bbox} and \mpl{center} to connect them.
-The "curved_connect" macro takes a string for the label, the two nodes
-to be connected, and the initial direction for the curved path to connect them.
+The approach taken for both examples is first to define the node labels as pictures
+placed as needed, and then write a special-purpose "connect" macro to make
+consistent arrows between the nodes, using \mpl{center}, \mpl{bbox},
+\mpl{cutbefore}, and \mpl{cutafter} as appropriate.  
 
-You can't have optional macro arguments in \MP\ but you can call macros from inside 
-another macro, so here a second simpler macro "connect" is defined to do straight
-connections.  To avoid repetition, this macro simply calls "curved_connect" with the 
-required direction from $a$ to $b$.
+The $X\times_ZY$ example needs two variations.  The "curved_connect" macro
+takes a string for the label, the two nodes to be connected, and the initial
+direction for the curved path to connect them.  You can't have optional macro
+arguments in \MP\ but you can call macros from inside another macro, so a second
+simpler macro "connect" is defined to do straight connections.  To avoid repetition,
+this macro simply calls "curved_connect" with the required direction from $a$ to
+$b$.
+
+For the $f^*E$ example, "connect" is simpler, because all the arrows are
+straight and there are no labels, but needs to allow for arrows crossing:
+\begin{smallcode}
+vardef connect(expr a, b) = 
+    save line; path line; interim bboxmargin := 4;
+    line = center a .. center b cutbefore bbox a cutafter bbox b;
+    cutdraw line withpen pencircle scaled 4 withcolor background;
+    drawarrow line
+enddef;
+\end{smallcode}
+
 
 \newpage
 \section{A triangle of Schläfli polygons}
