@@ -78,7 +78,9 @@ morestring=[s]{btex}{etex}
 \newcommand\mpexternal[2][]{{\mpstyle\lstinputlisting[#1]{#2}}}
 \newcommand\mpl[1]{{\mpstyle\lstinline!#1!}}
 \begin{document}
-\pagestyle{empty}
+\let\folio\thepage
+\renewcommand{\thepage}{\rlap{\hbox to 5in{\hss\small\folio}}}
+\pagestyle{myheadings}
 \raggedbottom
 % title & toc in the margin
 \makeatletter
@@ -96,6 +98,7 @@ morestring=[s]{btex}{etex}
 $(3,12^2)$ & $(3,4,6,4)$\cr}
 \vss}
 \makeatother
+\thispagestyle{empty}
 \section{Start here}
 
 This document contains a collection of ideas and techniques for producing attractive
@@ -2477,7 +2480,7 @@ $(7,8)$ of $B$.  But you may never get that far, as the process stops as soon as
 first intersection is found.  The upshot of this is that the intersection point
 found will always be as early as possible on $A$.  Note that after the call above
 point $t$ of $A$ will be very close to point $u$ of $B$, as they both refer to the
-same intersection point.  If there is an alternative point that is earlier on $B$,
+same intersection point.  If you want the alternative point that is earlier on $B$,
 then use `$B \mathbin{\textrm{intersectiontimes}} A$'
 instead.\mpic{-222pt}{intersection-AB-or-BA}
 
@@ -2495,9 +2498,8 @@ smaller rectangles, in the order $(1,2)$, $(1,4)$, $(3,2)$, $(3,4)$ (as shown). 
 this case it will pick $(1,2)$, discard 4, and push 3 onto a stack.  It carries on
 doing this, back tracking as required, until it finds sufficiently small overlapping
 rectangles.  The two times returned by \mpl{intersectiontimes} are the midpoints of
-these two tiny rectangles, which is why they do not always refer to exactly the same
-point.}}
-
+the subpaths enclosed by these two tiny rectangles, which is why they do not always
+refer to exactly the same point.}}
 
 \subsubsection{Finding all intersection points}
 

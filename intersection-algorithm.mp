@@ -39,8 +39,8 @@ P3 = image(
     s4 = boxed(subpath (m, infinity) of B);
     draw s3 withcolor 7/8; 
     draw s4 withcolor 7/8;
-    draw s2 withcolor tr;
-    draw s1 withcolor tb;
+    draw s2 withcolor tb;
+    draw s1 withcolor tr;
     label.urt("$\scriptstyle 1$", point 1 of s1);
     label.ulft("$\scriptstyle 2$", point 0 of s2);
     label.urt("$\scriptstyle 3$", point 1 of s3);

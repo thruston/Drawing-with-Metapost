@@ -5,7 +5,7 @@
 \begin{mplibcode}
 beginfig(1);
 label(btex \vbox{\halign{\hfil\itshape # \hfil\cr
-The paths are draw with\cr
+The paths are drawn with\cr
 arrows to show where\cr
 they start \& stop.\cr}} etex, origin);
 
