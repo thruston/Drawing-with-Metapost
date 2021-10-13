@@ -1,5 +1,8 @@
-prologues := 3;
-outputtemplate := "%j%c.eps";
+\documentclass[border=5mm]{standalone}
+\usepackage{luamplib}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
 input colorbrewer-rgb
 input archimedean-tools
 beginfig(1);
@@ -17,17 +20,21 @@ beginfig(1);
             fill t[i] withcolor Blues 8 4;
         endfor
         for i=1 upto 3:
-            fill s[i] withcolor Greens 8 2;
+            fill s[i] withcolor Greens 8 1;
         endfor
         fill h withcolor Oranges 9 4;
-        forsuffixes $=t1, t2, s1, s2, s3, h:
-            if known $:
-                % drawarrow $ withpen pencircle scaled 1/4;
-                pair m; m = median($);
-                for i=1 upto length $:
-                    draw m -- point i - 1/2 of $;
-                endfor
-            fi
+        forsuffixes $=t1, t2:
+            pair m; m = median($);
+            for i=1 upto length $:
+                draw m -- point i - 1/2 of $ withcolor Blues 8 8;
+            endfor
+        endfor
+        forsuffixes $=s1, s2, s3:
+            draw point 1/2 of $ -- point 5/2 of $ withcolor Oranges 8 8;
+            draw point 3/2 of $ -- point 7/2 of $ withcolor Blues 8 8;
+        endfor
+        for i=1 upto 3:
+            draw point i-1/2 of h -- point i+5/2 of h withcolor Oranges 8 8;
         endfor
     );
 
@@ -42,13 +49,14 @@ beginfig(1);
         endfor
     endfor
     %draw bbox unit withcolor red;
-
+    
+    clip currentpicture to fullcircle scaled (3/2n * abs(v));
     
     % picture p; p = currentpicture;
     % (wd, ht) = (urcorner p - llcorner p);
     % currentpicture := nullpicture;
     % p := p scaled (148.5mm / wd);
     % draw p;
-       
 endfig;
-end.
+\end{mplibcode}
+\end{document}

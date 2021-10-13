@@ -1,5 +1,8 @@
-prologues := 3;
-outputtemplate := "%j%c.eps";
+\documentclass[border=5mm]{standalone}
+\usepackage{luamplib}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
 input colorbrewer-rgb
 input archimedean-tools
 beginfig(1);
@@ -43,6 +46,7 @@ beginfig(1);
     currentpicture := nullpicture;
     p := p scaled (148.5mm / wd);
     draw p;
-       
 endfig;
-end.
+\end{mplibcode}
+\end{document}
+
