@@ -1,9 +1,9 @@
-\documentclass[border=5mm]{standalone}
+\documentclass{standalone}
 \usepackage{luamplib}
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
-input colorbrewer-rgb
+input colorbrewer-cmyk
 input archimedean-tools
 beginfig(1);
     path t[], s[];
@@ -26,7 +26,15 @@ beginfig(1);
             %drawarrow $ withpen pencircle scaled 1/4;
             pair m; m = median($);
             for i=1 upto length $:
-                draw m -- point i - 1/2 of $;
+                % draw m -- point i - 1/2 of $;
+                draw point i - 1/2 of $ 
+                     --
+                     m
+                    %{direction i - 1/2 of $ rotated 0} ..
+                    % {m - point i - 1/2 of $} .. {point i + 1/2 of $ - m}
+                    % point i + 1/2 of $ 
+                    withpen pencircle scaled 1 withcolor Spectral 3 2;
+                 %draw m -- point i - 1/2 of $;
             endfor
         endfor
     );
@@ -44,7 +52,12 @@ beginfig(1);
     picture p; p = currentpicture;
     (wd, ht) = (urcorner p - llcorner p);
     currentpicture := nullpicture;
-    p := p scaled (148.5mm / wd);
+    p := p scaled (146.5mm / wd);
+    undraw unitsquare xscaled 148.5mm yscaled 210mm shifted llcorner p shifted -(1mm, 1mm);
+    z0 = 1/2[llcorner currentpicture, ulcorner currentpicture];
+    draw z0 -- z0 shifted 3 right withpen pencircle scaled 1/8;
+    z1 = 1/2[lrcorner currentpicture, urcorner currentpicture];
+    draw z1 -- z1 shifted 3 left withpen pencircle scaled 1/8;
     draw p;
 endfig;
 \end{mplibcode}
