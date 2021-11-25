@@ -1745,7 +1745,7 @@ slower than using the primitive function.
 It is also fairly straightforward to implement random number generators that follow other statistical
 distributions.  The mathematical details are in the section of \textsl{TOACP}
 referenced above. Two examples, for the exponential distribution and the gamma
-distribution, are shown on the right.  In both cases note the care required to avoid
+distribution, are shown on the right.  In both cases, note the care required to avoid
 arithmetic overflow (and see section~\ref{trig} for the "tand" function).
 
 \medskip\noindent
@@ -5430,6 +5430,24 @@ vardef connect(expr a, b) =
     drawarrow line
 enddef;
 \end{smallcode}
+
+\newpage
+\section{Tilings and tesselations}
+
+\newpage
+\subsection{Penrose tilings}
+
+\textsc{You need} a different technique to generate an aperiodic tiling, like this
+one that was discovered in the 1970s by the British polymath Sir Roger Penrose.  
+$$\includegraphics[width=\textwidth]{penrose-P3.pdf}$$
+By definition, there is no periodic unit to repeat; but there are well-known
+expansion rules to split each shape in the tiling into smaller congruent copies.  So
+you can start with a single large shape and apply the rules recursively to make the
+tiling.  The tiling is made from two rhombus shapes, but each of these shapes can be
+split in half into two triangles, and the expansion process actually works on each
+of these triangles.
+
+
 
 
 \newpage
