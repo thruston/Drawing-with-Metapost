@@ -52,13 +52,17 @@ beginfig(1);
     picture p; p = currentpicture;
     (wd, ht) = (urcorner p - llcorner p);
     currentpicture := nullpicture;
-    p := p scaled (146.5mm / wd);
-    undraw unitsquare xscaled 148.5mm yscaled 210mm shifted llcorner p shifted -(1mm, 1mm);
+    p := p scaled (145mm / wd);
+    undraw unitsquare xscaled 148mm yscaled 210mm shifted llcorner p shifted -(1.5mm, 1.5mm)
+        withpen pencircle scaled 1/8;
     z0 = 1/2[llcorner currentpicture, ulcorner currentpicture];
     draw z0 -- z0 shifted 3 right withpen pencircle scaled 1/8;
     z1 = 1/2[lrcorner currentpicture, urcorner currentpicture];
     draw z1 -- z1 shifted 3 left withpen pencircle scaled 1/8;
     draw p;
+    picture r; r = currentpicture rotated 90;
+    currentpicture := nullpicture;
+    draw r;
 endfig;
 \end{mplibcode}
 \end{document}

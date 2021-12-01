@@ -5437,15 +5437,67 @@ enddef;
 \newpage
 \subsection{Penrose tilings}
 
-\textsc{You need} a different technique to generate an aperiodic tiling, like this
-one that was discovered in the 1970s by the British polymath Sir Roger Penrose.  
+\textsc{You need} a different technique to generate an aperiodic tiling, 
+\vadjust{\moveright5.5in\vbox to 0pt{\kern-8pt
+\begin{smallcode}
+% golden ratio constant
+numeric psi; psi = (sqrt 5 - 1) / 2;
+
+% inflating tall shape makes two others
+vardef inflate_tall(expr level, a, b, c) = 
+    if level = 0:
+        draw a--b--c withpen pencircle scaled 1/8;
+    else:
+        save d; pair d; d = psi[b,a]; 
+        inflate_tall(level - 1, d, c, a);
+        inflate_wide(level - 1, c, d, b);
+    fi
+enddef;
+
+% inflating wide makes three
+vardef inflate_wide(expr level, a, b, c) = 
+    if level = 0:
+        draw a--b--c withpen pencircle scaled 1/8;
+    else:
+        save d, e; pair d, e; d = psi[a,b]; e = psi[a,c];
+        inflate_tall(level - 1, d, e, b);
+        inflate_wide(level - 1, e, d, a);
+        inflate_wide(level - 1, c, e, b);
+    fi
+enddef;
+
+% start with a tall triangle with apex at origin
+pair a, b, c;  
+b = origin;
+c = (sind(18), sind(72)) scaled 800;
+a = (-xpart c, ypart c);
+
+% make an inflated "wedge"
+picture P; P = image(inflate_tall(7, a, b, c));
+
+% then exploit the five-fold symmetry to make the picture
+for t = 0 upto 9:
+    draw P if odd t: reflectedabout(b, c) fi rotated 72t;
+endfor;
+\end{smallcode}
+
+\qquad\hey \textit{\small Colouring the tiling is left as an exercise for the
+reader.}\par\vss}}
+like those discovered in the 1970s by the British polymath Sir Roger Penrose.  
 $$\includegraphics[width=\textwidth]{penrose-P3.pdf}$$
 By definition, there is no periodic unit to repeat; but there are well-known
 expansion rules to split each shape in the tiling into smaller congruent copies.  So
 you can start with a single large shape and apply the rules recursively to make the
-tiling.  The tiling is made from two rhombus shapes, but each of these shapes can be
-split in half into two triangles, and the expansion process actually works on each
-of these triangles.
+tiling.  The tiling above is made from two rhombus shapes, but each of these shapes can be
+split in half into two triangles, and the expansion process actually works on these:
+$$\includegraphics{penrose-stages.pdf}$$
+
+\vbox to 0pt{\noindent
+Each expansion of half the thick rhombus, produces two more thick halves and one
+thin half; each expansion of half the thin rhombus produces a thick half and a thin
+half. No other shapes are produced, so the recursive process can be repeated
+indefinitely. At the desired lowest level the triangles are patched back into
+rhombus shapes simply by \textit{not} drawing the edges shown with dots.\par\vss}
 
 
 

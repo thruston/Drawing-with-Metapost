@@ -6,9 +6,10 @@ size = 800;
 vardef inflate_tall(expr mode, level, a, b, c) = 
     save d, e; pair d, e; 
     if level = 0:
-        pickup pencircle scaled 1/8;
-        filldraw a--b--c--cycle withcolor (abs(b)/size)[Reds 7 2, Blues 8 2];
+        drawoptions(withpen pencircle scaled 1/8);
+        %filldraw a--b--c--cycle withcolor (abs(b)/size)[Reds 7 2, Blues 8 2];
         draw if mode=2: c--a--b else: a--b--c fi;
+        drawoptions();
     else:
         if mode = 3:
             d = psi[b,a]; 
@@ -26,9 +27,10 @@ enddef;
 vardef inflate_wide(expr mode, level, a, b, c) = 
     save d, e; pair d, e; 
     if level = 0:
-        pickup pencircle scaled 1/8;
-        filldraw a--b--c--cycle withcolor (abs(b)/size)[Reds 7 3, white];
+        drawoptions(withpen pencircle scaled 1/8);
+        %filldraw a--b--c--cycle withcolor (abs(b)/size)[Reds 7 3, white];
         draw if mode=2: c--a--b else: a--b--c fi;
+        drawoptions();
     else:
         if mode = 3:
             d = psi[a,b]; e = psi[a,c];
