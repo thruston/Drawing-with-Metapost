@@ -2,13 +2,22 @@ input colorbrewer-rgb
 numeric psi, size;
 psi = (sqrt 5 - 1) / 2;
 size = 800;
-
 vardef inflate_tall(expr mode, level, a, b, c) = 
     save d, e; pair d, e; 
     if level = 0:
         drawoptions(withpen pencircle scaled 1/8);
-        %filldraw a--b--c--cycle withcolor (abs(b)/size)[Reds 7 2, Blues 8 2];
-        draw if mode=2: c--a--b else: a--b--c fi;
+        filldraw a--b--c--cycle withcolor (abs(b)/size)[Reds 7 2, Blues 8 2];
+        if mode = 2:
+            draw c--a--b;
+        else:
+            % save arc; path arc;
+            % arc = fullcircle rotated angle (c-a) scaled 1/2 abs(b-a) shifted a 
+            %     if turningnumber (a--b--c--cycle) < 0: cutafter else: cutbefore fi (a--b);
+            % cutdraw arc withpen pencircle scaled 3/2 withcolor Reds 7 4;
+            % cutdraw arc reflectedabout(b, 1/2[a,c]) withpen pencircle scaled 3/2 withcolor Blues 8 8;
+            % draw arc reflectedabout(b, 1/2[a,c]) withpen pencircle scaled 1/2 withcolor Blues 8 2;
+            draw a--b--c;
+        fi
         drawoptions();
     else:
         if mode = 3:
@@ -28,8 +37,22 @@ vardef inflate_wide(expr mode, level, a, b, c) =
     save d, e; pair d, e; 
     if level = 0:
         drawoptions(withpen pencircle scaled 1/8);
-        %filldraw a--b--c--cycle withcolor (abs(b)/size)[Reds 7 3, white];
-        draw if mode=2: c--a--b else: a--b--c fi;
+        filldraw a--b--c--cycle withcolor (abs(b)/size)[Reds 7 3, white];
+        if mode = 2: 
+            draw c--a--b; 
+        else: 
+            % save arc; path arc;
+            % arc = fullcircle rotated angle (c-a) scaled 3/2 abs (b-a) shifted a
+            %       if turningnumber (a--b--c--cycle) < 0: cutafter else: cutbefore fi (a--b);
+            % cutdraw arc withpen pencircle scaled 3/2 withcolor Reds 7 4;
+            % path arc;
+            % arc = fullcircle rotated angle (a-c) scaled 1/2 abs (b-a) shifted c
+            %       if turningnumber (a--b--c--cycle) > 0: cutafter else: cutbefore fi (c--b);
+            % cutdraw arc withpen pencircle scaled 3/2 withcolor Blues 8 8;
+            % draw arc withpen pencircle scaled 1/2 withcolor Blues 8 2;
+            draw a--b--c; 
+            
+        fi
         drawoptions();
     else:
         if mode = 3:
