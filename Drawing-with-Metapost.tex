@@ -372,11 +372,10 @@ could try
 \begin{code}
 center p -- subpath(0,1/5 length p) of p -- cycle
 \end{code}
-
 Clearly this works rather better with more circular shapes.  Indeed for a circle you
 can convert directly between circumference angle and points along the path.  So
-you have defined path "c" to be a circle, then
-"point 1 of c" is $45^\circ$ round and 1~radian is "point 1.27324 of c", (because
+you have defined path $c$ to be scaled copy of \mpl{fullcircle}, then
+\mpl{point 1 of c} is $45^\circ$ round and 1~radian is \mpl{point 1.27324 of c}, (because
 $4/\pi \simeq 1.27324$).
 
 \vfill\noindent
@@ -387,9 +386,13 @@ point $n+\hbox{\bf length }p$.  This works with negative numbers too, so we coul
 center p -- subpath(-1,1) of p -- cycle
 \end{code}
 to get wedge that extends either side of point 0.
+The same idea was used to draw the arrows in the first row:
+\begin{code}
+drawarrow subpath(1/2, length p + 1/2) of p;
+\end{code}
 
 \newpage
-\subsection{Polygons of a given radius}
+\subsection{Regular polygons of a given radius}
 
 \noindent\mpic{-10pt}{closed-polygons}%
 \textsc{Regular polygons} with a given radius can be defined or drawn directly with a simple inline loop:
@@ -428,17 +431,47 @@ enddef;
 This should work for any cyclic path, not just regular polygons.
 
 \newpage
-\subsection{Polygons of a given side length}
+\subsection{Regular polygons of a given side length}
 But you might want a polygon with a fixed side instead of a fixed radius. This needs
-a little trigonometry, using the sine rule:
+a little trigonometry, using the sine rule:\mpic{-42pt}{closed-fixed-polygon}
 \begin{code}
 vardef polygon_with_side(expr n, s) = 
-    save a, b; numeric a, b; a * n = 360; a + 2b = 180; 
-    for i = 0 upto n-1: 
-        s * sind(b) / sind(a) * dir (a * i) -- 
-    endfor cycle
+  save a, b, r; numeric a, b, r; 
+  a * n = 360; a + 2b = 180; r = s * sind(b) / sind(a);
+  for i = 0 upto n-1: (0, r) rotated (a * i) -- endfor cycle
 enddef;
 \end{code}
+Which you can use like this to produce a nest of polygons $\rightarrow$
+\begin{smallcode}
+for n = 11 downto 3: path p; p = polygon_with_side(n, 72);
+  fill p withcolor (n/32)[white, 3/4 if odd n: red else: blue fi];
+  draw p;
+endfor
+\end{smallcode}
+These polygon paths are centred on $(0, 0)$ but
+sometimes it is more convenient to construct a polygon on a known segment
+rather than working out how to rotate and shift it into place.  
+$$\includegraphics[width=0.9\textwidth]{closed-polygon-chain.pdf}$$
+Here is a way to do that using the \mpl{of} syntax in the macro construction
+$\longrightarrow$
+\vadjust{\moveright 384pt\vbox to 0pt{\vss
+\begin{smallcode}
+vardef poly expr n of p = save x, y; 
+    z0 = point 0 of p; z1 = point 1 of p;
+    for i=2 upto n-1:
+        z[i] = z[i-2] rotatedabout(z[i-1], 180(2/n-1));
+    endfor
+    for i=0 upto n-1: z[i] -- endfor cycle
+enddef;
+path P[]; P3 = for i=0 upto 2: 6 up rotated 120i -- endfor cycle;
+fill P3 withcolor 3/4 red; draw P3;
+for n = 4 upto 23:
+    numeric m; m = floor(n / 2);
+    P[n] = poly n of subpath (m, m-1) of P[n-1];
+    fill P[n] withcolor (n/32)[3/4 if odd n: red else: blue fi, white];
+    draw P[n]; label(decimal n, median(P[n]));
+endfor
+\end{smallcode}\vskip -12pt}}
 
 \newpage\subsection{Building cycles from parts of other paths}
 
@@ -456,7 +489,7 @@ with
 \begin{code}
 buildcycle(yy shifted (1u,0), f, yy shifted (2.71828u,0), xx)
 \end{code}
-Note the use of the $y$-axis shifted along by different amounts.
+Note the re-use of the $y$-axis path shifted along by different amounts.
 
 \smallskip\noindent
 There are similar examples in the \MP\ manual, but "buildcycle" can also
