@@ -10,10 +10,14 @@ enddef;
 
 primarydef p enlarged s = p shifted -median p scaled s shifted median p enddef;
 
+vardef polygon(expr n, r) = 
+    for i = 0 upto n - 1: (r, 0) rotated (360 / n * i) -- endfor cycle
+enddef;
+
 path u, c, s;
-u = (for i=0 upto 4: dir 72i -- endfor cycle) scaled 36;
-c = (for i=0 upto 5: dir 60i -- endfor cycle) scaled 36 shifted 108 right;
-s = (for i=0 upto 6: dir 51.42857i -- endfor cycle) scaled 36 shifted 216 right;
+u = polygon(5, 36);
+c = polygon(6, 36) shifted 108 right;
+s = polygon(7, 36) shifted 216 right;
 
 picture p[];
 p1 = image(

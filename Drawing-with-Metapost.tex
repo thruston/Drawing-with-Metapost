@@ -389,24 +389,46 @@ center p -- subpath(-1,1) of p -- cycle
 to get wedge that extends either side of point 0.
 
 \newpage
-\subsection{Polygons}
+\subsection{Polygons of a given radius}
 
 \noindent\mpic{-10pt}{closed-polygons}%
-\textsc{Regular polygons} can be defined or drawn directly with a simple inline loop:
+\textsc{Regular polygons} with a given radius can be defined or drawn directly with a simple inline loop:
 \vadjust{\moveright -60pt \vbox to 0pt{\vskip-3pt\includegraphics{little-hexagon.pdf}\vss}}
 \begin{code}
 draw for i=0 upto 5: 20 dir 60i -- endfor cycle;
 \end{code}
-but you might prefer to make a macro:
+which works because \mpl{dir d} expands to \mpl{right rotated d}.  But
+you might prefer to make a macro:
 \begin{code}
 vardef polygon(expr n, r) = 
-  for i = 0 upto n-1: r * dir (360 / n * i) -- endfor cycle 
+    for i=0 upto n-1: (r, 0) rotated (360/n * i) -- endfor cycle 
 enddef;
 \end{code}
-This produces a cyclic path that represents an $n$-sided polygon that fits in a circle of 
-radius $r$ centred at the origin, and was used to create this polygonal version of
-the previous segment chart $\longrightarrow$.
+This produces a cyclic path to represent an $n$-sided polygon that fits in a circle
+of radius $r$ centred at the origin and that starts at \mpl{(r, 0)}, like the
+corresponding circular path, as shown in this polygonal version of the
+previous segment chart.\rlap{\ $\rightarrow$}\\
+If you need polygon paths that start at the top, you can just swap the
+coordinates:
+\begin{code}
+vardef polygon(expr n, r) = 
+    for i=0 upto n-1: (0, r) rotated (360/n * i) -- endfor cycle 
+enddef;
+\end{code}
+$$\includegraphics[width=0.66\textwidth]{closed-polygon-tops.pdf}$$
+Note also that some extra care is required to find the centres of these shapes. The
+\mpl{center} macro defined in "plain.mp" gives you the centre of the bounding box,
+but this is not the same as the centre of the polygon when the number of sides is
+odd.  What you need instead is the geometric median:
+\begin{code}
+vardef median primary p = 
+  origin for i=1 upto length p: + point i of p / length p endfor
+enddef;
+\end{code}
+This should work for any cyclic path, not just regular polygons.
 
+\newpage
+\subsection{Polygons of a given side length}
 But you might want a polygon with a fixed side instead of a fixed radius. This needs
 a little trigonometry, using the sine rule:
 \begin{code}
