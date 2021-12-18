@@ -1084,7 +1084,7 @@ or \mpl{(0.86603, 0.5)}. So to get the polar notation
 point $(r,\theta)$, where $r$ is the radius and $\theta$ is the angle in degrees
 counter-clockwise from the positive $x$-axis, you can write `\mpl{r * dir
 theta}'. As usual, with a constant you can omit the multiplication sign, so `\mpl{2
-dir 30}' provides another way to define§ the point "(sqrt(3),1)".
+dir 30}' provides another way to define the point "(sqrt(3),1)".
 
 \smallskip
 Plain \MP\ defines five useful pair variables: \id{origin}, \id{right}, \id{up},
@@ -1128,7 +1128,7 @@ want to use other letters for your variable names, you can use "xpart" and "ypar
 to do the same thing. So after `\mpl{pair w; w=(3,4);}' you can get the real part with
 "xpart w" and the imaginary part with "ypart w".
 You can also use the polar notation shown above to write complex numbers.  For
-$re^{i\theta}$ you can write `\mpl{r dir theta}' where "r" is the modulus and
+$re^{i\theta}$ you can write `\mpl{r * dir theta}' where "r" is the modulus and
 "theta" is the argument in degrees.
 
 The predefined constants \mpl{up},
@@ -3483,8 +3483,8 @@ point.
 
 \moveright384pt\vbox to 0pt{\hsize 4.2in\vss\textcolor{blue}{\itshape This section describes labels and
 annotations in what can be called the traditional \MP\ environment, where your
-figures are compiled with "mpost".  The next section describes labels and
-annotations in the newfangled (but generally better) world of "lualatex" and the
+figures are compiled with "mpost".  The section after this describes labels \&
+annotations in the newfangled (but better) world of "lualatex" and the
 "luamplib" package.}\par\kern 16pt}
 
 \noindent
