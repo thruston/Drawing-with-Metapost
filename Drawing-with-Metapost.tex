@@ -302,7 +302,7 @@ modern machine this is not really an issue any more.
 \label{plain-shapes}
 
 In \MP\ there are two sorts of paths: open and closed.
-\mpic{-12pt}{closed0}
+\mpic{-12pt}{closed-triangles}
 A closed path is called a cycle, and is created with the "cycle" primitive like this:
 \begin{code}
 path t; t = origin -- (55,0) -- (55,34) -- cycle;
@@ -318,7 +318,7 @@ $\hbox{\ttfamily if cycle p: ... fi}$.
 
 \medskip\noindent
 There are several closed paths defined for you in plain \MP.
-\mpic{1cm}{closed7}
+\mpic{0pt}{closed-standards}
 \begin{itemize}
     \item "unitsquare" which you can use to draw any rectangle with appropriate
         use of "xscaled" and "yscaled" --- it’s defined so that the bottom left
@@ -344,8 +344,10 @@ There are several closed paths defined for you in plain \MP.
         shapes.
 \end{itemize}
 
-\newpage\subsection{Points on the standard closed paths}\noindent\mpic{-10pt}{closed1}%
-Here are the three shapes centred on the origin and labelled to show the points
+\newpage\subsection{Points on the standard closed paths}
+
+\noindent\mpic{-10pt}{closed-points}%
+\textsc{Here are the three shapes} centred on the origin and labelled to show the points
 along them.  \textbf{Note} that the \textit{unitsquare} shape has been shifted so that it is
 centred on the origin in all of these examples.  The small red circle marks the
 \textit{origin}, and the labelled red dots are the points of each path.  The
@@ -385,6 +387,36 @@ point $n+\hbox{\bf length }p$.  This works with negative numbers too, so we coul
 center p -- subpath(-1,1) of p -- cycle
 \end{code}
 to get wedge that extends either side of point 0.
+
+\newpage
+\subsection{Polygons}
+
+\noindent\mpic{-10pt}{closed-polygons}%
+\textsc{Regular polygons} can be defined or drawn directly with a simple inline loop:
+\vadjust{\moveright -60pt \vbox to 0pt{\vskip-3pt\includegraphics{little-hexagon.pdf}\vss}}
+\begin{code}
+draw for i=0 upto 5: 20 dir 60i -- endfor cycle;
+\end{code}
+but you might prefer to make a macro:
+\begin{code}
+vardef polygon(expr n, r) = 
+  for i = 0 upto n-1: r * dir (360 / n * i) -- endfor cycle 
+enddef;
+\end{code}
+This produces a cyclic path that represents an $n$-sided polygon that fits in a circle of 
+radius $r$ centred at the origin, and was used to create this polygonal version of
+the previous segment chart $\longrightarrow$.
+
+But you might want a polygon with a fixed side instead of a fixed radius. This needs
+a little trigonometry, using the sine rule:
+\begin{code}
+vardef polygon_with_side(expr n, s) = 
+    save a, b; numeric a, b; a * n = 360; a + 2b = 180; 
+    for i = 0 upto n-1: 
+        s * sind(b) / sind(a) * dir (a * i) -- 
+    endfor cycle
+enddef;
+\end{code}
 
 \newpage\subsection{Building cycles from parts of other paths}
 
@@ -2257,6 +2289,7 @@ vardef equilateral_triangle_point(expr a, b) =
   b shifted -a rotated 60 shifted a
 enddef;
 \end{code}
+
 
 \newpage
 \subsection{Bisecting lines and paths}
