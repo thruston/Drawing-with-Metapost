@@ -473,6 +473,30 @@ for n = 4 upto 23:
 endfor
 \end{smallcode}\vskip -12pt}}
 
+\newpage\subsection{Curved polygons}
+
+\textsc{The regular polygons} above are all defined with straight edges using the
+\mpl{--} connector that makes a tense path.  If you changed each connector to
+\mpl{..} you would get a circle, and contrariwise, if you try
+\mpl{tensepath(fullcircle scaled 20)} you will get a regular octagon.  But we can
+also adjust the directions at the corners to make a variety of closed polygon shapes
+with closed edges.  
+
+One of the most pleasing is the Reuleaux polygon, with circular arcs for edges.
+$$\includegraphics[width=0.9\textwidth]{closed-reuleaux-set.pdf}$$
+The figure on the right attempts to explain the geometry.\mwpic{-160pt}{closed-reuleaux-geometry}
+\begin{code}
+vardef reuleaux(expr n, r) =
+  save a; numeric a; a = 90/n;
+  for t = 0 step 4a until 359:
+    (0,r) rotated t {left rotated (a+t)} .. {left rotated (3a+t)}
+  endfor cycle
+enddef;
+\end{code}
+If you swap the directions at each point you get shapes that are not quite like
+hypocycloids; play about a bit more to get flower shapes or windmills.
+$$\includegraphics[width=0.9\textwidth]{closed-antireuleaux-set.pdf}$$
+
 \newpage\subsection{Building cycles from parts of other paths}
 
 Plain \MP\ has a built-in function to compute the intersection points of two paths, and

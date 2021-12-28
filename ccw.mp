@@ -35,7 +35,7 @@ enddef;
 beginfig(1);
     
     for i=1 upto 4: 
-        path p; p = ccw(2i + 1, 100, 0); % 10-i);
+        path p; p = ccw(2i + 1, 100, 10-i);
         p := p shifted ((120i, 0) - lrcorner p); 
         fill p withcolor 1/2[Reds[9][i], white];
         draw for j=0 step i until i * length p: point j of p -- endfor cycle 

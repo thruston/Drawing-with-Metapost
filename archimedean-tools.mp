@@ -8,6 +8,15 @@ vardef poly expr n of p =
     endfor
     for i=0 upto n-1: z[i] -- endfor cycle
 enddef;
+vardef polyc expr n of p = 
+    save x, y;
+    z0 = point 0 of p;
+    z1 = point 1 of p;
+    for i=2 upto n-1:
+        z[i] = z[i-2] rotatedabout(z[i-1], 180(2/n-1));
+    endfor
+    for i=0 upto n-1: z[i] ... endfor cycle
+enddef;
 
 % a polygon of n sides of a given length
 vardef polya(expr n, s) = 
