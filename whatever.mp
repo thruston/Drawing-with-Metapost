@@ -1,25 +1,7 @@
 \documentclass[border=1mm]{standalone}
 \usepackage{luatex85}
 \usepackage{luamplib}
-\usepackage{listings}
-\usepackage{xcolor}
-\definecolor{textblue}{rgb}{.2,.2,.7}
-\definecolor{textred}{rgb}{0.54,0,0}
-\definecolor{textgreen}{rgb}{0,0.43,0}
-\newcommand\mpstyle{\lstset{
-language=Metapost,
-basicstyle=\ttfamily,
-keywordstyle=\color{textblue},
-commentstyle=\color{textred},    % Custom highlighting style
-stringstyle=\color{textgreen},
-frame=none,                      % Any extra options here
-columns=fullflexible,
-keepspaces=true,
-linewidth=3.5in,
-showstringspaces=false           % 
-}}
-\lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily}}{}
-\lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
+\usepackage{dwmpcode}
 \mplibtextextlabel{enable}
 \begin{document}
 $\vcenter{

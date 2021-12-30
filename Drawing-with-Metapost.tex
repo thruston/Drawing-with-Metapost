@@ -6,13 +6,12 @@
 \usepackage[inner=1in,textwidth=5in,textheight=6in, marginparsep=0.5in, marginparwidth=4.2in]{geometry}
 \usepackage{sectsty}
 \allsectionsfont{\normalfont\sffamily\bfseries}
-\usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{mflogo}
 \def\mfbook{\textsl{The \MF\kern1pt book}}
 \def\texbook{\textsl{The \TeX\kern1pt book}}
 \usepackage{shortvrb}\MakeShortVerb{"}
-\usepackage{listings}
+\usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
 \date{March 2017 – }
@@ -38,45 +37,6 @@
 \newfontface\ding{Zapf Dingbats}
 \def\hey{\llap{\ding ☞\ }}
 %
-\definecolor{textblue}{rgb}{.2,.2,.7}
-\definecolor{textred}{rgb}{0.54,0,0}
-\definecolor{textgreen}{rgb}{0,0.43,0}
-\definecolor{squash}{rgb}{0.793, 0.359, 0.05}
-\definecolor{carrot}{rgb}{0.934, 0.445, 0.082}
-% style for highlighting
-\newcommand\texstyle{\lstset{
-    language=[LaTeX]Tex,
-basicstyle=\ttfamily,
-keywordstyle=\color{textblue},
-commentstyle=\color{textred},    % Custom highlighting style
-stringstyle=\color{textgreen},
-frame=none,                      % Any extra options here
-columns=fullflexible,
-keepspaces=true,
-xleftmargin=\parindent,
-showstringspaces=false,
-}}
-\newcommand\mpstyle{\lstset{
-language=Metapost,
-basicstyle=\ttfamily,
-keywordstyle=\color{textblue},
-keywordstyle=[5]\color{squash},
-keywordstyle=[6]\color{carrot},
-commentstyle=\color{textred},    % Custom highlighting style
-stringstyle=\color{textgreen},
-frame=none,                      % Any extra options here
-columns=fullflexible,
-keepspaces=true,
-xleftmargin=\parindent,
-showstringspaces=false,
-morekeywords={cmykcolor},
-morestring=[s]{btex}{etex}
-}}
-\lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily}}{}
-\lstnewenvironment{texcode}[1][]{\texstyle\lstset{basicstyle=\small\ttfamily}}{}
-\lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
-\newcommand\mpexternal[2][]{{\mpstyle\lstinputlisting[#1]{#2}}}
-\newcommand\mpl[1]{{\mpstyle\lstinline!#1!}}
 \begin{document}
 \let\folio\thepage
 \renewcommand{\thepage}{\rlap{\hbox to 5in{\hss\small\folio}}}
