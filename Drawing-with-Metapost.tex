@@ -1,4 +1,6 @@
 \documentclass[a4paper,landscape]{article}
+\usepackage{luamplib}
+\mplibtextextlabel{enable}
 \usepackage{fontspec}
 \newfontfamily{\demo}{TeX Gyre Pagella}
 \DeclareTextFontCommand{\textdemo}{\demo}
@@ -908,7 +910,11 @@ Note that $\kw{mod}$ preserves any fractional part, so $355/113 \mathrel{\kw{mod
 \smallskip
 \parshape=1 0pt 3.4in
 This behaviour is usually what you want.
-\vadjust{\moveright 3.4in\vbox to 0pt{\includegraphics[scale=0.8]{clocks1}\vss}}
+\vadjust{\moveright 266pt \vbox to 0pt{\noindent  
+\begin{mplibcode}
+input clocks
+beginfig(1); draw clock(hour, minute) scaled 0.8; endfig;
+\end{mplibcode}\vss}}
 For example we can use it to turn the time of day into an appropriate rotation for
 the hands of a clock.%
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-196pt

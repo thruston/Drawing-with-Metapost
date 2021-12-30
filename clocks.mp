@@ -1,5 +1,3 @@
-prologues:=3;outputtemplate:="%j%c.mps";
-
 vardef clock_roman primary h = 
    if     h<5: ""  for i=1 upto h: & "I" endfor
    elseif h<9: "V" for i=6 upto h: & "I" endfor
@@ -47,18 +45,3 @@ vardef clock(expr hours, minutes) = image(
   fill fullcircle scaled 5;
   fill fullcircle scaled 3 withcolor .4 white;
 ) enddef;
-
-beginfig(1)
-draw clock(hour,minute) 
-endfig;
-beginfig(2);
-  roman_numerals_please := 1;
-  for i=0 upto 2:
-    for j=0 upto 3:
-       draw clock(floor(uniformdeviate 12), 5 * floor(uniformdeviate 12)) 
-            shifted (140i, 140j);
-    endfor 
-  endfor
-endfig;
-end
-
