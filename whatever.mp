@@ -4,7 +4,7 @@
 \usepackage{dwmpcode}
 \mplibtextextlabel{enable}
 \begin{document}
-$\vcenter{
+\hbox to 5.3in{$\vcenter{%
 \begin{mplibcode}
 beginfig(1);
     z1 = (10, 50); 
@@ -44,5 +44,5 @@ beginfig(1);
         withcolor 2/3 if @=0: red else: blue fi; 
     endfor
 endfig;
-\end{code}}$
+\end{code}}$\hss}
 \end{document}
