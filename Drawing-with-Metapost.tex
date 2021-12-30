@@ -2384,25 +2384,9 @@ triangle. The theorem shown here was first published in 2014.
 \newpage
 \subsection{Bisecting angles}\label{sec:bisect}
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
-\begin{code}
-vardef euclidean_bisector(expr a,b,c,r) =
-  save arc,p,q,e;
-  path arc; pair p,q,e;
-  arc = fullcircle scaled r shifted b;
-  p = (a--b) intersectionpoint arc;
-  q = (b--c) intersectionpoint arc ;
-  e = equilateral_triangle_point(p,q);
-  e
-enddef;
-\end{code}
-$$\includegraphics{bisection1}$$
-\begin{code}
-vardef vector_bisector(expr a,b,c,r) =
-   b + unitvector (a-b) scaled r
-     + unitvector (c-b) scaled r
-enddef;
-\end{code}
-$$\includegraphics{bisection2}$$
+$$\includegraphics{bisection-euclidean}$$
+\smallskip
+$$\includegraphics{bisection-vector}$$
 \vss}
 \noindent
 In an equilateral triangle the medians also bisect the angles at each vertex; this
@@ -2428,15 +2412,10 @@ triangle divides the opposite side in the ratio of the two other sides.
 So if sides $AB$ and $BC$ have lengths $p$ and $q$ then the bisector will
 be ${p\over p+q}={1\over1+q/p}$ from $A$ to $C$, and you can express this
 simply using \MP's mediation syntax:
-\begin{code}
-vardef interior_bisector(expr a,b,c) =
-  (1/(1+abs(c-b)/abs(a-b)))[a,c]
-enddef;
-\end{code}
-
 \vbox to 0pt{
-$$\includegraphics{bisection3}$$
+$$\includegraphics{bisection-interior}$$
 \vss}
+
 \newpage
 \subsection{Trisections and general sections of angles}
 
