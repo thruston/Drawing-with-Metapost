@@ -15,15 +15,26 @@ beginfig(1);
 
     picture unit;
     unit = image(
-        fill h0 withcolor Purples 8 2;
-        fill h1 withcolor Oranges 8 3;
-        fill h2 withcolor Blues 8 2;
-        for i=0 upto 2:
-            pair m; m = median(h[i]);
-            for j=0 upto 2:
-                draw point 2j+1/2 of h[i] -- m -- point 2j+3/2 of h[i];
+        % fill h0 withcolor Purples 8 3;
+        % fill h1 withcolor Oranges 8 3;
+        % fill h2 withcolor Blues 8 2;
+        numeric i; i = -1;
+        forsuffixes $ = Purples, Oranges, Blues:
+            pair m; m = median(h[incr i]);
+            for j=1 upto 3:
+                fill subpath (-2i+2j, 2-2i+2j) of h[i] -- m -- cycle withcolor $[8][1+j];
+            endfor
+            for j=1 upto 3:
+                draw m -- point 2j of h[i] withcolor $[8][1];
             endfor
         endfor
+        
+        % for i=0 upto 2:
+        %     pair m; m = median(h[i]);
+        %     for j=0 upto 2:
+        %         draw point 2j+1/2 of h[i] -- m -- point 2j+3/2 of h[i];
+        %     endfor
+        % endfor
     );
 
     pair u, v;
@@ -33,8 +44,8 @@ beginfig(1);
     numeric n;
     n = 4;
 
-    for i=-n upto n+1:
-        for j=-n upto n+1:
+    for i=-n upto n:
+        for j=-n upto n:
             draw unit shifted (i*u + j*v);
         endfor
     endfor

@@ -347,7 +347,7 @@ drawarrow subpath(1/2, length p + 1/2) of p;
 \end{code}
 
 \newpage
-\subsection{Regular polygons of a given radius}
+\subsection{Regular polygons of a given radius}\label{polygons}
 
 \noindent\mpic{-10pt}{closed-polygons}%
 \textsc{Regular polygons} with a given radius can be defined or drawn directly with a simple inline loop:
@@ -5486,6 +5486,101 @@ and Patterns}, Branko Grünbaum \& G.\@ C.\@ Shephard, Freeman, 1987}
 This section loosely follows that idea, and presents some ideas and general
 techniques for creating tilings and other patterns or textures.
 
+You can make an effective grid by drawing repeated lines and then clipping to the
+size you want:\mpic{-42pt}{tiling-simple}
+\begin{code}
+for i = -10 upto 10:
+    draw (left--right) scaled 200 shifted (0, 20i);
+    draw (down--up) scaled 200 shifted (20i, 0);
+endfor
+clip currentpicture to fullcircle scaled 200;
+\end{code}
+but this is a bit limited.  If you want to produce more interesting tilings, you
+need to define a unit shape or picture, and a pair of vectors to repeat it.
+\begin{code}
+path unit; pair u, v; color a, b; 
+unit = unitsquare scaled 24;
+u = point 1 of unit - point 0 of unit;
+v = point 3 of unit - point 0 of unit;
+a = 3/4[red, white]; b = 3/4[blue, white];
+for i=-5 upto 5:
+  for j=-5 upto 5:
+    fill unit shifted (i*u + j*v) 
+      withcolor if odd (i+j): a else: b fi;
+    draw unit shifted (i*u + j*v);
+  endfor
+endfor
+clip currentpicture to fullcircle scaled 200;
+\end{code}
+In tilings with more complex shapes you may find that using \mpl{fill} and
+\mpl{draw} in the same loop causes uneven lines because the fill overlaps part of
+the line.  In these cases it is a good idea to duplicate the loops; use the first
+set for filling, the second for drawing.  
+
+\newpage
+\subsection{Tiling with regular polygons}
+
+\textsc{After tiling with squares}, the two simplest tilings are with triangles and
+hexagons\mwpic{-24pt}{tiling-hex-trig}
+(using the regular polygons from §\ref{polygons}). The basic loop is the same as the
+previous page except
+that the vectors $u$ and $v$ are now at 60° to each other (as shown in blue and
+red in the examples to the right). All of these examples where drawn with the same 
+basic loop as before:
+\begin{code}
+for i = -n upto n:
+  for j = -n upto n:
+    draw P shifted (i * u + j * v);
+  endfor
+endfor;
+\end{code}
+In the first row, $P$ was set to a simple polygon path:
+\begin{code}
+triangle = for i=0 upto 2: (0, 16) rotated 120i -- endfor cycle;
+hexagon  = for i=0 upto 5: (0, 16) rotated  60i -- endfor cycle;
+\end{code}
+The vectors $u$ (in red) and $v$ (in blue) were defined as (for both tilings):
+\begin{code}
+u = point 0 of triangle - point 1 of triangle;
+v = u rotated -60;
+\end{code}
+To make the coloured versions, $P$ was defined as an appropriate \<picture>. 
+For the triangular tiling, it looked like this: $\vcenter{
+\begin{mplibcode}
+input colorbrewer-rgb
+path t, tt; 
+t = for i=0 upto 2: (0,8) rotated 120i --endfor cycle;
+tt = t reflectedabout(point 2 of t, point 0 of t);
+    beginfig(0);
+fill t withcolor Reds 8 2; fill tt withcolor Blues 8 2; draw t; draw tt; endfig;
+\end{mplibcode}}$ so that the tiling actually filled the plane. In the hexgonal
+tiling there are no gaps to fill, but in order to get a non-adjacent colouring, the
+unit picture was defined as three shifted copies of the hexagon each filled with a
+different color. The unit vectors were therefore scaled by $\sqrt3$ and rotated by
+30° (as shown).
+
+The bottom row the unit pictures were replaced with drawings that connect the centre
+of each shape to the midpoint of each side (in red), like this:
+$$
+\begin{mplibcode}
+path p[]; input colorbrewer-rgb
+p3 = for i=0 upto 2: (0, 14) rotated 120i -- endfor cycle;
+p6 = for i=0 upto 5: (0, 14) rotated  60i -- endfor cycle;
+picture P[];
+for i=3,6: 
+    P[i] = image(
+        for j=1 upto length p[i]:
+            draw origin -- point j+1/2 of p[i] withcolor Reds 7 6; 
+        endfor 
+        draw p[i]); 
+endfor
+    beginfig(0); draw P3; draw P3 reflectedabout(point 0 of p3, point 2 of p3);
+    draw P6 shifted (60, 3); endfig;
+\end{mplibcode}
+$$
+This has the effect of
+connecting the centres of adjacent shapes in the tiling, which reveals that each
+tiling is the dual of the other. 
 
 \newpage
 \subsection{Penrose tilings}
