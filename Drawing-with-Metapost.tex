@@ -515,7 +515,7 @@ There are similar examples in the \MP\ manual, but "buildcycle" can also
 be useful in more creative graphics.
 Here’s a second example that uses closed paths to give an illusion of depth to a simple
 graphic of the planet Saturn.
-\mpic{0pt}{saturn1}
+\mpic{0pt}{saturn}
 \marginpar{\hbox{}\vskip1.3in\raggedright\noindent\textbf{Notes}\begin{itemize}
     \item The first five paths are just circles and ellipses based on "fullcircle".
     \item The drawing is done inside an "image" simply so that the final result can
@@ -526,7 +526,7 @@ graphic of the planet Saturn.
         all run in the same direction.  Note that "subpath (8,4) of globe" runs
         clockwise (that is backwards) from point 8 to point 4.
 \end{itemize}}
-\mpexternal{saturn.mp}
+\mpexternal{saturn-code.mp}
 
 \newpage\subsection{The implementation of \texttt{buildcycle}}
 \textsc{The implementation} of "buildcycle" in plain \MP\ is interesting for a number of
