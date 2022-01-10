@@ -58,12 +58,12 @@ beginfig(1);
 
     picture dualt, dualh;
     dualt = image(
-        draw triangle; 
+        draw triangle withcolor 1/2; 
         for i=0 upto 2: draw origin -- point i+1/2 of triangle withcolor Reds 7 6; endfor
         draw currentpicture reflectedabout(point 0 of triangle, point 1 of triangle);
     ); 
     dualh = image(
-        draw hexagon; 
+        draw hexagon withcolor 1/2; 
         for i=0 upto 5: 
             draw origin -- point i+1/2 of hexagon withcolor Reds 7 6; 
         endfor
