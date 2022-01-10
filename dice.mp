@@ -1,6 +1,8 @@
-prologues := 3;
-outputtemplate := "%j%c.mps";
-
+\documentclass{standalone}
+\usepackage{luamplib}
+\begin{document}
+\begin{mplibcode}
+beginfig(1);
 vardef dice(expr pip_count, pip_color) = 
   save d,r,p, ul, ur, lr, ll; 
   r=1/8; path d; picture p;
@@ -35,5 +37,5 @@ for i=0 upto 4:
   draw dice(1+floor uniformdeviate 6, red) rotated (2 normaldeviate) shifted (36i,0);
 endfor
 endfig;
-end.
-
+\end{mplibcode}
+\end{document}
