@@ -602,7 +602,7 @@ be contained within the other.  This is explored in the next section.
 \subsection{Strange behaviour of \texttt{buildcycle} with two cyclic paths}
 
 The implementation of "buildcycle" in plain \MP\ can get confused if you use it with
-just two paths.  Consider the following example: \mpic{0pt}{overlaps2}
+just two paths.  Consider the following example: \mpic{0pt}{overlaps-missing-filler}
 \begin{code}
 beginfig(1);
   path A, B;
@@ -619,7 +619,7 @@ the cyclic path it returns consists of two identical (or very close) points and 
 so the fill has zero area.
 
 Now observe what happens when we rotate and reverse each of the paths in
-turn.\mpic{-24pt}{overlaps3}
+turn.\mpic{-24pt}{overlaps-default-fillers}
 Number 1 corresponds to the example shown above; point~0 of~$A$ is inside the closed
 path $B$.  In~2 we have rotated path $A$ by 180° so that the start of path~$A$ is no
 longer inside $B$, and now "buildcycle" works ‘properly’ --- but this is the only
@@ -633,8 +633,6 @@ You could use this behaviour as a feature if you need to treat $A$ and $B$ as se
 and you wanted to fill the intersection, union, or set differences, but if you just
 wanted the overlap, then you need to ensure that both paths are running in the same
 direction and that neither of them starts inside the other.
-\marginpar{\small \nb To rotate a circular path, use: \texttt{p rotatedabout(center p,
-180)}}
 
 \newpage
 \subsection{Find the overlap of two cyclic paths}
@@ -691,7 +689,7 @@ vardef overlap(expr a, b) =
 enddef;
 \end{smallcode}
 Using this "overlap" macro in place of "buildcycle" produces less surprising
-results.\mpic{-2in}{overlaps4}
+results.\mpic{-2in}{overlaps}
 
 \newpage
 \section{Numbers}
@@ -3644,24 +3642,24 @@ is compatible with ISO Latin~1.
 \subsubsection{Typographical minus signs with \texttt{infont}}
 
 If you are producing labels for a numeric reference scale, like the axis of a chart,
-it is convenient to be able to write a loop like this (assuming "u" is a horizontal
-unit):
+it is convenient to be able to write a loop like this:
 \begin{code}
-for x=1 upto 10: label(decimal x, (x*u,-5)); endfor
+for x=1 upto 3: label.bot(decimal x, (x*cm, 0)); endfor
 \end{code}
-to produce your labels, however if "x" is negative this does not come out so well,
-because the first character of the string produced by "decimal -1" is an ASCII 45,
+to produce your labels, however if $x$ is negative this does not come out so well,
+because the first character of the string produced by \mpl{decimal -1} is an
+\mpl{ASCII 45},
 which is the hyphen character.  What we need is the mathematical minus sign instead;
-this is what you get with "btex $-1$ etex" of course, but that's hard to put in a
-loop.  Instead you can do this:\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
-$$\includegraphics{minus1}$$
+this is what you get with \mpl{btex $-1$ etex} of course, but that's hard to put in a
+loop with traditional \MP.  Instead you can do this:\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
+$$\includegraphics{minus}$$
 \vss}}
 \begin{code}
 string minus_sign;
 minus_sign := char 143; % if you are using the texnansi encoding
 minus_sign := char 12;  % if you are using the 8r encoding
-for x=-10 upto 10:
-   label(if x<0: minus_sign & fi decimal abs(x), (x*u,-5));
+for x = -3 upto 3:
+   label.bot(if x<0: minus_sign & fi decimal abs(x), (x*cm, 0));
 endfor
 \end{code}
 Note that this does not work with the default encoding used in "cmr10" because

@@ -1,24 +1,8 @@
-prologues := 3;
-outputtemplate := "%j%c.mps";
-
-beginfig(1);
-
-u = 1cm;
-path xx, yy, f;
-xx = (left -- 5 right) scaled u;
-yy = (3 down -- 3 up) scaled u;
-
-drawarrow xx withcolor .7 white;
-drawarrow yy withcolor .7 white;
-
-f = ( (-3,mexp(-768)) for x= -23/8 step 1/8 until 13/8: -- (x,mexp(256x)) endfor) 
-    reflectedabout(origin, (1,1)) 
-    scaled u;
-
-draw f withcolor .67 blue;
-
-endfig;
-
+\documentclass[border=5mm]{standalone}
+\usepackage{luamplib}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
 % is point "p" inside cyclic path "ring" ?
 vardef inside(expr p, ring) = 
   save t, count, test_line;
@@ -85,57 +69,6 @@ vardef overlap(expr a, b) =
   fi
   enddef;
 
-beginfig(0)
-u:=10pt;
-vardef randomcirc(expr O, r, w) = 
-  save p,i; pair p; numeric i;
-    p=O+right*r;
-    p for i=1 upto 9: .. (p rotatedaround(O, 36i))+(uniformdeviate w, uniformdeviate w) endfor .. cycle
-enddef;
-path pat[];
-pair p[];
-p0:=(0,5u); p3:=(-8u,0);
-pat0:=randomcirc(p0,8u,.5u);
-pat3:=randomcirc(p3,5u,0.4u);
-%fill combine(pat0, pat3) withcolor .7[blue, white];
-fill overlap(pat0, pat3) withcolor .7[red, white];
-drawarrow front_half pat0; drawarrow front_half pat3;
-endfig;
-beginfig(2);
-  path A, B; 
-  A = fullcircle scaled 2.5cm; 
-  B = fullcircle scaled 1.8cm shifted (1cm,0);
-  fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;
-  label.rt(btex Where has the fill colour gone? etex, point 0 of B shifted (1cm,0));
-  label.ulft(btex $A$ etex, point 3 of A);
-  label.urt(btex $B$ etex, point 1 of B);
-endfig;
-
-beginfig(3);
-  path A, B; picture p[];
-  A = fullcircle scaled 2.5cm; 
-  B = fullcircle scaled 1.8cm shifted (1cm,0);
-  p1 = image(fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;);
-  A := A rotated 180;
-  p2 = image(fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;);
-  B := B rotatedabout(center B,180);
-  p3 = image(fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;);
-  A := A rotated 180;
-  p4 = image(fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;);
-  B := B rotatedabout(center B, 180);
-  A := reverse A;
-  p5 = image(fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;);
-  A := A rotated 180;
-  p6 = image(fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;);
-  B := B rotatedabout(center B,180);
-  p7 = image(fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;);
-  A := A rotated 180;
-  p8 = image(fill buildcycle(A,B) withcolor .8[blue,white]; drawarrow A; drawarrow B;);
-
-  for i=1 upto 4: draw p[i]   scaled .75 shifted (80i,  0); label(decimal i,     (5mm+80i,0)); endfor
-  for i=1 upto 4: draw p[i+4] scaled .75 shifted (80i,-68); label(decimal (4+i), (5mm+80i,-68)); endfor
-endfig;
-
 beginfig(4);
   path A, B; picture p[];
   A = fullcircle scaled 2.5cm; 
@@ -160,7 +93,5 @@ beginfig(4);
   for i=1 upto 4: draw p[i]   scaled .75 shifted (80i,  0); label(decimal i,     (5mm+80i,0)); endfor
   for i=1 upto 4: draw p[i+4] scaled .75 shifted (80i,-68); label(decimal (4+i), (5mm+80i,-68)); endfor
 endfig;
-
-
-end.
-
+\end{mplibcode}
+\end{document}
