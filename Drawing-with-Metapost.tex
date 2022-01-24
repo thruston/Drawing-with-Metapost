@@ -32,7 +32,9 @@
 \def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
 \def\mwpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=4in]{#2}}\vss}}}
 \def\mxpic#1#2#3{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=#2]{#3}}\vss}}}
-\def\nb{$\vcenter{\hbox{\includegraphics[height=6pt]{ding1}}}$\ }
+\def\nb{$\vcenter{\begin{mplibcode}beginfig(1);
+for t=0 upto 3: fill unitsquare scaled 4 shifted right shifted up rotated 45 rotated 90t;
+endfor currentpicture := currentpicture scaled 1/2; endfig;\end{mplibcode}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \def\to{\mathrel{\ldotp\ldotp}}
 \def\<#1>{\ensuremath{\langle\hbox{#1}\rangle}}
