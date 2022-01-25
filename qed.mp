@@ -1,60 +1,42 @@
-prologues := 3;
-outputtemplate := "%j%c.mps";
-
+\documentclass[border=5mm]{standalone}
+\usepackage{luamplib}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
 def perpendicular expr t of p = 
   direction t of p rotated 90 shifted point t of p
   enddef;
 
-beginfig(1);
+vardef block(expr r) = 
+    save u, n, s, theta, base, ray;
+    numeric u, n, s, theta;
+    u = 5mm;  n = 32; s = 8u; theta = -45;
 
-u = 5mm;  
-r = 0;
-n = 32;
-s = 8u;
-theta = -45;
+    path base, ray[];
+    base = origin for i=1 upto n-1: -- (i/n*s,r*normaldeviate) endfor 
+        -- (s,0) -- (s,-u) -- (0,-u) -- cycle;
 
-path base;
-base = origin for i=1 upto n-1: -- (i/n*s,r*normaldeviate) endfor -- (s,0) -- (s,-u) -- (0,-u) -- cycle;
-fill base withcolor .8[blue,white];
-draw base withcolor .67 blue;
+    image(
+        fill base withcolor .8[blue,white];
+        draw base withcolor .67 blue;
 
-path ray[];
-for i=2 upto 6:
-  ray[i] = (left--right) scaled 2/3 s rotated theta shifted (i*u,0);
-  b := ypart(ray[i] intersectiontimes base);
-  ray[i] := point 0 of ray[i] 
-         -- point b of base 
-         -- point 0 of ray[i] reflectedabout(point b of base, perpendicular b of base);
-  drawarrow ray[i];
-endfor   
+        for i=2 upto 6:
+          ray[i] = (left--right) scaled 2/3 s rotated theta shifted (i*u,0);
+          b := ypart(ray[i] intersectiontimes base);
+          ray[i] := point 0 of ray[i] 
+                 -- point b of base 
+                 -- point 0 of ray[i] reflectedabout(point b of base, perpendicular b of base);
+          drawarrow ray[i];
+        endfor   
 
-label("r=" & decimal r, center base);
+        label("r=" & decimal r, center base);
+    ) enddef;
 
-endfig;
-beginfig(2);
+beginfig(0);
 
-u := 5mm;  
-r := 0.42;
-n := 32;
-s := 8u;
-theta := -45;
+    draw block(0); draw block(0.42) shifted 180 right;
 
-path base;
-base = origin for i=1 upto n-1: -- (i/n*s,r*normaldeviate) endfor -- (s,0) -- (s,-u) -- (0,-u) -- cycle;
-fill base withcolor .8[blue,white];
-draw base withcolor .67 blue;
-
-path ray[];
-for i=2 upto 6:
-  ray[i] = (left--right) scaled 2/3 s rotated theta shifted (i*u,0);
-  b := ypart(ray[i] intersectiontimes base);
-  ray[i] := point 0 of ray[i] 
-         -- point b of base 
-         -- point 0 of ray[i] reflectedabout(point b of base, perpendicular b of base);
-  drawarrow ray[i];
-endfor   
-
-label("r=" & decimal r, center base);
 
 endfig;
-end.
+\end{mplibcode}
+\end{document}
