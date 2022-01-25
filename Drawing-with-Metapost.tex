@@ -2368,15 +2368,15 @@ enddef;
 \subsection{Bisecting lines and paths}
 
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
-        $$\includegraphics{mediation1}$$
-        \vskip 50pt
-        $$\includegraphics{mediation2}$$
-        \bigskip
-        $$\includegraphics[width=4in]{mediation3}$$
-        \centerline{Lee Sallows' theorem of median triangles}
+$$\includegraphics{mediation-pitfall}$$
+\vskip 50pt
+$$\includegraphics[width=4in]{mediation-shapes}$$
+\bigskip
+$$\includegraphics[width=4in]{mediation-sallows}$$
+\centerline{\textsl{Lee Sallows' theorem of median triangles}}
 \vss}
 \noindent
-The best way to bisect a line, depends on how you have defined it.
+The best way to bisect a line depends on how you have defined it.
 If you have two pairs $a$ and $b$, then the simplest way to find
 the pair that bisects them is to write "1/2[a,b]".  This mediation
 mechanism is entirely general, so you can write \mpl{1/3[a,b]}, "1/4[a,b]", and
@@ -3576,7 +3576,7 @@ UTF-8.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\parindent 0pt
   those that use three bytes.  The UTF-8 page on Wikipedia shows you how it
   works.  Essentially you look at the values of the next 2 or 3 characters and
   then pick the appropriate character in your encoding with "char".  But your
-  output is still, of course, limited to the 256 characters in your font.
+  output is still, of course, limited to the 256 characters in your encoded font.
 
 \item If you get tired of writing "decode", you could define a short cut with a
   shorter name.  You could even write it as a primary without parentheses like
@@ -3590,7 +3590,8 @@ label.rt(U"café à la möde", (x,y));
 \end{code}
 
 \item However, there's no point in making any of this too elaborate.  If you
-  really want proper Unicode support you should use \MP\ with Lua\TeX.
+    really want proper Unicode support you should use \MP\ with Lua\TeX. (See 
+    below in §\ref{sec:neo-labels}).
 \vss}}
 \begin{code}[xrightmargin=-10pt]
 vardef decode(expr given) =
@@ -3616,7 +3617,7 @@ Use it with "infont" like this: \verb|decode("café") infont "ptmr8r"| to produc
 normal "picture" that can be passed to "draw" or saved as
 usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt
 \noindent The fragment on the left produces:
-$$\includegraphics{utf82}$$
+$$\includegraphics{utf8}$$
 The \texttt{label} macro automatically calls \texttt{infont} with the current value
 of \texttt{defaultfont}; notice how it also adds some extra space.
 \vss}}
@@ -3668,15 +3669,15 @@ Once the encoding is fixed, the other two parts of a PostScript font are the fon
 metrics and the programs that draw the actual glyphs.  The font metrics define the
 width of each character and provide a kerning table to adjust the space between
 particular pairs.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
-$$\includegraphics{infont-example1} \qquad \includegraphics{infont-example2} $$
+$$\includegraphics{infont-example}$$
 }} This means that certain characters will overlap each other or stick out
 beyond the bounding box of the picture produced by "infont".  This is not normally a
 problem unless the picture happens to be at the edge of your figure.  In the first
-example observe how the first and last letters have been clipped; in the second a
+example observe how the last letter sticks out to the right; in the second a
 wider baseline has been added to prevent this.
 If you want this effect, but you
 don't want to see the baseline, then draw it
-using the colour "background".
+using the colour \mpl{background}.
 
 \subsubsection{But what about the \texttt{label} command?}
 
@@ -3691,7 +3692,7 @@ The "label" macro is defined (essentially) to do this:
                           scaled defaultscale fi shifted z
     enddef;
 \end{code}
-plus some slightly-too-clever code to align the label for you.
+plus some clever code to align the label for you.
 }}
 
 \newpage
@@ -3706,7 +3707,7 @@ of the baseline of the text or the x-height, provided you know how much your pic
 has been shifted.
 The easiest way to do this is to
 measure the picture \textit{before} you shift it.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
-$$\includegraphics{infont-example3}  $$
+$$\includegraphics[width=4in]{infont-annotated}$$
 \vss}}
 \begin{code}
     picture pp; pp = "proof" infont "pplri8r";
@@ -5293,7 +5294,7 @@ corresponding rolling wheel in blue.  The main idea in this diagram is to make t
 whole drawing depend on just a few parameters;  here there are two: the radius $r$
 and the amount of rotation $θ$.  If we make $r$ bigger, the drawing will be
 scaled up; if we change $θ$, the wheel will appear to have rolled along.
-\mpic{-66pt}{cycloids1}
+\mpic{-66pt}{cycloids}
 
 
 \marginpar{\par\kern1in
@@ -5322,20 +5323,20 @@ scaled up; if we change $θ$, the wheel will appear to have rolled along.
 
 \end{itemize}}
 
-\mpexternal[xleftmargin=0pt]{cycloids.mp}
+\mpexternal[xleftmargin=0pt]{cycloids-code.mp}
 
 \noindent
 You can generalize the picture to make cycloids where the point tracing the
 cycloid is not on the circumference doing the rolling; the classic example is the
 wheel of the train with a flange.  Here I have added $R$ to define the radius of an
 outer rim, while the wheel still rolls along a circle of radius $r$.
-\mpic{-40pt}{cycloids-extra1}
+\mpic{-40pt}{cycloids-extra}
 You might like to experiment with making $R<r$. Note also that variable names are
 case sensitive in \MP.
 
-\mpexternal[xleftmargin=0pt]{cycloids-extra.mp}
+\mpexternal[xleftmargin=0pt]{cycloids-extra-code.mp}
 
-\noindent The output\mpic{-122pt}{cycloids-extra1} is repeated at the right to save you flicking pages.
+\noindent The output\mpic{-122pt}{cycloids-extra} is repeated at the right to save you flicking pages.
 
 \newpage
 \subsection{The cycloid compared to other curves}
