@@ -1,5 +1,4 @@
 \documentclass[border=5mm]{standalone}
-\usepackage{luatex85}
 \usepackage{luamplib}
 \begin{document}
 \mplibtextextlabel{enable}
