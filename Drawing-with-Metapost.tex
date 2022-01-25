@@ -3650,7 +3650,7 @@ to produce your labels, however if $x$ is negative this does not come out so wel
 because the first character of the string produced by \mpl{decimal -1} is an
 \mpl{ASCII 45},
 which is the hyphen character.  What we need is the mathematical minus sign instead;
-this is what you get with \mpl{btex $-1$ etex} of course, but that's hard to put in a
+this is what you get with \mpl{btex $-1$ etex} of course, but that's harder to put in a
 loop with traditional \MP.  Instead you can do this:\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
 $$\includegraphics{minus}$$
 \vss}}
@@ -3978,7 +3978,7 @@ write EOF to ".mplabels";
 input ".mplabels";
 \end{code}
 $$
-\includegraphics{dynamic-labels2}
+\includegraphics{dynamic-labels}
 $$
 Note that you can't use "decimal" on a "pair" variable, but you can save the pair
 as a "z"-variable and then use the "x" and "y" syntax.  The scaling trick used here
