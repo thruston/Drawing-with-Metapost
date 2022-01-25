@@ -2257,15 +2257,15 @@ sometimes this can create unexpected loops.
 It's also possible to use a random
 walk approach so that each random step takes account of the previous one to avoid
 any big jumps.  Here's one way to do that.
+$$\includegraphics{torn-edge-straight}$$
 \begin{code}
-beginfig(1);
-  y=0;
-  path e;
-  e = (0,y) for i=1 upto 288: -- (i,walkr y) endfor ;
-  draw e;
-endfig;
+path t; numeric x, y; 
+x = 0; y=0; 
+t = (x, -20) -- (x, y) for i=1 upto 288: 
+        -- (incr x, walkr y) 
+    endfor -- (x, -20) -- cycle;
+draw t withcolor .67 blue;
 \end{code}
-$$\includegraphics{torn-edge1}$$
 The "walkr" routine works like the "incr" and "decr" commands; it updates the value of the
 argument.  The idea is that the further away from zero you are, the more likely is
 that the next value will take you back towards zero.
@@ -2284,7 +2284,6 @@ points along the path.
 
 \moveright5.5in\vbox to 0pt{\kern-4in
 \begin{code}
-beginfig(2);
 path c; c = fullcircle scaled 200;
 draw c withcolor .8 white;
 
@@ -2295,10 +2294,8 @@ path t; t = for i=0 upto n-1:
   --
 endfor cycle;
 draw t withcolor .67 red;
-endfig;
-end.
 \end{code}
-$$\includegraphics{torn-edge2}$$
+$$\includegraphics{torn-edge-circle}$$
 \vss}
 
 
