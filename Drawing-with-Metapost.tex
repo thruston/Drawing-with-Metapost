@@ -376,7 +376,7 @@ vardef polygon(expr n, r) =
 enddef;
 \end{code}
 $$\includegraphics[width=0.66\textwidth]{closed-polygon-tops.pdf}$$
-Note also that some extra care is required to find the centres of these shapes. The
+\hey Note also that some extra care is required to find the centres of these shapes. The
 \mpl{center} macro defined in "plain.mp" gives you the centre of the bounding box,
 but this is not the same as the centre of the polygon when the number of sides is
 odd.  What you need instead is the geometric median:
@@ -905,6 +905,7 @@ number system; if you want higher precision definitions, then you can update the
 including something like this at the top of your program: $\longrightarrow$
 \vadjust{\moveright 5.5in \vbox to 0pt{\kern-24pt
 \begin{code}
+% exact values to re-define the plain.mp units
 numeric bp, in, mm, cm, pt, pc, dd, cc;
 72 = 72 bp = 1 in;
 800 = 803 pt = 803/12 pc;
@@ -1767,11 +1768,12 @@ endfig;
         If you want a random whole number, use `$\kw{floor}$' on the result.
         So to simulate six-sided dice, you can use `$1+\kw{floor}\,\kw{uniformdeviate}6$'.
 
-        If you use the new number systems, you should beware that the numbers
-        generated will all be multiples of $1\over4096$, so $\kw{uniformdeviate}
-        8092$ (for example) will generate even integers instead of random real
-        numbers.  This `feature' is an accident of the way that the original rather
-        complicated arithmetic routines have been adapted.
+        If you use the new number systems, and you find that the numbers generated
+        are all multiples of $1\over4096$, so $\kw{uniformdeviate} 8092$ (for
+        example) generates even integers instead of random real numbers, then you
+        should update your \TeX\ distribution.  This `feature' was an accident of
+        the original way that the scaled arithmetic routines were
+        adapted.
 
     \item `\kw{normaldeviate}' generates a random real number that follows the
         familiar normal distribution. The algorithm used is discussed in \textsl{The
@@ -1779,8 +1781,8 @@ endfig;
         If you generate enough samples, the mean should
         be approximately zero, and the variance about 1.
         The chance of getting a number between $-1$ and 1 is
-        about 68\%; between $-2$ and 2, about 95\%.
-        $$\includegraphics{gauss3}$$
+        about 68\%; between $-2$ and 2, about 96\%.
+        $$\includegraphics[width=4.6in]{gaussian}$$
         To relocate the mean, just add a constant.  To rescale the distribution,
         multiply by the desired standard deviation (the square root of the
         desired variance).
