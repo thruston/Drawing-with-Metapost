@@ -19,17 +19,24 @@ vardef gauss_curve(expr mu, sigma, a, b, s) =
   (a, gauss(mu, sigma, a)) for x = a + s step s until b: .. (x, gauss(mu, sigma, x)) endfor
   enddef;
 
+vardef percent(expr n, N) = 
+    save p, s; 
+    numeric p; 
+    string s;
+    p = 1 - n / N / N;
+    s = decimal floor(1000 p);
+    substring (0, length(s) - 1) of s & "." & substring (length(s)-1, infinity) of s & "\thinspace\%"
+enddef;
+
 path Z; Z = gauss_curve(0, 1, -4, 4, 1/8) xscaled 50 yscaled 220;
 path A, B;
 A = subpath (16,48) of Z -- (xpart point 48 of Z, 0) -- (xpart point 16 of Z, 0) -- cycle;
 B = subpath (24,40) of Z -- (xpart point 40 of Z, 0) -- (xpart point 24 of Z, 0) -- cycle;
 beginfig(1);
-    fill A withcolor Reds 8 1;
-    fill B withcolor Reds 8 2;
     draw Z withcolor Reds 8 5;
-    numeric stack_height[];
+    numeric N, stack_height[]; N = 100;
     numeric plump, fat, gross; gross = plump = fat = 0;
-    for i=1 upto 100: for j = 1 upto 100:
+    for i=1 upto N: for j = 1 upto N:
         numeric r, k;
         r = 50 normaldeviate;
         k = round(r);
@@ -39,15 +46,17 @@ beginfig(1);
             stack_height[k] := 1;
         fi
         pair z; z = (r, uniformdeviate 1/4 + stack_height[k]);
-        draw z withpen pencircle scaled 1/2;
-        undraw z withpen pencircle scaled 3/8;
-        if abs(r) > 50: plump := plump + 1; fi
-        if abs(r) > 100: fat := fat + 1; fi
-        if abs(r) > 150: gross := gross + 1; fi
+        color shade; shade = Greens 8 8;
+        if abs(r) >  50: plump := plump + 1; shade := Blues 8 8; fi
+        if abs(r) > 100: fat   := fat   + 1; shade := Oranges 8 6 ; fi
+        if abs(r) > 150: gross := gross + 1; shade := Reds 8 8; fi
+        draw z withpen pencircle scaled 1/2 withcolor shade;
+        undraw z withpen pencircle scaled 1/4;
     endfor endfor
-    label("$abs(r) < 1$: " & decimal (round(100 - plump / 100)) & "\%", (-150, 80));
-    label("$abs(r) < 2$: " & decimal (round(100 - fat / 100)) & "\%", (-150, 68));
-    label("$abs(r) < 3$: " & decimal (100 - gross / 100) & "\%", (-150, 56));
+    label("\textsc{Observed values}", (-180, 96));
+    label("$abs(r) \le 1$: " & percent(plump, N),  (-180, 80));
+    label("$abs(r) \le 2$: " & percent(fat, N), (-180, 68));
+    label("$abs(r) \le 3$: " & percent(gross, N), (-180, 56));
     draw (left--right) scaled 220;
     for i = -4 upto 4:
         draw (50i, 0) -- (50i, -5);
