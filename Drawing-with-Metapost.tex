@@ -2072,8 +2072,9 @@ def angle_label_pos(expr p, i, s) =
 enddef;
 
 beginfig(2);
+  defaultfont := "eurm10";
   drawoptions(withcolor sepia);
-  draw_out(t,6);
+  draw_out(t,6); % the freehand triangle defined above
   drawoptions(withcolor .78 blue);
   label.lrt ("a", point 1/2 of t);
   label.urt ("b", point 3/2 of t);
@@ -2092,9 +2093,9 @@ $$\includegraphics{freehand2}$$
 \vfill
 \nb\label{eulertable}
 The AMS Euler font available to \MP\ as "eurm10" is encoded as a subset of the \TeX\
-math italic layout --- essentially it has all the Greek letters but none of the
-arrows.
-$$\includegraphics{freehand3}$$
+math italic layout --- essentially it has (nearly) all the Greek letters but none of the
+arrows, nor the music notation.
+$$\includegraphics{euler-sampler}$$
 
 \newpage\subsection{Increasingly random shapes of the same size}
 
