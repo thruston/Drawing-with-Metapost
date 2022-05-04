@@ -692,6 +692,110 @@ Using this "overlap" macro in place of "buildcycle" produces less surprising
 results.\mpic{-2in}{overlaps}
 
 \newpage
+\subsection{Fitting dashed lines to a cyclic path}
+
+\textsc{This one is} perhaps for perfectionists, but also shows how simple it
+is to make useful adjustments in \MP.  As you will know, plain \MP\ provides two 
+built-in dash patterns, so that you can draw a path \mpl{dashed withdots} or
+\mpl{dashed evenly}.
+\vadjust{%
+\moveright384pt\vbox to 0pt{\vskip-46pt\hsize 4.2in\small
+$$
+\begin{mplibcode}
+vardef exactly(expr a) = 
+    save m; numeric m; 2m = (a-6) / round(a/6);
+    dashpattern(on m off m)
+enddef;
+vardef gooddots(expr a) = 
+    save m; numeric m; 2m = (a-5) / round(a/5);
+    dashpattern(off m on 0 off m)
+enddef;
+    beginfig(1);
+    for i=2 upto 8:
+        path c[];
+        c1 = fullcircle scaled 16i shifted 80 left;
+        c2 = fullcircle scaled 16i shifted 80 right;
+        draw c1 dashed evenly withcolor 2/3 blue;
+        draw c2 dashed exactly(arclength c2) withcolor 1/2 red;
+        %draw c1 shifted 160 down dashed withdots withcolor 2/3 blue;
+        %draw c2 shifted 160 down dashed gooddots(arclength c2) withcolor 1/2 red;
+    endfor
+    endfig;
+\end{mplibcode}
+$$
+
+\noindent
+The blue circles on the left were drawn with \mpl{dashed evenly}, and the uneven
+gaps are noticeable at the “three o’clock” positions where the paths begin and end.
+As you can see the default dash spacing looks fine at some sizes but bad on others.  On the right you can see the
+same circular paths coloured red, and drawn with \mpl{dashed exactly(arclength c,
+6)}.
+
+$$
+\begin{mplibcode}
+vardef exactly(expr a, u) = 
+    save m; numeric m; 2m = a / round(a/u);
+    dashpattern(on m off m)
+enddef;
+    beginfig(1);
+    for i=2 upto 8:
+        path c[];
+        c1 = unitsquare shifted -(1/2, 1/2) scaled 16i shifted 80 left;
+        c2 = unitsquare shifted -(1/2, 1/2) scaled 16i shifted 80 right;
+        draw c1 dashed evenly withcolor 2/3 blue;
+        draw c2 dashed (exactly(arclength c2, 8) shifted 6 right) withcolor 1/2 red;
+    endfor
+    endfig;
+\end{mplibcode}
+$$
+Other paths may require a bit more ingenuity and thought.  Because the square paths
+have four equal sides, they work better with a target dash length that is a multiple
+of 4. Here the blue squares on the left use the default \mpl{dashed evenly}, and the
+red on the right, \mpl{exactly(arclength c2, 8)} \mpl{shifted 6 right}.  The shift makes
+the corners look better.
+
+
+\vss}}
+
+The keyword \mpl{dashed} gives you access to the PostScript "setdash" command, its
+argument is a special \<picture> defined with the \MP\ \mpl{dashpattern} function.
+If you look in "plain.mp" you will find these declarations:
+\begin{code}
+picture evenly,withdots;
+evenly = dashpattern(on 3 off 3); % dashed evenly
+withdots = dashpattern(off 2.5 on 0 off 2.5); % dashed withdots
+\end{code}
+The detailed syntax is explained in §9.4 of the \MP\ manual, but essentially
+\mpl{withdots} creates a unit 5 points long with a dot in the middle, and
+\mpl{evenly} creates a unit 6 points long with the dashes 3pt long (plus the round
+bit at the end of each dash, unless you have changed \mpl{linecap}) and gaps 3pt
+long (minus any round bits).  
+
+You probably also know that you can adjust these sizes by applying a suitable
+scaling, so that \mpl{dashed withdots scaled 1/2} gives a rather denser dotted line,
+and \mpl{dashed evenly scaled 4} will give you very long dashes.  But you may also
+notice that the dash patterns (particularly the longer ones) do not always fit your
+paths exactly -- this is especially noticeable with cyclic paths, where you may end
+up with one unsightly long dash or a very short gap a the point where the path
+begins and ends.
+
+Fortunately there is a very simple solution: adjust the length of the dash pattern
+so that an integer number of dash units exactly fit your path.
+\begin{code}
+vardef exactly(expr a, u) = 
+    save m; numeric m; 2m = (a-u) / round(a/u);
+    dashpattern(on m off m)
+enddef;
+\end{code}
+Here "a" is supposed to be the \mpl{arclength} of your path, and "u" the desired 
+unit size, so you can use it like this:
+\begin{code}
+path c; c = fullcircle scaled 200;
+draw c dashed exactly(arclength c, 6);
+\end{code}
+to get a close approximation to \mpl{dashed evenly} that exactly fits the path.
+
+\newpage
 \section{Numbers}
 
 This section discusses plain \MP 's scalar numeric variables
@@ -2687,11 +2791,11 @@ Note also that for the same reason, while $F$ will lie on the \textit{line} thro
 $A$ and $B$, it might not lie on the \textit{segment} from $A$ to $B$.
 But also note that you \textit{cannot} write the second equation as
 \begin{code}
-    E-G * whatever = (C-D); % <--- gives an error
+    E-F * whatever = (C-D); % <--- gives an error
 \end{code}
 because you can only apply \mpl{whatever} to known quantities.
 
-\smallskip\noindent\llap{\nb}%
+\bigskip\noindent\llap{\nb}%
 To define a line perpendicular to $C\to D$ rather than parallel, then you can write:
 \begin{code}
     G = whatever[A, B];
