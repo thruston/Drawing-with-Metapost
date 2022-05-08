@@ -13,9 +13,9 @@ beginfig(1);
     draw ray rotated 2/3 theta withcolor 2/3 red;
     draw ray rotated theta;
     dotlabel.llft("$0$", origin);
-    label("$\theta/3$", 72 right rotated 1/6 theta);
-    label("$\theta/3$", 72 right rotated 3/6 theta);
-    label("$\theta/3$", 72 right rotated 5/6 theta);
+    label("$\theta/3$", 72 right rotated 1/6 theta) withcolor 2/3 blue;
+    label("$\theta/3$", 72 right rotated 3/6 theta) withcolor 2/3 blue;
+    label("$\theta/3$", 72 right rotated 5/6 theta) withcolor 2/3 blue;
 endfig;
 \end{mplibcode}
 \end{document}

@@ -3547,7 +3547,6 @@ check whether $x=0$; if this is an issue you can say something like
 `$\kw{if}\,x=0\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$' at the appropriate
 point.
 
-
 \newpage
 \section{Traditional labels and annotations}\label{sec:trad-labels}
 
@@ -5395,9 +5394,183 @@ and it affects how much a mitered join is allowed to stick out at each corner.  
 beveled mode.
 
 \newpage
-\section{Cycloid and other spiral graphs}
+\section{Graphing functions}
 
-This section examines cycloids; the curves made by points on the circumference of a
+\textsc{A selection} of mathematical graphs is presented in this section, mainly
+taken from real examples collected over several years.  As ever in this document,
+the focus is on plain \MP; the plain format provides no built-in facilities for
+graphs so you have to do everything from scratch; but on the other hand there are no
+new macros or commands to learn, you get full control of what goes on the page, and
+you will not spend hours scratching your head wondering how to adjust the axis
+labels.
+
+\subsection{Making axes}
+
+You can start by drawing a simple set of axes.\mpic{-124pt}{plain-axes}
+\begin{smallcode}
+path xx, yy;
+xx = (left -- right) scaled 130;
+yy = (down -- up) scaled 80;
+drawarrow xx; label.rt("$x$", point 1 of xx);
+drawarrow yy; label.top("$y$", point 1 of yy);
+\end{smallcode}
+Here the axes are scaled arbitrarily to 130\,pt and 80\,pt, but you will probably
+find it useful to set consistent units, and express sizes in terms of them.  Purely
+from habit, I use $u$ for the horizontal unit and $v$ for the vertical unit.  This
+makes it more convenient when you want to add a number
+scale.\mpic{0pt}{numbered-axes}
+
+\vskip -12pt
+\vbox to 0pt{
+\begin{smallcode} 
+numeric u, v; u = 40; v = 29;
+path xx, yy;
+xx = (3/2 left -- 5 right) scaled u;
+yy = (3/2 down -- 4 up) scaled v;
+for x=-1 upto 4:
+    if x <> 0:
+        draw (down--up) shifted (x * u, 0);
+        label("$" & decimal x & "$", (x * u, -8));
+    fi
+endfor
+for y=-1 upto 3:
+    if y <> 0:
+        draw (left--right) shifted (0, y * v);
+        label("$" & decimal y & "$", (-10, y * v));
+    fi
+endfor
+drawarrow xx; label.rt("$x$", point 1 of xx);
+drawarrow yy; label.top("$y$", point 1 of yy);
+\end{smallcode}\vss}
+
+\newpage
+\subsection{Drawing linear functions}
+
+\textsc{For simple} linear graphs, you just need to define two points and draw a 
+line between them; it is tempting to try to make some generalized macro to do this,
+but it is hard to make something completely general, so for most graphs it is easier
+just to specify two points and use \mpl{draw}; often it is handy to making your line
+longer than you need, then trim it using \mpl{cutbefore} and/or \mpl{cutafter} so
+that it fits neatly.
+\vadjust{\moveright 384pt\vbox to 0pt{\hsize 4in\vskip -100pt\begin{smallcode}
+numeric u, m, m', b, b';
+u = 1.44cm;
+b = 3.6u;  b' = b + 1/2 u;
+m = -1;  m' = 3/4 m; 
+
+path xx, yy;
+xx = (left -- 5 right) scaled u;
+yy = xx rotated 90;
+
+numeric minx, maxx; path ff, gg;
+minx = xpart point 1/16 of xx;
+maxx = xpart point 15/16 of xx;
+ff = (minx, minx * m + b) -- (maxx, maxx * m + b); 
+gg = (minx, minx * m' + b') -- (maxx, maxx * m' + b'); 
+
+z0 = point 0.4 of ff;
+z1 = point 0.54 of ff;
+z1 0 = whatever [point 0 of gg, point 1 of gg]; x1 0 = x0;
+z1 1 = whatever [point 0 of gg, point 1 of gg]; x1 1 = x1;
+
+forsuffixes @=0, 1:
+    draw (x@, 0) -- z@ -- (0, y@) dashed evenly scaled 3/4;
+    draw z@ -- z1 @ -- (0, y1 @) dashed withdots scaled 1/2;
+    label.bot("$x_{" & decimal @ & "}$", (x@, 0));
+    label.lft("$y_{" & decimal @ & "}$", (0, y@));
+    label.lft("$y'_{" & decimal @ & "}$", (0, y1 @));
+endfor
+draw ff withcolor 2/3 red;
+draw gg withcolor 3/4 blue;
+drawarrow xx; drawarrow yy;
+
+label.rt("$x$", point 1 of xx);
+label.top("$y$", point 1 of yy);
+
+dotlabel.urt("$b$", (0, b));
+dotlabel.urt("$b'$", (0, b'));
+
+draw thelabel("slope: $m=" & decimal m & "$", 7 up)
+    rotated angle (1, m) shifted point 2/3 of ff;
+draw thelabel("slope: $m'=" & decimal m' & "$", 7 up)
+    rotated angle (1, m') shifted point 2/3 of gg;
+\end{smallcode}\vss}}
+$$\includegraphics[width=0.84\textwidth]{linear-graph.pdf}$$
+But in this example it was easier to calculate them using $y=mx+b$.
+Note also that spaces are allowed in suffixes, which makes the loop a bit simpler.
+
+\newpage
+In this second example of a linear function, the emphasis of the diagram was on
+the angles at the $x$-axis made by the two lines, so the lines were defined using
+\mpl{rotated}, \mpl{shifted}, and \mpl{cutbefore} instead.
+\vadjust{\moveright 384pt\vbox to 0pt{\hsize 4in\vskip -24pt\begin{smallcode}
+path ell, tee, arc;
+ell = (left--right) scaled 10u rotated theta shifted P cutbefore xx;
+tee = (left--right) scaled 10u rotated psi   shifted P cutbefore xx;
+arc = subpath (1.6, 3.2) of halfcircle rotated -180 shifted 1/2 up 
+      scaled 10u shifted P rotatedabout(P, psi);
+% the rest of the points then follow...
+Q = ell intersectionpoint subpath (1.5, 3) of arc;
+H = P + whatever * dir psi;  
+xpart H = xpart Q = xpart M;  ypart M = ypart N = 0;
+xpart N = xpart P;
+L = point 0 of ell;
+T = point 0 of tee;
+% now we can get with the drawing
+draw arc dashed withdots scaled 1/4 withcolor 1/2 red;
+draw P--N dashed withdots scaled 1/2;
+draw Q--M dashed withdots scaled 1/2;
+drawarrow xx; label.rt("$x$", point 1 of xx);
+drawarrow yy; label.top("$y$", point 1 of yy);
+drawoptions(withcolor 2/3 blue);
+draw fullcircle scaled 32 shifted T cutafter tee;
+draw fullcircle scaled 28 shifted L cutafter ell;
+label("$\psi$", 24 right rotated 1/2 psi shifted T);
+label("$\theta$", 20 right rotated 1/2 theta shifted L);
+drawoptions();
+% trim the function lines neatly
+path boundary;
+z1 = point .95 of xx;
+z2 = point .95 of yy;
+boundary = z1--(x1,y2)--z2;
+draw ell cutafter boundary;
+draw tee cutafter boundary;
+% and finally label the points.
+label.bot("$T$", T);
+label.bot("$L$", L);
+label.bot("$N$", N);
+label.bot("$M$", M);
+dotlabel.ulft("$P$", P);
+dotlabel.lrt("$Q$", Q);
+dotlabel.lrt("$H$", H);
+\end{smallcode}\vss}}
+$$\includegraphics[width=\textwidth]{angles-lines.pdf}$$
+The lines are both trimmed to a convenient path (\id{boundary}) when they are
+drawn.\vadjust{\moveright300pt\vbox to 0pt{\vskip 74pt\begin{mplibcode}beginfig(0);drawarrow
+origin {right} .. {dir 70} 42 dir 60;endfig;\end{mplibcode}\vss}}:
+
+\begin{smallcode}
+numeric u; u = 1cm;
+
+path xx, yy;
+xx = (2 left -- 10 right) scaled u;
+yy = (down -- 7 up) scaled u;
+
+numeric theta, psi;   psi = 28; theta = 50;
+
+pair P, Q, H, N, M, T, L;
+P = (4u, 3u);
+\end{smallcode}
+
+
+\newpage
+\subsection{Making curves for functions}
+
+
+\newpage
+\subsection{Cycloid and other spiral graphs}
+
+\textsc{This section} examines cycloids; the curves made by points on the circumference of a
 rolling wheel.  In the first diagram the cycloid is drawn in red and the
 corresponding rolling wheel in blue.  The main idea in this diagram is to make the
 whole drawing depend on just a few parameters;  here there are two: the radius $r$
@@ -5720,8 +5893,8 @@ unit[k] = image(
   endfor);
 \end{code}
 The $\id{median}()$ routine is from §\ref{polygons-given-side} and the colours are from 
-§\ref{colorbrewer}.  This tiling is generated using the same loop with the
-triangular grid vectors.
+§\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
+from the previous page.
 
 \newpage
 \subsection{Separating filling and drawing}
@@ -5867,6 +6040,9 @@ Notice that to make the dissection work, it is important to pass the three
 
 \newpage
 \section{A tour of the plain format}
+
+
+
 \newpage
 \tableofcontents
 
@@ -5886,15 +6062,11 @@ Notice that to make the dissection work, it is important to pass the three
 
 - decorating lines
 
-
 - the eye
 
-- physics diagrams, light rays, pendulum, indicating movement and vibration
-
+- physics diagrams, pendulum, indicating movement and vibration
 
 - examining a glyph
-
-- tessellations and tiling (reference title page)
 
 - all sorts of arrow, arrows between arrows, arrows next to a path (handles)
 
@@ -5903,7 +6075,9 @@ Notice that to make the dissection work, it is important to pass the three
 - recursive drawings, trees
 
 - four box model charts - Tufte charts - Venn diagrams
+
 - graphs, axes, grids, number labels, jitter, sketch graphs
+
 - parametric equations, folium of Descartes
 
 \end{document}
