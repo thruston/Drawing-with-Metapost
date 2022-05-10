@@ -5566,6 +5566,48 @@ P = (4u, 3u);
 \newpage
 \subsection{Making curves for functions}
 
+\textsc{To plot a function} you can construct a suitable path using an in-line
+\kw{for}
+loop like this:
+\begin{code}
+vardef f(expr x) = x ** 2 enddef;
+path ff;
+ff = (for x = minx step s until maxx - s: 
+        (x, f(x)) .. 
+    endfor (maxx, f(maxx))) xscaled u yscaled v; 
+\end{code}
+provided you have first defined variables \id{minx} and \id{maxx} to represent the
+domain of $x$, and worked out appropriate values for horizontal and vertical
+units, $u$, and $v$ so that the range of $f(x)$ fits neatly on your graph.  
+
+The loop 
+above also uses a variable $s$ to control the number of points used to define the
+path.\mwpic{-180pt}{curves}
+The figures on the right show that over the domain $-3$ to $3$ a step of $\frac12$
+gives enough points for \MP's Bezier curve fitting routines to draw the functions
+$x^2$ and $x^3$ accurately, but that you need a step size of $\frac18$, and hence
+four times as many points,
+for $x^6$ and $x^7$.  On modern machines it does not really hurt to calculate
+dozens of points, but a step size that generates 1000s of points will be slow to
+compile.
+
+There are two other techniques to improve the shape of the curve produced by these loops: you can increase
+the tension between each point by using \mpl{...} or \mpl{--} instead of \mpl{..} in
+the loop; and
+if you know how to differentiate your function, you can add a direction at each
+step:
+\begin{code}
+vardef f(expr x) = x ** 2 enddef;
+vardef fp(expr x) = 2x enddef;
+path ff;
+ff = (for x = minx step s until maxx - s: 
+        (x, f(x)){1, fp(x)} .. 
+    endfor (maxx, f(maxx))) xscaled u yscaled v; 
+\end{code}
+
+\smallskip\noindent
+However in general it is simpler just to increase the number of samples by making a
+smaller step size.
 
 \newpage
 \subsection{Cycloid and other spiral graphs}
