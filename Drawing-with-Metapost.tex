@@ -5546,8 +5546,10 @@ dotlabel.lrt("$H$", H);
 \end{smallcode}\vss}}
 $$\includegraphics[width=\textwidth]{angles-lines.pdf}$$
 The lines are both trimmed to a convenient path (\id{boundary}) when they are
-drawn.\vadjust{\moveright300pt\vbox to 0pt{\vskip 74pt\begin{mplibcode}beginfig(0);drawarrow
-origin {right} .. {dir 70} 42 dir 60;endfig;\end{mplibcode}\vss}}:
+drawn.\vadjust{\moveright296pt\vbox to 0pt{\vskip 80pt\begin{mplibcode}beginfig(0);drawarrow
+origin {right} .. {dir 70} 42 dir 60;
+    label.lft("\small \dots continues", origin);
+endfig;\end{mplibcode}\vss}}
 
 \begin{smallcode}
 numeric u; u = 1cm;
@@ -5564,7 +5566,7 @@ P = (4u, 3u);
 
 
 \newpage
-\subsection{Making curves for functions}
+\subsection{Making curves for functions with a loop}
 
 \textsc{To plot a function} you can construct a suitable path using an in-line
 \kw{for}
@@ -5591,23 +5593,138 @@ for $x^6$ and $x^7$.  On modern machines it does not really hurt to calculate
 dozens of points, but a step size that generates 1000s of points will be slow to
 compile.
 
+\bigskip\noindent
 There are two other techniques to improve the shape of the curve produced by these loops: you can increase
 the tension between each point by using \mpl{...} or \mpl{--} instead of \mpl{..} in
 the loop; and
 if you know how to differentiate your function, you can add a direction at each
-step:
+step using the $\{\<pair>\}$ syntax:
 \begin{code}
 vardef f(expr x) = x ** 2 enddef;
-vardef fp(expr x) = 2x enddef;
+vardef fp(expr x) = 2x enddef; % NB "fp" because "f'" is illegal
 path ff;
 ff = (for x = minx step s until maxx - s: 
         (x, f(x)){1, fp(x)} .. 
     endfor (maxx, f(maxx))) xscaled u yscaled v; 
 \end{code}
 
-\smallskip\noindent
-However in general it is simpler just to increase the number of samples by making a
+\vfill
+\noindent
+\hey However in general it is simpler just to increase the number of samples by making a
 smaller step size.
+
+\newpage
+\subsection{Making curves for functions from path pieces}
+
+\textsc{In some situations}, you might find it easier to stich together various 
+\<path> pieces to make your curve.  This can be especially elegant if there is a
+symmetry in the path.  For example:\mwpic{-48pt}{curves-reflection}
+\begin{code}
+path ff, negative_ff;
+
+ff = (1,1) for x = 3/2 step 1/2 until 6: ... (x, 1/x) endfor;
+ff := reverse ff reflectedabout(origin, dir 45) & ff;
+ff := ff scaled 24;
+negative_ff = ff reflectedabout(origin, dir -45);
+
+draw ff withcolor 2/3 red;
+draw negative_ff withcolor 2/3 red;
+\end{code}
+
+\smallskip\centerline{\small (Omitting code for the axes, the grid, and the dots at
+each \mpl{point} of the paths).}
+
+\smallskip
+\noindent
+\begin{itemize}
+    \item Notice that you can update the path using the assignment operator
+        “\mpl{:=}”.
+    \item You need to \mpl{reverse} the reflected portion so that the two ends coincide.  
+    \item The two path segments are spliced together with \mpl{&}.  You could use
+        a path join like \mpl{..} instead, but then the joined path would have an extra
+        \mpl{point} at \mpl{(1,1)}.
+    \item Notice also how the vertical part has the same equal spacing of points as
+        the more horizontal part.
+\end{itemize}
+
+Reflection of a function in the line at 45° gives the inverse of the function, which
+is especially useful for $y=1/x$, but it applies to functions generally.  So if you want to
+plot $y=\sqrt x$ it may be easier to define a path for $y=x^2$ and then reflect it.
+This is particularly useful if you want to plot, say, $y=\sqrt[3]x$, over a domain
+that includes negative numbers, because \MP\ will not calculate reciprocal powers of
+negative numbers.\mwpic{-60pt}{curves-cuberoot}
+The curve in this chart was created by reflecting the line $y=x^3$.
+
+\newpage
+\subsection{Functions using trigonometric functions}
+
+\textsc{As noted} in §\ref{trig}, \MP’s built-in trigonometric functions work in
+degrees, this example shows how you might use them in a graph.%
+\vadjust{\moveright5in\vbox to 0pt{\vskip-24pt\begin{code}
+    numeric u, pi; u = 50; pi = 3.141592653589793;
+
+    path xx, yy;
+    xx = (3.5 left -- 3.6 right) scaled u;
+    yy = (1.1 down -- 1.2 up) scaled u;
+    
+    path ss;
+    ss = origin for t=1 upto 360: -- (t, sind(t)) endfor;
+    ss := ss shifted 360 left & ss;
+    ss := ss xscaled (pi/180) scaled u;
+    
+    draw ss cutbefore yy shifted point 0 of xx
+            cutafter  yy shifted point 1 of xx
+            withcolor 3/4 blue;
+    draw ss shifted (-1/2 pi * u ,0)  
+            cutbefore yy shifted point 0 of xx
+            cutafter  yy shifted point 1 of xx
+            withcolor 2/3 red;
+
+    drawoptions(dashed withdots scaled 1/4);
+    draw ((1/4 pi, 0) .. (1/4 pi, sind(45))) scaled u;
+    draw ((1/2 pi, 0) .. (1/2 pi, sind(90))) scaled u;
+    draw ((3/4 pi, 0) .. (3/4 pi, sind(135))) scaled u;
+    drawoptions();
+
+    drawarrow xx; label.rt("$t$", point 1 of xx);
+    drawarrow yy; label.top("$u(t)$", point 1 of yy);
+
+    for i=-4, -3, -2, -1, 1, 2, 3, 4:
+        draw (down--up) scaled 2 shifted (pi * i/4 * u, 0);
+        label.bot(pi_quarters(i), (pi * i/4 * u, -2));
+    endfor
+\end{code}\vss}}
+$$\includegraphics[width=\textwidth]{curves-sines.pdf}$$
+
+For this diagram, the sine wave path ("ss", shown in \textcolor{textblue}{blue})
+needs to have two complete cycles, so it is constructed in stages.  First the
+section from the origin to $2\pi$ is created in a loop; with 360 steps, you can use
+\mpl{--} and still get a smooth path.  Secondly the cycle is duplicated by splicing
+itself to a shifted copy.  Thirdly it is $x$-scaled to radians, and then scaled in both
+directions to the chosen unit size, and drawn chopped off to the width of
+the $x$-axis.  The cosine path is the same path, shifted $\frac12\pi$ left, 
+drawn in red, and chopped off to fit the same width.
+
+The fancy fraction labels were produced with this subroutine:
+\begin{smallcode}
+vardef pi_quarters(expr n) = 
+    save s, f, q; string s, f; numeric q; 
+    s = if n < 0: "-" else: "" fi; q = abs(n);
+    if q mod 4 = 0:
+        f = if q > 4: decimal 1/4 q else: "" fi;
+    elseif q mod 2 = 0:
+        f = "\frac{" & decimal 1/2 q & "}{2}";
+    else:
+        f = "\frac{" & decimal q & "}{4}";
+    fi     
+    "$\scriptstyle" & s & f & "\pi$"
+enddef;
+    
+\end{smallcode}
+
+\newpage
+\subsection{Further examples of graphs}
+
 
 \newpage
 \subsection{Cycloid and other spiral graphs}
