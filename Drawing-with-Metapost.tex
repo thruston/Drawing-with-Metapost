@@ -5584,7 +5584,7 @@ units, $u$, and $v$ so that the range of $f(x)$ fits neatly on your graph.
 
 The loop 
 above also uses a variable $s$ to control the number of points used to define the
-path.\mwpic{-180pt}{curves}
+path.\mwpic{-180pt}{func-powers}
 The figures on the right show that over the domain $-3$ to $3$ a step of $\frac12$
 gives enough points for \MP's Bezier curve fitting routines to draw the functions
 $x^2$ and $x^3$ accurately, but that you need a step size of $\frac18$, and hence
@@ -5618,7 +5618,7 @@ smaller step size.
 
 \textsc{In some situations}, you might find it easier to stich together various 
 \<path> pieces to make your curve.  This can be especially elegant if there is a
-symmetry in the path.  For example:\mwpic{-48pt}{curves-reflection}
+symmetry in the path.  For example:\mwpic{-48pt}{func-reflection}
 \begin{code}
 path ff, negative_ff;
 
@@ -5652,7 +5652,7 @@ is especially useful for $y=1/x$, but it applies to functions generally.  So if 
 plot $y=\sqrt x$ it may be easier to define a path for $y=x^2$ and then reflect it.
 This is particularly useful if you want to plot, say, $y=\sqrt[3]x$, over a domain
 that includes negative numbers, because \MP\ will not calculate reciprocal powers of
-negative numbers.\mwpic{-60pt}{curves-cuberoot}
+negative numbers.\mwpic{-60pt}{func-cuberoot}
 The curve in this chart was created by reflecting the line $y=x^3$.
 
 \newpage
@@ -5694,7 +5694,7 @@ degrees, this example shows how you might use them in a graph.%
         label.bot(pi_quarters(i), (pi * i/4 * u, -2));
     endfor
 \end{code}\vss}}
-$$\includegraphics[width=\textwidth]{curves-sines.pdf}$$
+$$\includegraphics[width=\textwidth]{func-sines}$$
 
 For this diagram, the sine wave path ("ss", shown in \textcolor{textblue}{blue})
 needs to have two complete cycles, so it is constructed in stages.  First the
@@ -5723,11 +5723,11 @@ enddef;
 \end{smallcode}
 
 \newpage
-\subsection{Focus on a specific region of a curve}
+\subsection{Focus on a specific region of a function}
 
-\textsc{This visual proof} required a large $y$-axis scale.\mwpic{-24pt}{functions-epi-v-pie}
-The axes are separated visually to show the
-discontinuity.\enlargethispage\baselineskip
+\textsc{This visual proof} required a large $y$-axis scale.\mwpic{-24pt}{func-epi-v-pie}
+The axes are separated to show the 
+discontinuity in scales, and that the origin is not on the chart.\enlargethispage\baselineskip
 
 \begin{smallcode}[xleftmargin=0pt]
 numeric minx, maxx, s, u, v;
@@ -5782,6 +5782,51 @@ drawoptions();
 label("\dots\ hence\enspace $e^\pi > \pi^e$.", (4u, 0.38v));
 \end{smallcode}}
 
+\newpage
+\subsection{Approximate function diagrams}
+
+\textsc{Sometimes} you may need to plot a function that does not have a simple
+mathematical definition.  You can use \MP’s normal path definitions to make a likely
+looking approximation.\mwpic{-48pt}{func-stress}
+\bgroup\overfullrule0pt
+\begin{smallcode}[xleftmargin=0pt]
+z1 = 377 right;  z2 = 233 up;
+path ff; ff = origin .. (72, 144){1,2} .. (84, 144) .. (96, 144){1,1} 
+            .. (220, 220){right} .. (370, 160){2,-1.3};
+
+for t=2, 4, 4.9:
+    draw point t of ff -- (xpart point t of ff, y2 + 6) 
+        dashed evenly scaled 1/2;
+endfor
+label.top("Strain hardening", 
+        (1/2 (xpart point 2 of ff + xpart point 4 of ff), y2));
+label.top("Necking",          
+        (1/2 (xpart point 4 of ff + xpart point 4.9 of ff), y2));
+
+path rr; 
+rr = point 0.4 of ff -- (xpart point 0.8 of ff, ypart point 0.4 of ff) -- point 0.8 of ff;
+draw rr; label.bot("Run", point 1/2 of rr); label.rt("Rise", point 3/2 of rr);
+
+vardef pin_label@#(expr p, a, b)= 
+    draw a -- b cutbefore fullcircle scaled 8 shifted a withpen pencircle scaled 1/4 withcolor 1/2 white;
+    label@#(p, b);
+enddef;
+pin_label.lrt("Yield strength",     point 1.2 of ff, point 2 of ff + (8, -18));
+pin_label.bot("Ultimate strength",  point 4   of ff, point 4 of ff + (4, -24));
+pin_label.bot("Fracture",           point 5   of ff, point 5 of ff + (-8, -18));
+
+draw ff withpen pencircle scaled 1 withcolor 2/3 blue;
+clip currentpicture to unitsquare scaled 400; % clip thick pen at origin
+
+drawdblarrow z1 -- origin -- z2;
+label.ulft("Strain, $\epsilon$", z1);
+label.urt("Stress, $\sigma$", z2);
+
+label("$\displaystyle\hbox{Young's modulus} = \hbox{Slope} = {\hbox{Rise}\over\hbox{Run}}$",
+    1/2 z1 shifted 36 up) withcolor 2/3 blue;
+\end{smallcode}
+\egroup
+\newpage
 
 \newpage
 \subsection{Cycloid and other spiral graphs}
