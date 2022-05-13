@@ -5394,15 +5394,15 @@ and it affects how much a mitered join is allowed to stick out at each corner.  
 beveled mode.
 
 \newpage
-\section{Graphing functions}
+\section{Plotting functions}\label{func}
 
-\textsc{A selection} of mathematical graphs is presented in this section, mainly
-taken from real examples collected over several years.  As ever in this document,
-the focus is on plain \MP; the plain format provides no built-in facilities for
-graphs so you have to do everything from scratch; but on the other hand there are no
-new macros or commands to learn, you get full control of what goes on the page, and
-you will not spend hours scratching your head wondering how to adjust the axis
-labels.
+\textsc{A selection} of graphs of mathematical functions is presented in this
+section, taken from real examples collected over several years.  For data
+visualizations, see §\ref{dviz}. As ever in this document, the focus is on plain
+\MP; the plain format provides no built-in facilities for graphs so you have to do
+everything from scratch; but on the other hand there are no new macros or commands
+to learn, you get full control of what goes on the page, and you will not spend
+hours scratching your head wondering how to adjust the axis labels.
 
 \subsection{Making axes}
 
@@ -5827,6 +5827,69 @@ label("$\displaystyle\hbox{Young's modulus} = \hbox{Slope} = {\hbox{Rise}\over\h
 \end{smallcode}
 \egroup
 \newpage
+\subsubsection{Taming Bezier paths with controls}
+
+\textsc{It takes some} practice to translate a sketch of a curve into a smooth 
+path.  Plain \MP\ inherits from \MF\ a useful \id{flex} macro, that takes a list of \<pair>s
+(any number of them) and produces a pleasing path through them. As Knuth says in the
+\mfbook: 
+“The idea is to specify two endpoints, $z_1$ and $z_n$, together with
+one or more intermediate points where the path is traveling in the
+same direction as the straight line from $z_1$ to~$z_n$; these
+intermediate points are easy to see on a typical curve, so they
+are natural candidates for key points.”  For example:
+\begin{code}
+draw flex(z1,z2,z3) & flex(z3,z4,z5)
+flex(z5,z6,z7) & flex(z7,z8,z9,z1) & cycle;
+\end{code}
+(with appropriate definitions of the points), produces this:
+\lower 12pt\hbox{\smash{\begin{mplibcode}
+beginfig(0);
+z1=(0,509);
+z2=(-14,492);
+z3=(-32,481);
+z4=(-42,455);
+z5=(-62,430);
+z6=(-20,450);
+z7=(42,448);
+z8=(38,465);
+z9=(4,493);
+    draw flex(z1,z2,z3) & flex(z3,z4,z5) &
+flex(z5,z6,z7) & flex(z7,z8,z9,z1) & cycle;
+    for i=1 upto 9: draw z[i] withpen pencircle scaled 2 withcolor red; endfor
+    currentpicture := currentpicture scaled 0.7071 rotatedabout(z3, -20);
+endfig;
+\end{mplibcode}}}
+
+\bigskip\noindent
+\textsc{Another approach} is just to define the end-points and some control points,
+and then define a path that is shaped by the control points but does not actually go
+through them.   Consider this program:\mwpic{-20pt}{func-pulse}
+\begin{code}
+vardef pulse(expr w, h, d) = 
+for i=0 upto 4: x[i] = w/4 * i; endfor
+    y0 = y1 = 0;
+    y3 = y4 = d;
+    y2 = h;
+    z0 .. 1/2[z0, z1] .. controls z1 
+       .. 1/2[z1, z2] .. controls z2 
+       .. 1/2[z2, z3] .. controls z3 
+       .. 1/2[z3, z4] .. z4
+enddef;
+draw pulse(300, 100, -40);
+\end{code}
+This produces the smooth blue line shown on the right.  A second copy of the line is
+shown below, decorated with the three control points $z_1$, $z_2$, and $z_3$ in red,
+and showing the six points of the path as small black circles.  You can tweak this
+curve by adjusting the controls left or right, or changing the mediation parameters
+so that the points on the path are closer to one control point than the other.
+
+\newpage
+\subsection{Parametric plots}
+
+\textsc{For functions} that can have more than one value for $y$ for a given $x$,
+you can generally rewrite the equation in parametric form, so that it depends on an
+independent variable, as in $(x, y) = (\cos t, \sin t)$ for the unit circle.  
 
 \newpage
 \subsection{Cycloid and other spiral graphs}
@@ -5932,6 +5995,8 @@ travelling along it under gravity takes a shorter time than is possible along an
 other curve between the points).
 $$\includegraphics{brachisto}$$
 
+\newpage
+\section{Data visualizations}\label{dviz}
 
 \newpage
 \section{Commutative diagrams}
