@@ -5887,10 +5887,48 @@ so that the points on the path are closer to one control point than the other.
 \newpage
 \subsection{Parametric plots}
 
-\textsc{For functions} that can have more than one value for $y$ for a given $x$,
-you can generally rewrite the equation in parametric form, so that it depends on an
-independent variable, as in $(x, y) = (\cos t, \sin t)$ for the unit circle.  
-
+\textsc{If you want to plot} one function against another, then you can make each 
+coordinate a function of an independent variable. All functions can be converted,
+trivially, to this form:
+\begin{code}
+vardef f(expr x) = x enddef;
+vardef g(expr x) = sind(x) enddef; % or whatever function ...
+path ff; ff = for t = mint step s until maxt - s: 
+    (f(t), g(t)) .. 
+endfor (f(maxt), g(maxt));
+\end{code}
+But you can make more complicated curves, for example curves 
+that can have more than one value for $y$ for a given $x$, if you change $f(x)$ and
+$g(x)$ appropriately.
+The first example\mwpic{-24pt}{func-lemniscate} shows the lemniscate of Bernoulli
+and was drawn like this:
+\begin{smallcode}
+numeric a, c; c = 128; a = sqrt(2) * c;
+vardef f(expr x) = a * cosd(x) / (1 + sind(x) ** 2) enddef;
+vardef g(expr x) = f(x) * sind(x) enddef;
+numeric mint, maxt, s; mint = 0; s = 30; maxt = 360;
+path p; 
+p = for t = mint step s until maxt - s: 
+    (f(t), g(t)) ...
+endfor cycle;
+draw p withcolor 3/4 blue;
+path xx, yy;
+xx = (left -- right) scaled 200;
+yy = (down -- up) scaled 64;
+drawarrow xx; label.rt("$x$", point 1 of xx);
+drawarrow yy; label.top("$y$", point 1 of yy);
+dotlabel.bot("$F_1$", c * left);
+dotlabel.bot("$F_2$", c * right);
+\end{smallcode}
+Although sometimes, especially when you know the domain is 0° to 360° and that the
+path is cyclic, it is simpler to write the two expressions directly in the
+loop:\mwpic{-108pt}{func-parametric}
+\begin{smallcode}
+path p; 
+p = for t = 0 upto 360: (144 cosd(3t), 89 sind(2t)) ... endfor cycle;
+draw p withcolor 2/3 red;
+\end{smallcode}
+which produces this Lissajous curve $\longrightarrow$
 \newpage
 \subsection{Cycloid and other spiral graphs}
 
