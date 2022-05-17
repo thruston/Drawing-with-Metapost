@@ -1205,7 +1205,8 @@ refer to them as a pair with "z1".  A common usage is to find the orthogonal poi
 on the axes in graphs, like so $\longrightarrow$
 
 \smallskip
-There is also a simple way to write coordinates using a polar notation using
+There is also a simple way to write coordinates using a polar notation
+using\label{polar}
 \mpl{dir}.  This macro is defined so that \mpl{dir 30} expands to \mpl{right rotated
 30} and then to \mpl{(1,0) rotated 30}, which becomes \mpl{(cosd(30), sind(30)}
 or \mpl{(0.86603, 0.5)}. So to get the polar notation
@@ -1966,11 +1967,12 @@ referenced above. Two examples, for the exponential distribution and the gamma
 distribution, are shown on the right.  In both cases, note the care required to avoid
 arithmetic overflow (and see section~\ref{trig} for the "tand" function).
 
-\medskip\noindent
+\medskip\label{mexp}\noindent
 You can also see the special nature of \MP's \kw{mexp} and \kw{mlog}
 functions. They are defined so that $\kw{mexp} x = \exp(x/256)$ and $\kw{mlog} x =256\log(x)$.
 This is another artefact of the scaled number system.  \MP\ computes $x^y$ using the
 formula "mexp(y*mlog(x))", and the adjusted log values give more accurate results.
+Note that this means that you have $e=\kw{mexp}(256)$.
 
 \medskip\noindent
 At the start of each job, \MP\ automatically sets a new seed for the random number
@@ -5656,6 +5658,50 @@ negative numbers.\mwpic{-60pt}{func-cuberoot}
 The curve in this chart was created by reflecting the line $y=x^3$.
 
 \newpage
+\subsubsection{Exponential and logarithm functions by reflection}
+
+\textsc{A further example} of creating paths by
+transformation.\mpic{0pt}{func-exponential}
+\begin{smallcode}
+numeric u; u = 42;
+path xx, yy;
+xx = (-3u, 0) -- (5u, 0);
+yy = xx rotated 90;
+path ee, ll, nn;
+numeric minx, maxx, s;
+minx = -3;  maxx = 1/256 mlog(4.5); s = 1/4;
+ee = (for x = minx step s until maxx - s: 
+    (x, mexp(256x)){1, mexp(256x)} ... 
+endfor (maxx, mexp(256 maxx)){1, mexp(256 maxx)}) scaled u;
+ll = ee reflectedabout(origin, dir 45);    
+nn = (for x=1 step s until 4-s: (x, 1/x) ... endfor (4, 1/4)) scaled u;
+nn := reverse nn reflectedabout(origin, dir 45) & nn;
+
+draw unitsquare xscaled mexp(256) scaled u withcolor 7/8;
+draw unitsquare yscaled mexp(256) scaled u withcolor 7/8;
+path T[];
+numeric p; p = directiontime dir 45 of ee; 
+T1 = (precontrol p of ee -- postcontrol p of ee) 
+    shifted - point p of ee scaled 1/2 u shifted point p of ee;
+T2 = (precontrol p of ll -- postcontrol p of ll) 
+    shifted - point p of ll scaled 1/2 u shifted point p of ll;
+drawoptions(withpen pencircle scaled 1/4 withcolor 1/2);
+draw T1; draw T2; draw interpath(1/2, T1, T2) dashed evenly;
+drawoptions();
+
+draw nn; label.urt("$1/x$", point 0 of nn);
+draw ee withcolor 2/3 blue; label.top("$e^x$", point infinity of ee);
+draw ll withcolor 3/4 red; label.top("$\ln(x)$", point infinity of ll);
+drawarrow xx; label.rt("$x$", point 1 of xx);
+drawarrow yy; label.top("$y$", point 1 of yy);
+
+dotlabel.lft("$e$", (0, mexp(256) * u));
+dotlabel.bot("$e$", (mexp(256) * u, 0));
+dotlabel.ulft("$1$", (0, u));
+dotlabel.lrt("$1$", (u, 0));
+\end{smallcode}
+
+\newpage
 \subsection{Functions using trigonometric functions}
 
 \textsc{As noted} in §\ref{trig}, \MP’s built-in trigonometric functions work in
@@ -5930,7 +5976,43 @@ draw p withcolor 2/3 red;
 \end{smallcode}
 which produces this Lissajous curve $\longrightarrow$
 \newpage
-\subsection{Cycloid and other spiral graphs}
+\subsubsection{Parametric plots with polar coordinates: Maurer roses}
+
+\textsc{Instead of} defining separate functions for the $x$ and $y$ coordinates in a
+parametric plot, it is sometimes convenient to use \MP’s polar coordinate notation (discussed in
+§\ref{polar}).  The family of “rose” plots, based on $r=\cos(n\theta)$, is easy to
+do in this way.  Here is a Maurer rose, based on $r=\cos(2\theta)$ and connecting
+every 29th point on the curve.\mpic{-24pt}{func-maurer-rose}
+
+\begin{code}
+    numeric n; n = 2;
+    path r; r = (for t=0 upto 360: 
+        cosd(n * t) * dir t ...
+    endfor cycle) scaled 150;
+
+    numeric d; d = 29;
+    path k; k = for t = 0 upto 360:
+        point d * t mod 360 of r -- 
+    endfor cycle;
+    
+    draw k dashed withdots scaled 1/8
+        withpen pencircle scaled 1/4 
+        withcolor 1/2[blue, white];
+
+    draw r withcolor 2/3 red;
+
+    path xx, yy; % you might not need the axes...
+    xx = (left -- right) scaled 160;
+    yy = (down -- up) scaled 160;
+    drawarrow xx; label.rt("$x$", point 1 of xx);
+    drawarrow yy; label.top("$y$", point 1 of yy);
+\end{code}
+Different values of $n$ and $d$ give an endless variety of patterns.  But note that if
+your choice of $d$ exceeds $2^{15}/360 \simeq 91$ you will need to use
+"-numbersystem=double" to avoid arithmetic overflow.
+
+\newpage
+\subsection{Making paths by simulating physical construction}
 
 \textsc{This section} examines cycloids; the curves made by points on the circumference of a
 rolling wheel.  In the first diagram the cycloid is drawn in red and the
