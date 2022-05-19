@@ -5007,7 +5007,7 @@ As you may appreciate, with this approach, you need to do the transparent parts
 after you have drawn everything else in your drawing.
 
 \newpage
-\subsection{Adding a background and other post-processing}
+\subsection{Adding a background and other post-processing}\label{backgrounds}
 
 The \<picture> capture technique provides a simple way to add a background or do
 other post-processing on your drawing.  The advantage is that you do not have to
@@ -6118,10 +6118,73 @@ $$\includegraphics{brachisto}$$
 \newpage
 \section{Data visualizations}\label{dviz}
 
+\textsc{Graphs and other displays} that show data, rather than a mathematical
+function, are presented in this section, with a focus on illustrations for books and
+technical papers.  Most of the examples here follow those developed in Edward
+Tufte's \textsl{The Visual Display of Quantitative Information}.
+
+Most of them have a pale manilla background, which was added using the technique
+from §\ref{backgrounds}, like this:
+\begin{code}
+picture p; p = currentpicture; currentpicture := nullpicture;
+bboxmargin := 12;
+fill bbox p withcolor 1/32(32, 32, 31);
+draw p;
+\end{code}
+
+\newpage
+\subsection{Simple time line}
+
+\noindent\mpic{48pt}{tufte-mpg}\marginpar{The complete Lua\TeX\ document shows the
+use of "fontspec" to get the Palatino-like font.}
+\begin{texcode}[xleftmargin=0pt]
+\documentclass{standalone}
+\usepackage{luamplib}
+\usepackage{fontspec}
+\setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
+\end{texcode}\vskip -8pt
+\begin{smallcode}[xleftmargin=2pt]
+beginfig(1);
+path data, p;
+data = (1978, 18) -- (1979, 19) -- (1980, 20) -- (1981, 22)
+    -- (1982, 24) -- (1983, 26) -- (1984, 27) -- (1985, 27.5);
+numeric u, v;
+u = xpart urcorner textext("1980\kern 0.75em"); v = 8;
+p = data shifted -(xpart point 0 of data, 0) xscaled u yscaled v;
+draw (xpart point 0 of p, 20) -- p -- (xpart point infinity of p, 20);
+draw (xpart point 0 of p, 0) -- (xpart point infinity of p, 0);
+for t=0 upto length p: 
+    numeric x, y; (x, y) = point t of p;
+    undraw (x, y) withpen pencircle scaled 2 dotlabeldiam;
+    draw (x, y) withpen pencircle scaled dotlabeldiam;
+    label("\strut" & decimal ypart point t of data, (x, y + 8));
+    draw (x, 0) -- (x, 4);
+    label("\strut" & decimal xpart point t of data, (x, 12));
+endfor
+dotlabel.rt(btex \vbox to 6pt{\halign{\small #\hss\cr
+13.7 mpg, average\cr for all cars on\cr road, 1978\cr}\vss} etex, 
+(xpart point 0 of p, 13.7v));
+dotlabel.lft(btex \vbox to 6pt{\halign{\small #\hss\cr
+19.5 mpg, expected\cr average for all cars\cr on road, 1985\cr}\vss} etex, 
+(xpart point infinity of p, 19.5v));
+label.top(btex \vbox{\halign{\hss\textsc{#}\hss\cr
+required fuel economy standards:\cr
+new cars built from 1978 to 1985\cr}} etex,
+point 5/2 of bbox currentpicture shifted 21 up);
+endfig;
+\end{smallcode}\vskip -10pt
+\vbox to 0pt{\begin{texcode}[xleftmargin=0pt]
+\end{mplibcode}
+\end{document}
+\end{texcode}\vss}
+
 \newpage
 \section{Commutative diagrams}
 
-If you want lots of complex bells and whistles on your commutative diagrams, then
+\textsc{If you want lots} of complex bells and whistles on your commutative diagrams, then
 you probably want to use specialist tools like "tikz-cd" or "xypic", but if your
 needs are simpler, plain \MP\ is more than capable, and if you are already
 using it for other illustrations, there is one less thing to learn.
