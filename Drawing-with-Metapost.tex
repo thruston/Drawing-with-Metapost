@@ -6012,7 +6012,59 @@ your choice of $d$ exceeds $2^{15}/360 \simeq 91$ you will need to use
 "-numbersystem=double" to avoid arithmetic overflow.
 
 \newpage
-\subsection{Making paths by simulating physical construction}
+\section{Drawing plane curves}
+
+{\textsc{“Plane curves offer} a rich \dots\ field of study which may be approached
+from a quite elementary level. Anyone who can draw a circle with a given centre and
+a given radius can draw a cardioid or a limaçon.  Anyone who can use a set square
+can draw a parabola or a strophoid” \hfill — \textsl{A Book of Curves}, E.\@ H.\@
+Lockwood\parfillskip0pt\par}
+
+\subsection{Parabola}
+
+\textsc{The simplest way} to get a parabola curve is to plot $y=x^2$ over $-1 \le x
+\le 1$ and then transform as required, but it can be illuminating to follow more
+traditional constructions, such as that shown on the
+right.\mwpic{-180pt}{curves-parabola}
+\vadjust{\moveright7.2in\vbox to 0pt{\hsize 200pt\noindent  
+The idea here is that you put the right angle of your set square on the vertical
+axis with the short side touching $S$, and then draw the long side.  If you do this 
+in enough places, the edges form a parabola. In the \MP\ code here, the intersection
+of each ray with the one before is captured as variable $t$ and then added one at a
+time to the \<path> \id{parabola}, (using a neat trick at the beginning).
+\vss}}
+\begin{smallcode}[xleftmargin=0pt]
+pair A, S; A = origin; S = 66 right;
+path parabola, last;
+for q = -144 step 8 until 144:
+    pair Q; Q = (0, q); 
+    path ray; 
+    ray = (origin -- unitvector(S - Q)) scaled 300 
+          rotated if q < 0: - fi 90 shifted Q;
+    draw S -- ray withcolor 7/8;
+    if known last:
+        pair t;
+        t = whatever[point 0 of ray, point 1 of ray] 
+          = whatever[point 0 of last, point 1 of last];
+        parabola := if known parabola: parabola .. fi t;
+    fi
+    last := ray;
+endfor
+
+draw parabola withcolor 3/4[red, white];
+for t=0 upto length parabola:
+    draw point t of parabola withpen pencircle scaled 3/2 withcolor red;
+endfor
+draw (up--down) scaled 300;
+
+forsuffixes @=A,S:
+    dotlabel.lft("$" & str @ & "$", @);
+endfor
+\end{smallcode}
+
+
+\newpage
+\subsection{Simulating physical construction}
 
 \textsc{This section} examines cycloids; the curves made by points on the circumference of a
 rolling wheel.  In the first diagram the cycloid is drawn in red and the
@@ -6133,7 +6185,7 @@ draw p;
 \end{code}
 
 \newpage
-\subsection{Simple time line}
+\subsection{Simple time lines}
 
 \noindent\mpic{48pt}{tufte-mpg}\marginpar{The complete Lua\TeX\ document shows the
 use of "fontspec" to get the Palatino-like font.}
@@ -6180,6 +6232,49 @@ endfig;
 \end{mplibcode}
 \end{document}
 \end{texcode}\vss}
+
+\newpage
+
+\noindent\mpic{0pt}{tufte-budget}
+\begin{smallcode}[xleftmargin=0pt]
+beginfig(1);
+path data, p;
+data = (1967, 311) -- (1968, 332) -- (1969, 372) -- (1970, 385)
+    -- (1971, 385) -- (1972, 393) -- (1973, 387) -- (1974, 381) 
+    -- (1975, 387) -- (1976, 400) -- (1977, 380);
+numeric u, v;
+u = xpart urcorner textext("1980\kern 0.75em"); v = 1.414;
+p = data shifted -(xpart point 0 of data, 300) xscaled u yscaled v;
+draw p;
+for d = 300 step 20 until 400:
+    numeric y; y =  (d - 300) * v;
+    label.lft("\strut\scriptsize\$\,\small" & decimal d, (-12, y));
+    draw (-8, y) -- (-12, y);
+    if d > 370:
+        draw (xpart point 3 of p, y) -- (xpart point infinity of p + 8, y)
+            dashed evenly scaled 1/4 withpen pencircle scaled 1/4;
+    fi
+endfor
+path a; a = (xpart point infinity of p + 21, (380 - 300) * v) 
+         -- (xpart point infinity of p + 21, (400 - 300) * v);
+interim ahangle := 180; 
+interim ahlength := 2;
+drawdblarrow a withpen pencircle scaled 1/4;
+label("\small 5\%", point 1/2 of a shifted 12 right);
+
+for t=0 upto length p: 
+    numeric x, y; (x, y) = point t of p;
+    undraw (x, y) withpen pencircle scaled 2 dotlabeldiam;
+    draw (x, y) withpen pencircle scaled dotlabeldiam;
+    draw (x, -8) -- (x, -12);
+    label("\strut\small" & decimal xpart point t of data, (x, -20));
+endfor
+
+label.urt(btex \vbox{\halign{\small #\hfill\cr
+Per capita\cr budget expenditure\cr in constant dollars\cr}} etex, 
+(0, (410 - 300) * v));
+endfig;
+\end{smallcode}
 
 \newpage
 \section{Commutative diagrams}
