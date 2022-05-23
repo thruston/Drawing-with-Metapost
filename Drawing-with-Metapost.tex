@@ -3806,7 +3806,7 @@ plus some clever code to align the label for you.
 }}
 
 \newpage
-\subsubsection{Bounding boxes and alignment with \texttt{infont}}
+\subsubsection{Bounding boxes and alignment with \texttt{infont}}\label{textsize}
 \label{infontbbox}
 
 To allow you to align a text label on a specific point, \MP\ provides five unary
@@ -6175,6 +6175,7 @@ function, are presented in this section, with a focus on illustrations for books
 technical papers.  Most of the examples here follow those developed in Edward
 Tufte's \textsl{The Visual Display of Quantitative Information}.
 
+\bigskip\noindent
 Most of them have a pale manilla background, which was added using the technique
 from §\ref{backgrounds}, like this:
 \begin{code}
@@ -6187,8 +6188,18 @@ draw p;
 \newpage
 \subsection{Simple time lines}
 
-\noindent\mpic{48pt}{tufte-mpg}\marginpar{The complete Lua\TeX\ document shows the
-use of "fontspec" to get the Palatino-like font.}
+\noindent\mpic{144pt}{tufte-mpg}\marginpar{
+\begin{itemize}
+    \item The complete Lua\TeX\ document shows the
+use of "fontspec" to get the Palatino-like font, used in E.\@ Tufte's books.
+    \item The data is stored as \<pair> values in a \<path> variable. This only
+        works if both data values are numeric.  If the values are larger than 4096
+        you either need to scale them or use the "double" number system.
+    \item Notice how the horizontal unit $u$ is set by measuring the width of a label using 
+the technique discussed in §\ref{textsize}.  And that you have to shift the data
+        path left before applying the $x$-scaling to avoid overflow.
+\end{itemize}
+}
 \begin{texcode}[xleftmargin=0pt]
 \documentclass{standalone}
 \usepackage{luamplib}
@@ -6234,8 +6245,17 @@ endfig;
 \end{texcode}\vss}
 
 \newpage
-
-\noindent\mpic{0pt}{tufte-budget}
+\subsection{Time line with minimal annotation}
+\noindent\mpic{120pt}{tufte-budget}\marginpar{
+\begin{itemize}
+    \item This one has an even sparser frame, and 
+        uses the \mpl{ahangle} trick to make the neat
+        I-beam annotation mark.
+    \item It is suggested that you resist the temptation to make very many
+        special macros to do charts like this; the ideas here are mainly 
+        to show that \MP\ makes a good environment for following Tufte’s advice
+        about charts: to maximize data ink, and minimize chart junk.
+\end{itemize}}
 \begin{smallcode}[xleftmargin=0pt]
 beginfig(1);
 path data, p;
@@ -6261,7 +6281,6 @@ interim ahangle := 180;
 interim ahlength := 2;
 drawdblarrow a withpen pencircle scaled 1/4;
 label("\small 5\%", point 1/2 of a shifted 12 right);
-
 for t=0 upto length p: 
     numeric x, y; (x, y) = point t of p;
     undraw (x, y) withpen pencircle scaled 2 dotlabeldiam;
@@ -6269,12 +6288,34 @@ for t=0 upto length p:
     draw (x, -8) -- (x, -12);
     label("\strut\small" & decimal xpart point t of data, (x, -20));
 endfor
-
 label.urt(btex \vbox{\halign{\small #\hfill\cr
 Per capita\cr budget expenditure\cr in constant dollars\cr}} etex, 
 (0, (410 - 300) * v));
 endfig;
 \end{smallcode}
+
+\newpage
+\subsection{Time line with more complex dates}
+
+If the dates in your time line are more granular than years, then you need a 
+better way to deal with them.  This chart shows the £/€ exchange rate by month.
+$$\includegraphics[width=\textwidth]{tufte-currency}$$
+The dates on the horizontal axis where transformed from calendar dates to a
+serial number using this routine:
+\begin{code}
+vardef base(expr Y, M, d) = 
+  save m, y; numeric m, y;
+  if M < 3: m = M + 9; y = Y - 1; 
+  else: m = M - 3; y = Y; fi
+  365/1024 y + (floor(y/4) - floor(y/100) + floor(y/400) 
+    + floor((2+3m)/5) + 30m + d - 307) / 1024
+enddef;
+\end{code}
+which allows you to add events like this:
+\begin{code}
+dotlabel.bot("Brexit vote", (base(2016, 6, 24) * u, 78 v));
+\end{code}
+for suitable values of $u$ and $v$.
 
 \newpage
 \section{Commutative diagrams}
