@@ -4,7 +4,7 @@
 \mplibtextextlabel{enable}
 \begin{mplibcode}
 beginfig(1);
-    pair A, S; A = origin; S = 66 right;
+    pair O, S; O = origin; S = 66 right;
     path parabola, last;
     for q = -144 step 8 until 144:
         pair Q; Q = (0, q); 
@@ -27,9 +27,8 @@ beginfig(1);
     endfor
     draw (up--down) scaled 300;
 
-    forsuffixes $=A,S:
-        dotlabel.lft("$" & str $ & "$", $);
-    endfor
+    dotlabel.lft("$O$", O);
+    dotlabel.rt("$S$", S);
 
     % vardef signum(expr x) = if x=0: 1 else: abs(x) / x fi enddef;
     % path cart;
