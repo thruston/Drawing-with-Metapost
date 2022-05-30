@@ -6023,7 +6023,7 @@ Lockwood\parfillskip0pt\par}
 \subsection{Parabola}
 
 \textsc{The simplest way} to get a parabola curve is to plot $y=x^2$ over $-1 \le x
-\le 1$ and then transform as required, but it can be illuminating to follow more
+\le 1$ and then transform as required (see next page), but it can be illuminating to follow more
 traditional constructions, such as that shown on the
 right.\mwpic{-180pt}{curves-parabola}
 \vadjust{\moveright7.2in\vbox to 0pt{\hsize 200pt\noindent  
@@ -6062,7 +6062,7 @@ dotlabel.rt("$S$", S);
 \end{smallcode}
 
 \newpage
-\subsubsection{Using directrix and focus}
+\subsubsection{Parabola from directrix and focus}
 
 \textsc{The classical definition} of the parabola is the locus of points that are 
 equidistant from a given line (the \textit{directrix}, shown as $A\to B$ on the
@@ -6088,6 +6088,18 @@ vardef parabola(expr A, B, S) =
     parabola
 enddef;
 
+\end{code}
+
+\subsubsection{Parabola from $y=x^2$ and $dy/dx=2x$}
+
+Alternatively you could define a “unit parabola” like this:
+\begin{code}
+path ff; ff = (-1, 1){1, -2} .. (-1/2, 1/4){1, -1} ..
+  (0, 0){right} .. (1/2, 1/4){1, 1} .. (1, 1){1, 2};
+\end{code}
+and then — using the points defined above, where $o$ is the mid-point of $n\to S$ — scale it and place it like this:
+\begin{code}
+draw ff scaled 4 abs(S-o) rotated angle (B-A) shifted o;
 \end{code}
 
 

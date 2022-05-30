@@ -35,17 +35,25 @@ beginfig(1);
     pair a, b, s; a = 160 up rotated 5; b = 160 down rotated 5; s = 60 * right;
     draw a--b; 
 
+    path ff; ff = (-1, 1){1, -2} .. (-1/2, 1/4){1, -1} .. (0, 0){right} .. (1/2, 1/4){1, 1} .. (1, 1){1, 2};
+
     path p; p = parabola(a, b, s);
-    pair n; n = whatever[a, b]; point i of p - n = whatever * (a-b) rotated 90;
-    pair q; q = point i of p reflectedabout(s, n);
-    draw n -- point i of p -- q -- n -- s withcolor 3/4;
-    pair z; z = whatever[a,b] = whatever[q, s];
-    pair o; o = 1/2[z, s];
-    interim ahangle := 24;
-    drawarrow (b--a) shifted (o-z) withcolor 3/4;
-    drawarrow (1/2[a, z] --b) rotatedabout(z, 90) withcolor 3/4;
+    pair tab; tab = whatever[a, b]; point i of p - tab = whatever * (a-b) rotated 90;
+    pair q; q = point i of p reflectedabout(s, tab);
+    pair n; n = whatever[a,b] = whatever[q, s];
+    pair o; o = 1/2[n, s];
+
+    % draw ff scaled 4 abs(s-o) 
+            % rotated angle (b-a)
+            % shifted o
+            % withpen pencircle scaled 2 withcolor 7/8[red, white];
     
-    show angle (point i of p - s);
+    interim ahangle := 24;
+    drawarrow (b--a) shifted (o-n) withcolor 3/4;
+    drawarrow (1/2[a, n] --b) rotatedabout(n, 90) withcolor 3/4;
+
+    draw tab -- point i of p -- q -- tab -- s withcolor 3/4;
+    
     drawarrow s -- point i of p 
                 -- s reflectedabout(precontrol i of p rotatedabout(point i of p, 90), 
                                    postcontrol i of p rotatedabout(point i of p, 90))
@@ -58,12 +66,12 @@ beginfig(1);
     dotlabel.ulft("\kw{point} $i$ \kw{of} $p$", point i of p);
     interim dotlabeldiam := 2;
     dotlabel.bot("$\scriptstyle q$", q);
-    dotlabel.llft("$\scriptstyle n$", z);
+    dotlabel.llft("$\scriptstyle n$", n);
     dotlabel.llft("$\scriptstyle o$", o);
-    dotlabel.lft("$\scriptstyle m\:$", 1/2[n, s]); 
-    dotlabel.lft("$\scriptstyle t[A, B]$", n);
+    dotlabel.lft("$\scriptstyle m\:$", 1/2[tab, s]); 
+    dotlabel.lft("$\scriptstyle t[A, B]$", tab);
 
 endfig;
-\end{mplibcode}
+\end{mplibcode}\llap{\tiny\texttt{\jobname}}
 \end{document}
 
