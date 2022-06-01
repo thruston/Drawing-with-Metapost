@@ -6102,7 +6102,111 @@ and then — using the points defined above, where $o$ is the mid-point of $n\to
 draw ff scaled 4 abs(S-o) rotated angle (B-A) shifted o;
 \end{code}
 
+\newpage
+\subsection{Ellipse}
 
+\textsc{You can draw an ellipse} in \MP\ by scaling the standard \mpl{fullcircle}
+path by a different amount in each direction.  By convention, the $y$-axis is the
+minor axis of an ellipse.\mwpic{-24pt}{curves-ellipse}
+The ellipse shown on the right, was defined like this:
+\begin{code}
+path ellipse; 
+ellipse = fullcircle scaled 300 yscaled 5/8 rotated 13;
+\end{code}
+The length of the semi-major axis, $a$, and the semi-minor axis, $b$, are given by
+\begin{code}
+numeric a, b;
+2a = abs (point 4 of ellipse - point 0 of ellipse);
+2b = abs (point 6 of ellipse - point 2 of ellipse);
+\end{code}
+The “eccentricity”, $e$, of the ellipse is the ratio between the distance from the centre
+to each focus and the semi-major axis, $a$.  By definition, the distance from $F_1$
+to $T$ to $F_2$ is constant as $T$ moves round the ellipse and is equal to $2a$.
+Hence when $T$ lies on the minor axis, you have $TF_1=a$, and so $a^2 = b^2 +
+a^2e^2$, and $e^2=1-b^2/a^2$:
+\begin{code}
+numeric e; e = 1 +-+ b/a; % the Pythagorean difference operator
+\end{code}
+The focus points can then be found like this:
+\begin{code}
+z0 = 1/2[point 0 of ellipse, point 4 of ellipse];
+z1 = e[z0, point 0 of ellipse];
+z2 = e[z0, point 4 of ellipse];
+\end{code}
+The tangent and the normal at $T$ were added like this:
+\begin{code}
+numeric t; t = 1.732;
+draw (left--right) scaled 21 
+    rotated angle direction t of ellipse
+    shifted point t of ellipse;
+draw (1/2 down--up) scaled 21 
+    rotated angle direction t of ellipse
+    shifted point t of ellipse;
+\end{code}
+\newpage
+\subsubsection{Tangent from external point to ellipse}
+
+$$\includegraphics[width=\textwidth]{curves-ellipse-tangents}$$
+To find the tangent points from an external point $A$ to an ellipse, the classical
+construction is to draw an arc centred at $A$ through one focus point, then draw a
+second arc centred at the other focus with radius $2a$.  The intersection points,
+$P$ and $Q$, of these two arcs are the images of the first focus point in the
+required tangents (because $F_2TF_1=2a$ by definition, and $F_2P=2a$ by
+construction), and so the tangent points $T$ and $T'$ are the intersections of
+$F_2P$ and $F_2Q$ with the ellipse. 
+
+\vfill\noindent
+There is no such direct construction for the nearest point on an ellipse to a given
+point, but you can use the macro \id{solve} to find it numerically. The blue arrow
+shows the shortest distance from $A$ to the ellipse.
+\vadjust{\moveright 384pt\vbox to 0pt{\vss
+\begin{smallcode}
+secondarydef a through b = 
+    begingroup; save d; numeric d; d = abs(a-b); 
+    (1+12/d)[b,a]--(1+12/d)[a,b] endgroup
+enddef;
+path ellipse; ellipse = fullcircle scaled 300 yscaled 5/8 rotated 13;
+z0 = 1/2[point 4 of ellipse, point 0 of ellipse];
+numeric a, b, e; 
+2a = abs (point 4 of ellipse - point 0 of ellipse);
+2b = abs (point 6 of ellipse - point 2 of ellipse);
+e = 1 +-+ b/a;
+z1 = e[z0, point 0 of ellipse];
+z2 = e[z0, point 4 of ellipse];
+z3 = 240 dir 25;
+path pp, qq;
+pp = fullcircle scaled 2 abs (z1 - z3) shifted z3;
+qq = fullcircle scaled 4a shifted z2;
+z4 = pp intersectionpoint qq;
+z5 = reverse pp intersectionpoint qq;
+numeric t, u;
+(t, whatever) = ellipse intersectiontimes (z2 -- z4);
+(u, whatever) = ellipse intersectiontimes (z2 -- z5);
+vardef f(expr x) = 
+    angle (z3 - point x of ellipse) + 90 > angle direction x of ellipse
+enddef;
+drawarrow z3 -- point solve f(0, t) of ellipse withcolor 2/3 blue;
+drawoptions(dashed evenly withcolor 7/8);
+draw point 0 of ellipse through point 4 of ellipse;
+draw point 2 of ellipse through point 6 of ellipse;
+drawoptions(withcolor 3/4);
+draw z4 -- z1 -- z5;
+draw z2 -- z4 -- z3 -- z5 -- cycle;
+draw point t of ellipse -- z1 -- point u of ellipse;
+drawoptions();
+draw point t of ellipse -- z3 -- point u of ellipse withcolor 2/3 red;
+dotlabel.llft("$F_1$", z1); dotlabel.llft("$F_2$", z2);
+dotlabel.urt("$A$", z3);
+dotlabel.ulft("$P$", z4); dotlabel.lrt ("$Q$", z5);
+dotlabel.ulft("$T$", point t of ellipse);
+dotlabel.lrt("$T'$", point u of ellipse);
+draw ellipse;
+picture P; P = currentpicture; currentpicture := nullpicture;
+draw pp dashed withdots scaled 1/2;
+draw qq dashed withdots scaled 1/2;
+bboxmargin := 24; clip currentpicture to bbox P; draw P;
+\end{smallcode}
+\vskip -48pt}}
 
 \newpage
 \subsection{Simulating physical construction}
