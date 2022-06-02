@@ -6034,7 +6034,7 @@ of each ray with the one before is captured as variable $t$ and then added one a
 time to the \<path> \id{parabola}, (using a neat trick at the beginning).
 \vss}}
 \begin{smallcode}[xleftmargin=0pt]
-pair O, S; O = origin; S = 66 right;
+pair A, S; A = origin; S = 66 right;
 path parabola, last;
 for q = -144 step 8 until 144:
     pair Q; Q = (0, q); 
@@ -6057,7 +6057,7 @@ for t=0 upto length parabola:
 endfor
 draw (up--down) scaled 300;
 
-dotlabel.lft("$O$", O);
+dotlabel.lft("$A$", A);
 dotlabel.rt("$S$", S);
 \end{smallcode}
 
@@ -6101,6 +6101,17 @@ and then — using the points defined above, where $o$ is the mid-point of $n\to
 \begin{code}
 draw ff scaled 4 abs(S-o) rotated angle (B-A) shifted o;
 \end{code}
+
+\newpage
+\subsection{Hyperbola}
+
+\textsc{The traditional construction} for the hyperbola is identical to the
+construction for the parabola given above, except that the base line is a circle
+rather than a straight line.\mwpic{-48pt}{curves-hyperbola-construction}
+As a result, the shape of the curve changes depending on the radius of the base
+circle, unlike the parabola. The curve is bounded by the two asymptotes, which are
+the lines from the centre of the circle $O$ through the tangent points from the focus
+$S$.  When the ratio of $OS/OA = \sqrt2$, the asymptotes are at right angles.
 
 \newpage
 \subsection{Ellipse}

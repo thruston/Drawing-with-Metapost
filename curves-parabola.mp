@@ -27,7 +27,7 @@ beginfig(1);
     endfor
     draw (up--down) scaled 300;
 
-    dotlabel.lft("$O$", O);
+    dotlabel.lft("$A$", O);
     dotlabel.rt("$S$", S);
 
     % vardef signum(expr x) = if x=0: 1 else: abs(x) / x fi enddef;
@@ -36,8 +36,6 @@ beginfig(1);
     %     .. (x, 16 sqrt abs(x)) scaled signum(x) endfor);
 
     % drawarrow cart withcolor 1/3 green;
-
-
 endfig;
 \end{mplibcode}
 \end{document}
