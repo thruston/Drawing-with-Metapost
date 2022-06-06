@@ -5616,7 +5616,7 @@ ff = (for x = minx step s until maxx - s:
 smaller step size.
 
 \newpage
-\subsection{Making curves for functions from path pieces}
+\subsection{Making curves for functions from path pieces}\label{sec:pathpieces}
 
 \textsc{In some situations}, you might find it easier to stich together various 
 \<path> pieces to make your curve.  This can be especially elegant if there is a
@@ -6112,6 +6112,21 @@ As a result, the shape of the curve changes depending on the radius of the base
 circle, unlike the parabola. The curve is bounded by the two asymptotes, which are
 the lines from the centre of the circle $O$ through the tangent points from the focus
 $S$.  When the ratio of $OS/OA = \sqrt2$, the asymptotes are at right angles.
+
+You can also draw the hyperbola as the function $y=1/x$ (as shown in
+§\ref{sec:pathpieces}), which can be transformed to any desired shape. 
+The untransformed function is shown on the bottom left, with the focus $S$ 
+at the point $(\sqrt2, \sqrt2)$.  If the desired angle between the asymptotes is
+$2\alpha$, the transformation can be created like this:
+\begin{code}
+numeric alpha; alpha = 34; transform t;
+origin transformed t = origin;
+right transformed t = dir -alpha;
+up transformed t = dir alpha;
+\end{code}
+This can be applied to the hyperbola curve itself and to the axes.  But the focus
+will remain at the same distance from the origin, as shown below right.
+$$\includegraphics[width=0.9\textwidth]{curves-hyperbola-function}$$
 
 \newpage
 \subsection{Ellipse}

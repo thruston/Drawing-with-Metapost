@@ -28,18 +28,24 @@ beginfig(1);
         last := ray;
     endfor
 
+
+    drawoptions(withcolor 1/2);
+    drawdblarrow   2[O, point t of c] -- O --   2[O, point -t of c];
+    draw O -- 1.2[O, S];
+    
+    drawoptions(withcolor 3/4[blue, white]);
+    draw subpath (-1.4, 1.4) of c;
+    draw 1.4[S, point t of c] -- S -- 1.4[S, point -t of c];
+    drawoptions();
+
     draw hyperbola withcolor 3/4[red, white];
     for t=0 upto length hyperbola:
         draw point t of hyperbola withpen pencircle scaled 3/2 withcolor red;
     endfor
 
-    draw O -- 2[O, point t of c] dashed evenly;
-    draw O -- 2[O, point -t of c] dashed evenly;
 
-    draw subpath (-1.4, 1.4) of c;
-
-    dotlabel.rt("$S$", S);
-    dotlabel.lft("$A$", point 0 of c);
+    dotlabel.lrt("$S$", S);
+    dotlabel.llft("$A$", point 0 of c);
     dotlabel.lft("$O$", origin);
 
 endfig;
