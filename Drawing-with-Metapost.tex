@@ -6235,9 +6235,34 @@ bboxmargin := 24; clip currentpicture to bbox P; draw P;
 \vskip -48pt}}
 
 \newpage
-\subsection{Simulating physical construction}
+\subsection{Cardioid}
 
-\textsc{This section} examines cycloids; the curves made by points on the circumference of a
+\textsc{To draw a cardioid by hand}, you can draw a base circle, mark a fixed point $A$ on it, and
+then draw a circle centred at any point $Q$ on the circle that passes through point
+$A$.  If you then repeat this for many different positions of Q, the cardioid is the
+curve that encloses all the circles.\mpic{-24pt}{curves-cardioid-simple}
+But for \MP, you want only a single point $P$ from the circumference of each circle;
+this turns out to be the image of $A$ reflected in the tangent at each point $Q$, like so:
+$$\includegraphics[width=0.7\textwidth]{curves-cardioid-construction}$$
+\vskip -84pt\noindent
+With a small step size $s$ and a base circle \id{base}, this suggests:
+\begin{smallcode}
+path cardioid; cardioid = for t = 0 step s until length base:
+  point 0 of base 
+    reflectedabout(precontrol t of base, postcontrol t of base) ..
+endfor cycle;
+\end{smallcode}
+You can also show that $AP=2a(1+\cos\theta)$, where $a$ is the radius of the
+base circle and $\theta$ is the angle that $AP$ makes with the diameter through
+$A$, so you might use:
+\begin{smallcode}
+cardioid = for t=0 upto 360: 2a * (1+cosd(t)) * dir t .. endfor cycle;
+\end{smallcode}
+
+\newpage
+\subsection{Cycloid}
+
+\textsc{Cycloids} are the curves made by points on the circumference of a
 rolling wheel.  In the first diagram the cycloid is drawn in red and the
 corresponding rolling wheel in blue.  The main idea in this diagram is to make the
 whole drawing depend on just a few parameters;  here there are two: the radius $r$
