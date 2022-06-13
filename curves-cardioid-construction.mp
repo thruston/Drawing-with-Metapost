@@ -24,14 +24,17 @@ beginfig(1);
     M = 1/2[P, P'];
     R = whatever[P, Q] = whatever[P', Q'];
 
-    %draw P' -- Q' -- Q -- P -- cycle;
-    draw A -- Q -- P -- cycle;
-
     %draw Q' -- R -- Q withcolor 3/4;
     draw 3[postcontrol t of base, precontrol t of base]
       -- 5[precontrol t of base, postcontrol t of base] withcolor 3/4;  
     %draw 5[postcontrol t-4 of base, precontrol t-4 of base]
     %  -- 3[precontrol t-4 of base, postcontrol t-4 of base] withcolor 3/4;  
+
+    draw fullcircle scaled 2 abs (Q-A) shifted Q withcolor 7/8;
+
+    %
+    %draw P' -- Q' -- Q -- P -- cycle;
+    draw A -- Q -- P -- cycle;
 
     draw base withcolor 2/3 blue;
     draw origin withpen pencircle scaled dotlabeldiam withcolor 2/3 blue;

@@ -6247,9 +6247,9 @@ $$\includegraphics[width=0.7\textwidth]{curves-cardioid-construction}$$
 \vskip -84pt\noindent
 With a small step size $s$ and a base circle \id{base}, this suggests:
 \begin{smallcode}
+pair A; A = point 0 of base;
 path cardioid; cardioid = for t = 0 step s until length base:
-  point 0 of base 
-    reflectedabout(precontrol t of base, postcontrol t of base) ..
+  A reflectedabout(precontrol t of base, postcontrol t of base) ..
 endfor cycle;
 \end{smallcode}
 You can also show that $AP=2a(1+\cos\theta)$, where $a$ is the radius of the
@@ -6258,6 +6258,53 @@ $A$, so you might use:
 \begin{smallcode}
 cardioid = for t=0 upto 360: 2a * (1+cosd(t)) * dir t .. endfor cycle;
 \end{smallcode}
+
+\newpage
+\subsection{Limaçon}
+
+\textsc{The limaçon can be seen} as a generalization of the cardioid, obtained by 
+moving point $A$ off the base circle.
+\vadjust{\moveright356pt\vbox to 0pt{\vskip -20pt\noindent
+\rlap{\includegraphics[scale=0.833]{curves-limacon-simple}}\vss}}
+
+\begin{itemize}
+    \item Here $A$ has been moved to the left, but\dots
+    \item Each $P$ on the curve is still $A$ reflected in the tangent
+        at each $Q$.
+    \item The “hole” gets larger as $A$ moves away from the \id{base} circle.
+    \item When $A$ touches the \id{base} the hole disappears.
+    \item The curve then becomes the cardioid, as before.
+\end{itemize}
+
+\noindent
+The red limaçon path was generated like this:
+\begin{smallcode}
+pair A; A = 2[center base, point 0 of base];
+path limacon; limacon = for t = 0 step s until length base:
+  A reflectedabout(precontrol t of base, postcontrol t of base) ..
+endfor cycle;
+\end{smallcode}
+
+\vfill
+\noindent
+An alternative approach (due to Albrecht Dürer) is shown below. In this dia-
+\par\kern 2pt
+\vbox{\halign{#&\quad\vbox{\hsize=2.4in\noindent #}\cr
+$$\includegraphics{curves-limacon-durer}$$
+&gram the base circle is divided into 12 parts like a 
+clock face.  At 1 o’clock, you draw a line segment of a given 
+length parallel to the radius to 2 o’clock; at 2 you draw the same length
+segment parallel to 4 o’clock, and so on.  The limaçon is the curve through
+the far ends of each segment (plus any intermediate points required).
+This approach of doubling the angles makes it more obvious that the limaçon goes round twice, as it
+were. The path was generated like this: \cr}}
+\smallskip
+\begin{smallcode}
+limacon = for t=0 upto length base-1:
+   42 dir angle point 2t of base shifted point t of base ..
+endfor cycle;
+\end{smallcode}
+
 
 \newpage
 \subsection{Cycloid}

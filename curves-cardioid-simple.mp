@@ -37,12 +37,12 @@ beginfig(1);
     draw base withcolor 2/3 blue;
     draw cardoid withcolor 2/3 red;
 
-    for i=1 upto n-1:
-        draw center c[i] withpen pencircle scaled 3/2;
-    endfor
+    % for i=1 upto n-1:
+    %     draw center c[i] withpen pencircle scaled 3/2;
+    % endfor
 
     dotlabel.urt("$A$", point 0 of base);
-    dotlabel.lrt("$Q$", point 4 of base);
+    dotlabel.urt("$Q$", point 5.4 of base);
 endfig;
 \end{mplibcode}
 \end{document}
