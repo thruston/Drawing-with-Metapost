@@ -6305,6 +6305,59 @@ limacon = for t=0 upto length base-1:
 endfor cycle;
 \end{smallcode}
 
+\newpage
+\subsection{Astroid}
+
+\textsc{Readers of a certain age} may recall threading strings between
+pegs on a board to make the astroid.  It is the envelope of a line of a given
+length drawn from $x$-axis to $y$-axis at all possible points.\mpic{-24pt}{curves-astroid}
+In \MP\ the simplest way to draw the astroid curve (and the “strings”) is to use a
+base circle and the points $A$ and $B$ at the ends of each line have the $x$
+part and $y$ part of each point $T$ round the base circle.
+$$\includegraphics[scale=0.8]{curves-astroid-construction}$$
+The point $P$ on $A \to B$ that is closest to $T$ will lie on the astroid, so you
+can make the path with:
+\begin{smallcode}
+path astroid; astroid = for t=0 step 1/16 until 8:
+  hide(pair a, b, p; 
+    a = (xpart point t of base, 0); b = (0, ypart point t of base); 
+    p = whatever[a, b]; p-point t of base = whatever * (a-b) rotated 90;
+  ) p -- endfor cycle;
+\end{smallcode}
+Note that you need to use \mpl{--} so that the cusps stay neatly
+pointed.\marginpar{\vskip-38pt\small\noindent
+\llap{\hey\,}The geometry of the subtended angles shows that the length of the arc
+$T\to S$ equals the length of the arc from $T\to P$ on the quarter-sized circle
+through $T$ and $M$.  So the astroid is also the path of a point on the smaller
+circle rolling around the inside of the base circle.}
+
+\newpage
+\subsubsection{Astroid and cousins}
+
+The geometry of the astroid also allows us to define a simple parametric equation
+for the point $P$.
+$$\includegraphics[scale=0.8]{curves-astroid-construction}$$
+If the distance $OT = a$, then $OA = BT = a\cos\theta$.
+But then $BP = BT\,\cos\theta = a\cos^2\theta$, and the 
+$x$-coordinate of $P = BP\,\cos\theta=a\cos^3\theta$. By a similar
+argument the $y$-coordinate is $a\sin^3\theta$, so the parametric 
+equations for $P = (x, y)$:
+$$\centerline{$x=a\cos^3\theta$ \quad and \quad $y=a\sin^3\theta$}$$
+This is used to make this rather psychedelic family of astroid cousins $\longrightarrow$
+
+\moveright384pt\vbox to 36pt{\vss
+$$\includegraphics[scale=0.9]{curves-astroid-family}$$
+\begin{smallcode}
+numeric a; a = 144; input colorbrewer-rgb
+for n=1 upto 7:
+    path p; p = a * right for t=6 step 6 until 90:
+        .. a * (cosd(t) ** n, sind(t) ** n)
+    endfor;
+    p := for i=0 upto 3: p rotated 90i & endfor cycle;
+    fill p withcolor Oranges[9][n]; draw p;
+endfor
+\end{smallcode}}
+
 
 \newpage
 \subsection{Cycloid}
