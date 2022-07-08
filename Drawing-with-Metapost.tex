@@ -6312,10 +6312,10 @@ endfor cycle;
 pegs on a board to make the astroid.  It is the envelope of a line of a given
 length drawn from $x$-axis to $y$-axis at all possible points.\mpic{-24pt}{curves-astroid}
 In \MP\ the simplest way to draw the astroid curve (and the “strings”) is to use a
-base circle and the points $A$ and $B$ at the ends of each line have the $x$
+base circle and the points $A$ and $B$ at the ends of each line that have the $x$
 part and $y$ part of each point $T$ round the base circle.
 $$\includegraphics[scale=0.8]{curves-astroid-construction}$$
-The point $P$ on $A \to B$ that is closest to $T$ will lie on the astroid, so you
+Then the point $P$ on $A \to B$ that is closest to $T$ will lie on the astroid, so you
 can make the path with:
 \begin{smallcode}
 path astroid; astroid = for t=0 step 1/16 until 8:
@@ -6324,7 +6324,7 @@ path astroid; astroid = for t=0 step 1/16 until 8:
     p = whatever[a, b]; p-point t of base = whatever * (a-b) rotated 90;
   ) p -- endfor cycle;
 \end{smallcode}
-Note that you need to use \mpl{--} so that the cusps stay neatly
+Note that you need to use “\mpl{--}” so that the cusps stay neatly
 pointed.\marginpar{\vskip-38pt\small\noindent
 \llap{\hey\,}The geometry of the subtended angles shows that the length of the arc
 $T\to S$ equals the length of the arc from $T\to P$ on the quarter-sized circle
