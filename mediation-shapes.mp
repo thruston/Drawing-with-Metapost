@@ -21,7 +21,7 @@ forsuffixes $=t,s,p,c:
         dashed withdots scaled 1/3
         withcolor .67 red;
 endfor
-label.bot("\textsl{Dotted lines drawn with}: \mpl{point 0 of p -- point 1/2 length p}", 
+label.bot("\textsl{Dotted lines drawn with}: \mpl{point 0 of p -- point 1/2 length p of p}", 
     point 1/2 of bbox currentpicture);
 
 endfig;
