@@ -27,7 +27,7 @@ beginfig(1);
 numeric n;  n = 5;
 for i=-n upto n:
     for j=-n upto n:
-        draw filler rotated ((i+j) mod 4 * 90) shifted (i*u + j * v);
+        draw filler rotated ((i+j) mod 2 * 90) shifted (i*u + j * v);
     endfor
 endfor
 for i=-n upto n:
