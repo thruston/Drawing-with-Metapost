@@ -6904,38 +6904,6 @@ connecting the centres of adjacent shapes in the tiling, which reveals that each
 tiling is the dual of the other. 
 
 \newpage
-\subsection{More examples of Archimedian tilings}
-
-\textsc{These tilings are classified} by the configuration of the polygons that meet
-at each vertex.  This one is $(3^4, 6)$ because each vertex has four triangles and one
-hexagon. It exists in two enantiomorph forms.\mxpic{-80pt}{3.6in}{arch-snub-hexagon}
-The unit pictures look like this:
-$$\includegraphics[scale=0.85]{arch-snub-hexagon-unit}$$
-and they are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
-triangles surrounding it, and $t_7$ \& $t_8$ are the two “connecting” triangles,
-which swap sides to make the enantiomorphs.
-\begin{code}
-unit[k] = image(
-  for i=1 upto 6:
-    fill t[i] withcolor Blues 8 if odd i: 2 else: 3 fi;
-  endfor
-  for i=7 upto 8:
-    fill t[i] withcolor Oranges 8 if odd i: 3 else: 2 fi;
-  endfor
-  fill h withcolor Oranges 8 2;
-  forsuffixes S=h, t1, t2, t3, t4, t5, t6, t7, t8:
-    draw S withpen pencircle scaled 1/4 withcolor 3/4;
-    pair m; m = median(S);
-    for i=1 upto length S:
-      draw m -- point i - 1/2 of S withcolor 3/4;
-    endfor
-  endfor);
-\end{code}
-The $\id{median}()$ routine is from §\ref{polygons-given-side} and the colours are from 
-§\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
-from the previous page.
-
-\newpage
 \subsection{Separating filling and drawing}
 
 \textsc{Repeating a unit image} can sometimes cause unwanted overlaps, so as noted
@@ -6978,6 +6946,82 @@ endfor
 Rotating every other \mpl{filler} allows you to get the alternate colours in the squares.
 \mpic{-60pt}{arch-4-8-8-parts}%
 Using \mpl{filldraw} ensures that there are no gaps between adjacent segments.
+
+\newpage
+\subsection{Uniform tilings with different polygons}
+
+\textsc{The next example} also uses the square lattice,\mwpic{0pt}{arch-3-4-3-4}
+but the unit is more complicated, so the drawing needs two \<picture>
+variables, one for the colour fill and a second for the grid.  
+\begin{smallcode}
+input colorbrewer-rgb
+path s[], t[];
+s1 = unitsquare scaled 21 rotated 15; 
+s2 = s1 rotated 150;
+t1 = subpath (4, 3) of s1 -- point 1 of s2 -- cycle;
+t2 = t1 reflectedabout(point 1 of t1, point 2 of t1);
+t3 = t1 rotated 150;
+t4 = t1 rotated 210;
+picture color_unit, grid_unit;
+color_unit = image(
+    fill s1 withcolor Oranges 8 1;
+    fill s2 withcolor Oranges 8 2;
+    fill t1 withcolor Blues 8 1;
+    fill t2 withcolor Blues 8 2;
+    fill t3 withcolor Blues 8 3;
+    fill t4 withcolor Blues 8 4;
+);
+grid_unit = image(
+    draw s1; draw s2; 
+    draw t2; draw t3; draw t4;
+);
+pair u, v;
+u = point 1 of s1 - point 1 of s2;
+v = u rotated 90;
+numeric n; n = 4;
+forsuffixes $=color_unit, grid_unit:
+    for i=-n upto n:
+        for j=-n upto n:
+            draw $ shifted (i * u + j * v);
+        endfor
+    endfor
+endfor
+\end{smallcode}
+
+
+
+\newpage
+\subsection{More examples of Archimedian tilings}
+
+\textsc{These tilings are classified} by the configuration of the polygons that meet
+at each vertex.  This one is $(3^4, 6)$ because each vertex has four triangles and one
+hexagon. It exists in two enantiomorph forms.\mxpic{-80pt}{3.6in}{arch-snub-hexagon}
+The unit pictures look like this:
+$$\includegraphics[scale=0.85]{arch-snub-hexagon-unit}$$
+and they are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
+triangles surrounding it, and $t_7$ \& $t_8$ are the two “connecting” triangles,
+which swap sides to make the enantiomorphs.
+\begin{code}
+unit[k] = image(
+  for i=1 upto 6:
+    fill t[i] withcolor Blues 8 if odd i: 2 else: 3 fi;
+  endfor
+  for i=7 upto 8:
+    fill t[i] withcolor Oranges 8 if odd i: 3 else: 2 fi;
+  endfor
+  fill h withcolor Oranges 8 2;
+  forsuffixes S=h, t1, t2, t3, t4, t5, t6, t7, t8:
+    draw S withpen pencircle scaled 1/4 withcolor 3/4;
+    pair m; m = median(S);
+    for i=1 upto length S:
+      draw m -- point i - 1/2 of S withcolor 3/4;
+    endfor
+  endfor);
+\end{code}
+The $\id{median}()$ routine is from §\ref{polygons-given-side} and the colours are from 
+§\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
+from the previous page.
+
 
 \newpage
 \subsection{Penrose tilings}
