@@ -6839,7 +6839,7 @@ the line.  In these cases it is a good idea to duplicate the loops; use the firs
 set for filling, the second for drawing.  
 
 \newpage
-\subsection{Tiling with regular polygons}
+\subsection{Tiling with regular polygons}\label{sec:regtiling}
 
 \textsc{After tiling with squares}, the two simplest tilings are with triangles and
 hexagons\mwpic{-24pt}{tiling-hex-trig}
@@ -6948,7 +6948,7 @@ Rotating every other \mpl{filler} allows you to get the alternate colours in the
 Using \mpl{filldraw} ensures that there are no gaps between adjacent segments.
 
 \newpage
-\subsection{Uniform tilings with different polygons}
+\subsection{Tilings with more complex patterns}
 
 \textsc{The next example} also uses the square lattice,\mwpic{0pt}{arch-3-4-3-4}
 but the unit is more complicated, so the drawing needs two \<picture>
@@ -6991,14 +6991,21 @@ endfor
 
 
 \newpage
-\subsection{More examples of Archimedian tilings}
+\subsection{Showing the dual tiling}
 
-\textsc{These tilings are classified} by the configuration of the polygons that meet
+\textsc{These tilings can be classified} by the configuration of the polygons that meet
 at each vertex.  This one is $(3^4, 6)$ because each vertex has four triangles and one
 hexagon. It exists in two enantiomorph forms.\mxpic{-80pt}{3.6in}{arch-snub-hexagon}
 The unit pictures look like this:
-$$\includegraphics[scale=0.85]{arch-snub-hexagon-unit}$$
-and they are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
+\par\bigskip
+\vbox{\halign{#&\qquad\qquad\vbox to 48pt{\hsize=2.7in\noindent #\par\vss}\cr
+\includegraphics[scale=0.75]{arch-snub-hexagon-unit}
+&\hey\itshape To reveal the dual of the tiling, you can draw a line from 
+the median (or centroid if you prefer) of each polygon to the centre of each
+edge.\cr}}
+
+\bigskip
+\noindent They are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
 triangles surrounding it, and $t_7$ \& $t_8$ are the two “connecting” triangles,
 which swap sides to make the enantiomorphs.
 \begin{code}
@@ -7020,7 +7027,49 @@ unit[k] = image(
 \end{code}
 The $\id{median}()$ routine is from §\ref{polygons-given-side} and the colours are from 
 §\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
-from the previous page.
+from §\ref{sec:regtiling}.
+
+\newpage
+\subsection{Tiling with a dynamic unit}
+
+\textsc{In order to reveal} patterns in a tiling, you might want to vary the colours
+or line styles used in each repeated drawing unit.  In this case, you can write a
+macro that takes a parameter and returns a picture to draw.\mwpic{-36pt}{arch-3-4-6-4}
+
+\begin{smallcode}
+\mplibsetformat{metafun}  % <-- for the "transparent" macro
+\begin{mplibcode}
+input colorbrewer-rgb
+beginfig(1);
+numeric r; r = 5;
+path d; d = for i=1 upto 12:
+    (0, r) shifted (r * (sqrt(3)+2), 0) rotated 30i -- 
+endfor cycle;
+color shade[]; 
+shade0 = Oranges 8 3;  shade2 = Greens 8 3;
+shade1 = Blues 8 3;    shade3 = Reds 8 3;
+vardef unit(expr n) = image(
+    fill d withcolor transparent (2, .9, shade[n mod 4]);
+    draw d; 
+) enddef;
+pair u, v;
+u = point 0 of d - point 3 of d;
+v = u rotated 60;
+numeric n; n = 6;
+for i=-n upto n:
+    for j=-n upto n:
+        draw unit(i*j) shifted ((i - floor(j / 2)) * u + j * v);
+    endfor
+endfor
+clip currentpicture to unitsquare shifted -(1/2, 1/2) scaled (n * 9 r);
+endfig;
+\end{mplibcode}
+\end{smallcode}
+Instead of defining six trianges, six squares, and a hexagon, you can just define
+the dodecagon and overlap each one.  Using a macro to create the unit, allows you to
+choose a different colour for each filler. Using the \mpl{transparent} macro from
+Metafun automatically mixes the colours for the overlaps.  But the edges don't look
+so good, so you need to clip the whole picture to a neat square.
 
 
 \newpage

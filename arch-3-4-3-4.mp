@@ -7,7 +7,7 @@ input colorbrewer-rgb
 vardef median(expr p) = origin for i=1 upto length p: + point i of p / length p endfor enddef;
 beginfig(1);
     path s[], t[];
-    s1 = unitsquare scaled 24 rotated 15; 
+    s1 = unitsquare scaled 21 rotated 15; 
     s2 = s1 rotated 150;
     t1 = subpath (4, 3) of s1 -- point 1 of s2 -- cycle;
     t2 = t1 reflectedabout(point 1 of t1, point 2 of t1);
@@ -46,9 +46,16 @@ beginfig(1);
             endfor
         endfor
     endfor
-    label.bot("The arrangement of polygons in the unit is carefully",  point 1/2 of bbox currentpicture
-            shifted 34 down);
-    label.bot("chosen so that the tiling has neat edges."            , point 1/2 of bbox currentpicture);
+    label.bot("The arrangement of polygons in the units was carefully",  point 1/2 of bbox currentpicture
+            shifted 21 down);
+    label.bot("chosen to give the tiling neat edges."            , point 1/2 of bbox currentpicture);
+
+    path b; b = bbox currentpicture shifted 34 down;
+    draw color_unit shifted point 1/4 of b;
+    draw grid_unit  shifted point 3/4 of b;
+    path b; b = bbox currentpicture shifted 13 down;
+    label("\texttt{color\_unit}", point 1/4 of b);
+    label("\texttt{grid\_unit}", point 3/4 of b);
 endfig;
 \end{mplibcode}
 \end{document}
