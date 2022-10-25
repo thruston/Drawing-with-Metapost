@@ -2921,43 +2921,52 @@ To get the other excircles, call the macro with the points in a different order.
 \newpage
 \subsection{Circumcircle of a triangle}
 
-The circumcircle of a triangle is the circle through the three corners, so you can
-use the \mpl{circle_through} macro from §\ref{sec:circles} that uses an idea from
-§\ref{sec:parallel}.
-\begin{code}
-vardef circle_through(expr A, B, C) =
-    save m; pair m;
-    m = whatever * (A-B) rotated 90 shifted 1/2 [A,B]
-      = whatever * (B-C) rotated 90 shifted 1/2 [B,C];
-    fullcircle scaled 2 abs (A-m) shifted m
+The circumcircle of a triangle is the circle through the three corners, so if you
+already have the corners of your triangle as separate \<pair> variables, you can
+use the \mpl{circle_through} macro from §\ref{sec:circles}.  Or you can adapt the
+macro to take a single triangular path:
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-60pt]
+vardef circumcircle(expr T) =
+  save m; pair m;
+  m = whatever * (point 0 of T - point 1 of T) rotated 90 shifted point 1/2 of T 
+    = whatever * (point 1 of T - point 2 of T) rotated 90 shifted point 3/2 of T; 
+  fullcircle scaled 2 abs (point 0 of T - m) shifted m
 enddef;
-\end{code}
-Note that as the diagram on the right shows,\mxpic{-1in}{4.8in}{circumcircle}
+\end{smallcode}
+Note that as the diagram on the right shows,\mxpic{-2in}{4.6in}{circumcircle}
 the centre of the circumcircle is the intersection of all three of the perpendicular bisectors of
 sides, but for the purposes of drawing in \MP\ you only need to find the
 intersection of two of them.  You could write 
-\begin{code}
-    m = whatever * (A-B) rotated 90 shifted 1/2 [A,B]
-      = whatever * (B-C) rotated 90 shifted 1/2 [B,C]
-      = whatever * (C-A) rotated 90 shifted 1/2 [C,A];
-\end{code}
-but it does not add any more information to the system of equations, and
-\MP\ will sometimes give you an “inconsistent equation” error.
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-60pt]
+  m = whatever * (point 0 of T - point 1 of T) rotated 90 shifted point 1/2 of T 
+    = whatever * (point 1 of T - point 2 of T) rotated 90 shifted point 3/2 of T 
+    = whatever * (point 2 of T - point 3 of T) rotated 90 shifted point 5/2 of T; 
+\end{smallcode}
+but this does not add any more information to the equation for $m$, and
+\MP\ will sometimes give you an “inconsistent equation” error if your triangle 
+is long and thin.
 
-\medskip\noindent
+\vfill
+\noindent
 \hey The marks that show line segments are equal were created by this macro.
 \begin{code}
 vardef mark_equal(expr a, b, n) = 
-    save m, s; numeric s; 2s = n - 1;
-    picture m; m = image(for t=-s upto s:
-        draw (down--up) scaled 2 rotated -13 shifted (t,0) 
-            withpen pencircle scaled 1/4;
-    endfor);
-    draw m rotated angle (b-a) shifted 1/4[a,b];
-    draw m rotated angle (b-a) shifted 3/4[a,b];
+  save m, s; numeric s; 2s = n - 1;
+  picture m; m = image(for t=-s upto s:
+      draw (down--up) scaled 2 rotated -13 shifted (t,0) 
+          withpen pencircle scaled 1/4;
+  endfor);
+  draw m rotated angle (b-a) shifted 1/4[a,b];
+  draw m rotated angle (b-a) shifted 3/4[a,b];
 enddef;
 \end{code}
-The triple marks on the segments of $AC$ were created with \mpl{mark_equal(C,A,3)}.
+Given the triangular \<path> $T$, the macro was used like this: 
+$\longrightarrow$\vadjust{\moveright5.5in\vbox to 0pt{\vss
+\begin{code}
+mark_equal(point 0 of T, point 1 of T, 1);
+mark_equal(point 1 of T, point 2 of T, 2);
+mark_equal(point 2 of T, point 0 of T, 3);
+\end{code}}}
 
 \newpage
 \subsection{The nine-point circle of a triangle}

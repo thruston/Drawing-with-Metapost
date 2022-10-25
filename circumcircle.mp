@@ -9,29 +9,24 @@ vardef through(expr a, b, o) =
 enddef;
 
 beginfig(1);
-    pair A, B, C;
-    A = origin; B = 377 dir 10; C = 233 dir 70;
-    pair m, a, b, c; 
-    a = 1/2[A, B]; b = 1/2[B, C]; c = 1/2[C, A];
-    m = whatever * (A-B) rotated 90 shifted a
-      = whatever * (B-C) rotated 90 shifted b
-      = whatever * (C-A) rotated 90 shifted c;
+  path T; T = origin -- 377 dir 10 -- 233 dir 70 -- cycle;
+  pair m;
+  m = whatever * (point 0 of T - point 1 of T) rotated 90 shifted point 1/2 of T 
+    = whatever * (point 1 of T - point 2 of T) rotated 90 shifted point 3/2 of T 
+    = whatever * (point 2 of T - point 3 of T) rotated 90 shifted point 5/2 of T; 
     
   drawoptions(withcolor 3/4);
-    draw unitsquare scaled 5 rotated angle (B-A) shifted a;
-    draw unitsquare scaled 5 rotated angle (C-B) shifted b;
-    draw unitsquare scaled 5 rotated angle (A-C) shifted c;
+    draw unitsquare scaled 5 rotated angle (point 1 of T-point 0 of T) shifted point 1/2 of T;
+    draw unitsquare scaled 5 rotated angle (point 2 of T-point 1 of T) shifted point 3/2 of T;
+    draw unitsquare scaled 5 rotated angle (point 0 of T-point 2 of T) shifted point 5/2 of T;
   drawoptions(dashed evenly scaled 1/4 withcolor 1/2);
-    draw through(a, m, 10);
-    draw through(b, m, 10);
-    draw through(c, m, 10);
+    draw through(point 1/2 of T, m, 10);
+    draw through(point 3/2 of T, m, 10);
+    draw through(point 5/2 of T, m, 10);
   drawoptions();
-    draw fullcircle scaled 2 abs (A-m) shifted m withcolor 2/3 red;
-    draw A--B--C--cycle;
+    draw fullcircle scaled 2 abs (point 0 of T - m) shifted m withcolor 2/3 red;
+    draw T;
 
-    dotlabel.llft("$A$", A);
-    dotlabel.rt("$B$", B);
-    dotlabel.ulft("$C$", C);
     draw m withpen pencircle scaled dotlabeldiam; label("$m$", m + 10 dir 12);
 
 vardef mark_equal(expr a, b, n) = 
@@ -44,9 +39,9 @@ vardef mark_equal(expr a, b, n) =
     draw m rotated angle (b-a) shifted 3/4[a,b];
 enddef;
     
-    mark_equal(A, B, 1);
-    mark_equal(B, C, 2);
-    mark_equal(C, A, 3);
+    mark_equal(point 0 of T, point 1 of T, 1);
+    mark_equal(point 1 of T, point 2 of T, 2);
+    mark_equal(point 2 of T, point 0 of T, 3);
 
 endfig;
 \end{mplibcode}
