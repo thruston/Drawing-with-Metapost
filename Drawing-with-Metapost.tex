@@ -3578,8 +3578,8 @@ endfig;
 \newpage
 \section{Trigonometry functions}\label{trig}
 
-\MP\ provides only two basic trigonometry functions, "sind" and "cosd";  this lack
-appears to be a deliberate design.  In general it's much easier to use the "rotated"
+\MP\ provides only two basic trigonometry functions, "sind" and "cosd".  This lack
+appears to be a deliberate design;  in general it's much easier to use the "rotated"
 and "angle" functions than to work out all the sine, cosines and arc-tangents
 involved in rotating parts of your picture.  But if you really want the `missing'
 functions they are not hard to implement.
@@ -3595,8 +3595,8 @@ numeric pi;
 pi := 3.14159;
 % measure round a circular arc...
 pi := 1/4 arclength (quartercircle scaled 16);
-% up to 34 digits of precision
-pi := 3.141592653589793238462643383279503;
+% up to 32 digits of precision
+pi := 3.1415926535897932384626433832795;
 % as many digits as are needed...
 vardef getpi =
   numeric lasts, t, s, n, na, d, da;
@@ -3634,11 +3634,11 @@ precision.  In fact there's no harm in always defining these extra digits; even 
 you are using the default "scaled" number system, \MP\ will happily read as many
 extra digits of $\pi$ as you supply, before it rounds the value to the nearest
 multiple of $1\over65536$ (which turns out to be $3.14159$). The same applies to the
-"double" and "binary" number systems, but the "decimal" number system will give you
-an error if you supply more digits that the default precision (which is 34).  So
-it's best to use no more than 34 digits.  It's also possible, but not really worth
+"double" number system, but the "binary" and "decimal" number systems will give you
+an error if you supply more digits that the default precision.  So in general
+it's best to use no more than 32 digits.  It's also possible, but not really worth
 the trouble, to define a routine to calculate $\pi$ to the current
-precision.  However you define it, once you are armed with a value for $\pi$ you can
+precision.\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}  However you define it, once you are armed with a value for $\pi$ you can
 then define functions to convert between degrees and radians, and some more `normal'
 versions of sine and cosine.
 
@@ -3651,10 +3651,12 @@ operator.
 $\kw{dir}\,30$ gives you the point $(x,y)$ on the unit circle such that $\tan
 30^{\circ} = y/x$.  You can use these ideas to define tangent and arctan functions
 if you really need them, but often "angle" and "dir" are more directly useful
-for drawing.  You should also be aware that the tangent function shown here does not
-check whether $x=0$; if this is an issue you can say something like
-`$\kw{if}\,x=0\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$' at the appropriate
-point.
+for drawing.  
+
+You should also be aware that the tangent function shown here does not
+check whether $x=0$; if this is an issue, then add something like this 
+at the appropriate point:
+$$\kw{if}\,x=0\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$$
 
 \newpage
 \section{Traditional labels and annotations}\label{sec:trad-labels}
