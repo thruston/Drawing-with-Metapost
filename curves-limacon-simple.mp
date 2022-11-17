@@ -24,7 +24,7 @@ beginfig(1);
     endfor cycle;
 
     % path polar;
-    % polar = for t=0 upto 360: 4a * (1/2 + cosd(t)) * dir t ..  endfor cycle;
+    % polar = for t=0 upto 359: 2a * (1 + 2 cosd(t)) * dir t .. endfor cycle;
     % draw polar withpen pencircle scaled 5/4 withcolor 3/4[green, white];
 
     draw base withcolor 2/3 blue; draw center base withpen pencircle scaled 2 withcolor 2/3 blue;

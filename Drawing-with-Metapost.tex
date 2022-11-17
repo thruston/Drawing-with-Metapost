@@ -5627,7 +5627,7 @@ xpart H = xpart Q = xpart M;  ypart M = ypart N = 0;
 xpart N = xpart P;
 L = point 0 of ell;
 T = point 0 of tee;
-% now we can get with the drawing
+% now get on with the drawing
 draw arc dashed withdots scaled 1/4 withcolor 1/2 red;
 draw P--N dashed withdots scaled 1/2;
 draw Q--M dashed withdots scaled 1/2;
@@ -5770,7 +5770,7 @@ The curve in this chart was created by reflecting the line $y=x^3$.
 \subsubsection{Exponential and logarithm functions by reflection}
 
 \textsc{A further example} of creating paths by
-transformation.\mpic{0pt}{func-exponential}
+transformation.\mpic{-36pt}{func-exponential}
 \begin{smallcode}
 numeric u; u = 42;
 path xx, yy;
@@ -5803,12 +5803,17 @@ draw ee withcolor 2/3 blue; label.top("$e^x$", point infinity of ee);
 draw ll withcolor 3/4 red; label.top("$\ln(x)$", point infinity of ll);
 drawarrow xx; label.rt("$x$", point 1 of xx);
 drawarrow yy; label.top("$y$", point 1 of yy);
-
 dotlabel.lft("$e$", (0, mexp(256) * u));
 dotlabel.bot("$e$", (mexp(256) * u, 0));
 dotlabel.ulft("$1$", (0, u));
 dotlabel.lrt("$1$", (u, 0));
 \end{smallcode}
+\moveright6in\vbox to 0pt{\vss\noindent
+If you prefer more ‘normal’ functions, you can define:
+\begin{smallcode}
+vardef exp(expr x) = mexp(256x) enddef;
+vardef log(expr x) = 1/256 mlog(x) enddef;
+\end{smallcode}}
 
 \newpage
 \subsection{Functions using trigonometric functions}
@@ -6354,8 +6359,7 @@ But for \MP, you want only a single point $P$ from the circumference of each cir
 this turns out to be the image of $A$ reflected in the tangent at each point $Q$, like so:
 $$\includegraphics[width=0.7\textwidth]{curves-cardioid-construction}$$
 \vskip -84pt\noindent
-With a small step size $s$ and a base circle \id{base}, this suggests:
-\begin{smallcode}
+With a small step size $s$ and a base circle \id{base}, this suggests: \begin{smallcode}
 pair A; A = point 0 of base;
 path cardioid; cardioid = for t = 0 step s until length base:
   A reflectedabout(precontrol t of base, postcontrol t of base) ..
@@ -6375,24 +6379,25 @@ cardioid = for t=0 upto 360: 2a * (1+cosd(t)) * dir t .. endfor cycle;
 moving point $A$ off the base circle.
 \vadjust{\moveright356pt\vbox to 0pt{\vskip -20pt\noindent
 \rlap{\includegraphics[scale=0.833]{curves-limacon-simple}}\vss}}
+Here $A$ has been moved to the left, but each $P$ on the curve is still $A$
+reflected in the tangent at each $Q$. The “hole” gets larger as $A$ moves away from
+the \id{base} circle; when $A$ touches the \id{base} the hole disappears and the
+curve becomes the cardioid, as before.
 
-\begin{itemize}
-    \item Here $A$ has been moved to the left, but\dots
-    \item Each $P$ on the curve is still $A$ reflected in the tangent
-        at each $Q$.
-    \item The “hole” gets larger as $A$ moves away from the \id{base} circle.
-    \item When $A$ touches the \id{base} the hole disappears.
-    \item The curve then becomes the cardioid, as before.
-\end{itemize}
-
-\noindent
-The red limaçon path was generated like this:
+Following this ruler-and-compasses approach, the red limaçon path in the figure here
+was generated from the \id{base} circle shown in blue.
 \begin{smallcode}
 pair A; A = 2[center base, point 0 of base];
 path limacon; limacon = for t = 0 step s until length base:
   A reflectedabout(precontrol t of base, postcontrol t of base) ..
 endfor cycle;
 \end{smallcode}
+Or if you prefer a more trigonometrical approach:
+\begin{smallcode}
+limacon = for t=0 upto 359: 2a*(1+2cosd(t))*dir t .. endfor cycle;
+\end{smallcode}
+Here $2a$ is the diameter of the blue \id{base} circle.  Note that if you use
+\mpl{sind}\\ instead of \mpl{cosd} you get the same curve rotated $90^\circ$.
 
 \vfill
 \noindent
@@ -6571,6 +6576,11 @@ so-called \textit{brachistochrone} (the curve joining two points such that a bod
 travelling along it under gravity takes a shorter time than is possible along any
 other curve between the points).
 $$\includegraphics{brachisto}$$
+
+\newpage
+\section{Eggs}\label{eggs}
+
+
 
 \newpage
 \section{Data visualizations}\label{dviz}
@@ -7222,6 +7232,5 @@ Notice that to make the dissection work, it is important to pass the three
 
 - graphs, axes, grids, number labels, jitter, sketch graphs
 
-- parametric equations, folium of Descartes
 
 \end{document}
