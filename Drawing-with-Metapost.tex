@@ -6580,6 +6580,91 @@ $$\includegraphics{brachisto}$$
 \newpage
 \section{Eggs}\label{eggs}
 
+\textsc{Drawing bird's eggs} excites a curious fascination in some people.  This
+section shows some possible ways to make eggs with \MP. The first few
+compass-and-ruler constructions are taken from Robert Dixon's
+\textsl{Mathographics}.  They all follow the same basic idea of contructing the
+egg-shaped path from a series of circular arcs.  
+
+\subsection{Euclidean egg}
+
+The first is made of four circular arcs,\mwpic{0pt}{eggs-moss}
+defined here as parts of circles $a$, $b$, $c$, and $d$.  But note
+that you don't actually need $d$ to make the egg; it is enough simply
+to join the arcs of $b$ and $c$ with the $\to$ connector.
+\begin{code}[xleftmargin=0pt]
+color eggshell; eggshell = 3/4[1/4[red, green], white];
+path a, b, c, d, egg; numeric r; r = 72;
+a = fullcircle scaled 2r;
+b = subpath (0, 1) of fullcircle scaled 4r shifted point 4 of a;
+c = subpath (3, 4) of fullcircle scaled 4r shifted point 0 of a;
+d = fullcircle scaled 2 abs (point 2 of a - point 1 of b) 
+               shifted point 2 of a;
+egg = subpath (4, 8) of a & b .. c & cycle;
+fill egg withpen pencircle scaled 2 withcolor eggshell;
+
+picture P; P = currentpicture;
+drawoptions(withpen pencircle scaled 1/4 withcolor 1/2);
+draw a;
+draw b -- point 4 of a -- cycle;
+draw c -- point 0 of a -- cycle;
+draw d;
+draw point 0 of a withpen pencircle scaled 2;
+draw point 2 of a withpen pencircle scaled 2;
+draw point 4 of a withpen pencircle scaled 2;
+draw center a withpen pencircle scaled 2;
+drawoptions();
+draw P shifted 160 right;
+\end{code}
+\newpage
+\subsection{Pythagorean egg}
+
+The centres of the arcs are determined by the 3-4-5 triangle at the
+origin.\mwpic{0pt}{eggs-thom}
+\begin{code}
+numeric r, a, b; a = 60; b = 45; r = a ++ b;
+z1 = -z2 = (b, 0);
+path base, cap, egg;
+base = subpath (4, 8) of fullcircle scaled 2(2r-b);
+cap = subpath (0, 4) of fullcircle scaled 2r shifted (0, a)
+      cutbefore ((b, 0) -- (b, 2r))
+      cutafter  ((-b, 0) -- (-b, 2r));  
+egg = cap .. {down} base {up} .. cycle;
+\end{code}
+Note that you can use $\to$ to create reasonably large 
+circular arcs.
+The parts of the drawing for filling the egg, 
+and showing the contruction are similar to the first example.
+
+\subsection{A taller Pythagorean egg}
+
+A slightly different approach using a $\sqrt3$-2-$\sqrt7$
+triangle.\mwpic{20pt}{eggs-357}
+\begin{code}
+path base, cup, cap, egg;
+base = fullcircle scaled 200;
+z1 = point -2/3 of base;
+z2 = point  2/3 of base;
+z3 = point 10/3 of base;
+z4 = point 14/3 of base;
+z5 = 1/2[z2, z3]; z6 = 1/2[z4, z1];
+numeric a, b, c;
+a = abs(z3 - z1); b = a - abs(z4 - z6); c = a - abs(z4 - z5);
+cup = subpath (4, 8) of fullcircle scaled 2b shifted z6;
+cap = fullcircle scaled 2c shifted z5
+      cutbefore (z5 -- 2[z4, z5])
+      cutafter (z5 -- 2[z1, z5]);
+egg = cup {up} .. z2 .. cap .. z3 .. {down} cycle;
+\end{code}
+
+% eggs-five-point.mp
+% eggs-four-point.mp
+% eggs-gold.mp
+% eggs-pentagons.mp
+% eggs-perfect.mp
+% eggs-shaded.mp
+% eggs-fried.mp
+
 
 
 \newpage
