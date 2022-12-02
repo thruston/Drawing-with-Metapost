@@ -3,16 +3,12 @@
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
+input eggs-common
 beginfig(1);
-
-color eggshell, darker_eggshell;
-eggshell = 3/4[1/4[red, green], white];
-darker_eggshell = 1/2[1/4[red, green], white];
-
 numeric a; a = 56;    
 path r[], s[];
 for i=1 upto 4:
-    r[i] = fullcircle scaled 2a shifted (0, a * i);
+    r[i] = fullcircle scaled 2a shifted (0, a * i - 5/2 a);  % -2.5a so the origin is in centre 
 endfor
 r5 = r2 rotatedabout(point 2 of r2, 60);
 r6 = r2 rotatedabout(point 2 of r2, -60);
@@ -34,14 +30,21 @@ s2 = reverse s1 reflectedabout(up, down);
 s4 = reverse s3 reflectedabout(up, down);
 s6 = reverse s5 reflectedabout(up, down);
 
-
 path egg;
-egg = s5 -- s3 -- s1 .. point 2 of r4 .. s2 -- s4 -- s6 .. point 6 of r1 .. cycle;
+
+egg = point 0 of s1 {direction 0 of s1} ..
+      point 2 of s1 {direction 2 of s1} ..
+      point 0 of s2 {direction 0 of s2} ..
+      point 0 of s4 {direction 0 of s4} ..
+      point 0 of s6 {direction 0 of s6} ..
+      point 1 of s6 {direction 1 of s6} ..
+      point 0 of s5 {direction 0 of s5} ..
+      point 0 of s3 {direction 0 of s3} .. cycle;
 
 fill egg withpen pencircle scaled 2 withcolor eggshell;
 picture P; P = currentpicture;
 
-drawoptions(withpen pencircle scaled 1/4 withcolor darker_eggshell);
+drawoptions(withpen pencircle scaled 1/4 withcolor dark_eggshell);
 for i=1 upto 6: 
     draw r[i];
 endfor
@@ -69,6 +72,7 @@ for $=z3, z4, z5, z6, z7, point 2 of r3, point 6 of r5, point 6 of r6:
 endfor
 
 draw egg;
+draw numbered_points(egg);
 
 drawoptions();
 

@@ -6635,7 +6635,7 @@ endfig;
 The centres of the arcs are determined by the 3-4-5 triangle at the
 origin.\mwpic{0pt}{eggs-thom}
 \begin{code}
-numeric r, a, b, t; a = 60; b = 45; r = a ++ b;
+numeric r, a, b, t; a = 60; 4b = 3a; r = a ++ b;
 path base, cap, egg;
 base = subpath (4, 8) of fullcircle scaled 2(2r-b);
 cap = subpath (0, 4) of fullcircle scaled 2r shifted (0, a)
@@ -6673,10 +6673,34 @@ egg = point 4 of cup {up} .. cap .. {down} cup & cycle;
 \end{code}
 
 \newpage
+\subsection{Golden section egg}
+
+An alternative construction.\mwpic{-10pt}{eggs-gold}
+\begin{code}[xleftmargin=0pt]
+path base, aa, bb; pair m, n, n';
+base = fullcircle scaled 200; m = 1/2 point 0 of base;
+aa = halfcircle scaled 2 abs (point 2 of base - m) 
+                shifted m cutbefore (origin -- 1000 up);
+n = point infinity of aa; n' = n reflectedabout(up, down);
+bb = subpath (0, 2) of base shifted n cutafter (origin -- 1000 up);
+
+path dome, cap, cup, egg;
+dome = fullcircle 
+    scaled 2 (abs(n - point 0 of base) - abs(n - point 0 of bb))
+    shifted point infinity of bb;
+cap = dome cutbefore (point 4 of bb -- 2[n, point 4 of bb])
+           cutafter (point 4 of bb -- 2[n', point 4 of bb]);
+cup = subpath (4, 8) of base;
+egg = point 4 of cup {up} .. cap .. {down} cup & cycle;
+\end{code}
+
 \subsection{Four point egg}
 % eggs-four-point.mp
-To get a smoother curve, you can use four different sized arcs to make up 
-each side of the egg.\mwpic{0pt}{eggs-four-point}
+So far all the eggs have been drawn with semi-circular big end, but this
+can be improved.  
+To get a smoother curve, you can use four different sized arcs with four different
+centres of rotation to make up 
+each side of the egg.\mwpic{-36pt}{eggs-four-point}
 \begin{code}[xleftmargin=0pt]
 path egg, a, b, c, d;
 a = fullcircle scaled 80;
@@ -6692,35 +6716,52 @@ egg = point 0 of c {up} .. subpath (1,3) of d .. {down} point 4 of c
 
 \newpage
 \subsection{Five point egg}
-% eggs-five-point.mp
-Why 5??\mwpic{0pt}{eggs-five-point}
-\begin{code}
+
+The next level of sophistication is to use five different arcs, 
+but this comes at the cost of more complexity and the loss of the 
+points at exactly E, N, W, and S.\mwpic{0pt}{eggs-five-point}
+\begin{smallcode}[xleftmargin=0pt] 
 numeric a; a = 56;    
-path egg, r[], s[];
-for i=1 upto 4:
-    r[i] = fullcircle scaled 2a shifted (0, a * i);
+path r[], s[];
+for i=1 upto 4:          % -2.5a so the origin is in centre 
+    r[i] = fullcircle scaled 2a shifted (0, a * i - 5/2 a);  
 endfor
 r5 = r2 rotatedabout(point 2 of r2, 60);
 r6 = r2 rotatedabout(point 2 of r2, -60);
+z1 = subpath (4, 8) of r5 intersectionpoint 
+         (point 6 of r6 -- 8[point 6 of r6, point 2/3 of r2]);
+z2 = subpath (0, 4) of r4 intersectionpoint 
+         (point 6 of r6 -- 8[point 6 of r6, point 2 of r3]);
+z3 = whatever[z1, point 6 of r6] = whatever[point 2 of r3,point 10/3 of r1];
+z4 = 1/2[point 10/3 of r1, point 2/3 of r1];
+z5 = whatever [z3, point 2/3 of r1] = whatever [z4, point 10/3 of r3];
 
-z1 = subpath (4, 8) of r5 intersectionpoint (point 6 of r6 -- 8[point 6 of r6, point 2/3 of r2]);
-z2 = subpath (0, 4) of r4 intersectionpoint (point 6 of r6 -- 8[point 6 of r6, point 2 of r3]);
-z3 = whatever [z1, point 6 of r6] = whatever [point 2 of r3,  point 10/3 of r1];
-z4 = z3 reflectedabout(up, down);
-z7 = 1/2[point 10/3 of r1, point 2/3 of r1];
-z5 = whatever [z3, point 2/3 of r1] = whatever [z7, point 10/3 of r3];
-z6 = z5 reflectedabout(up, down);
-
-s1 = fullcircle scaled 2 length (z2 - point 6 of r6) shifted point 6 of r6 cutbefore z1 cutafter z2;
-s3 = fullcircle rotated angle (point 2/3 of r1 - z3) scaled 2 length (z1-z3) shifted z3 cutafter z1;
-s5 = fullcircle rotated angle (z7 - z5) scaled 2 (length (z1-z3) - length (z3-z5)) shifted z5 cutafter point 0 of s3;
-
+s1 = fullcircle scaled 2 length (z2 - point 6 of r6) 
+                shifted point 6 of r6 cutbefore z1 cutafter z2;
+s3 = fullcircle rotated angle (point 2/3 of r1 - z3) 
+                scaled 2 length (z1 - z3) shifted z3 cutafter z1;
+s5 = fullcircle rotated angle (z4 - z5) 
+                scaled 2 (length (z1 - z3) - length (z3 - z5)) 
+                shifted z5 cutafter point 0 of s3;
 s2 = reverse s1 reflectedabout(up, down);
 s4 = reverse s3 reflectedabout(up, down);
 s6 = reverse s5 reflectedabout(up, down);
-egg = s5 -- s3 -- s1 .. point 2 of r4 .. s2 -- s4 -- s6 .. point 6 of r1 .. cycle;
-\end{code}
-% eggs-gold.mp
+
+path egg;
+egg = point 0 of s1 {direction 0 of s1} ..
+      point 2 of s1 {direction 2 of s1} ..
+      point 0 of s2 {direction 0 of s2} ..
+      point 0 of s4 {direction 0 of s4} ..
+      point 0 of s6 {direction 0 of s6} ..
+      point 1 of s6 {direction 1 of s6} ..
+      point 0 of s5 {direction 0 of s5} ..
+      point 0 of s3 {direction 0 of s3} .. cycle;
+\end{smallcode}
+
+\newpage
+\subsection{The perfect egg}
+
+$$\includegraphics[width=0.9\textwidth]{eggs-perfect.pdf}$$
 % eggs-pentagons.mp
 % eggs-perfect.mp
 % eggs-shaded.mp
@@ -7356,8 +7397,6 @@ Notice that to make the dissection work, it is important to pass the three
 
 - angle marks, including curved angle marks
 
-- eggs, ellipses
-
 - drawing knots, double lines, ropes
 
 - decorating lines
@@ -7371,6 +7410,8 @@ Notice that to make the dissection work, it is important to pass the three
 - all sorts of arrow, arrows between arrows, arrows next to a path (handles)
 
 - faking 3d
+
+- functions, def, vardef, recursion, primarydef etc, of syntax, expr suffix text
 
 - recursive drawings, trees
 
