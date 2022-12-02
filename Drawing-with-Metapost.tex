@@ -30,6 +30,7 @@
 \def\cycle{{\rm cycle}}
 \def\vpic#1#2{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}
 \def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
+\def\mnote#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\noindent #2\par\vss}}}
 \def\mwpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=4in]{#2}}\vss}}}
 \def\mxpic#1#2#3{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=#2]{#3}}\vss}}}
 \def\nb{$\vcenter{\begin{mplibcode}beginfig(1);
@@ -6584,37 +6585,49 @@ $$\includegraphics{brachisto}$$
 section shows some possible ways to make eggs with \MP. The first few
 compass-and-ruler constructions are taken from Robert Dixon's
 \textsl{Mathographics}.  They all follow the same basic idea of contructing the
-egg-shaped path from a series of circular arcs.  
+egg-shaped path from a series of circular arcs.\mnote{-16pt}{In these \MP\ implementations
+each egg path has 8 points starting with point 0 at “3 o’clock” like \mpl{fullcircle}.}
 
 \subsection{Euclidean egg}
 
-The first is made of four circular arcs,\mwpic{0pt}{eggs-moss}
-defined here as parts of circles $a$, $b$, $c$, and $d$.  But note
-that you don't actually need $d$ to make the egg; it is enough simply
-to join the arcs of $b$ and $c$ with the $\to$ connector.
+The first is made of four circular arcs, defined here as parts of 
+circles $a$, $b$, $c$, \& $d$.\mwpic{0pt}{eggs-moss}\marginpar{\par\kern 3in
+\begin{itemize}
+    \item "eggs-common.mp" defines the colours, and the \mpl{numbered_points}
+        routine that is used to show the points of the "egg" path.
+    \item Note that it is not necessary that the parts of the arcs touch;
+        in fact it is better to join them with the \mpl{..} connector in case the 
+        ends are not close enough for you to use \mpl{&}.
+    \item The rigmarole with saving the current picture, is to show a copy 
+        of the egg path with and without the construction lines.
+\end{itemize}
+}
 \begin{code}[xleftmargin=0pt]
-color eggshell; eggshell = 3/4[1/4[red, green], white];
-path a, b, c, d, egg; numeric r; r = 72;
+input eggs-common
+path a, b, c, d, egg; numeric r; r = 100;
 a = fullcircle scaled 2r;
-b = subpath (0, 1) of fullcircle scaled 4r shifted point 4 of a;
-c = subpath (3, 4) of fullcircle scaled 4r shifted point 0 of a;
+b = fullcircle scaled 4r shifted point 4 of a;
+c = fullcircle scaled 4r shifted point 0 of a;
 d = fullcircle scaled 2 abs (point 2 of a - point 1 of b) 
                shifted point 2 of a;
-egg = subpath (4, 8) of a & b .. c & cycle;
+egg = subpath (0, 1) of b .. point 2 of d .. 
+      subpath (3, 4) of c .. subpath (5, 7) of a .. cycle;
+beginfig(1);
 fill egg withpen pencircle scaled 2 withcolor eggshell;
-
 picture P; P = currentpicture;
+drawoptions(withpen pencircle scaled 1/4 withcolor dark_eggshell);
+draw a; draw d;
 drawoptions(withpen pencircle scaled 1/4 withcolor 1/2);
-draw a;
-draw b -- point 4 of a -- cycle;
-draw c -- point 0 of a -- cycle;
-draw d;
-draw point 0 of a withpen pencircle scaled 2;
-draw point 2 of a withpen pencircle scaled 2;
-draw point 4 of a withpen pencircle scaled 2;
-draw center a withpen pencircle scaled 2;
+draw point 1 of egg -- point 4 of egg --
+     point 0 of egg -- point 3 of egg;
+draw egg;
+drawoptions(withpen pencircle scaled 2 withcolor 7/16);
+draw center a;
+draw center d;
+draw numbered_points(egg);
 drawoptions();
-draw P shifted 160 right;
+draw P shifted 240 right;
+endfig;
 \end{code}
 \newpage
 \subsection{Pythagorean egg}
@@ -6622,23 +6635,23 @@ draw P shifted 160 right;
 The centres of the arcs are determined by the 3-4-5 triangle at the
 origin.\mwpic{0pt}{eggs-thom}
 \begin{code}
-numeric r, a, b; a = 60; b = 45; r = a ++ b;
-z1 = -z2 = (b, 0);
+numeric r, a, b, t; a = 60; b = 45; r = a ++ b;
 path base, cap, egg;
 base = subpath (4, 8) of fullcircle scaled 2(2r-b);
 cap = subpath (0, 4) of fullcircle scaled 2r shifted (0, a)
       cutbefore ((b, 0) -- (b, 2r))
       cutafter  ((-b, 0) -- (-b, 2r));  
-egg = cap .. {down} base {up} .. cycle;
+egg = point 4 of base {up} .. cap .. {down} base & cycle;
+% more naturally "base {up} .. cap .. {down} cycle"
+% but then point 0 would not be at 3 o'clock
 \end{code}
-Note that you can use $\to$ to create reasonably large 
-circular arcs.
+Note that you can use $\to$ to create reasonably large circular arcs.
 The parts of the drawing for filling the egg, 
 and showing the contruction are similar to the first example.
 
 \subsection{A taller Pythagorean egg}
 
-A slightly different approach using a $\sqrt3$-2-$\sqrt7$
+A slightly different approach using a $\sqrt3$-$\sqrt4$-$\sqrt7$
 triangle.\mwpic{20pt}{eggs-357}
 \begin{code}
 path base, cup, cap, egg;
@@ -6647,18 +6660,66 @@ z1 = point -2/3 of base;
 z2 = point  2/3 of base;
 z3 = point 10/3 of base;
 z4 = point 14/3 of base;
-z5 = 1/2[z2, z3]; z6 = 1/2[z4, z1];
-numeric a, b, c;
-a = abs(z3 - z1); b = a - abs(z4 - z6); c = a - abs(z4 - z5);
-cup = subpath (4, 8) of fullcircle scaled 2b shifted z6;
-cap = fullcircle scaled 2c shifted z5
+z5 = 1/2[z2, z3];
+z6 = 1/2[z4, z1];
+numeric a, b;
+a = abs(z3 - z1) - abs(z4 - z6);
+b = abs(z3 - z1) - abs(z4 - z5);
+cup = subpath (4, 8) of fullcircle scaled 2a shifted z6;
+cap = fullcircle scaled 2b shifted z5
       cutbefore (z5 -- 2[z4, z5])
       cutafter (z5 -- 2[z1, z5]);
-egg = cup {up} .. z2 .. cap .. z3 .. {down} cycle;
+egg = point 4 of cup {up} .. cap .. {down} cup & cycle;
 \end{code}
 
-% eggs-five-point.mp
+\newpage
+\subsection{Four point egg}
 % eggs-four-point.mp
+To get a smoother curve, you can use four different sized arcs to make up 
+each side of the egg.\mwpic{0pt}{eggs-four-point}
+\begin{code}[xleftmargin=0pt]
+path egg, a, b, c, d;
+a = fullcircle scaled 80;
+b = a scaled 2 shifted point 6 of a;
+c = halfcircle 
+    scaled 2 (abs(point 0 of a - point 5 of b) - abs(point 0 of a));
+d = fullcircle 
+    scaled 2 abs(point 2 of a - point 2 of c) shifted point 2 of c;
+
+egg = point 0 of c {up} .. subpath (1,3) of d .. {down} point 4 of c
+     .. subpath (5, 7) of b .. cycle;
+\end{code}
+
+\newpage
+\subsection{Five point egg}
+% eggs-five-point.mp
+Why 5??\mwpic{0pt}{eggs-five-point}
+\begin{code}
+numeric a; a = 56;    
+path egg, r[], s[];
+for i=1 upto 4:
+    r[i] = fullcircle scaled 2a shifted (0, a * i);
+endfor
+r5 = r2 rotatedabout(point 2 of r2, 60);
+r6 = r2 rotatedabout(point 2 of r2, -60);
+
+z1 = subpath (4, 8) of r5 intersectionpoint (point 6 of r6 -- 8[point 6 of r6, point 2/3 of r2]);
+z2 = subpath (0, 4) of r4 intersectionpoint (point 6 of r6 -- 8[point 6 of r6, point 2 of r3]);
+z3 = whatever [z1, point 6 of r6] = whatever [point 2 of r3,  point 10/3 of r1];
+z4 = z3 reflectedabout(up, down);
+z7 = 1/2[point 10/3 of r1, point 2/3 of r1];
+z5 = whatever [z3, point 2/3 of r1] = whatever [z7, point 10/3 of r3];
+z6 = z5 reflectedabout(up, down);
+
+s1 = fullcircle scaled 2 length (z2 - point 6 of r6) shifted point 6 of r6 cutbefore z1 cutafter z2;
+s3 = fullcircle rotated angle (point 2/3 of r1 - z3) scaled 2 length (z1-z3) shifted z3 cutafter z1;
+s5 = fullcircle rotated angle (z7 - z5) scaled 2 (length (z1-z3) - length (z3-z5)) shifted z5 cutafter point 0 of s3;
+
+s2 = reverse s1 reflectedabout(up, down);
+s4 = reverse s3 reflectedabout(up, down);
+s6 = reverse s5 reflectedabout(up, down);
+egg = s5 -- s3 -- s1 .. point 2 of r4 .. s2 -- s4 -- s6 .. point 6 of r1 .. cycle;
+\end{code}
 % eggs-gold.mp
 % eggs-pentagons.mp
 % eggs-perfect.mp
