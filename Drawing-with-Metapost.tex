@@ -6718,57 +6718,137 @@ egg = point 0 of c {up} .. subpath (1,3) of d .. {down} point 4 of c
 \subsection{Five point egg}
 
 The next level of sophistication is to use five different arcs, 
-but this comes at the cost of more complexity and the loss of the 
-points at exactly E, N, W, and S.\mwpic{0pt}{eggs-five-point}
+but this is more complex and you lose the 
+points at exactly E, N, W, and S.\mwpic{0pt}{eggs-five-better}\marginpar{\par\vskip 3in
+\noindent\hey Instead of defining and joining circular arcs, this construction defines
+the points for the egg and the desired directions at each point;
+all the work of making the circular arcs is left to the $\to$
+connector.  The six symmetrically-arranged rings $r_1$ to $r_6$ are used to define eight centres of
+rotation $o_1$ to $o_8$ which are either points on the rings or intersections of
+lines between them.  Then eight directions $u_1$ to $u_8$ are defined at right
+angles to lines between pairs of centre points.  Finally the handy
+\mpl{directionpoint} macro is used to find the points where the relevant circle is 
+moving in that direction.  To make the egg, these points are joined up with $\to$ 
+constrained by the matching direction to make circular arcs.\\
+\llap{$\longleftarrow$\ }{\small Like so.}
+} 
 \begin{smallcode}[xleftmargin=0pt] 
-numeric a; a = 56;    
-path r[], s[];
-for i=1 upto 4:          % -2.5a so the origin is in centre 
-    r[i] = fullcircle scaled 2a shifted (0, a * i - 5/2 a);  
-endfor
-r5 = r2 rotatedabout(point 2 of r2, 60);
-r6 = r2 rotatedabout(point 2 of r2, -60);
-z1 = subpath (4, 8) of r5 intersectionpoint 
-         (point 6 of r6 -- 8[point 6 of r6, point 2/3 of r2]);
-z2 = subpath (0, 4) of r4 intersectionpoint 
-         (point 6 of r6 -- 8[point 6 of r6, point 2 of r3]);
-z3 = whatever[z1, point 6 of r6] = whatever[point 2 of r3,point 10/3 of r1];
-z4 = 1/2[point 10/3 of r1, point 2/3 of r1];
-z5 = whatever [z3, point 2/3 of r1] = whatever [z4, point 10/3 of r3];
+numeric a; a = 56;
+path r[];  % the rings
+r1 = fullcircle scaled 2a shifted (0, -3/2 a);
+r2 = fullcircle scaled 2a shifted (0, -1/2 a);
+r3 = fullcircle scaled 2a shifted (0, +1/2 a);
+r4 = fullcircle scaled 2a shifted (0, +3/2 a);
+r5 = r2 rotatedabout(point 2 of r2, -60);
+r6 = r2 rotatedabout(point 2 of r2, +60);
+pair o[];  % the centres of rotation for each arc
+o1 = point 6 of r5;
+o2 = point 2 of r3;
+o3 = point 6 of r6;
+o4 = whatever[o3, point 2+4/3 of r2] = whatever[o2, point 2-4/3 of r1];
+o8 = whatever[o1, point 2-4/3 of r2] = whatever[o2, point 2+4/3 of r1]; 
+o6 = 1/2[point 2-4/3 of r1, point 2+4/3 of r1];
+o5 = whatever[o6, point 2-4/3 of r3] = whatever[o4, point 2+4/3 of r1];
+o7 = whatever[o6, point 2+4/3 of r3] = whatever[o8, point 2-4/3 of r1];
+pair u[], t[];  % directions and points for the egg path
+u0 = (o8 - o1) rotated 90;  t0 = directionpoint u0 of r6;
+u1 = (o2 - o1) rotated 90;  t1 = directionpoint u1 of r4;
+u2 = (o2 - o3) rotated 90;  t2 = directionpoint u2 of r4;
+u3 = (o4 - o3) rotated 90;  t3 = directionpoint u3 of r5;
+u4 = (o5 - o4) rotated 90;
+u5 = (o6 - o5) rotated 90;
+u6 = (o6 - o7) rotated 90;
+u7 = (o7 - o8) rotated 90;
+t4 = directionpoint u4 of fullcircle scaled 2 abs (t3 - o4) shifted o4;  
+t5 = directionpoint u5 of fullcircle scaled 2 abs (t4 - o5) shifted o5;
+t6 = directionpoint u6 of fullcircle scaled 2 abs (t5 - o6) shifted o6;
+t7 = directionpoint u7 of fullcircle scaled 2 abs (t6 - o7) shifted o7;
 
-s1 = fullcircle scaled 2 length (z2 - point 6 of r6) 
-                shifted point 6 of r6 cutbefore z1 cutafter z2;
-s3 = fullcircle rotated angle (point 2/3 of r1 - z3) 
-                scaled 2 length (z1 - z3) shifted z3 cutafter z1;
-s5 = fullcircle rotated angle (z4 - z5) 
-                scaled 2 (length (z1 - z3) - length (z3 - z5)) 
-                shifted z5 cutafter point 0 of s3;
-s2 = reverse s1 reflectedabout(up, down);
-s4 = reverse s3 reflectedabout(up, down);
-s6 = reverse s5 reflectedabout(up, down);
-
-path egg;
-egg = point 0 of s1 {direction 0 of s1} ..
-      point 2 of s1 {direction 2 of s1} ..
-      point 0 of s2 {direction 0 of s2} ..
-      point 0 of s4 {direction 0 of s4} ..
-      point 0 of s6 {direction 0 of s6} ..
-      point 1 of s6 {direction 1 of s6} ..
-      point 0 of s5 {direction 0 of s5} ..
-      point 0 of s3 {direction 0 of s3} .. cycle;
+path egg; egg = for i=0 upto 7: t[i] {u[i]} .. endfor cycle;
 \end{smallcode}
 
 \newpage
+\subsection{A superellipse egg}
+
+All this construction is a good exercise in ingenuity, but if you just want
+a simple quick egg path, then the \mpl{superellipse} macro gives you a \MP-specific
+option.  All you need is this:\mwpic{-36pt}{eggs-super}
+\begin{code}[xleftmargin=0pt]
+path egg; 
+egg = superellipse(right, 1.6 up, left, 1.2 down, 0.69);
+egg := egg scaled 100;
+\end{code}
+
+
+\vfill \centerline{\tiny [This space intentionally left blank]} 
+\vfill
+
 \subsection{The perfect egg}
 
-$$\includegraphics[width=0.9\textwidth]{eggs-perfect.pdf}$$
-% eggs-pentagons.mp
-% eggs-perfect.mp
-% eggs-shaded.mp
-% eggs-fried.mp
+The last word in egg curve perfection is the algebraic solution provided by the TDCC
+Laboratory in Japan [{\small \mpl{https://nyjp07.com/index_E.html}}].\mwpic{0pt}{eggs-perfect}
+\begin{code}
+path egg; 
+egg = for t=-180 step 15 until 180 - eps:
+        (0.78 cosd(1/4 t) * sind(t), -cosd(t)) ..
+    endfor cycle;
+egg := egg scaled 128;
+\end{code}
+Note that, unlike all the others, this path has 24 points and the path starts at the
+top.  You can draw it starting at 3 o’clock, and with only 8 points but the egg is slightly less perfect.
+Just replace the loop above with:
+\begin{code}
+egg = for t=90, 135, 180, -135, -90, -45, 0, 45:
+        (0.78 cosd(1/4 t) * sind(t), -cosd(t)) ..
+    endfor cycle;
+\end{code}
 
+\newpage
+\subsection{Egg kitsch}
 
+If you want eggs that look solid, then you can use \mpl{interpath}:\mpic{-24pt}{eggs-shaded}
+\begin{smallcode}[xleftmargin=0pt]
+path egg, spot; 
+egg = (for t=-180 step 15 until 180 - eps:
+    (0.78 cosd(1/4 t) * sind(t), -cosd(t)) ..
+endfor cycle) scaled 100;
+spot = fullcircle scaled 4 shifted 3/4 point 3 of egg;
+vardef fade_filled(expr egg, spot, dark, light, n) = image(
+  for i = 0 upto n:
+    fill interpath(i/n, egg, spot) withcolor ((i/n)**1/3)[dark,light];
+  endfor) 
+enddef;
+beginfig(1);
+    color a, b; 
+    a = 1/256(150, 100, 60); 
+    b = 1/256(256, 220, 180);
+    draw fade_filled(egg, spot, a, b, 256) rotated -30;
+endfig;
+\end{smallcode}
+This works nicely with any of the "egg" paths defined in this section.
+And finally, if all that has made you feel peckish, then how about
+these?\mwpic{12pt}{eggs-fried}
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-24pt]
+path yolk, base;
+color cooked_egg_yolk, cooked_egg_white;
+cooked_egg_yolk = 1/256(216, 136, 49);
+cooked_egg_white = 1/256(235, 237, 233);
+vardef fried_egg(expr r) = 
+  save base, yolk; path base, yolk;
+  yolk = for i=0 upto 17: (r + 1/8 normaldeviate) * dir 20i .. endfor cycle;
+  base = for i=0 upto 17: (2r + 1/8r * normaldeviate) * dir 20i .. endfor cycle;
+  base := base shifted (uniformdeviate r/2, uniformdeviate r/2);
+  image(
+    fill base withcolor cooked_egg_white;
+    fill yolk withcolor cooked_egg_yolk;
+    fill subpath (6.7, 9.6) of yolk scaled 0.8 -- 
+         subpath (9.6, 6.7) of yolk scaled 0.66 -- cycle 
+         withcolor 1/2[cooked_egg_yolk, white];
+  ) enddef;
+for i=0 upto 1: draw fried_egg(40) shifted 120 dir 120i; endfor
+\end{smallcode}
 
+%===============================================================
 \newpage
 \section{Data visualizations}\label{dviz}
 
