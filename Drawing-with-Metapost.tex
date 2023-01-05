@@ -5247,7 +5247,7 @@ where you want markers and then call \mpl{input ruler}.
 
 
 \newpage
-\subsection{Adding a border}
+\subsection{Adding a border}\label{pics-border}
 
 \textsc{In most documents} the drawings look just fine without any decoration, but sometimes
 you might want to add emphasis or pick out part of a drawing.  The examples here can
@@ -6528,7 +6528,7 @@ case sensitive in \MP.
 \noindent The output\mpic{-122pt}{cycloids-extra} is repeated at the right to save you flicking pages.
 
 \newpage
-\subsection{The cycloid compared to other curves}
+\subsubsection{The cycloid compared to other curves}
 
 \noindent\textsc{You can't easily} draw a cycloid through two arbitrary points, but
 if you get the size of the generating circle right, you can make it pass through 
@@ -6577,6 +6577,85 @@ so-called \textit{brachistochrone} (the curve joining two points such that a bod
 travelling along it under gravity takes a shorter time than is possible along any
 other curve between the points).
 $$\includegraphics{brachisto}$$
+
+\newpage
+\subsection{Spirals}
+
+\textsc{D'arcy Thompson} tells us, in \textsl{On Growth and Form}, that the spiral
+of Archimedes “may be roughly illustrated by the way a sailor coils a rope upon the
+deck; as the rope is of uniform thickness, so in the whole spiral coil is each whorl
+of the same breadth as that which precedes and as that which follows it”.  In
+mathematical terms the radius of the spiral is proportional to the angle turned, so that
+$r=a\theta$.\mpic{-36pt}{curves-spiral-archimedes}
+This is very simple to program in \MP.
+\begin{code}
+numeric a; a = 1/8; path S; 
+S = origin for t=1 upto 360: .. a * t * dir t endfor;
+\end{code}
+except that you are unlikely to need one point for every degree of turn in your spiral, so you are
+more likely to code:
+\begin{code}
+S = origin for t=1 upto 360: .. a * t * dir 8t endfor;
+\end{code}
+which spreads the points out and gives you eight full turns, or perhaps
+\begin{code}
+S = origin for t=1 upto 90: .. 1/12 t * dir 16t endfor;
+\end{code}
+which would give you four complete turns with a tighter spacing.\marginpar{\small
+The rope was drawn (very slowly) with the \mpl{rope} macro from §\ref{pics-border}.}
+
+\bigskip\noindent
+The next simplest is the logarithmic spiral where you have
+$r=a^\theta$.\mwpic{10pt}{curves-spiral-equiangular} This is also very simple to
+program in \MP, provided you are careful about the scaling. The complete program 
+for the spiral shown on the right was:
+\begin{code}
+numeric a; a = 2.6; path S; 
+S = right for t=1 upto 360: .. a ** (t/64) * dir 4t endfor;
+drawarrow S;
+\end{code}
+Note that $a$ was carefully chosen to get a curve that would fit the page, and that
+$t$ has been divided by 64 to bring it into a suitable range to work with the
+default number system.  
+
+\newpage
+\subsection{Logarithmic spiral and the golden rectangle}
+
+\textsc{The logarithmic spiral} is connected to growth in nature.  If you start with 
+a small square and keep adding squares scaled to the longer side of the resulting 
+rectangle, you get the golden rectangle and the logarithmic spiral emerges from
+it.\mpic{-24pt}{curves-spiral-gnomon-sq}
+\begin{code}[xleftmargin=0pt, xrightmargin=-20pt]
+drawoptions(withpen pencircle scaled 1/4 withcolor 1/4);
+path s[]; s0 = unitsquare; 
+fill s0 withcolor 1/2[2/3 blue, white]; draw s0;
+numeric a, b, t, n; a = 1; b = 1; n = 11;
+for i = 1 upto n:
+  t := b; b := b + a; a := t;
+  s[i] = unitsquare scaled a;
+  s[i] := s[i] shifted (point i of s[i-1] - point i-1 of s[i]);
+  fill s[i] withcolor (1/2 + i/32)[2/3 blue, white];
+  draw s[i];
+endfor
+for i = n-1 upto n:
+  draw point i-2 of s[i-2] -- point i of s[i];
+endfor
+drawoptions();
+drawarrow origin for i=0 upto n: .. point i of s[i] endfor 
+    withcolor 2/3 red;
+    
+numeric a, b, t; a = 1; b = 1;
+for i = 1 upto n:
+  t := b; b := b + a; a := t;
+  if a > 5:
+    label(TEX(decimal a) rotated angle point n of s[n], center s[i]);
+  fi
+endfor
+currentpicture := currentpicture rotated - angle point n of s[n]; 
+\end{code}
+
+
+
 
 \newpage
 \section{Eggs}\label{eggs}

@@ -8,6 +8,10 @@ vardef pinwheel(expr level, a, b, c, s) =
     if level = 0:
         fill a--b--c--cycle withcolor s;
         draw a--b--c--cycle withpen pencircle scaled 1/16 withcolor Blues 9 1;
+        % path t; t = a--b--9/10[b,c]--cycle;
+        % fill t withcolor s;
+        % draw t withpen pencircle scaled 1/16 withcolor Greens 9 1;
+        % draw point 5/2 of t withpen pencircle scaled 2 withcolor (1/4 + greenpart s, redpart s, bluepart s);
     else:
         save d, e, f, g;
         pair d, e, f, g; 
@@ -24,6 +28,9 @@ beginfig(1);
     pinwheel(5, (0, 0), (b, 0), (0, a), ""); 
     pinwheel(5, (b, a), (0, a), (b, 0), "");
     currentpicture := currentpicture rotated 90;
+    for i=1 upto 1:
+        draw currentpicture shifted (lrcorner currentpicture - llcorner currentpicture);
+    endfor
 endfig;
 \end{mplibcode}
 \end{document}

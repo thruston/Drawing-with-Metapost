@@ -1,12 +1,18 @@
 \documentclass{standalone}
 \usepackage{luamplib}
+\mplibtextextlabel{enable}
 \begin{document}
 \begin{mplibcode}
 input london-boroughs
 input colorbrewer-rgb
+vardef median(expr p) = 
+    save n; numeric n; n = length p; 
+    1/n * point 0 of p for i=1 upto n: + 1/n * point i of p endfor
+enddef;
+
 beginfig(1);
 
-fill Barking_and_Dagenham    withcolor 0.638 [white, RdYlBu 9 3]; draw Barking_and_Dagenham;
+fill Barking_and_Dagenham    withcolor 0.638 [white, RdYlBu 9 3]; draw Barking_and_Dagenham; 
 fill Barnet                  withcolor 0.721 [white, RdYlBu 9 6]; draw Barnet;
 fill Bexley                  withcolor 0.752 [white, RdYlBu 9 3]; draw Bexley;
 fill Brent                   withcolor 0.650 [white, RdYlBu 9 5]; draw Brent;
@@ -40,6 +46,41 @@ fill Waltham_Forest          withcolor 0.666 [white, RdYlBu 9 5]; draw Waltham_F
 fill Wandsworth              withcolor 0.719 [white, RdYlBu 9 7]; draw Wandsworth;
 fill Westminster             withcolor 0.649 [white, RdYlBu 9 6]; draw Westminster;
 
+label("\tiny Barking \& Dagenham", median(Barking_and_Dagenham));
+label("\tiny Barnet", median(Barnet));
+label("\tiny Bexley", median(Bexley));
+label("\tiny Brent", median(Brent));
+label("\tiny Bromley", median(Bromley));
+label("\tiny Camden", median(Camden));
+label("\tiny City of London", median(City_of_London));
+label("\tiny Croydon", median(Croydon));
+label("\tiny Ealing", median(Ealing));
+label("\tiny Enfield", median(Enfield));
+label("\tiny Greenwich", median(Greenwich));
+label("\tiny Hackney", median(Hackney));
+label(TEX("\tiny Hammersmith \& Fulham") rotated -62, median(Hammersmith_and_Fulham));
+label("\tiny Haringey", median(Haringey));
+label("\tiny Harrow", median(Harrow));
+label("\tiny Havering", median(Havering));
+label("\tiny Hillingdon", median(Hillingdon));
+label("\tiny Hounslow", median(Hounslow) shifted 12 left);
+label("\tiny Islington", median(Islington));
+label(TEX("\tiny Kensington \& Chelsea") rotated -54, median(Kensington_and_Chelsea));
+label(TEX("\tiny Kingston upon Thames") rotated 66, median(Kingston_upon_Thames));
+label("\tiny Lambeth", median(Lambeth));
+label("\tiny Lewisham", median(Lewisham));
+label("\tiny Merton", median(Merton));
+label("\tiny Newham", median(Newham));
+label("\tiny Redbridge", median(Redbridge));
+label("\tiny Richmond upon Thames", median(Richmond_upon_Thames));
+label("\tiny Southwark", median(Southwark));
+label("\tiny Sutton", median(Sutton));
+label("\tiny Tower Hamlets", median(Tower_Hamlets));
+label("\tiny Waltham Forest", median(Waltham_Forest));
+label("\tiny Wandsworth", median(Wandsworth));
+label("\tiny Westminster", median(Westminster));
+
+label("\tiny Barking \& Dagenham", median(Barking_and_Dagenham));
 picture legend; legend = image(
 numeric s; s = 10;
 for i = 1 upto 9:
