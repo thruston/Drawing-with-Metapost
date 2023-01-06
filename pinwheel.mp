@@ -28,9 +28,9 @@ beginfig(1);
     pinwheel(5, (0, 0), (b, 0), (0, a), ""); 
     pinwheel(5, (b, a), (0, a), (b, 0), "");
     currentpicture := currentpicture rotated 90;
-    for i=1 upto 1:
-        draw currentpicture shifted (lrcorner currentpicture - llcorner currentpicture);
-    endfor
+    % for i=1 upto 1:
+    %     draw currentpicture shifted (lrcorner currentpicture - llcorner currentpicture);
+    % endfor
 endfig;
 \end{mplibcode}
 \end{document}

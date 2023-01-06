@@ -6619,41 +6619,101 @@ $t$ has been divided by 64 to bring it into a suitable range to work with the
 default number system.  
 
 \newpage
-\subsection{Logarithmic spiral and the golden rectangle}
+\subsubsection{Logarithmic spiral and the golden rectangle}
 
 \textsc{The logarithmic spiral} is connected to growth in nature.  If you start with 
 a small square and keep adding squares scaled to the longer side of the resulting 
 rectangle, you get the golden rectangle and the logarithmic spiral emerges from
-it.\mpic{-24pt}{curves-spiral-gnomon-sq}
+it.\mpic{-48pt}{curves-spiral-gnomon-sq}
 \begin{code}[xleftmargin=0pt, xrightmargin=-20pt]
 drawoptions(withpen pencircle scaled 1/4 withcolor 1/4);
 path s[]; s0 = unitsquare; 
 fill s0 withcolor 1/2[2/3 blue, white]; draw s0;
 numeric a, b, t, n; a = 1; b = 1; n = 11;
 for i = 1 upto n:
-  t := b; b := b + a; a := t;
+  t := b; b := b + a; a := t;  % Fibonacci sequence
   s[i] = unitsquare scaled a;
   s[i] := s[i] shifted (point i of s[i-1] - point i-1 of s[i]);
   fill s[i] withcolor (1/2 + i/32)[2/3 blue, white];
   draw s[i];
 endfor
+% cross hairs
 for i = n-1 upto n:
   draw point i-2 of s[i-2] -- point i of s[i];
 endfor
 drawoptions();
+% Draw the spiral as a red arrow
 drawarrow origin for i=0 upto n: .. point i of s[i] endfor 
     withcolor 2/3 red;
-    
-numeric a, b, t; a = 1; b = 1;
-for i = 1 upto n:
-  t := b; b := b + a; a := t;
-  if a > 5:
-    label(TEX(decimal a) rotated angle point n of s[n], center s[i]);
-  fi
+% Show the Fibonacci sizes for the bigger boxes
+for i = 5 upto n:
+    label(TEX(decimal arclength subpath (0, 1) of s[i])
+          scaled 0.8 rotated angle point n of s[n], center s[i]);
 endfor
+% Rotate whole picture to show off the spiral
 currentpicture := currentpicture rotated - angle point n of s[n]; 
 \end{code}
+\moveright 396pt \vbox to 0pt{\vss\hsize 4in\small
+\noindent\llap{• }You can't assign to a pair literal in \MP, so you cannot write
+        \mpl{(a,b) := (b,a+b)}; use a temporary numeric instead.
 
+\noindent\llap{• }The uses of \mpl{point} with the square paths \mpl{s[]}
+exploit the fact the the \mpl{unitsquare} path is cyclic, so point 4 is the same 
+as point 0, and so on.
+
+\noindent\llap{• }Note also the rotation of the labels, so that they are horizontal 
+when the whole picture is rotated at the end to show the spiral better.
+\par}
+
+
+\newpage
+\subsubsection{Logarithmic spiral and similar triangles}
+
+\textsc{This drawing} starts with a large triangle and transforms it to make 
+smaller similar copies.  The spiral is drawn through the apex of successive
+transformed triangles.\mpic{0pt}{curves-spiral-gnomon-trig}
+\begin{code}[xleftmargin=0pt, xrightmargin=-80pt]
+path t[], base; pair apex;
+base = (left--right) scaled 100;
+apex = whatever * dir +72 shifted point 0 of base 
+     = whatever * dir -72 shifted point 1 of base;
+t0 = (base -- apex -- cycle);
+
+transform S; 
+r = arclength subpath (0, 1) of t0 / arclength subpath (2, 3) of t0;
+point 0 of t0 transformed S = (r*r)[point 0 of t0, point 2 of t0];
+point 1 of t0 transformed S = point 0 of t0;
+point 2 of t0 transformed S = point 1 of t0;
+
+n = 16;
+for i=1 upto n:
+    t[i] = t[i-1] transformed S;
+    draw subpath (2,3) of t[i] withpen pencircle scaled 1/4;
+endfor
+
+drawoptions(withpen pencircle scaled 1/8 withcolor blue);
+draw point 0 of t0 -- point 3/2 of t0;
+draw point 0 of t1 -- point 3/2 of t1;
+drawoptions();
+draw t0;
+drawarrow point 2 of t[n] for i=n-1 downto 0: 
+    .. point 2 of t[i] endfor withcolor 2/3 red;
+
+z0 = whatever[point 0 of t0, point 3/2 of t0]
+   = whatever[point 0 of t1, point 3/2 of t1];
+currentpicture := currentpicture rotated - angle (point 2 of t0 - z0);
+\end{code}
+\moveright 396pt \vbox to 0pt{\vss\hsize 4in\small
+\noindent The \<transform> $S$ is defined implicitly.  It is sufficient 
+to give equations for three non-colinear points, and \MP\ will work out 
+the rest.  In order to do this, you need to know the ratio of $x/a$, but by 
+definition $a/b=b/x$, so $x=b^2/a$, hence $x/a=(b/a)^2$.  The code shown 
+sets $r=b/a$, and then uses $r^2$ as the required fraction along $a$.
+
+\smallskip\noindent\hey
+This construction also works for other triangles, but it looks more elegant with
+an isosceles with base angles of $72^\circ$ as shown.
+\par}
 
 
 

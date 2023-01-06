@@ -20,13 +20,9 @@ beginfig(1);
     endfor
     drawoptions();
     drawarrow origin for i=0 upto n: .. point i of s[i] endfor withcolor 2/3 red;
-        
-    numeric a, b, t; a = 1; b = 1;
-    for i = 1 upto n:
-        t := b; b := b + a; a := t;
-        if a > 5:
-            label(TEX(decimal a) rotated angle point n of s[n], center s[i]);
-        fi
+    for i = 5 upto n:
+        label(TEX(decimal arclength subpath (0, 1) of s[i])
+              scaled 0.8 rotated angle point n of s[n], center s[i]);
     endfor
     currentpicture := currentpicture rotated - angle point n of s[n]; 
 
