@@ -26,7 +26,7 @@ beginfig(1);
     t = (origin -- subpath (0, 1) of h -- cycle)
         shifted -1/3(point 0 of h + point 1 of h) 
         scaled 1.08
-        rotated 92;
+        rotated 90;
 
     thatch(point 2 of t, point 0 of t, point 1 of t, 1/4, 3/2);
     thatch(point 4 of h, point 0 of t, point 2 of t, 1/4, 5/4);
