@@ -6252,14 +6252,22 @@ minor axis of an ellipse.\mwpic{-24pt}{curves-ellipse}
 The ellipse shown on the right, was defined like this:
 \begin{code}
 path ellipse; 
-ellipse = fullcircle scaled 300 yscaled 5/8 rotated 13;
+ellipse = fullcircle scaled 320 yscaled 5/8 rotated 13;
 \end{code}
-The length of the semi-major axis, $a$, and the semi-minor axis, $b$, are given by
+Then the lengths of the semi-major axes, $a$ and $b$, were extracted like this:
 \begin{code}
 numeric a, b;
 2a = abs (point 4 of ellipse - point 0 of ellipse);
 2b = abs (point 6 of ellipse - point 2 of ellipse);
 \end{code}
+If you already had $a$ and $b$, then you could use them directly to scale your
+ellipse;  the following snippet would produce the same elliptical path:
+\begin{code}
+numeric a, b; a = 160; b = 100; path ellipse;   
+ellipse = fullcircle xscaled 2a yscaled 2b rotated 13; 
+\end{code}
+
+\bigskip\noindent
 The “eccentricity”, $e$, of the ellipse is the ratio between the distance from the centre
 to each focus and the semi-major axis, $a$.  By definition, the distance from $F_1$
 to $T$ to $F_2$ is constant as $T$ moves round the ellipse and is equal to $2a$.
@@ -6274,6 +6282,8 @@ z0 = 1/2[point 0 of ellipse, point 4 of ellipse];
 z1 = e[z0, point 0 of ellipse];
 z2 = e[z0, point 4 of ellipse];
 \end{code}
+\vfill
+\moveright 384pt\vbox to 0pt{\vss
 The tangent and the normal at $T$ were added like this:
 \begin{code}
 numeric t; t = 1.732;
@@ -6283,7 +6293,7 @@ draw (left--right) scaled 21
 draw (1/2 down--up) scaled 21 
     rotated angle direction t of ellipse
     shifted point t of ellipse;
-\end{code}
+\end{code}}
 \newpage
 \subsubsection{Tangent from external point to ellipse}
 
