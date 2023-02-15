@@ -15,14 +15,14 @@ beginfig(1);
 
     pair P, Q, R, P', m;
     P = whatever[a, b]; o - P = whatever * (a - b) rotated 90;
-    Q = C intersectionpoint fullcircle scaled abs (P-o) shifted 1/2[P, o];
+    Q = C intersectionpoint halfcircle zscaled (P-o) shifted 1/2[P, o];
     R = Q reflectedabout(P, o);
     P' = whatever[o, P] = whatever [Q, R];
 
     draw fullcircle scaled abs(P' - o) shifted 1/2[o, P'] 
         dashed withdots scaled 1/4
         withpen pencircle scaled 1/4
-        withcolor 2/3 blue;
+        withcolor 1/3 blue;
 
     draw unitsquare scaled 5 rotated (270 + angle (P-Q)) shifted Q withcolor 3/4 white;
     draw unitsquare scaled 5 rotated (90 + angle (P-o)) shifted P withcolor 3/4 white;

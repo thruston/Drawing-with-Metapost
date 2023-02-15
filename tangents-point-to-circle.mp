@@ -8,9 +8,11 @@ path C, C'; pair p, t, t';
 C = fullcircle scaled 100;
 p = 189 right rotated 30;
 
-C' = fullcircle scaled abs p shifted 1/2 p;
-t = C intersectionpoint C';
-t' = reverse C intersectionpoint C';
+C' = fullcircle zscaled p shifted 1/2 p;
+% t = C intersectionpoint C';
+% t' = reverse C intersectionpoint C';
+t  = C intersectionpoint halfcircle zscaled p shifted 1/2 p;
+t' = C intersectionpoint halfcircle zscaled -p shifted 1/2 p; 
 
 drawoptions(dashed withdots scaled 1/4 withcolor (.2, .2, .7));
 draw C'; draw t -- center C -- p;

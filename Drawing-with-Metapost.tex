@@ -3093,11 +3093,10 @@ the center of $C$; draw a circle through $p$, centred on this midpoint; the tang
 points are where this second circle intersects $C$. %
 \mpic{-120pt}{tangents-point-to-circle.pdf}
 Given a suitable \mpl{path C} and \mpl{pair p} you can do this:
-\begin{code}
-pair t, t';
-t = C intersectionpoint fullcircle scaled abs(p - center C)
-                                   shifted 1/2[p, center C];
-t' = t reflectedabout(p, center C);
+\begin{code}[xleftmargin=0pt]
+pair o, t, t'; o = center C;
+t = C intersectionpoint halfcircle zscaled (p-o) shifted 1/2[o,p];
+t' = C intersectionpoint halfcircle zscaled (o-p) shifted 1/2[o,p];
 \end{code}
 No parentheses are needed around the second path, because \mpl{intersectionpoint} is
 defined with \mpl{secondarydef}.
@@ -3110,22 +3109,23 @@ that $b > a$ in all cases regardless of the relative rotation of $C$ and $p$.  T
 means that \mpl{subpath (a, b) of C} is always the “long way round” C, on the
 opposite side from $p$, and \mpl{subpath (a, b-8) of C} is always the shorter
 segment.
-\begin{code}
+\begin{code}[xleftmargin=0pt]
 vardef tangent_times(expr C, p) =
     % return the two times on C that correspond
     % to the external tangents from p to C
-    save m, a, b, G, H;
-    pair m; numeric a, b; path G, H;
-    m = 1/2[p, center C];
-    H = halfcircle scaled abs (p - center C)
-                   rotated angle (p - center C)
-                   shifted m;
-    G = H rotatedabout(m, 180);
+    save o, a, b, G, H;
+    pair o; numeric a, b; path G, H;
+    o = center C;
+    H = halfcircle zscaled (p-o) shifted 1/2[o, p];
+    G = halfcircle zscaled (o-p) shifted 1/2[o, p];
     (a, whatever) = C intersectiontimes H;
     (b, whatever) = C intersectiontimes G;
     (a, b if b < a: + 8 fi)
 enddef;
 \end{code}
+Note the elegant syntax here; 
+if \mpl{z} is a \<pair> then the operation \mpl{zscaled z} is equivalent
+to \mpl{scaled abs z rotated angle z}.
 
 \vpic{-200pt\noindent Here is the macro in action.
 Having obtained the two times $a$ and $b$ from the macro, the dashed line
@@ -3272,49 +3272,50 @@ which is a bit quicker than working out all the tangent points.}}
 \newpage
 \subsection{Inversion, pole, and polar}\label{sec:inversion}
 
-Inversion in a circle may be thought of as a generalization of reflection in a line.
+Inversion in a circle is a generalization of reflection in a line.
 \mpic{-68pt}{pole-and-polar}
-It is a useful technique for certain constructions in geometry, and easy to
-implement as a special sort of transformation in plain \MP.  For given circle, and a
+It is useful for certain constructions in geometry, and easy to
+implement as a macro \MP.  For given circle, and a
 given point $P$ lying outside the circle, the inverted point $P'$ lies inside the
 circle at the intersection of the line from $P$ to the centre of the circle, and the
 line between the tangent points [§\ref{sec:tangent-times}] from $P$, shown here as
-$Q$ and $R$.
+$Q$ and $R$.\rlap{\quad$\longrightarrow$}
 
-But $OPQ$ and $OQP'$ are similar triangles, so we have $r/OP=OP'/r$ and so $OP' =
-r^2/OP$, and $P'$ must lie on the line through $O$ and $P$.  This is enough to
-define a macro to do inversion directly without having to find the tangent points
-every time; given the radius of the circle of inversion as $r$ and the centre as
-$O$, we have
-$$P'=O + \op{unitvector}(P-O) \kw{scaled}\, (r^2/\op{abs}(P-O)).$$
-This also works when $P$ is not outside the circle, provided only that $P$ is not at
-the centre of the circle (to avoid division by zero). Here is an attempt at a
-slightly more general macro that can invert a \<pair> (or a \<path>) $P$
-in a circle $C$.
-\begin{smallcode}
-vardef invert(expr P, C) =
-    save o, r; pair o; numeric r;
-    o = 1/2[point 0 of C, point 4 of C];
-    r = abs (o - point 0 of C);
-    if pair P:
-        save p, d; pair p; numeric d;
-        p = P - o; d = abs p;
-        if d > 0:
-            o + unitvector p scaled (r/d*r)
-        else:
-            errmessage("Inversion undefined at center.")
-        fi
-    elseif path P:
-        for t=0 upto 31:
-            invert(point t/32 * length P of P, C) ..
-        endfor
-        if cycle P: cycle else: invert(point infinity of P, C) fi
-    fi
+But $OPQ$ and $OQP'$ are similar triangles, so $r/OP=OP'/r$ and so $OP' =
+r^2/OP$, and since $P'$ must lie on the line through $O$ and $P$, this is enough to
+define a macro directly to find $P'$ given $P$, $O$, and $r$:
+\begin{code}
+P' = O + unitvector(P-O) scaled r * r / abs (P-O);
+\end{code}
+But examining \mpl{plain.mp} shows that \mpl{unitvector} is a macro defined like this:
+\begin{code}
+vardef unitvector primary z = z/abs z enddef;
+\end{code}
+which suggests this alternative (safer) approach:
+\begin{code}
+vardef invert(expr P, O, r) = 
+    save s; numeric s; s = r / abs (P-O);
+    O + (P-O) * s * s
 enddef;
-\end{smallcode}
-\noindent
-You could make this more efficient by passing $O$ and $r$ as arguments instead of
-$C$.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\noindent
+\end{code}
+This works well provided that $|P| > \frac1{180} r$, which is usually the case, but
+you could also consider checking that $|t|>0$ and that $s$ was not too large.
+
+If it was more convenient to deal with the \<path> of the circle of inversion
+instead of the centre and the radius, you get the macro to work out the centre and
+the radius for you. 
+\begin{code}
+vardef invert(expr P, C) = 
+    save o; pair o; o = 1/2[point 0 of C, point 4 of C];
+    save r; numeric r; r = abs (point 0 of C - o);
+    save s; numeric s; s = r / abs (P - o);
+    o + (P - o) * s * s
+enddef;
+\end{code}
+
+\vfill
+
+\moveright5.5in\vbox to 0pt{\vss\hsize 4in\noindent
 \noindent\llap{\nb}Inversion is reciprocal, so $P$ is the inverse of $P'$ above. Points
 on the circle of inversion invert to themselves.
 
@@ -3331,7 +3332,7 @@ inversion.
 
 \smallskip
 \noindent\llap{\nb}The small dotted circle through $O$ and $P'$ above is the inversion
-of the whole polar line (infinitely extended).}}
+of the whole polar line (infinitely extended).}
 
 \newpage
 \subsection{Radical axis and radical centre}\label{sec:radical}
