@@ -5,7 +5,7 @@
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
-path unitse; unitse = (superellipse(right,up,left,down,.8)) scaled 1/2;
+path unitse; unitse = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down,.8);
 path xx, yy; xx = (left -- right) scaled 144; yy = (down -- up) scaled 89;
 path u, c, s;
 u = unitsquare scaled 72;
@@ -21,12 +21,7 @@ draw c; label("$\id{fullcircle}$", 3/4[point 2 of c, point 6 of c]);
 drawoptions(withcolor .67 blue);
 draw s; label.lrt("$\id{superellipse}()$", point 7 of s);
 drawoptions();
-label.bot(btex \vbox{\hsize 3.6in \centering \small
-Note that, unaccountably, $\id{superellipse}()$ is defined
-in \texttt{plain.mp} with a \kw{def} rather than a \kw{vardef}. 
-This means you need to enclose it in a group before you can
-transform it in any way. Using parentheses is probably simplest.
-\par} etex, point 1/2 of bbox currentpicture shifted 12 down);
+dotlabel.bot("$\scriptstyle (1,0)$", point 1 of u);
 endfig;
 \end{mplibcode}
 \end{document}

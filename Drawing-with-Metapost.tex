@@ -256,51 +256,100 @@ every time you compile the document, which might slow you down --- although on a
 modern machine this is not really an issue any more.
 
 \newpage
-\section{Making and using closed paths}
+\section{Making and using paths}
 \label{plain-shapes}
 
 In \MP\ there are two sorts of paths: open and closed.
 \mpic{-12pt}{closed-triangles}
-A closed path is called a cycle, and is created with the "cycle" primitive like this:
+A closed path is called a cycle, and is created with the \mpl{cycle} primitive like this:
 \begin{code}
 path t; t = origin -- (55,0) -- (55,34) -- cycle;
 \end{code}
-You can think of "cycle" as meaning ‘connect back to the start and close the path’.
-You can use "draw" with either sort of path, but you can only use "fill" with a
+You can think of \mpl{cycle} as meaning ‘connect back to the start and close the path’.
+Note that you have explicitly put \mpl{cycle} to make a closed path.  If you wrote 
+\begin{code}[xrightmargin=-32pt]
+path u; u = origin {right} .. (55,0) .. (55,34) .. {-2,-1} origin;
+\end{code}
+then $u$ would be an open path even though the last point is the same as the
+first.  Any path that does not have \mpl{cycle} at the end is an open
+path.\mpic{-12pt}{open-triangle}
+
+You can use \mpl{draw} with either sort of path, but you can only use \mpl{fill} with a
 cycle.  This concept is common to most drawing languages but it’s often hidden:  an
 open path might be automatically closed for you when you try to fill it.  \MP\ takes
-a more cautious approach; if you pass an open path to "fill" you will get an error
-that says ‘Not a cycle’.  You can also use "cycle" in a boolean context to test
-whether a path "p" is closed (or cyclic if you prefer):
-$\hbox{\ttfamily if cycle p: ... fi}$.
+a more cautious approach; if you pass an open path to \mpl{fill} you will get an error
+that says ‘Not a cycle’, even if the first and last points are the same like path
+$u$ above.  
 
-\medskip\noindent
+If you want to write a macro that deals differently with the two types
+of path, then you can use \mpl{cycle} in a boolean context to test
+whether a given path $p$ is closed:
+\begin{code}
+    if cycle p:
+        % do something for closed path p
+    else:
+        % do something for open path p
+    fi
+\end{code}
+
+\smallskip\noindent
+\MP\ inherits the rich path-making syntax directly from \MF, so if you want a
+general refresher, or you are not
+quite sure what the five joiners do, $\longrightarrow$\marginpar{%
+    \vbox to 0pt{\vss\halign{\kern .5in\mpl{#}\hfil\quad&#\hfil\cr
+..&free curve\cr
+...&bounded curve\cr
+--&straight line\cr
+---&tense line\cr
+\&&splice.\cr}\vss}} or you would like to bone up on exactly what \mpl{curl} and
+\mpl{tension} are for, then you are recommended to review Chapter 14 of \mfbook.  
+
+\vfill\noindent
+Most of the examples in this document use only the two simple joiners \mpl{--} and
+\mpl{..} with the occasional use of a direction-specifying pair before or after a
+point.
+
+\clearpage
+\subsection{Predefined closed paths}
+
 There are several closed paths defined for you in plain \MP.
 \mpic{0pt}{closed-standards}
 \begin{itemize}
-    \item "unitsquare" which you can use to draw any rectangle with appropriate
-        use of "xscaled" and "yscaled" --- it’s defined so that the bottom left
-        corner is point 0 of the shape.  This point is also defined as "(0,0)",
-        so the "unitsquare" is centred on point "(1/2,1/2)".  If you want a square
-        centred on the origin, then shift it by "-(1/2,1/2)" before you scale it.
+    \item "unitsquare" is defined as the path
+        \mpl{(0,0)--(1,0)--(1,1)--(0,1)--cycle}.  It runs counter-clockwise from the
+        origin, and you can use it to draw any rectangle with appropriate
+        use of \mpl{xscaled} and \mpl{yscaled}, or a parallelogram with \mpl{slanted},
+        or a diamond with \mpl{rotated} --- but note that the definition means
+        that is it centred on point \mpl{(1/2, 1/2)} so you might want to 
+        shift it by \mpl{-(1/2,1/2)} before you transform it.
 
     \item "fullcircle" which you can use to draw any circle or ellipse with
-        appropriate use of "xscaled" and "yscaled".  It is defined so that it is centred
-        at the origin, and that it has unit \textit{diameter}, and that it starts at 3
-        o’clock; which means \mpl{point 0 of
-        fullcircle = (1/2, 0)} is true.
+        appropriate use of \mpl{xscaled} and \mpl{yscaled}.  Unlike the square, it is defined so that it is centred
+        at the origin.  But beware that it has unit \textit{diameter}, so its radius
+        is $0.5\unit{bp}$ long.  The path runs counter-clockwise and starts at 3
+        o’clock; which means \mpl{point 0 of fullcircle = 1/2 right} is true. 
 
     \item "superellipse()" which creates the shape beloved of the Danish designer Piet Hein.  Unlike the
-        other two, this one is a function rather than a path, so you need to call it
+        other two, this one is defined as a function rather than a \<path> constant, so you need to call it
         like this:
-        \begin{code}
-        path s; s = superellipse(right,up,left,down,.8);
+\begin{code}
+path s; 
+s = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down, .8);
 \end{code}
-        to create a ‘unit’ shape.  The fifth parameter is the ‘superness’: the value
+        to create a ‘unit’ shape that matches \mpl{fullcircle} as shown on the right.  
+        The fifth parameter is the ‘superness’: the value
         1 makes it look almost square, 0.8 is about right, 0.5 gives you a diamond,
         and values outside the range $(0.5,1)$ give you rather weird propeller
         shapes.
+
+        Note that, unaccountably, $\id{superellipse}()$ is defined
+in \texttt{plain.mp} with a \kw{def} rather than a \kw{vardef}. 
+This means you need to enclose it in a group before you can
+transform it in any way. One way to do this is to use parentheses; or you 
+can assign it to a \<path> variable, as shown above.
+
 \end{itemize}
+
 
 \newpage\subsection{Points on the standard closed paths}
 
@@ -337,7 +386,7 @@ you have defined path $c$ to be scaled copy of \mpl{fullcircle}, then
 $4/\pi \simeq 1.27324$).
 
 \vfill\noindent
-In a cyclic path, the point numbering in \MP\ wraps round: so in a
+In a closed path, the point numbering in \MP\ wraps round: so in a
 circle, point $n$ is the same as point $n+8$; and in general point $n$ is the same as
 point $n+\hbox{\bf length }p$.  This works with negative numbers too, so we could use
 \begin{code}
@@ -365,7 +414,7 @@ vardef polygon(expr n, r) =
     for i=0 upto n-1: (r, 0) rotated (360/n * i) -- endfor cycle 
 enddef;
 \end{code}
-This produces a cyclic path to represent an $n$-sided polygon that fits in a circle
+This produces a closed path to represent an $n$-sided polygon that fits in a circle
 of radius $r$ centred at the origin and that starts at \mpl{(r, 0)}, like the
 corresponding circular path, as shown in this polygonal version of the
 previous segment chart.\rlap{\ $\rightarrow$}\\
@@ -386,7 +435,7 @@ vardef median primary p =
   origin for i=1 upto length p: + point i of p / length p endfor
 enddef;
 \end{code}
-This should work for any cyclic path, not just regular polygons.
+This should work for any closed path, not just regular polygons.
 
 \newpage
 \subsection{Regular polygons of a given side length}\label{polygons-given-side}
@@ -503,7 +552,7 @@ create an arbitrary closed path.
 \mpic{0pt}{area-under-graph}
 The arguments to the function are just a list of paths, and providing the paths all
 intersect sensibly, it
-returns a cyclic path that can be filled or drawn.  This is often used for colouring an
+returns a closed path that can be filled or drawn.  This is often used for colouring an
 area under a function in a graph.
 Here is an example. The red line has been defined
 as path "f" and the two axes as paths "xx", and "yy".  The blue area was defined
@@ -590,7 +639,7 @@ points.
 The third and final "for" loop assumes that this is indeed the case, and tries to
 connect them all together.  Note that it uses ".." rather than "&" just in case the
 points are not quite co-incident; finally it finishes with a
-"cycle" to close the path even though point "tb" of path "k" should be identical (or
+\mpl{cycle} to close the path even though point "tb" of path "k" should be identical (or
 at least very close) to
 point "ta" of path "0".
 
@@ -600,7 +649,7 @@ two paths need to be running the same direction, and the start of each path must
 be contained within the other.  This is explored in the next section.
 
 \newpage
-\subsection{Strange behaviour of \texttt{buildcycle} with two cyclic paths}
+\subsection{Strange behaviour of \texttt{buildcycle} with two closed paths}
 
 The implementation of "buildcycle" in plain \MP\ can get confused if you use it with
 just two paths.  Consider the following example: \mpic{0pt}{overlaps-missing-filler}
@@ -616,7 +665,7 @@ endfig;
 When we compile this example, we get no error message from "buildcycle", but there
 is no fill colour visible in the output.  The problem is that the points found by
 "buildcycle" are the same both times that it steps through the middle loop, so
-the cyclic path it returns consists of two identical (or very close) points and the
+the closed path it returns consists of two identical (or very close) points and the
 so the fill has zero area.
 
 Now observe what happens when we rotate and reverse each of the paths in
@@ -636,9 +685,9 @@ wanted the overlap, then you need to ensure that both paths are running in the s
 direction and that neither of them starts inside the other.
 
 \newpage
-\subsection{Find the overlap of two cyclic paths}
+\subsection{Find the overlap of two closed paths}
 
-As we have seen, in order to get the overlap of two cyclic paths from "buildcycle",
+As we have seen, in order to get the overlap of two closed paths from "buildcycle",
 we need both paths to be running in the same direction, and neither path should
 start inside the other one.  It's not hard to create an "overlap" macro that does
 this automatically for us.  The first element we need is a macro to determine if a
@@ -670,7 +719,7 @@ same direction, and then uses "inside" to determine where the start points are.
 \begin{smallcode}
 vardef front_half primary p = subpath(0, 1/2 length p) of p enddef;
 vardef back_half primary p = subpath(1/2 length p, length p) of p enddef;
-% a and b should be cyclic paths...
+% a and b should be closed paths...
 vardef overlap(expr a, b) =
   save A, B, p, q;
   path A, B; boolean p, q;
@@ -693,7 +742,7 @@ Using this "overlap" macro in place of "buildcycle" produces less surprising
 results.\mpic{-2in}{overlaps}
 
 \newpage
-\subsection{Fitting dashed lines to a cyclic path}
+\subsection{Fitting dashed lines to a path}
 
 \textsc{This one is} perhaps for perfectionists, but also shows how simple it
 is to make useful adjustments in \MP.  As you will know, plain \MP\ provides two 
@@ -776,7 +825,7 @@ You probably also know that you can adjust these sizes by applying a suitable
 scaling, so that \mpl{dashed withdots scaled 1/2} gives a rather denser dotted line,
 and \mpl{dashed evenly scaled 4} will give you very long dashes.  But you may also
 notice that the dash patterns (particularly the longer ones) do not always fit your
-paths exactly -- this is especially noticeable with cyclic paths, where you may end
+paths exactly -- this is especially noticeable with closed paths, where you may end
 up with one unsightly long dash or a very short gap a the point where the path
 begins and ends.
 
@@ -2604,7 +2653,7 @@ vardef measured_angle(expr P, Q, R) =
 enddef;
 \end{smallcode}
 The primitive \mpl{turningnumber} is explained on p.\thinspace 111 of \textsl{The
-METAFONTbook}.  It takes a cyclic path and returns number of times that you would
+METAFONTbook}.  It takes a closed path and returns number of times that you would
 turn through 360${}^\circ$ if you traversed the path.  We use this here to
 negate the measured angle if necessary, so that you always get the interior angle.
 The \mpl{mod 360} on the end ensures that the result is in the range $0 \le \theta <
@@ -3031,9 +3080,9 @@ $$\includegraphics[width=\textwidth]{nine-point-circle}$$
 \subsection{Lines tangent to a point on a path}
 
 \MP\ represents paths internally as a sequence of nodes. Each node consists of three
-pairs: the point, the pre-control point, and the post-control point.  These three
-points are always co-linear.  The idea is
-that \MP\ adjusts a path so that when it travels through a point, it is heading in
+pairs: the point, the pre-control point, and the post-control point. Unless you
+explicitly set them differently, \MP’s curve fitting will make these three points co-linear.  The idea is
+that adjusts a path so that when it travels through a point, it is heading in
 the direction from the pre-control point to the post-control point.
 \MP\ provides a convenient built-in feature to examine the direction
 of a path $p$ at any time $t$ along it: \mpl{direction t of p}.
@@ -3045,29 +3094,27 @@ that represents the direction that the path is taking at point $t$.
 In the language of Bézier
 cubic curves, the pair is the value of the current control point minus the current
 point on the path. So if you define a path like this $\longrightarrow$
-\begin{code}
-path p;
-p = origin .. controls (64, 64) and (128, 64) .. (192, 0)
-           .. controls (256, -64) and (320, -64) .. (384, 0);
-\end{code}
+\begin{smallcode}[xleftmargin=0pt]
+path p; p := origin {1,3} .. (192,0) .. {1,2} (384,0);
+\end{smallcode}
 it has three points – \id{origin}, $(192,0)$, $(384,0)$ – numbered 0, 1, and 2;
 and you can extract
-any of these points with \mpl{point t of p}.  You can also extract the control points
+any of these points with \mpl{point t of p}.  It also has control points which
+we have constrained at point 0 and 2 but left free at point 1.
+You can extract the control points 
 with \mpl{precontrol t of p} and \mpl{postcontrol t of p}.  The pre-control is the
 control point just before a node, the post-control is the one after.  Unless the path is
 cyclic, there won't be a control point before the first node or after the last one,
 so \MP\ defines them to be the same as the coordinates of the node, so with:
-\begin{code}
+\begin{smallcode}[xleftmargin=0pt]
 for t=0 upto length p:
-    drawarrow precontrol t of p -- postcontrol t of p;
+  drawarrow precontrol t of p -- point t of p --  postcontrol t of p;
 endfor
-\end{code}
-you get a neat visualization of how the path is made, and the arrows are tangent to
-the path.  Now, plain \MP\ defines
-\begin{code}
-vardef direction expr t of p =
-    postcontrol t of p - precontrol t of p enddef;
-\end{code}
+\end{smallcode}
+you get a neat visualization of how the path is made.  Now, plain \MP\ defines
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-20pt]
+vardef direction expr t of p = postcontrol t of p - precontrol t of p enddef;
+\end{smallcode}
 to save you some typing, but the clever bit is that $t$ does not have to be a whole
 number.  If you set $t=1/2$, \MP\ works out where all the fractional control points
 are, so that you can use \mpl{direction t of p} to get a tangent at any point.  The
@@ -3076,11 +3123,11 @@ the usual idiom is something like this:
 
 \vskip-\baselineskip
 \vbox to 0pt{%
-\begin{code}
+    \begin{smallcode}[xleftmargin=0pt]
 path s;
 s = origin -- unitvector(direction t of p) scaled 36;
 drawarrow s shifted point t of p;
-\end{code}\vss}
+\end{smallcode}\vss}
 
 \newpage
 \subsection{Lines tangent to a circle}\label{sec:tangent-times}
@@ -3835,7 +3882,7 @@ vardef decode(expr given) =
 enddef;
 \end{code}
 Use it with "infont" like this: \verb|decode("café") infont "ptmr8r"| to produce a
-normal "picture" that can be passed to "draw" or saved as
+normal "picture" that can be passed to \mpl{draw} or saved as
 usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt
 \noindent The fragment on the left produces:
 $$\includegraphics{utf8}$$
@@ -3849,7 +3896,7 @@ defaultfont := "pncr8r";
 label.rt("café noir £2.50", 24 down);
 label.rt(decode("café noir £2.50"), 36 down);
 \end{code}
-Note that you can't just use "draw" with a string variable; you have to use
+Note that you can't just use \mpl{draw} with a string variable; you have to use
 "infont" to turn the string into a picture.
 On the other hand, "label" calls "infont" automatically, but you must explicitly set
 the default font, preferably to one with an encoding that
@@ -4043,7 +4090,7 @@ of consistency.  The only downside is that this mechanism is a little bit slower
 
 The "btex" mechanism produces a textual picture just as "infont" does with a height,
 width, and depth that you can measure, and adjust, as discussed in
-section~\ref{infontbbox}.  And again, just like "infont" you can either use "draw"
+section~\ref{infontbbox}.  And again, just like "infont" you can either use \mpl{draw}
 to place the resulting picture directly, or pass it to the "label" macro.
 
 What you need to be aware of is that \MP\ places everything you put between the
@@ -6505,10 +6552,10 @@ scaled up; if we change $θ$, the wheel will appear to have rolled along.
         in the source, but \MP\ only lets you use plain ASCII characters, to you
         have to write "pi" instead.  Later on "t" is used instead of $\theta$.
 
-    \item The cycloid path "c" is defined using an inline "for" loop.  There’s a
+    \item The path of the cycloid $c$ is defined using an inline "for" loop.  There’s a
         slight awkwardness to doing this as you have to repeat yourself either at
         the beginning or the end, because you can’t have a dangling "--" or ".." at
-        the end of the path.  With a cyclic path it’s easier because you can just
+        the end of the path.  With a closed path it’s easier because you can just
         put "--cycle" after the "endfor".  The strange numbers here are because
         we are going from a rotation of $-100°$ to $+460°$; $360°$ corresponds to
         one hop of the cycloid.
