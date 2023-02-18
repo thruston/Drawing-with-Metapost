@@ -694,7 +694,7 @@ this automatically for us.  The first element we need is a macro to determine if
 given point is inside a given closed path.  Following Robert Sedgwick's
 \textit{Algorithms in C} we can write a generic "inside" function that works with any
 simple closed path.  The approach is to extend a horizontal ray from
-the point towards the right margin and to count how many times it crosses the cyclic
+the point towards the right margin and to count how many times it crosses the closed
 path; if the number is odd, the point must be inside.\vadjust{\moveright5.5in\vbox
     to 0pt{\kern-4.05cm
 \begin{code}
@@ -2192,7 +2192,7 @@ endfig;
 $$\includegraphics{freehand1}$$
 A small amount of random wiggle makes the drawing come out charmingly wonky.  Notice
 that the "freehand_path" macro will transform a path whether it is straight or curved,
-and open or cyclic.  Notice also that to find the mid-point of a line, you find the
+and open or closed.  Notice also that to find the mid-point of a line, you find the
 point along the freehand path; if you simply put "1/2[a,b]" there's no guarantee
 that the point would actually be on the free hand path between "a" and "b".  In this
 case a little extra randomness has been added, and the
@@ -2562,7 +2562,7 @@ but for more complicated, curved paths you have to use this rather cumbersome no
 \begin{code}
     point arctime 1/2 arclength p of p of p
 \end{code}
-If your path is cyclic, and makes a triangle or a regular polygon,
+If your path is closed, and makes a triangle or a regular polygon,
 then you can bisect it with the line
 \begin{code}
     point t of p -- point t + 1/2 length p of p
@@ -2891,7 +2891,7 @@ path fullcircle; fullcircle = makepath pencircle;
 \end{code}
 A \kw{pencircle} is the basic nib that is used to draw lines that digitize neatly;
 it represents a true circle of diameter 1, passing through the points $(\pm.5, 0)$
-and $(0, \pm.5)$.  When processed with \kw{makepath} it turns into a cyclic
+and $(0, \pm.5)$.  When processed with \kw{makepath} it turns into a closed
 polygonal path with eight points that closely approximates a circle with diameter
 1\unit{bp} centred on the point $(0, 0)$.  To use it, you can scale it and shift it.
 To draw a circle with radius 2\unit{cm} at the point $(34, 21)$ you would do:
@@ -3080,54 +3080,41 @@ $$\includegraphics[width=\textwidth]{nine-point-circle}$$
 \subsection{Lines tangent to a point on a path}
 
 \MP\ represents paths internally as a sequence of nodes. Each node consists of three
-pairs: the point, the pre-control point, and the post-control point. Unless you
-explicitly set them differently, \MP’s curve fitting will make these three points co-linear.  The idea is
-that adjusts a path so that when it travels through a point, it is heading in
-the direction from the pre-control point to the post-control point.
-\MP\ provides a convenient built-in feature to examine the direction
-of a path $p$ at any time $t$ along it: \mpl{direction t of p}.
-
-\smallskip\noindent
-This returns a pair
-that represents the direction that the path is taking at point $t$.
-\mwpic{0pt}{tangents-on-path}%
-In the language of Bézier
-cubic curves, the pair is the value of the current control point minus the current
-point on the path. So if you define a path like this $\longrightarrow$
-\begin{smallcode}[xleftmargin=0pt]
-path p; p := origin {1,3} .. (192,0) .. {1,2} (384,0);
-\end{smallcode}
-it has three points – \id{origin}, $(192,0)$, $(384,0)$ – numbered 0, 1, and 2;
-and you can extract
-any of these points with \mpl{point t of p}.  It also has control points which
-we have constrained at point 0 and 2 but left free at point 1.
-You can extract the control points 
-with \mpl{precontrol t of p} and \mpl{postcontrol t of p}.  The pre-control is the
-control point just before a node, the post-control is the one after.  Unless the path is
-cyclic, there won't be a control point before the first node or after the last one,
-so \MP\ defines them to be the same as the coordinates of the node, so with:
-\begin{smallcode}[xleftmargin=0pt]
-for t=0 upto length p:
-  drawarrow precontrol t of p -- point t of p --  postcontrol t of p;
-endfor
-\end{smallcode}
-you get a neat visualization of how the path is made.  Now, plain \MP\ defines
+pairs: the pre-control point, the point itself, and the post-control point. 
+\mpic{0pt}{tangents-on-path}%
+For a given path $p$ you can extract these points at time $t$ with these operators:
+\begin{code}
+precontrol t of p
+point t of p
+postcontrol t of p
+\end{code}
+Unless you explicitly set them differently, \MP’s curve fitting will make these
+three points co-linear, so you can draw a tangent at point $t$ with 
+\begin{code}
+draw precontrol t of p -- postcontrol t of p;
+\end{code}
+The length of the tangent line drawn
+like this depends on the size and shape of the curve, but it is somewhat arbitrary.
+So you may prefer to extract a \<pair> representing the tangent at point $t$ with
+\begin{code}
+pair d; d = postcontrol t of p - precontrol t of p;  
+\end{code}
+In fact, this is so useful that
+"plain.mp" provides \mpl{direction} as a shorthand:
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-20pt]
 vardef direction expr t of p = postcontrol t of p - precontrol t of p enddef;
 \end{smallcode}
-to save you some typing, but the clever bit is that $t$ does not have to be a whole
-number.  If you set $t=1/2$, \MP\ works out where all the fractional control points
-are, so that you can use \mpl{direction t of p} to get a tangent at any point.  The
-vector pairs returned have the right direction, but rather arbitrary magnitudes, so
-the usual idiom is something like this:
+which can save you some typing.  But the clever bit is that $t$ does not have to be a whole
+number.  If you set $t=\frac14$ (say), \MP\ works out the corresponding fractional
+control points, so that you can use \mpl{direction t of p} to get a tangent at any point.  
 
-\vskip-\baselineskip
-\vbox to 0pt{%
-    \begin{smallcode}[xleftmargin=0pt]
-path s;
-s = origin -- unitvector(direction t of p) scaled 36;
+The vector pairs returned have the right direction, but still have rather arbitrary magnitudes, so
+the usual idiom is something like this:
+\begin{smallcode}
+path s; s = origin -- 36 unitvector(direction t of p);
 drawarrow s shifted point t of p;
-\end{smallcode}\vss}
+\end{smallcode}
+or the snippet shown on the right $\longrightarrow$
 
 \newpage
 \subsection{Lines tangent to a circle}\label{sec:tangent-times}
@@ -3136,14 +3123,14 @@ The techniques of the preceding section can be used to add a tangent line to a
 given point on a circular path, but not to find the tangent lines from a given point
 outside a circle.  To do this, you need to adapt the standard geometrical
 construction: for a given circle $C$ and a point $p$, find the midpoint of $p$ and
-the center of $C$; draw a circle through $p$, centred on this midpoint; the tangent
-points are where this second circle intersects $C$. %
-\mpic{-120pt}{tangents-point-to-circle.pdf}
+the center of $C$; draw a semicircle through $p$, centred on this midpoint; the tangent
+point is where the semicircle intersects $C$. %
+\mpic{-110pt}{tangents-point-to-circle.pdf}
 Given a suitable \mpl{path C} and \mpl{pair p} you can do this:
-\begin{code}[xleftmargin=0pt]
-pair o, t, t'; o = center C;
-t = C intersectionpoint halfcircle zscaled (p-o) shifted 1/2[o,p];
-t' = C intersectionpoint halfcircle zscaled (o-p) shifted 1/2[o,p];
+\begin{code}
+pair o, m, t, t'; o = center C; m = 1/2[o, p];
+t = C intersectionpoint halfcircle zscaled (p-o) shifted m;
+t' = C intersectionpoint halfcircle zscaled (o-p) shifted m;
 \end{code}
 No parentheses are needed around the second path, because \mpl{intersectionpoint} is
 defined with \mpl{secondarydef}.
@@ -3156,7 +3143,7 @@ that $b > a$ in all cases regardless of the relative rotation of $C$ and $p$.  T
 means that \mpl{subpath (a, b) of C} is always the “long way round” C, on the
 opposite side from $p$, and \mpl{subpath (a, b-8) of C} is always the shorter
 segment.
-\begin{code}[xleftmargin=0pt]
+\begin{code}
 vardef tangent_times(expr C, p) =
     % return the two times on C that correspond
     % to the external tangents from p to C

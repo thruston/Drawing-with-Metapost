@@ -19,7 +19,7 @@ draw C'; draw t -- center C -- p;
 
 drawoptions(withcolor (.2, .2, .7));
 dotlabel.lrt("$m$", 1/2 p);
-drawdot center C withpen pencircle scaled dotlabeldiam;
+dotlabel.llft("$o$", center C);
 
 drawoptions(dashed evenly);
 draw t -- p -- t';
