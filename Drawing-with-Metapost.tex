@@ -3568,9 +3568,22 @@ endfig;
 \mpexternal[xleftmargin=0pt]{projections-code.mp}
 
 \newpage
-\vpic{1in}{arbelos}
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent This needs an \mpl{invert} macro, such
-as the one from [§\ref{sec:inversion}].\vss}
+as the one from [§\ref{sec:inversion}].
+
+\smallskip\noindent
+\includegraphics[width=288pt]{arbelos}
+
+\vskip 1.414in\noindent
+\begingroup
+\raggedleft\fontsize{8}{10}\selectfont\textsf{%
+One must also recognize that any attempt to illustrate geometry\\
+involves a basic fallacy.  For example, a straight line is unbounded\\
+and infinitely thin and smooth, while any illustration is unavoidably\\
+of finite length, of positive thickness, and rough edged.\\[2pt]
+— Benoit Mandelbrot, \textsl{The Fractal Geometry of Nature}}
+\par\endgroup
+\vss}
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-72pt]
 beginfig(1);
 pair A,B,C; A = origin; C = 244 right;  B = 7/8[A, C];
@@ -5564,27 +5577,25 @@ drawarrow yy; label.top("$y$", point 1 of yy);
 Here the axes are scaled arbitrarily to 130\,pt and 80\,pt, but you will probably
 find it useful to set consistent units, and express sizes in terms of them.  Purely
 from habit, I use $u$ for the horizontal unit and $v$ for the vertical unit.  This
-makes it more convenient when you want to add a number
-scale.\mpic{0pt}{numbered-axes}
+makes it more convenient when you want to add a grid and/or a number
+scale.\mpic{-16pt}{numbered-axes}
 
 \vskip -12pt
 \vbox to 0pt{
 \begin{smallcode} 
-numeric u, v; u = 40; v = 29;
-path xx, yy;
+numeric u, v; u = 40; v = 29; 
+path xx, yy;  
 xx = (3/2 left -- 5 right) scaled u;
 yy = (3/2 down -- 4 up) scaled v;
-for x=-1 upto 4:
-    if x <> 0:
-        draw (down--up) shifted (x * u, 0);
-        label("$" & decimal x & "$", (x * u, -8));
-    fi
+for x=-1, 1, 2, 3, 4:
+    draw yy shifted (x * u, 0) withcolor 7/8;  % grid
+    draw (down--up) shifted (x * u, 0);        % ticks
+    label("$" & decimal x & "$", (x * u, -8));
 endfor
-for y=-1 upto 3:
-    if y <> 0:
-        draw (left--right) shifted (0, y * v);
-        label("$" & decimal y & "$", (-10, y * v));
-    fi
+for y=-1, 1, 2, 3:
+    draw xx shifted (0, y * v) withcolor 7/8;  % grid
+    draw (left--right) shifted (0, y * v);     % ticks
+    label("$" & decimal y & "$", (-10, y * v));
 endfor
 drawarrow xx; label.rt("$x$", point 1 of xx);
 drawarrow yy; label.top("$y$", point 1 of yy);
