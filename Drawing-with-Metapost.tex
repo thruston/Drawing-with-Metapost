@@ -1076,10 +1076,10 @@ numeric bp, in, mm, cm, pt, pc, dd, cc;
 \vss}}
 
 The effect of the $\kw{numeric}$ keyword is to remove the previous definitions; the
-four equation lines then re-establish the units with more accurate definitions.
-You can safely use these definitions with "scaled", as they are equivalent to the
-decimals currently given in "plain.mp" (with the exception of "cc" which is 0.00003
-smaller!).
+four equation lines then re-establish the units with very slightly more accurate
+definitions.  You can safely use these definitions with "scaled", as they are
+equivalent to the decimals currently given in "plain.mp". The values are
+mainly shown here as an example of implicit definition with equations.
 
 
 \newpage
@@ -1177,6 +1177,67 @@ dividing the result. So to round to the nearest eighth you might use
 `$\kw{round}(x\times8)/8$', and to round to two decimal places
 `$\kw{round}(x\times100)/100$'.  The only restriction is that the intermediate value
 must remain less than 32767 if you are using the default number system.
+
+\newpage
+\subsection{Integer powers}
+
+\textsc{Even if you use} one of the new number systems, you may occasionally get
+caught out by the \mpl{**} operator.  As the table on the right shows, you may get
+an approximate answer from \mpl{x ** y} even when $x$ and $y$ are both integers.
+\vadjust{\moveright 384pt\vbox to 0pt{\kern -2pt
+$$\begin{mplibcode}
+beginfig(0);
+%primarydef x ** y = 1 for n=1 upto y: * x endfor enddef;
+for x=1 upto 19:
+    for y = 1 upto 7:
+        if x = 1:
+            label("$x" if y>1: & "^{" & decimal y & "}" fi & "$", (52y, -20x));
+        elseif y * mlog(x) < mlog(infinity):
+            numeric r; r = x ** y;
+            label(decimal r, (52y, -20x)) withcolor 3/4 if r = round(r): blue
+            else: red fi;
+        fi
+    endfor
+endfor
+label.lft("Results of \mpl{x**y} for small values, using", lrcorner currentpicture shifted 36 up);
+label.lft("the default \mpl{scaled} number system", lrcorner currentpicture shifted 24 up);
+currentpicture := currentpicture scaled 0.8;
+endfig;
+\end{mplibcode}$$\vss}}
+Note that the squares are all integers, and the powers of two appear to be ok
+(although if the page was wider you would see that \mpl{2**9} is $512.00002$), but
+that with a couple of exceptions cubes and higher powers are slightly off.  Changing
+the number system makes it worse; even $x^1$ is not always an integer.  The reason
+can be found in the way that the \mpl{**} operator is defined in "plain.mp".
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-36pt]
+primarydef x ** y = if y = 2: x * x else: takepower y of x fi enddef;
+def takepower expr y of x =
+  if x > 0: 
+    mexp(y * mlog x)
+  elseif (x = 0) and (y > 0): 
+    0
+  else: 
+    if y = floor y:
+      if y >= 0: 1 for n=1 upto y: * x endfor
+      else:      1 for n=-1 downto y: / x endfor
+      fi
+    else: 
+      hide(errmessage "Undefined power: " & decimal x & "**" & decimal y)
+    fi 
+  fi 
+enddef;
+\end{smallcode}
+This is inherited direction from plain \MF, and as it says in the \mfbook, it is
+optimized for $x^2$ and takes care to handle correctly negative numbers and zeros.
+But for all positive values of $x$ other than 2 it is implemented using logs, and
+the results are therefore only approximate.  To avoid confusion where this might
+matter (such as a particular offset into a recursively defined path) you could
+simply use \mpl{round(7**3)} to get a whole number, or if you are sure that your $y$
+values are all non-negative integers, you could temporarily replace the definition:
+\begin{smallcode}
+primarydef x ** y = 1 for n=1 upto y: * x endfor enddef;
+\end{smallcode}
+
 
 \newpage
 \section{Pairs, triples, and other tuples}
