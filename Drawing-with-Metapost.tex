@@ -505,7 +505,7 @@ hypocycloids; play about a bit more to get flower shapes or windmills.
 $$\includegraphics[width=0.9\textwidth]{closed-antireuleaux-set.pdf}$$
 
 \newpage
-\subsection{A triangle of Schläfli polygons}
+\subsection{A triangle of Schläfli polygons}\label{sec:gcd}
 
 Apart from the curious polygon patterns in the display, the main \MP\ point of interest
 is the recursive "gcd" macro to find the greatest common divisor.\mpic{-108pt}{gons}
@@ -7675,9 +7675,54 @@ so good, so you need to clip the whole picture to a neat square.
 
 
 \newpage
+\section{Recursion and iteration}
+
+\textsc{This chapter is not a tutorial} on recursion or iteration \textit{per se}, but rather
+more of an exploration of the \MP\ techniques you can use to create some particular types
+of drawing such as trees, plane-filling curves, non-periodic tilings, and fractals.\mwpic{-48pt}{rec-bush}
+
+\medskip\noindent
+Even so, 
+it is perhaps useful to review some of the basic programming ideas
+involved.
+Consider for example the greatest common divisor algorithm presented in
+§\ref{sec:gcd}.
+\begin{smallcode}
+vardef gcd(expr a, b) = if b = 0: a else: gcd(b, a mod b) fi enddef;
+\end{smallcode}
+The reason this works is that we know (mathematically) that $0 \le a \bmod b < b$,
+and therefore that the arguments to the recursive call must get smaller each time
+and eventually we must get to $b=0$ when the answer will be $a$.  This is the basic
+recursive approach: ensure at least one argument gets smaller each time and stop
+when you get to a given limit.  
+The examples in this chapter use one of two simple approaches:
+\begin{itemize}
+    \item Explicitly pass a \mpl{level} argument that is decremented on each 
+        recursive call, and stop the recursion when the level gets to zero
+    \item Pass a \<path> or two \<pair> arguments, and stop the recursion when the
+        path is too short or the pairs are too close together.
+\end{itemize}
+If you find recursion confusing, you can nearly always use an iterative approach
+instead.  For example, you can implement the \mpl{gcd} function like this:
+\begin{smallcode}
+vardef gcd(expr A, B) = save r, a, b; numeric a, b, r; a := A; b := B;
+    forever:
+        r := a mod b; exitif r = 0;
+        a := b; b := r;
+    endfor b
+enddef;
+\end{smallcode}
+Notice that you have to use assignment in the loop to update the variables, and
+that you cannot assign to the arguments of a macro. Notice also that this version
+requires both arguments to be positive integers.  You need to use your judgement to
+decide which is the better approach for a given problem.
+
+
+
+\newpage
 \subsection{Penrose tilings}
 
-\textsc{You need} a different technique to generate an aperiodic tiling, 
+\textsc{Recursion is useful} for generating non-periodic tilings,%
 \vadjust{\moveright5.5in\vbox to 0pt{\kern-8pt
 \begin{smallcode}
 % golden ratio constant
@@ -7742,7 +7787,7 @@ rhombus shapes simply by \textit{not} drawing the edges shown with dots.\par\vss
 \newpage
 \subsection{Pinwheel tiling}
 
-\textsc{Another aperiodic tiling} is the so-called pinwheel tiling, devised in 1994
+\textsc{Another non-periodic tiling} is the so-called pinwheel tiling, devised in 1994
 by Charles Radin, based on
 this dissection by John Conway.\mpic{-22pt}{pinwheel}
 $$\includegraphics{conway.pdf}$$
@@ -7773,9 +7818,6 @@ endfig;
 Notice that to make the dissection work, it is important to pass the three 
 \<pair> arguments in the right order.
 
-\newpage
-\section{A tour of the plain format}
-
 
 
 \newpage
@@ -7802,8 +7844,8 @@ Notice that to make the dissection work, it is important to pass the three
 
 - functions, def, vardef, recursion, primarydef etc, of syntax, expr suffix text
 
-- recursive drawings, trees
-
 - four box model charts - Tufte charts - Venn diagrams
+
+- tour of the plain format
 
 \end{document}
