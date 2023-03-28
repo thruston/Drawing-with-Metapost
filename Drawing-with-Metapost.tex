@@ -1078,8 +1078,8 @@ numeric bp, in, mm, cm, pt, pc, dd, cc;
 The effect of the $\kw{numeric}$ keyword is to remove the previous definitions; the
 four equation lines then re-establish the units with very slightly more accurate
 definitions.  You can safely use these definitions with "scaled", as they are
-equivalent to the decimals currently given in "plain.mp". The values are
-mainly shown here as an example of implicit definition with equations.
+equivalent to the decimals currently given in "plain.mp", but the main point of the
+example is to show how you can do implicit definitions with equations.
 
 
 \newpage
@@ -7717,7 +7717,32 @@ that you cannot assign to the arguments of a macro. Notice also that this versio
 requires both arguments to be positive integers.  You need to use your judgement to
 decide which is the better approach for a given problem.
 
+\newpage
+\subsection{The Koch curve}
 
+\textsc{The Swedish mathetician} Helge von Koch\mpic{-30pt}{rec-koch-steps} originally devised the
+Koch curve as an example of a non-differentiable curve that could be contructed with
+elementary geometry.  It makes a good introduction to recursive paths with \MP. The
+construction is recursive: each straight line segment in the path is replaced with 
+four copies of itself, scaled down $\frac13$  and arranged as shown
+at Level 1 on the right\ \rlap{$\longrightarrow$}\\
+At each level of the construction, the number of points in the path increases
+four-fold and the \mpl{arclength} of the path gets $\frac43$ longer.  
+\begin{code}
+vardef koch(expr level, a, b) = 
+    if level = 0:
+        a -- b
+    else:
+        save p, q, r; pair p, q, r; 
+        p = 1/3[a,b]; r = 2/3[a,b]; q = r rotatedabout(p, 60);
+        koch(level-1, a, p) &
+        koch(level-1, p, q) &
+        koch(level-1, q, r) &
+        koch(level-1, r, b) 
+    fi
+enddef;
+\end{code}
+The bottom line here was created with \mpl{draw koch(4, origin, 300 right)}.
 
 \newpage
 \subsection{Penrose tilings}
