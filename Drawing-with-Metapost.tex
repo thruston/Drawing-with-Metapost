@@ -7759,6 +7759,40 @@ the length of each segment shrinks to the size of your pen, you will start losin
 detail.
 
 \newpage
+\subsection{Sierpinski's gaskets}
+
+\textsc{The second example} of recursive construction also dates from the early 20th
+century, but unlike von Koch's infinite curve, the area of Sierpinski's gasket tends
+to zero.\mwpic{-12pt}{rec-sierpinski-triangle} In the original specification, you
+are supposed to remove the central quarter of each triangle, but this program does
+it the other way round and delays drawing the triangles until they are small enough.
+\begin{code}[xleftmargin=0pt, xrightmargin=-2in]
+vardef gasket(expr t, s, limit) = 
+  if length (point 1 of t - point 0 of t) < limit:
+    fill t;
+  else:
+    save little_t; path little_t; little_t = t scaled s;
+    for i=1 upto length t:
+      gasket(little_t shifted (point i of t - point i of little_t), s, limit);
+    endfor
+  fi
+enddef;
+beginfig(1);  
+  path T; T = for i = 1 upto 3: 220 up rotated (120i) -- endfor cycle;
+  gasket(T, 1/2, 20);
+endfig;
+\end{code}
+Note the useful idiom \mpl{shifted (point i of t - point i of little_t)} – this
+neatly tucks a copy of the small triangle into the appropriate corner of the big
+triangle.   You can make this even simpler by coding the scaling parameter $s$ and
+\id{limit} as constants in the recursive routine, so that you do not have to pass 
+them down each time.  But you can also generalize it, for example by making
+the path \id{T} into a pentagon with scaling factor to $(3-\sqrt5)/2$,
+or a hexagon with $1/3$.
+
+\vbox to 0pt{\vskip -12pt $$\includegraphics{rec-sierpinski-pentagon.pdf}$$\vss}
+
+\newpage
 \subsection{Penrose tilings}
 
 \textsc{Recursion is useful} for generating non-periodic tilings,%
