@@ -4367,7 +4367,7 @@ verbatimtex
  \begin{document}
 etex
 \end{smallcode}
-Note that the "\documentclass" aggnd the "\begin{document}" lines are required, but
+Note that the "\documentclass" and the "\begin{document}" lines are required, but
 \MP\ is smart enough to add an "\end{document}" for you.\vss}}
 
 Plain "mpost" needs an old-fashioned ".dvi" file to work with, so you can only use
@@ -5311,7 +5311,7 @@ add a temporary ruler that shows you the dimensions of the bounding box like thi
 $$\includegraphics{icosahedron}$$
 The red rulers were added by putting \mpl{input ruler-cm} at the end of the figure.
 \vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\raggedright\noindent
-Here is the impementation of "ruler.mp":
+Here is the implementation of "ruler.mp":
 \begin{code}
 % add a ruler along the left hand and lower edges 
 % of the bounding box of the currentpicture
@@ -6347,7 +6347,7 @@ dotlabel.rt("$S$", S);
 \textsc{The classical definition} of the parabola is the locus of points that are 
 equidistant from a given line (the \textit{directrix}, shown as $A\to B$ on the
 right) to a given focus point (shown as $S$).\mpic{-24pt}{curves-parabola-directrix}
-Each point on the parabola path is related to each point, and you can contruct an
+Each point on the parabola path is related to each point, and you can construct an
 equilateral parallelogram at each point as shown.  This leads to a macro that
 generates a parabola given two \<pair> variables to define the directrix and another
 to define the focus:
@@ -6880,7 +6880,7 @@ currentpicture := currentpicture rotated - angle (point 2 of t0 - z0);
 \end{code}
 \moveright 396pt \vbox to 0pt{\vss\hsize 4in\small
 \noindent The \<transform> $S$ is defined implicitly.  It is sufficient 
-to give equations for three non-colinear points, and \MP\ will work out 
+to give equations for three non-collinear points, and \MP\ will work out 
 the rest.  In order to do this, you need to know the ratio of $x/a$, but by 
 definition $a/b=b/x$, so $x=b^2/a$, hence $x/a=(b/a)^2$.  The code shown 
 sets $r=b/a$, and then uses $r^2$ as the required fraction along $a$.
@@ -6898,7 +6898,7 @@ an isosceles with base angles of $72^\circ$ as shown.
 \textsc{Drawing bird's eggs} excites a curious fascination in some people.  This
 section shows some possible ways to make eggs with \MP. The first few
 compass-and-ruler constructions are taken from Robert Dixon's
-\textsl{Mathographics}.  They all follow the same basic idea of contructing the
+\textsl{Mathographics}.  They all follow the same basic idea of constructing the
 egg-shaped path from a series of circular arcs.\mnote{-16pt}{In these \MP\ implementations
 each egg path has 8 points starting with point 0 at “3 o’clock” like \mpl{fullcircle}.}
 
@@ -6961,7 +6961,7 @@ egg = point 4 of base {up} .. cap .. {down} base & cycle;
 \end{code}
 Note that you can use $\to$ to create reasonably large circular arcs.
 The parts of the drawing for filling the egg, 
-and showing the contruction are similar to the first example.
+and showing the construction are similar to the first example.
 
 \subsection{A taller Pythagorean egg}
 
@@ -7476,7 +7476,7 @@ t = for i=0 upto 2: (0,8) rotated 120i --endfor cycle;
 tt = t reflectedabout(point 2 of t, point 0 of t);
     beginfig(0);
 fill t withcolor Reds 8 2; fill tt withcolor Blues 8 2; draw t; draw tt; endfig;
-\end{mplibcode}}$ so that the tiling actually filled the plane. In the hexgonal
+\end{mplibcode}}$ so that the tiling actually filled the plane. In the hexagonal
 tiling there are no gaps to fill, but in order to get a non-adjacent colouring, the
 unit picture was defined as three shifted copies of the hexagon each filled with a
 different color. The unit vectors were therefore scaled by $\sqrt3$ and rotated by
@@ -7667,7 +7667,7 @@ clip currentpicture to unitsquare shifted -(1/2, 1/2) scaled (n * 9 r);
 endfig;
 \end{mplibcode}
 \end{smallcode}
-Instead of defining six trianges, six squares, and a hexagon, you can just define
+Instead of defining six triangles, six squares, and a hexagon, you can just define
 the dodecagon and overlap each one.  Using a macro to create the unit, allows you to
 choose a different colour for each filler. Using the \mpl{transparent} macro from
 Metafun automatically mixes the colours for the overlaps.  But the edges don't look
@@ -7720,12 +7720,12 @@ decide which is the better approach for a given problem.
 \newpage
 \subsection{The Koch curve}
 
-\textsc{The Swedish mathetician} Helge von Koch\mpic{-30pt}{rec-koch-steps} originally devised the
-Koch curve as an example of a non-differentiable curve that could be contructed with
+\textsc{The Swedish mathematician} Helge von Koch\mpic{-30pt}{rec-koch-steps} originally devised the
+Koch curve as an example of a non-differentiable curve that could be constructed with
 elementary geometry.  It makes a good introduction to recursive paths with \MP. The
 construction is recursive: each straight line segment in the path is replaced with 
 four copies of itself, scaled down $\frac13$  and arranged as shown
-at Level 1 on the right\ \rlap{$\longrightarrow$}\\
+at Level 1 \rightarrowfill\break
 At each level of the construction, the number of points in the path increases
 four-fold and the \mpl{arclength} of the path gets $\frac43$ longer.  
 \begin{code}
@@ -7742,7 +7742,21 @@ vardef koch(expr level, a, b) =
     fi
 enddef;
 \end{code}
-The bottom line here was created with \mpl{draw koch(4, origin, 300 right)}.
+The five levels were drawing using this function in a loop like this:
+\begin{code}
+for n=0 upto 4:
+    draw koch(n, origin, 300 right) shifted (0, -100n)
+endfor
+\end{code}
+The annotations in the middle show the \mpl{length} of the path and the
+\mpl{arclength}. The curve will always fit in the same bounding box but in theory it
+can become infinitely long.  In practice it looks much the same past level 6, and
+you will start running into \MP\ limitations.  The length of a path is not limited by
+the default scaled number system, but the numbers actually returned by \mpl{length}
+and \mpl{arclength} may not be reliable for very long paths.  Also the call stack may
+get very large and the single-threaded processing time can get very slow, and when
+the length of each segment shrinks to the size of your pen, you will start losing
+detail.
 
 \newpage
 \subsection{Penrose tilings}
