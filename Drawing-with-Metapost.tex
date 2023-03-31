@@ -7777,20 +7777,29 @@ vardef gasket(expr t, s, limit) =
     endfor
   fi
 enddef;
-beginfig(1);  
-  path T; T = for i = 1 upto 3: 220 up rotated (120i) -- endfor cycle;
-  gasket(T, 1/2, 20);
-endfig;
 \end{code}
 Note the useful idiom \mpl{shifted (point i of t - point i of little_t)} – this
 neatly tucks a copy of the small triangle into the appropriate corner of the big
 triangle.   You can make this even simpler by coding the scaling parameter $s$ and
 \id{limit} as constants in the recursive routine, so that you do not have to pass 
-them down each time.  But you can also generalize it, for example by making
-the path \id{T} into a pentagon with scaling factor to $(3-\sqrt5)/2$,
-or a hexagon with $1/3$.
+them down each time.  The triangular gasket was generated using the macro like this:
+\begin{code}[xleftmargin=0pt, xrightmargin=-2in]
+beginfig(1);  
+  path T; T = for i = 1 upto 3: 220 up rotated 120i -- endfor cycle;
+  gasket(T, 1/2, 20);
+endfig;
+\end{code}
+You can generalize it, for example by making
+the path \id{T} into a pentagon with scaling factor $s=(3-\sqrt5)/2$,
+or a hexagon with $s=1/3$, and so on:
 
-\vbox to 0pt{\vskip -12pt $$\includegraphics{rec-sierpinski-pentagon.pdf}$$\vss}
+\vbox to 0pt{\vskip-2pt\hsize10in\noindent\includegraphics[width=10in]{rec-sierpinski-pentagon.pdf}\par\vss}
+
+\newpage
+\subsection{Heighway dragon}
+
+\textsc{The Heighway dragon curve} dates from the 1960s, and is created 
+
 
 \newpage
 \subsection{Penrose tilings}
