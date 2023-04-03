@@ -3815,35 +3815,35 @@ find a definitive list of the font names you can use with your local \MP.
 \vss}}
 
 To make a suitable string you can enclose your text
-in double quotes to make a string token, or to refer to a string variable, or do
+in double quotes to make a string token, or to refer to a \<string> variable, or do
 one of these:
 \begin{itemize}
-    \item Concatenate two other strings with "&".
+    \item Concatenate two other strings with \mpl{&}.
 
-    \item Use "substr (a,b) of s" to get a substring of string "s".
+    \item Use \mpl{substring (a,b) of s} to get a substring of string \mpl{s}.
 
-    \item Use "min(a,b,...)" or "max(a,b,..)" to find the lexicographically smallest
-        (or largest) string in the list "a,b,...".  The list must have at least two
+    \item Use \mpl{min(a,b,...)} or \mpl{max(a,b,..)} to find the lexicographically smallest
+        (or largest) string in the list \mpl{a,b,...}.  The list must have at least two
         entries, and they must all be strings.
 
-    \item Use "char" to convert a numeric expression to the corresponding an ASCII
+    \item Use \mpl{char} to convert a numeric expression to the corresponding ASCII
         code;
           the numeric expression is rounded to the nearest integer modulo
           256.
 
-    \item Use "decimal" to get
-        the value (as a decimal) of a numeric expression.
+    \item Use \mpl{decimal} to get a string representing 
+        the value of a numeric expression.
 
-    \item Apply "str" to any suffix (and hence to any variable).  You get back a
+    \item Apply \mpl{str} to any suffix (and hence to any variable).  You get back a
         string representation of the suffix or variable name.
 
-    \item Use "readfrom" to read one line from a file as a string.
+    \item Use \mpl{readfrom} to read one line from a file as a string.
 
-    \item Use "fontpart" to extract the name of the font used in a picture created
-        with "infont" --- the string will be empty if there's no text element in the
+    \item Use \mpl{fontpart} to extract the name of the font used in a picture created
+        with \mpl{infont} --- the string will be empty if there's no text element in the
         picture.
 
-    \item Use "textpart" to get the text used in a picture created by "infont" ---
+    \item Use \mpl{textpart} to get the text used in a picture created by \mpl{infont} ---
         the string will be empty if there's no text element in the picture.
 
 \end{itemize}
