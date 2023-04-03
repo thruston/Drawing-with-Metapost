@@ -4,3 +4,4 @@
 *.mpx
 *.fls
 mpxerr.tex
+.DS_Store
