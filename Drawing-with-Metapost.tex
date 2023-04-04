@@ -2261,7 +2261,8 @@ rotating to make the markers fit the wonky lines properly.
 The Euler font complements the hand-drawn look; but
 you might find that a little of this type of decoration goes a long way.
 
-\newpage\subsubsection{Extending straight lines slightly}
+\newpage
+\subsubsection{Extending straight lines slightly}\label{euler}
 
 This second freehand figure uses a macro to draw a wonky line through two points
 with a bit of overlap at each end.  The overlap size is given using the suffix
@@ -2312,8 +2313,7 @@ endfig;
 $$\includegraphics{random-freehand-through}$$
 
 \vfill
-\noindent\llap{\nb\ }\label{eulertable}%
-The AMS Euler font available to \MP\ as "eurm10" is encoded as a subset of the \TeX\
+\noindent\llap{\nb\ }The AMS Euler font available to \MP\ as "eurm10" is encoded as a subset of the \TeX\
 math italic layout --- essentially it has all the Greek letters but none of the
 arrows, nor the musical notation.
 $$\includegraphics{euler-sampler}$$
@@ -3784,13 +3784,13 @@ annotations in the newfangled (but better) world of "lualatex" and the
 "luamplib" package.}\par\kern 16pt}
 
 \noindent
-\MP\ does not draw text directly; instead it provides two different mechanisms to
-turn a text string into a picture, which can then be treated like any other; in
-other words, the text picture can
-be saved as a picture variable, drawn directly, or transformed in some way with a
-scaling, a reflection, or a rotation.
+\MP\ does not draw text directly; but it provides two different mechanisms to
+turn some text into a \<picture>, which can then be treated like any other; 
+saved as a variable, drawn directly, or transformed in some way with a
+scaling, a reflection, or a rotation. The first mechanism is described below,
+the other in §\ref{btex}.
 
-\subsection{Simple strings in PostScript fonts with \texttt{infont}}
+\subsection{Simple strings in PostScript fonts with \texttt{infont}}\label{infont}
 
 The first mechanism is the primitive binary operation "infont".  As explained in
 section~8.3 of the \MP\ manual, it takes two strings as arguments: the left hand
@@ -3802,7 +3802,7 @@ To find the name of a suitable font, you have to consult your local "psfonts.map
 file, and probably the PSNFSS documentation.
 Here are a few of the many fonts available on my local \TeX\ installation; the name
 to use with "infont" is in the first column.
-$$\includegraphics{font-sampler2}$$
+$$\includegraphics{trad-font-samples}$$
 The text example in the first line
 of this table was produced with
 \begin{smallcode}
@@ -3864,7 +3864,7 @@ right), but you can use any 8-bit characters as the payload of a string.
 However, plain \MP\ is set by default to use "cmr10", the familiar Computer Modern typeface
 developed by Knuth for \TeX, and unfortunately, this is encoded using the \TeX\ text
 font encoding (also known as `OT1', and as shown in the first table in Appendix~F of the {\sl \TeX book}).
-\mpic{-108pt}{font-sampler1}
+\mpic{-108pt}{trad-font-tables}
 From the point of
 view of using "infont" to make simple labels, this means that the characters for
 space and seven other characters ("< > \ _ { | }") are in the wrong place.
@@ -3879,10 +3879,8 @@ defaultfont := "texnansi-lmr10";  % for Computer Modern Roman
 If you want "cmss10", use "texnansi-lmss10" and so on.  The encoding is shown on the
 right.  The characters printed in black correspond to the widely used ISO Latin~1
 encoding.  If you want to use one of the standard PostScript fonts listed on the
-previous page, then the encoding to use is "8r".  As you can see from the lower
-table, this is nearly the
-same; for most users the main difference is the location of the Euro currency
-symbol.
+previous page, then the encoding to use is either "8y" to get the same "texnansi"
+arrangement or "8r" to get the arrangement shown in the lower table.
 
 Choosing a font with one of these encodings means that if you use Windows code page
 1252 or ISO Latin 1 as the encoding for your text editor, you can create labels with
@@ -3903,8 +3901,8 @@ able to work with at least a subset of UTF-8 input.
 UTF-8 is a way of
 representing 16-bit Unicode characters with sequences of 8-bit characters. So your
 UTF-8 aware editor may show you an é but \MP, knowing nothing about UTF-8,
-will see this as Ã©.  But you can write a fairly simple routine to decode the
-commonly used subset of
+will see this as Ã©.  But you can write a fairly simple routine to decode a
+commonly-used subset of
 UTF-8.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\parindent 0pt
 \def\item{\leavevmode\llap{•~}}
 \item You can extend this idea to cope with other UTF-8 characters, including
@@ -4104,8 +4102,8 @@ instead.  Fortunately you are unlikely to need more than the first few, and it's
 quite easy to remember that $"char 11"=\alpha$, $"char 12"=\beta$, and so on.
 Producing the upper case letters is a bit more of a fiddle with this encoding as you
 need to know which ones use a Roman letter form; for details examine the program on
-the right, or check the table on p.\thinspace\pageref{eulertable}.
-Herman Zapf's elegant Euler font, available as "eurm10" uses the same encoding and
+the right, or check the table in §\ref{euler} that shows
+Herman Zapf's elegant Euler font, available as "eurm10". This
 makes a refreshing change for some diagrams.\vadjust{\moveright5.5in\vbox to
 0pt{\hsize4in\kern-164pt
 \begin{code}
@@ -4187,7 +4185,7 @@ label(btex $\displaystyle \int_0^t 3x^2\, dx$ etex, (x,y));
 
 \subsubsection{Getting consistent baselines for your labels}
 
-As already discussed [§\ref{infontbbox}], you can fiddle with the
+As already discussed §\ref{infontbbox}, you can fiddle with the
 bounding box of a text picture to make
 the \mpl{label} macro line things up on a common baseline, but there is a
 much easier way with "btex" and "etex".  Plain \TeX\ provides a "\strut"
@@ -4353,7 +4351,7 @@ and mathematics will be set in Times New Roman.\vadjust{\moveright5.5in\vbox to
 Here are some samples of the fonts available in the "font-change" package.  For full
 details, and especially details about using AMS symbols, see the package
 documentation.
-$$\includegraphics{font-sampler3}$$
+$$\includegraphics{trad-font-changes}$$
 }}
 
 If you still can't get your labels to match, you can force \MP\ to use \LaTeX\
