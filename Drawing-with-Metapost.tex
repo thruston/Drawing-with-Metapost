@@ -2206,113 +2206,119 @@ implementations are easier to use with plain \MP.\vadjust{\moveright5.5in\vbox t
 \hsize4in\kern -5.5\baselineskip
 \begin{smallcode}
 def freehand_segment(expr p) =
-  point 0 of p {direction 0 of p rotated (4+normaldeviate)} ..
+  point 0 of p {direction 0 of p rotated (4+normaldeviate)} .. 
   point 1 of p {direction 1 of p rotated (4+normaldeviate)}
 enddef;
-
-def freehand_path(expr p) =
+def freehand_path(expr p) = 
   freehand_segment(subpath(0,1) of p)
   for i=1 upto length(p)-1:
     & freehand_segment(subpath(i,i+1) of p)
   endfor
   if cycle p: & cycle fi
 enddef;
-
-picture mark[];
-mark1 = image(draw (left--right) scaled 2 rotated 60);
-mark2 = image(draw mark1 shifted left; draw mark1 shifted right);
-
+defaultfont := "eurm10";
+color sepia; sepia = (0.44, 0.26, 0.08);
+picture marker; marker = image(for s=-1/2, 1/2: 
+  draw (left--right) scaled 2 rotated 60 shifted (s,0);
+endfor);
 def moved_along expr x of p = rotated angle direction x of p
                               shifted point x of p enddef;
 
-z0 = (0,-1cm); z1 = (6cm,0);  z2 = (4cm,3cm);
-path t, c;
-t = freehand_path(z0--z1--z2--cycle);
-c = freehand_path(z0..z1..z2..cycle);
-
-z3 = point 1/2 + 1/20 normaldeviate of subpath (0,1) of t;
-
 beginfig(1);
-draw c withcolor .67 red;
-draw t;
-draw freehand_segment(point 2 of t--z3);
-draw mark2 moved_along 1/4 of t;
-draw mark2 moved_along 3/4 of t;
-
-defaultfont := "eurm10"; % use Euler
-label.lft("A", z0);
-label.rt ("B", z1);
-label.top("C", z2);
-label.bot("D", z3);
+pair A, B, C, D;
+A = (0,-30); B = (180,0);  C = (120,90); 
+D = (1/2 + 1/40 normaldeviate)[A, B]; 
+path triangle, circumcircle, bisector;
+triangle = freehand_path(A--D--B--C--cycle);
+bisector = freehand_segment(C--D);
+circumcircle = freehand_path(A..B..C..cycle);
+draw triangle; 
+draw bisector; 
+draw circumcircle withcolor .67 red;
+draw marker moved_along 1/2 of triangle withcolor .67 red;
+draw marker moved_along 3/2 of triangle withcolor .67 red;
+label.lft("A", A);
+label.rt ("B", B);
+label.top("C", C);
+label.bot("D", D);
 endfig;
 \end{smallcode}
 \vss}}
 
 \subsubsection{Making curves and straight lines look hand drawn}
 
-$$\includegraphics{freehand1}$$
+$$\includegraphics{random-freehand-circumcircle}$$
 A small amount of random wiggle makes the drawing come out charmingly wonky.  Notice
 that the "freehand_path" macro will transform a path whether it is straight or curved,
-and open or closed.  Notice also that to find the mid-point of a line, you find the
-point along the freehand path; if you simply put "1/2[a,b]" there's no guarantee
-that the point would actually be on the free hand path between "a" and "b".  In this
+and open or closed.  Notice also that to find $D$ the mid-point of a $AB$, you need
+to find the
+point along the freehand path; if you simply put "1/2[A,B]" there's no guarantee
+that the point would actually be on the free hand path between $A$ and $B$.  In this
 case a little extra randomness has been added, and the
 two segments $AD$ and $DB$ have been marked with traditional
 markers to show that they are equal.  The "moved_along" macro combines shifted and
 rotating to make the markers fit the wonky lines properly.
-The Euler font complements the hand-drawn look;
+The Euler font complements the hand-drawn look; but
 you might find that a little of this type of decoration goes a long way.
 
 \newpage\subsubsection{Extending straight lines slightly}
 
-This second freehand figure uses the same macros as the one on the previous page,
-but now the ink colour is set to sepia, and the lines are given a slightly more hand
-drawn look at the corners.\vadjust{\moveright5.5in\vbox to 0pt{
-\hsize4in\kern -3\baselineskip
-\begin{code}
-color sepia; sepia = (0.44, 0.26, 0.08);
-
-def draw_out(expr p, o) =
-  draw p;
-  for i=1 upto length(p):
-     draw (unitvector(direction i-eps of p) scaled +o
-           -- origin --
-           unitvector(direction i+eps of p) scaled -o)
-           shifted point i of p;
-  endfor
+This second freehand figure uses a macro to draw a wonky line through two points
+with a bit of overlap at each end.  The overlap size is given using the suffix
+syntax.  The lines are drawn in sepia ink to enhance the hand-drawn look. The angle 
+labels are positioned on invisible arcs between neighbouring wonky lines.
+\vadjust{\moveright5.5in\vbox to 0pt{
+\hsize4in\kern -4.5\baselineskip
+\begin{code}[xleftmargin=0pt]
+vardef freehand_through@#(expr a, b) =
+  save t; pair t; 
+  t = @# * unitvector(b - a) rotated (4 + normaldeviate);
+  a - t .. a {t} .. b {t} .. b + t
 enddef;
 
-def angle_label_pos(expr p, i, s) =
-  ( unitvector(point i-1 of p-point i of p)
-  + unitvector(point i+1 of p-point i of p)
-  ) scaled s shifted point i of p
+vardef mid_arc@#(expr p, a, b) =
+  save c; path c; 
+  c = fullcircle scaled (2*@#) shifted p cutbefore a cutafter b;
+  point arctime 1/2 arclength c of c of c
 enddef;
 
-beginfig(2);
-  defaultfont := "eurm10";
-  drawoptions(withcolor sepia);
-  draw_out(t,6); % the freehand triangle defined above
-  drawoptions(withcolor .78 blue);
-  label.lrt ("a", point 1/2 of t);
-  label.urt ("b", point 3/2 of t);
-  label.ulft("c", point 5/2 of t);
+beginfig(1);
+defaultfont := "eurm10"; color sepia; sepia = (0.44, 0.26, 0.08);
+pair A, B, C; A = (0,-30); B = (180,0);  C = (120,90);
 
-  drawoptions(withcolor .67 red);
-  label(char 11, angle_label_pos(t,2,10));
-  label(char 12, angle_label_pos(t,0,14));
-  label(char 13, angle_label_pos(t,1,10));
+path a, b, c;
+a = freehand_through 7 (A, B);
+b = freehand_through 8 (B, C);
+c = freehand_through 6 (C, A);
+
+drawoptions(withcolor sepia);
+draw a; draw b; draw c;
+
+drawoptions(withcolor .67 blue);
+label.bot ("a", point 3/2 of a);
+label.rt  ("b", point 3/2 of b);
+label.ulft("c", point 3/2 of c);
+
+drawoptions(withcolor .5 red);
+label(char 11, mid_arc 16 (A, a, c));
+label(char 12, mid_arc 14 (B, b, a));
+label(char 13, mid_arc 14 (C, c, b));
+
+drawoptions();
 endfig;
 \end{code}
 \vss}}
 
-$$\includegraphics{freehand2}$$
+$$\includegraphics{random-freehand-through}$$
 
 \vfill
-\nb\label{eulertable}
+\noindent\llap{\nb\ }\label{eulertable}%
 The AMS Euler font available to \MP\ as "eurm10" is encoded as a subset of the \TeX\
-math italic layout --- essentially it has (nearly) all the Greek letters but none of the
-arrows, nor the music notation.
+math italic layout --- essentially it has all the Greek letters but none of the
+arrows, nor the musical notation.
 $$\includegraphics{euler-sampler}$$
+If you can't get the upper case $\Gamma$ at \mpl{char 0}, then you might be running 
+an old out-of-date version of "luamplib".
 
 \newpage\subsection{Increasingly random shapes of the same size}
 

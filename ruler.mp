@@ -1,5 +1,6 @@
 % add a ruler along the left hand and lower edges 
 % of the bounding box of the currentpicture
+% ** meant to be embedded by something that sets u[] appropriately **
 path B; B = bbox currentpicture;
 for s=0, 1:
     path p; numeric a; pair o;
