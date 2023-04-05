@@ -3,7 +3,7 @@
 \begin{document}
 \begin{mplibcode}
 input torn-edge
-beginfig(2);
+beginfig(1);
 path c; c = fullcircle scaled 200;
 draw c withcolor .8 white;
 y=0; n = 600;
