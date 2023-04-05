@@ -1,7 +1,10 @@
 # Drawing-with-Metapost
 
-Some intermediate examples of how to draw technical diagrams with John Hobby's Metapost language.
-See http://www.tug.org/metapost.html for more about Metapost.  
+This project provides a document that discusses how to draw technical
+diagrams with John Hobby's Metapost language. It includes over 200 illustrations
+created with Metapost, complete with source code as inspiration and examples.
+The intended level is for intermediate to advanced users rather than complete beginners.
+For introductions, tutorials, and other articles about Metapost, see http://www.tug.org/metapost.html
 
 Start with "Drawing-with-Metapost.pdf" in this directory.
 
