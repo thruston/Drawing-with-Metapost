@@ -18,7 +18,7 @@ names and the MP source names, so "apollonius.pdf" is created from "apollonius.m
 
 To build the main PDF document I follow these steps
 
-- build any new or updated Metapost source files with `lualatex` to create a PDF in the src directory
+- build any new or updated Metapost source files with `lualatex` to create PDFs in the src directory
 - build the main tex file with `lualatex -output-directory=.. -recorder Drawing-with-Metapost`
 - run a Python script to read the .fls and `git add` all the files used
 
