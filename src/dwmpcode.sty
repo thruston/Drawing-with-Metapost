@@ -1,0 +1,49 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{dwmpcode}[2021/12/30 v0.01 Code setting in DwMP]
+\RequirePackage{listings}
+\RequirePackage{xcolor}
+\definecolor{textblue}{rgb}{.2,.2,.7}
+\definecolor{textred}{rgb}{0.54,0,0}
+\definecolor{textgreen}{rgb}{0,0.43,0}
+\definecolor{squash}{rgb}{0.793, 0.359, 0.05}
+\definecolor{carrot}{rgb}{0.934, 0.445, 0.082}
+\def\red#1{\textcolor{textred}{#1}}
+\def\blue#1{\textcolor{textblue}{#1}}
+\def\green#1{\textcolor{textgreen}{#1}}
+\newcommand\mpstyle{\lstset{
+language=Metapost,
+basicstyle=\ttfamily,
+keywordstyle=\color{textblue},
+keywordstyle=[5]\color{squash},
+keywordstyle=[6]\color{carrot},
+commentstyle=\color{textred},
+stringstyle=\color{textgreen},
+frame=none,
+columns=fullflexible,
+keepspaces=true,
+xleftmargin=\parindent,
+showstringspaces=false,
+morekeywords={cmykcolor, step, eps, exitif},
+morestring=[s]{btex}{etex}
+}}
+\lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily,#1}}{}
+\lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
+\newcommand\mpexternal[2][]{{\mpstyle\lstinputlisting[#1]{#2}}}
+\newcommand\mpl[1]{{\mpstyle\lstinline!#1!}}
+%
+\newcommand\texstyle{\lstset{
+language=[LaTeX]Tex,
+basicstyle=\ttfamily,
+keywordstyle=\color{textblue},
+commentstyle=\color{textred},
+stringstyle=\color{textgreen},
+frame=none,
+columns=fullflexible,
+keepspaces=true,
+xleftmargin=\parindent,
+showstringspaces=false,
+}}
+\lstnewenvironment{texcode}[1][]{\texstyle\lstset{basicstyle=\small\ttfamily,#1}}{}
+\newcommand\txl[1]{{\texstyle\lstinline!#1!}}
+%
+\endinput
