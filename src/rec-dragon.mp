@@ -1,16 +1,16 @@
-\documentclass[border=5mm]{standalone}
+\documentclass{standalone}
 \usepackage{luamplib}
 \begin{document}
+\mplibtextextlabel{enable}
 \begin{mplibcode}
 vardef dragon(expr level, a, b, r) = 
-    if level = 0:
-        a .. b
-    else:
+    if level > 0:
         save p; pair p;
-        p = 0.7071067811865476[a, b] rotatedabout(a, r); 
-        
+        p = (sqrt 1/2)[a, b] rotatedabout(a, r); 
         dragon(level-1, a, p, +abs(r)) &
         dragon(level-1, p, b, -abs(r)) 
+    else:
+        a .. b
     fi
 enddef;
 
@@ -22,17 +22,18 @@ vardef rounded_corners expr p =
     endfor .. subpath (n-r, n) of p
 enddef;
 
-
 beginfig(1);
 
-    for i=1 upto 11:
-        path p; p = dragon(i, origin, 180 right, 45); 
+    path d; d = dragon(15, origin, 240 right, 45);
+    draw d withpen pencircle scaled 1/4 withcolor (.2, .2, .7);
+    label.top("The dragon curve at level 15", point 1/3 of bbox currentpicture);
 
-        show length p;
-        draw p shifted (0, -180i);
-        draw rounded_corners p shifted (360, -180i);
-    endfor
+    draw rounded_corners dragon(10, origin, 240 right, 45)
+        shifted 280 down
+        withcolor .54 red;
 
+    label.top("\dots\ and at level 10 with rounded corners", point 1/3 of bbox currentpicture);
+    
 endfig;
 \end{mplibcode}
 \end{document}
