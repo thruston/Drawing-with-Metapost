@@ -7847,6 +7847,47 @@ $2^n$, so if you want to do arithmetic with the path length you need to use a bi
 number system when $n > 11$.}
 
 \newpage
+\subsection{Iterative dragons}
+
+\textsc{The dragon curve} can also be created with iteration instead of recursion. 
+Another way of viewing the stages of developing the curve is that at each stage the
+whole curve is replaced by two copies of itself arranged as shown:
+
+\medskip
+\centerline{\includegraphics{ifs-heighway-stages}}
+
+\smallskip\noindent
+We can do this in two steps in a loop, like this:\mpic{-160pt}{ifs-heigh}
+\begin{smallcode}
+path p; p = origin -- dir 30;
+numeric n;
+for i=1 upto 12:
+    n := length p;
+    p := p rotated 45;
+    p := p & reverse p rotatedabout(point n of p, 90);
+endfor
+draw p scaled (384 / xpart (urcorner p - llcorner p));
+\end{smallcode}
+In this approach, instead of scaling down each time, the curve is just allowed to
+grow $\sqrt2$-times bigger in each loop, then scaled to the desired width
+(384\unit{pt}) when it is complete. The 12 stages in the loop produce the rotated blue
+dragon as shown.\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}
+
+\vfill\noindent
+With a small adaptation, you can also use this to explore variations.
+\begin{smallcode}
+path p; p = origin -- dir 30;
+numeric n, r; r = 3;
+for i=1 upto 12:
+    n := length p;
+    p := p rotated (45 - r);
+    p := p & reverse p rotatedabout(point n of p, 90 + 2r);
+endfor
+\end{smallcode}
+The extra parameter $r$ is used to open up the folds, making it more
+“organic”.\mpic{-200pt}{ifs-heigh-open}
+
+\newpage
 \subsection{Penrose tilings}
 
 \textsc{Recursion is useful} for generating non-periodic tilings,%
