@@ -7813,18 +7813,18 @@ Note that every other segment is flipped left and right.  At each stage, the num
 increases two-fold and the path gets $\sqrt2$ times longer.  Here is a recursive
 routine to generate the curve as a single path.
 \begin{smallcode}
-vardef dragon(expr level, a, b, r) = 
-    if level = 0:
-        a .. b
-    else:
+numeric r, theta; r = sqrt 1/2; theta = 45;
+vardef dragon(expr level, a, b) = 
+    if level > 0:
         save p; pair p;
-        p = (sqrt 1/2)[a, b] rotatedabout(a, r); 
-        dragon(level-1, a, p, +abs(r)) &
-        dragon(level-1, p, b, -abs(r)) 
+        p = r[a, b] rotatedabout(a, theta); 
+        dragon(level - 1, a, p) & reverse dragon(level - 1, b, p)
+    else:
+        a .. b
     fi
 enddef;
 \end{smallcode}
-The blue dragon was drawn with: {\small\mpl{draw dragon(15, origin, 240 right, 45)}}\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}
+The blue dragon was created with: {\small\mpl{draw dragon(15, origin, 240 right)}}\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}
 
 After the fourth level the corners of the curve start to touch each
 other, but they never cross.  You can see this if you draw the curve with rounded
@@ -7839,7 +7839,7 @@ vardef rounded_corners expr p =
 enddef;
 \end{smallcode}
 The red dragon was: {\small\mpl{draw rounded_corners dragon(10, origin, 240
-right, 45)}}\rlap{\hbox{\ $\smash{\longrightarrow}$}}
+right)}}\rlap{\hbox{\ $\smash{\longrightarrow}$}}
 
 \vfill
 \noindent{\small\llap{\hey\ }The length of the dragon path at level $n$ is
@@ -7886,6 +7886,30 @@ endfor
 \end{smallcode}
 The extra parameter $r$ is used to open up the folds, making it more
 “organic”.\mpic{-200pt}{ifs-heigh-open}
+
+\newpage
+\subsection{The golden dragon}
+
+\textsc{You can also explore variations} with the recursive approach by altering 
+the scaling and rotation. Here $r\simeq 0.74274$ and
+$\theta\simeq 32.893°$ in the initial triangle.\vadjust{\moveright136pt\vbox to
+0pt{\vskip 3.16in \hsize 3.6in \noindent
+Because the initial triangle shape is shorter on one side, it is better to adapt
+the \mpl{dragon} routine to measure the gap between points instead of using a fixed
+level parameter:
+\begin{smallcode}
+vardef dragon(expr a, b) = 
+    if abs(a-b) > 1:
+        save p; pair p; 
+        p = r[a, b] rotatedaround(a, theta); 
+        dragon(a, p) & reverse dragon(b, p)
+    else:
+        a -- b
+    fi
+enddef;
+\end{smallcode}
+\vss}}
+$$\hbox to \textwidth{\includegraphics{rec-dragon-golden.pdf}\hss}$$
 
 \newpage
 \subsection{Penrose tilings}

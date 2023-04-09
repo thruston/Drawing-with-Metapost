@@ -3,12 +3,12 @@
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
-vardef dragon(expr level, a, b, r) = 
+numeric r, theta; r = sqrt 1/2; theta = 45;
+vardef dragon(expr level, a, b) = 
     if level > 0:
         save p; pair p;
-        p = (sqrt 1/2)[a, b] rotatedabout(a, r); 
-        dragon(level-1, a, p, +abs(r)) &
-        dragon(level-1, p, b, -abs(r)) 
+        p = r[a, b] rotatedabout(a, theta); 
+        dragon(level - 1, a, p) & reverse dragon(level - 1, b, p)
     else:
         a .. b
     fi
@@ -24,11 +24,11 @@ enddef;
 
 beginfig(1);
 
-    path d; d = dragon(15, origin, 240 right, 45);
+    path d; d = dragon(15, origin, 240 right);
     draw d withpen pencircle scaled 1/4 withcolor (.2, .2, .7);
     label.top("The dragon curve at level 15", point 1/3 of bbox currentpicture);
 
-    draw rounded_corners dragon(10, origin, 240 right, 45)
+    draw rounded_corners dragon(10, origin, 240 right)
         shifted 280 down
         withcolor .54 red;
 
