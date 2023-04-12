@@ -4,11 +4,12 @@
 \mplibtextextlabel{enable}
 \begin{mplibcode}
 input colorbrewer-rgb
-numeric t; t = 8;
 vardef bush(expr start, aim, level, limit) = 
-    save s; numeric s; s = level / limit;
-    for a = -4t, -t, t, 2t:
-        pair target; target = aim scaled ((32 + 16 normaldeviate)*s) rotated a shifted start;
+    save s, target; 
+    numeric s; s = level / limit;
+    for a = -32, -8, 8, 16:
+        pair target; 
+        target = aim scaled ((32 + 16 normaldeviate) * s) rotated a shifted start;
         draw start -- target 
             withpen pencircle scaled s
             withcolor BrBG[limit][limit-level];
