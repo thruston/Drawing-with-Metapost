@@ -7904,12 +7904,46 @@ vardef dragon(expr a, b) =
         p = r[a, b] rotatedaround(a, theta); 
         dragon(a, p) & reverse dragon(b, p)
     else:
-        a -- b
+        a .. b
     fi
 enddef;
 \end{smallcode}
 \vss}}
 $$\hbox to \textwidth{\includegraphics{rec-dragon-golden.pdf}\hss}$$
+
+\newpage
+\subsection{The Peano-Gosper curve, or flow-snake}
+
+\textsc{The Peano-Gosper curve} is a space-filling curve.  It is 
+constructed in the same way as the dragons, but generating shape has seven sections 
+instead of two, and they are cunningly arranged to fill the space.\mpic{-48pt}{rec-flowsnake-construction}
+The arrows indicate the reversals so that the scaled-down copies fill the larger
+part of the hexagons that contain them.\rlap{\hbox{\ $\smash{\rightarrow}$}}
+$$\includegraphics[width=\textwidth]{rec-flowsnake}$$
+This fourth-level curve is the boundary bewteen the filled and unfilled branches.
+\vadjust{\moveright 384pt \vbox to 0pt{\vss\hsize 4in
+\noindent Given the \id{snake} path scaled to unit length as shown above in
+\red{red}, the
+flow-snake path can be created with:
+\begin{smallcode}
+vardef rattle(expr level, a, b) = 
+  if level > 0:
+    save s; path s; s = snake zscaled (b-a) shifted a;
+    reverse rattle(level - 1, point 1 of s, a) &
+            rattle(level - 1, point 1 of s, point 2 of s) &
+            rattle(level - 1, point 2 of s, point 3 of s) &
+            rattle(level - 1, point 3 of s, point 4 of s) & 
+    reverse rattle(level - 1, point 5 of s, point 4 of s) & 
+    reverse rattle(level - 1, point 6 of s, point 5 of s) &
+            rattle(level - 1, point 6 of s, b)
+  else:
+    a -- b
+  fi
+enddef;
+path S; S = rattle(4, origin, 360 right);
+\end{smallcode}
+}}
+
 
 \newpage
 \subsection{Penrose tilings}
