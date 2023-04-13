@@ -7944,6 +7944,119 @@ path S; S = rattle(4, origin, 360 right);
 \end{smallcode}
 }}
 
+\newpage
+\subsection{Fractal trees}
+
+\textsc{You can make a tree} with a vertical line segment, a scaling factor $0< r <
+1$, and an angle $0° < \theta < 180°$.  Start with the vertical line as the trunk,
+then make the first branch by scaling the trunk by $r$, rotating it $+\theta$, and
+moving it to the top of the trunk; make the second in the same way but rotate it by
+$-\theta$.  Then repeat using each branch as a new trunk.\mpic{-114pt}{rec-simple-tree}
+And stop after enough levels.  
+
+This can be implemented easily in \MP, but requires a
+slightly different technique.  There is no simple way to represent the tree as a single
+\<path> because a path cannot have branches, so
+you need to draw each segment separately instead of trying to join them up. Compare
+this to the \mpl{rattle} routine on the page before.
+\begin{code}
+vardef make_tree(expr level, bar) = 
+  draw bar;
+  if level > 0:
+    for t=-theta, theta:
+      make_tree(level - 1, bar shifted - point 0 of bar 
+        scaled r rotated t shifted point 1 of bar);
+    endfor
+  fi
+enddef;
+\end{code}
+To combine several such trees in a drawing either move the initial \id{bar} path, or
+capture the tree as a \<picture> using \mpl{image(make_tree(...))}, like so:
+\begin{code}
+picture T[]; numeric r, theta;
+r = 0.58; theta = 60; T1 = image(
+  make_tree(3, origin -- 100 up); 
+);
+% update r and theta...
+r := 0.75; theta := 14; T2 = image(
+  make_tree(10, origin -- 100 up);
+);
+draw T1 shifted 32 up; 
+draw T2 shifted 128 right;
+\end{code}
+Notice that $r$ and $\theta$ are treated as global constants.  You could pass them
+to the \mpl{make_tree} routine instead.  Notice also that the smaller tree only has
+three levels, but the larger one has 10.  And that the labels were omitted.
+
+\newpage
+\subsubsection{More fractal vegetation}
+
+\textsc{If you are more interested} in the visual aspect of your tree than the
+mathematical, you can tweak the \mpl{make_tree} routine a
+bit.\mpic{-12pt}{rec-general-tree}
+\begin{smallcode}[xleftmargin=0pt]
+vardef make_tree(expr bar) = 
+  save a; numeric a; a = abs(point 1 of bar - point 0 of bar);
+  cutdraw bar withpen pencircle scaled 1.2(1/8 a) withcolor background;
+  cutdraw bar withpen pencircle scaled (1/8 a) withcolor 1/256(57, 35, 32);
+  if a > leaf:
+    save s; pair s; 
+    s = 1/32 a * r * unitvector(direction 1 of bar) rotated 90;
+    make_tree(bar shifted - point 0 of bar 
+      shifted s scaled r rotated theta
+      shifted point 1 of bar);
+    make_tree(bar shifted - point 0 of bar 
+      shifted -s scaled r rotated -theta
+      shifted point 1 of bar);
+  else:
+    draw point 1 of bar withpen pencircle scaled 1 withcolor 2/3 green;
+  fi
+enddef;
+beginfig(1);
+  numeric leaf, r, theta;
+  r = 0.75; theta = 14; leaf = 3; 
+  make_tree(origin -- 100 up);
+endfig;
+\end{smallcode}
+\begin{itemize}
+    \item The recursion is controlled by measuring the length of the branches instead
+        of using a \id{level} parameter.
+    \item Each branch is drawn with a pen scaled to $\frac18$ of its length using
+        \mpl{cutdraw}, and outlined so you can see the crossings.
+    \item Each branch is moved slightly left or right with $s$ to make the joins
+        neater.
+    \item Tiny green leaves are added on the ends of each branch.
+\end{itemize}
+
+\newpage
+\subsubsection{Randomized recursive plants}
+
+\vskip-\baselineskip
+\noindent\hbox to \linewidth{\includegraphics{rec-general-tree-deviate}\hss}
+
+\noindent
+\textsc{To get plants that look more natural} you can introduce some random factors.
+Strictly these are not fractal because they are not
+self-similar. The only change from the previous \mpl{make_tree} is to replace
+\mpl{scaled r rotated theta} with 
+\begin{smallcode}[xleftmargin=0pt]
+scaled (r + 1/16 normaldeviate) rotated (theta + 8 normaldeviate) 
+\end{smallcode}
+The bush is similar, except that it splits into four branches at each step instead of
+two and only the lengths randomized.\mwpic{-96pt}{rec-bush}
+The colouring was a happy accident.
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-100pt]
+input colorbrewer-rgb
+vardef bush(expr start, aim, level, limit) = 
+  save s, target; numeric s; pair target; s = level / limit;
+  for a = -32, -8, 8, 16:
+    target = aim scaled ((32 + 16 normaldeviate) * s) rotated a shifted start;
+    draw start -- target withpen pencircle scaled s withcolor BrBG[limit][limit-level];
+    if level > 1: bush(target, aim rotated a, level - 1, limit); fi
+  endfor
+enddef;
+beginfig(1); bush(origin, dir 80, 6, 8); endfig;
+\end{smallcode}
 
 \newpage
 \subsection{Penrose tilings}
