@@ -30,3 +30,8 @@ To update the main PDF document I follow these steps
 - git commit and push
 
 Toby Thurston -- 14 Apr 2023
+
+Copyright (c) 2023 by Toby Thurston. This material may be distributed only
+subject to the terms and conditions set forth in the Open Publication License,
+v1.0 or later (the latest version is presently available at
+http://www.opencontent.org/openpub/).
