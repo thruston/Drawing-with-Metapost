@@ -2,13 +2,13 @@
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
+% \loop\iftrue \errmessage{This manual is copyrighted and should not be compiled as is}\repeat
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
 \usepackage{fontspec}
 \newfontfamily{\demo}{TeX Gyre Pagella}
 \DeclareTextFontCommand{\textdemo}{\demo}
-\usepackage{unicode-math}
 \usepackage[inner=1in,textwidth=5in,textheight=6in, marginparsep=0.5in, marginparwidth=4.2in]{geometry}
 \usepackage{sectsty}
 \allsectionsfont{\normalfont\sffamily\bfseries}
@@ -43,8 +43,8 @@ endfor currentpicture := currentpicture scaled 1/2; endfig;\end{mplibcode}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \def\to{\mathrel{\ldotp\ldotp}}
 \def\<#1>{\ensuremath{\langle\hbox{#1}\rangle}}
-\newfontface\ding{Zapf Dingbats}
-\def\hey{\llap{\ding ☞\ }}
+\newfontface\ding{Zapf Dingbats} % <- try Hoefler Text Ornaments?  Or Noto Symbols 2?
+\def\hey{\llap{{\ding ☞}\ }}
 %
 \begin{document}
 \let\folio\thepage
@@ -3352,9 +3352,11 @@ drawoptions();
 
 \subsection{Axis of similitude}\label{sec:axosim}
 
-\bigskip
-\noindent\hbox to \textwidth{\includegraphics[scale=0.92]{axis-of-similitude}\hss}
-\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+\vbox to 0pt{\vskip-\baselineskip\noindent\hbox to
+\textwidth{\includegraphics[scale=0.92]{axis-of-similitude}\hss}\vss}
+
+\vfill
+\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 Given three circles taken in pairs, you can use the techniques of the preceding
 sections to find the three points where the common external tangents
 intersect (shown here as $E_{12}$, $E_{31}$, and $E_{23}$) and the
@@ -3364,14 +3366,19 @@ The line common to the three $E$ points is known as the \textit{Axis of
 Similitude}.
 
 The drawing is left as an exercise for the reader, except
-to note that if $r_1$ and $r_2$ are \mpl{numeric} variables representing
-the radius of the circles centred at the \mpl{pair} variables $C_1$ and $C_2$,
-then we have:
-$$\vbox{\openup3pt\halign{\hfil$#$&${}=#$\hfil\cr
-E_{12}&({r_1\over r_1 - r_2})[C_1, C_2];\cr
-I_{12}&({r_1\over r_1 + r_2})[C_1, C_2];\cr
-}}$$
-which is a bit quicker than working out all the tangent points.}}
+to note that if \mpl{r1} and \mpl{r2} are \<numeric> variables representing
+the radius of the circles centred at the \<pair> variables \mpl{C1} and \mpl{C2},
+then:
+% $$
+% E_{12} = \left(\frac{r_1}{r_1 - r_2}\right)[C_1, C_2];\hbox{\quad and\quad}
+% I_{12} = \left(\frac{r_1}{r_1 + r_2}\right)[C_1, C_2];
+% $$
+
+\begin{smallcode}
+E12 = (r1/(r1 - r2)[C1, C2]; I12 = (r1/(r1 + r2)[C1, C2];
+\end{smallcode}
+which is a bit quicker than working out all the tangent points. 
+My version is in the file "src/axis-of-similitude.mp"}
 
 \newpage
 \subsection{Inversion, pole, and polar}\label{sec:inversion}
@@ -3502,9 +3509,11 @@ endfig;
 
 \newpage
 \subsection{Circles tangent to other circles}
-\bigskip
-\noindent\hbox to \textwidth{\includegraphics[height=\textheight]{apollonius}\hss}
-\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+
+\vbox to 0pt{\noindent\hbox to \textwidth{\includegraphics[height=\textheight]{apollonius}\hss}\vss}
+
+\vfill
+\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 The classical Problem of Apollonius is to find a circle tangent to three others.
 All of the approaches are rather involved, but Gergonne's is probably the simplest
 to follow in \MP.
@@ -3525,9 +3534,8 @@ technique [§\ref{sec:circles}].
 \smallskip\noindent
 {\small
 The drawing is also left as an exercise for the reader, although you can find my
-version in the source code for this document. You might like to try to make a more
-robust version or to find all the other tangent circles.}
-}}
+"apollonius.mp" in the source for this document. You might try to make a more
+robust version or to find all the other tangent circles.}}
 
 
 \newpage
@@ -6662,8 +6670,8 @@ endfor
 rolling wheel.  In the first diagram the cycloid is drawn in red and the
 corresponding rolling wheel in blue.  The main idea in this diagram is to make the
 whole drawing depend on just a few parameters;  here there are two: the radius $r$
-and the amount of rotation $θ$.  If we make $r$ bigger, the drawing will be
-scaled up; if we change $θ$, the wheel will appear to have rolled along.
+and the amount of rotation $\theta$.  If we make $r$ bigger, the drawing will be
+scaled up; if we change $\theta$, the wheel will appear to have rolled along.
 \mpic{-66pt}{cycloids}
 
 
@@ -7895,8 +7903,12 @@ The extra parameter $r$ is used to open up the folds, making it more
 
 \textsc{You can also explore variations} with the recursive approach by altering 
 the scaling and rotation. Here $r\simeq 0.74274$ and
-$\theta\simeq 32.893°$ in the initial triangle.\vadjust{\moveright136pt\vbox to
-0pt{\vskip 3.16in \hsize 3.6in \noindent
+$\theta\simeq 32.893°$ in the initial triangle.
+
+\medskip
+\vbox to 3in{\noindent\hbox to \textwidth{\includegraphics{rec-dragon-golden.pdf}\hss}\vss}
+
+\moveright136pt\vbox to 0pt{\hsize 3.6in \noindent
 Because the initial triangle shape is shorter on one side, it is better to adapt
 the \mpl{dragon} routine to measure the gap between points instead of using a fixed
 level parameter:
@@ -7911,8 +7923,7 @@ vardef dragon(expr a, b) =
     fi
 enddef;
 \end{smallcode}
-\vss}}
-$$\hbox to \textwidth{\includegraphics{rec-dragon-golden.pdf}\hss}$$
+\vss}
 
 \newpage
 \subsection{The Peano-Gosper curve, or flow-snake}
