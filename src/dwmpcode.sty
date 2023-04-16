@@ -23,7 +23,16 @@ columns=fullflexible,
 keepspaces=true,
 xleftmargin=\parindent,
 showstringspaces=false,
-morekeywords={cmykcolor, step, eps, exitif, rotatedabout},
+% missing commands 
+morekeywords={step, errmessage, exitif, colorpart, textpart, pathpart},
+% missing operators
+morekeywords=[2]{cmykcolor, counterclockwise, tensepath, rotatedabout},
+morekeywords=[3]{drawdot},
+morekeywords=[4]{superellipse, flex},
+% missing internal variables
+morekeywords=[5]{dotlabeldiam, extra_endfig},
+% missing constants
+morekeywords=[6]{eps, numbersystem},
 morestring=[s]{btex}{etex}
 }}
 \lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily,#1}}{}

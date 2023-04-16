@@ -22,16 +22,13 @@
 \author{Toby Thurston}
 \date{March 2017 – April 2023}
 \overfullrule=2pt
-\def\kw#1{\begingroup\def\_{\kern.04em
-    \vbox{\hrule width.3em height .6pt}\kern.08em}%
-\ifmmode\mathop{\textbf{#1}}\else\hbox{\bf#1\/}\fi\endgroup}
-\def\op#1{\begingroup\def\_{\kern.04em
-    \vbox{\hrule width.3em height .6pt}\kern.08em}%
-\ifmmode\mathop{\textrm{#1}}\else\hbox{\rm#1\/}\fi\endgroup}
-\def\id#1{\begingroup\def\_{\kern.04em
-    \vbox{\hrule width.3em height .6pt}\kern.08em}%
-\ifmmode\mathop{\textit{#1}}\else\hbox{\it#1\/}\fi\endgroup}
-\def\cycle{{\rm cycle}}
+\def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
+\ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
+\def\op#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
+\ifmmode\mathop{\textrm{#1}}\else\textrm{#1}\fi\endgroup}
+\def\id#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
+\ifmmode\mathop{\textit{#1}}\else\textit{#1}\fi\endgroup}
+\def\cycle{\textrm{cycle}}
 \def\vpic#1#2{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}
 \def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
 \def\mnote#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\noindent #2\par\vss}}}
@@ -392,7 +389,7 @@ is $45^\circ$ round and 1~radian is \mpl{point 1.27324 of c}, (because $4/\pi \s
 \vfill\noindent
 In a closed path, the point numbering in \MP\ wraps round: so in a
 circle, point $n$ is the same as point $n+8$; and in general point $n$ is the same as
-point $n+\hbox{\bf length }p$.  This works with negative numbers too, so we could use
+point $n+\kw{length} p$.  This works with negative numbers too, so we could use
 \begin{code}
 center p -- subpath(-1,1) of p -- cycle
 \end{code}
@@ -463,7 +460,7 @@ These polygon paths are centred on $(0, 0)$ but
 sometimes it is more convenient to construct a polygon on a known segment
 rather than working out how to rotate and shift it into place.  
 $$\includegraphics[width=0.9\textwidth]{closed-polygon-chain.pdf}$$
-Here is a way to do that using the \mpl{of} syntax in the macro construction
+Here is a way to do that using the “\mpl{of}” syntax in the macro construction
 $\longrightarrow$
 \vadjust{\moveright 384pt\vbox to 0pt{\vss
 \begin{smallcode}
@@ -573,19 +570,19 @@ Here’s a second example that uses closed paths to give an illusion of depth to
 graphic of the planet Saturn.
 \mpic{0pt}{saturn}
 \marginpar{\hbox{}\vskip1.3in\raggedright\noindent\textbf{Notes}\begin{itemize}
-    \item The first five paths are just circles and ellipses based on "fullcircle".
-    \item The drawing is done inside an "image" simply so that the final result can
+    \item The first five paths are just circles and ellipses based on \mpl{fullcircle}.
+    \item The drawing is done inside an \mpl{image} simply so that the final result can
         be drawn at an angle
-    \item "unfill gap" is shorthand for "fill gap withcolor background"
-    \item The subpaths passed to "buildcycle" are chosen carefully to make sure we
+    \item \mpl{unfill gap} means: \mpl{fill gap withcolor background}
+    \item The subpaths passed to \mpl{buildcycle} are chosen carefully to make sure we
         get the intersections at the right points and so that the component paths
-        all run in the same direction.  Note that "subpath (8,4) of globe" runs
+        all run in the same direction.  Note that \mpl{subpath (8,4) of globe} runs
         clockwise (that is backwards) from point 8 to point 4.
 \end{itemize}}
 \mpexternal{saturn-code.mp}
 
 \newpage\subsection{The implementation of \texttt{buildcycle}}
-\textsc{The implementation} of "buildcycle" in plain \MP\ is interesting for a number of
+\textsc{The implementation} of \mpl{buildcycle} in plain \MP\ is interesting for a number of
 reasons.  Here it is copied from "plain.mp" (with minor simplifications) $\longrightarrow$
 \vadjust{\moveright5.5in\vbox to 0pt{\kern-1cm%
 \begin{code}
@@ -614,19 +611,19 @@ enddef;
 Notice how freely the indentation can vary; this is both a blessing
 (because you can line up things clearly) and a curse (because the syntax may not
 be very obvious at first glance).  Notice also the different ways we can use a
-$\kw{for}$-loop.  The first two are used at the ‘outer’ level to repeat complete
+\mpl{for}-loop.  The first two are used at the ‘outer’ level to repeat complete
 statements (that end with semi-colons); the third one is used at the ‘inner’ level
 to build up a single statement.
 
-The use of a "text" parameter allows us to pass a comma-separated list as an
+The use of a \mpl{text} parameter allows us to pass a comma-separated list as an
 argument; in this case the list is supposed to be a list of path expressions that
-(we hope) will make up a cycle.  The first "for" loop provides us with a standard
+(we hope) will make up a cycle.  The first \mpl{for} loop provides us with a standard
 idiom to split a list; in this case the comma-separated value of "input_path_list"
 is separated into into a more convenient array of paths called "pp" indexed by "k".
-Note that the declaration of the array as "path" forces the argument to be a list of
+Note that the declaration of the array as \<path> forces the argument to be a list of
 paths.
 
-The second "for" loop steps through this array of paths looking for intersections.
+The second \mpl{for} loop steps through this array of paths looking for intersections.
 The index "j" is set to be "k" when "i=1", and then set to the previous value of "i"
 at the end of the loop;   in this way
 "pp[j]" is the path before "pp[i]" in what is supposed to be a cycle.
@@ -638,14 +635,12 @@ by reversing the previous path and setting the $b$-point indirectly by subtracti
 the time returned from the length of the path.
 
 If all has gone well, then "ta" will hold all the start points of the desired
-subpaths, and "tb" all the corresponding end
-points.
-The third and final "for" loop assumes that this is indeed the case, and tries to
-connect them all together.  Note that it uses ".." rather than "&" just in case the
-points are not quite co-incident; finally it finishes with a
-\mpl{cycle} to close the path even though point "tb" of path "k" should be identical (or
-at least very close) to
-point "ta" of path "0".
+subpaths, and "tb" all the corresponding end points.  The third and final \mpl{for}
+loop assumes that this is indeed the case, and tries to connect them all together.
+Note that it uses \mpl{..} rather than \mpl{&} just in case the points are not quite
+co-incident; finally it finishes with a \mpl{cycle} to close the path even though
+point \mpl{tb[k] of pp[k]} should be identical (or at least very close) to point
+\mpl{ta[0] of pp[0]}.
 
 This implementation of \mpl{buildcycle} works well in most cases, provided that there
 are enough components to the cycle of paths.  If you only have two paths, then the
@@ -872,19 +867,16 @@ implications:
  choose fractional step-values in a "for" loop; the errors can accumulate so that
  you may miss your expected terminal value.\vadjust{\moveright5.5in\vbox to
  0pt{\kern-2in\hsize4in\noindent
-     Compare the following two snippets:
+        Compare the following two snippets:
      $$\vbox{\halign{#\hfil\quad&#\hfil\cr
      Code&Output\cr\noalign{\smallskip\hrule\bigskip}
-     \vtop{\parindent0pt\hsize2.2in
-     \bgroup\obeylines
-     $\kw{for}$ $i=0$ \kw{step} $1/10$ \kw{until} $1$:
-     \quad$\kw{show}$ $i$;
-     $\kw{endfor}$
-     \egroup
-
-}
+\vtop{\begin{code}[xleftmargin=0pt, xrightmargin=160pt]
+for i = 0 step 1/10 until 1:
+    show i;
+endfor
+\end{code}}
      &
-     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize60pt\tt
+     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize60pt\ttfamily
 >> 0
 >> 0.1
 >> 0.20001
@@ -897,15 +889,13 @@ implications:
 >> 0.90005
 }
 \cr\noalign{\bigskip}
-     \vtop{\parindent0pt\hsize2.2in
-     \bgroup\obeylines
-     $\kw{for}$ $i=0$ \kw{step} $1$ \kw{until} $10$:
-     \quad$\kw{show}$ $i/10$;
-     $\kw{endfor}$
-     \egroup
-}
+\vtop{\begin{code}[xleftmargin=0pt, xrightmargin=160pt]
+for i = 0 step 1 until 10:
+    show i/10;
+endfor
+\end{code}}
      &
-     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize60pt\tt
+     \vtop{\parindent0pt\parskip-2pt\obeylines\hsize60pt\ttfamily
 >> 0
 >> 0.1
 >> 0.2
@@ -919,7 +909,8 @@ implications:
 >> 1
 }\cr\noalign{\bigskip\hrule}\cr
 }}$$
-You get 11 iterations in the second but only 10 with the first.
+Unless you run this with "-numbersystem=decimal", you will get
+11 iterations in the second but only 10 with the first.
 \vss}}
 
     \item The system limits you to numbers that are less than 4096 in absolute value.
@@ -974,9 +965,9 @@ have.
 \vadjust{\moveright5.5in\vbox to 0pt{\kern-221pt\hsize 4.25in
 \noindent
 Running the toy program:
-\par\bigskip
-$\kw{show} \id{numbersystem}, \id{eps}, \id{epsilon}, \id{infinity}; \kw{end}\!.$
-\par\bigskip\noindent
+\begin{code}
+show numbersystem, eps, epsilon, infinity; end.
+\end{code}
 gives the following results with the different
 number systems:
 
@@ -1170,9 +1161,9 @@ to give a sort of graphical time stamp.
 \vfill
 
 There is also a "round" function that rounds a number to the nearest integer.  It is
-essentially defined as $\mathop{\kw{floor}}(x+0.5)$ except that it is enhanced to
-deal with $\kw{pair}$ variables as well.  If you round a pair the $x$-part and
-the $y$-part are rounded separately, so that $\mathop{\kw{round}}(3.14159, 2.71828)
+essentially defined as $\kw{floor}(x+0.5)$ except that it is enhanced to
+deal with \<pair> variables as well.  If you round a pair the $x$-part and
+the $y$-part are rounded separately, so that $\kw{round}(3.14159, 2.71828)
 = (3,3)$.
 
 The "round" function only takes a single argument, but you can use it to round to a
@@ -1881,11 +1872,10 @@ The first part defines two wedge-shaped closed paths, $\id{w}$ being
 the mirror image of $\id{b}$.  Like the standard \id{unitsquare} path, the
 path $\id{b}$ is defined so that point 0 is the bottom left corner.
 
-The two $\kw{picture}$ variables are produced
-by drawing lines across the shapes from bottom to top.  By setting $n$ high enough,
-these multiple lines blend smoothly to give an even colour.  And by using higher
-powers of the index variable, an effective shadow can be drawn ‘bunched up’ into the
-top of each shape.
+The two \<picture> variables are produced by drawing lines across the shapes from
+bottom to top.  By setting $n$ high enough, these multiple lines blend smoothly to
+give an even colour.  And by using higher powers of the index variable, an effective
+shadow can be drawn ‘bunched up’ into the top of each shape.
 
 By repeating them alternately in a grid, we get an effective texture, which is
 clipped at the end to a neat rectangle again.
@@ -2621,7 +2611,7 @@ get caught out by the \MP\ precedence rules:  "-1/2[a,b]" is interpreted as
 "-(1/2[a,b])" and not as "(-1/2)[a,b]", so either put in the parentheses or swap
 the order of the pairs: "(3/2)[b,a]". See $\longrightarrow$.
 
-If you want to work with a \kw{path} variable, rather than separate \kw{pair}
+If you want to work with a \<path> variable, rather than separate \<pair>
 variables, you can
 use the \mpl{point t of p}
 notation to do mediation along the path.  For a simple straight path $p$ of length 1
@@ -2709,7 +2699,7 @@ label("$\theta/3$", 72 right rotated 3/6 theta);
 label("$\theta/3$", 72 right rotated 5/6 theta);
 \end{smallcode}
 But if you have only the coordinates of some points then you need to use the
-\mpl{angle} primitive to measure the angle first; \mpl{angle} takes a \kw{pair}
+\mpl{angle} primitive to measure the angle first; \mpl{angle} takes a \<pair>
 argument and returns a numeric representing the angle in degrees measured clockwise
 from the $x$-axis to a line through the origin and the point represented by the pair.
 This definition means that if you have three points $A$, $B$, and $C$, then you can

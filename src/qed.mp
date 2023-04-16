@@ -29,7 +29,7 @@ vardef block(expr r) =
           drawarrow ray[i];
         endfor   
 
-        label("r=" & decimal r, center base);
+        label("$r=" & decimal r & "$", center base);
     ) enddef;
 
 beginfig(0);
