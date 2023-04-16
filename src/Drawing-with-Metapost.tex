@@ -43,8 +43,8 @@ endfor currentpicture := currentpicture scaled 1/2; endfig;\end{mplibcode}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \def\to{\mathrel{\ldotp\ldotp}}
 \def\<#1>{\ensuremath{\langle\hbox{#1}\rangle}}
-\newfontface\ding{Zapf Dingbats} % <- try Hoefler Text Ornaments?  Or Noto Symbols 2?
-\def\hey{\llap{{\ding ☞}\ }}
+\usepackage{pifont}
+\def\hey{\llap{{\ding{43}}\ }}
 %
 \begin{document}
 \let\folio\thepage
@@ -384,10 +384,10 @@ could try
 center p -- subpath(0,1/5 length p) of p -- cycle
 \end{code}
 Clearly this works rather better with more circular shapes.  Indeed for a circle you
-can convert directly between circumference angle and points along the path.  So
-you have defined path $c$ to be scaled copy of \mpl{fullcircle}, then
-\mpl{point 1 of c} is $45^\circ$ round and 1~radian is \mpl{point 1.27324 of c}, (because
-$4/\pi \simeq 1.27324$).
+can convert directly between circumference angle and points along the path.  So you
+have defined path $c$ to be scaled copy of \mpl{fullcircle}, then \mpl{point 1 of c}
+is $45^\circ$ round and 1~radian is \mpl{point 1.27324 of c}, (because $4/\pi \simeq
+1.27324$).
 
 \vfill\noindent
 In a closed path, the point numbering in \MP\ wraps round: so in a
