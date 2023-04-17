@@ -2149,7 +2149,7 @@ will set the delta to $+2$ with probability $p$ and and to $-1$ with probability
 A random walk is normally constrained to move one unit at a time, but if you relax
 that constraint and use `\kw{normaldeviate}' in place of `\kw{uniformdeviate}' you
 can get rather more interesting patterns.\vadjust{\moveright5.5in\vbox to 0pt{
-\hsize4in\kern -20pt
+\hsize4.2in\kern -20pt
 \begin{code}
 beginfig(2);
 for n=1 upto 4:
@@ -2165,7 +2165,7 @@ fill fullcircle scaled 3 withcolor green;
 endfig;
 \end{code}
 
-\kern 120pt
+\kern 84pt
 \noindent
 Using these random number generators means that the output is
 different each time because \MP\ produces a different sequence of numbers.  You may
@@ -2183,11 +2183,11 @@ Now \MP\ writes the (random) value used in the log for you to copy. Note that if
 If you also allow the $x$-coordinates to
 wander at random as well as the $y$-coordinates you get two-dimensional random
 patterns.  And if you replace the straight line segments "--" with ".." so that \MP\
-draws a smooth curve through the points, as well as vary the colour each time
-you draw a new curve, then the result is almost artistic.
+draws a smooth curve through the points, then the result is almost artistic.
 
-\medskip\noindent
-\hbox to \textwidth{\includegraphics[width=1.2\textwidth]{brown3a}\hss}
+\vbox to 0pt{\noindent
+\hbox to \textwidth{\includegraphics[width=1.2\textwidth]{random-two-dimensional-brownian}\hss}
+\vss}
 
 \newpage\subsection{Drawing freehand}
 
@@ -4780,15 +4780,13 @@ although they might appear to be special quotation marks, they produce a
 \newpage
 \subsection{Drawing on an external image}\label{sec:extimage}
 
-One of the limitations of the way that plain "mpost" uses \TeX\ is that 
-any "\special" commands are removed from the intermediate file that \MP\ translates
-into a \<picture> variable.   Hence, in particular, you cannot use
-"\includegraphics" in a \TeX\ label.  Fortunately, "luamplib" removes this
-limitation, so it is now possible to annotate images using the full array of \MP\
-tools.
-$$\includegraphics[width=360pt]{marked-up-photo}$$
-The source is shown on the right.
-\vadjust{\moveright5.5in\vbox to 0pt{\vskip-3.75in\hsize 4in\raggedright\noindent
+A limitation of plain "mpost"'s use of \TeX\ is that 
+"\special" commands are removed from the ".dvi" file that is made
+into a \<picture> variable. So, in particular, you can’t use
+"\includegraphics" in a \TeX\ label.  But "luamplib" removes this
+limitation, so you can annotate images using the full array of \MP\
+tools, as shown here \rlap{$\longrightarrow$}%
+\vadjust{\moveright5.5in\vbox to 0pt{\vskip-80pt\hsize 4.2in\raggedright\noindent
 \begin{texcode}
 \documentclass[border=1mm]{standalone}
 \usepackage{luamplib}
@@ -4801,16 +4799,7 @@ The source is shown on the right.
 \begin{smallcode}
 beginfig(1);
 draw btex \includegraphics[width=5in]{glenshiel.jpg} etex;
-if false:
-for i=1 upto 36:
-    draw (origin -- 180 up) shifted (10i, 0) 
-        withcolor if i mod 10 = 0: red else: 1/2 fi;
-endfor
-for i=1 upto 18:
-    draw (origin -- 360 right) shifted (0, 10i) 
-        withcolor if i mod 10 = 0: red else: 1/2 fi;
-endfor
-fi
+% input reference-grid
 vardef callout@#(expr t, p, o) = 
     save T; picture T; T = thelabel.@#(t, p+o);
     draw T; drawarrow p+o -- p cutbefore bbox T;
@@ -4830,11 +4819,33 @@ endfig;
 \end{mplibcode}
 \end{document}
 \end{texcode}
+\small
+If you uncomment the \mpl{\% input reference-grid} line, so that the 
+code on \llap{$\leftarrow$\;}the left is included, you get this automatically-sized grid superimposed:
+$$\includegraphics[width=3in]{marked-up-photo-grid}$$
+The grid makes it easier to find the right coordinates for your annotations.
 \vss}}
-The two loops commented out with \mpl{if false:} will add a grid
-on top of the photo like this:
-$$\includegraphics[width=200pt]{marked-up-photo-with-grid}$$
-This makes it easier to find the appropriate coordinates for your annotations.
+
+\medskip\noindent
+\includegraphics[width=\textwidth]{marked-up-photo}
+
+\vfill\noindent
+Here is a general purpose "reference-grid.mp" routine:
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-36pt]
+begingroup;
+  save llx, lly, urx, ury, u; numeric llx, lly, urx, ury, u; u = 10;
+  (llx, lly) = llcorner currentpicture;
+  (urx, ury) = urcorner currentpicture;
+  drawoptions(withpen pencircle scaled 1/4);
+  for x = ceiling (llx / u) upto floor (urx / u):
+    draw (x * u, lly) -- (x * u, ury) withcolor if x mod u = 0: red else: 1/2 fi;
+  endfor
+  for y = ceiling (lly / u) upto floor (ury / u):
+    draw (llx, y * u) -- (urx, y * u) withcolor if y mod u = 0: red else: 1/2 fi;
+  endfor
+  drawoptions();
+endgroup;
+\end{smallcode}
 
 \newpage
 \section{Working with pictures}

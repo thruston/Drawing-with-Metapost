@@ -1,4 +1,4 @@
-\documentclass[border=1mm]{standalone}
+\documentclass{standalone}
 \usepackage{luamplib}
 \usepackage{graphicx}
 \usepackage{fontspec}\setmainfont[Scale=0.6]{Helvetica}
@@ -7,14 +7,7 @@
 \begin{mplibcode}
 beginfig(1);
 draw btex \includegraphics[width=5in]{glenshiel.jpg} etex;
-if false:
-for i=1 upto 36:
-    draw (origin -- 180 up) shifted (10i, 0) withcolor if i mod 10 = 0: red else: 1/2 fi;
-endfor
-for i=1 upto 18:
-    draw (origin -- 360 right) shifted (0, 10i) withcolor if i mod 10 = 0: red else: 1/2 fi;
-endfor
-fi
+% input reference-grid
 vardef callout@#(expr t, p, o) = 
     save T; picture T; T = thelabel.@#(t, p+o);
     draw T; drawarrow p+o -- p cutbefore bbox T;
