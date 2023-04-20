@@ -7,6 +7,7 @@
 \definecolor{textgreen}{rgb}{0,0.43,0}
 \definecolor{squash}{rgb}{0.793, 0.359, 0.05}
 \definecolor{carrot}{rgb}{0.934, 0.445, 0.082}
+\definecolor{purple}{rgb}{0.398, 0.008, 0.234}
 \def\red#1{\textcolor{textred}{#1}}
 \def\blue#1{\textcolor{textblue}{#1}}
 \def\green#1{\textcolor{textgreen}{#1}}
@@ -16,6 +17,7 @@ basicstyle=\ttfamily,
 keywordstyle=\color{textblue},
 keywordstyle=[5]\color{squash},
 keywordstyle=[6]\color{carrot},
+keywordstyle=[7]\color{purple},
 commentstyle=\color{textred},
 stringstyle=\color{textgreen},
 frame=none,
@@ -23,17 +25,78 @@ columns=fullflexible,
 keepspaces=true,
 xleftmargin=\parindent,
 showstringspaces=false,
-% missing commands 
-morekeywords={step, errmessage, exitif, colorpart, textpart, pathpart},
-% missing operators
-morekeywords=[2]{cmykcolor, counterclockwise, tensepath, rotatedabout},
-morekeywords=[3]{drawdot},
-morekeywords=[4]{superellipse, flex},
-% missing internal variables
-morekeywords=[5]{dotlabeldiam, extra_endfig},
-% missing constants
-morekeywords=[6]{eps, numbersystem},
-morestring=[s]{btex}{etex}
+% keywords[1] = Syntax primitive + plain sugar
+keywords=[1]{beginfig, begingroup, bye, controls, curl, verbatimtex,%
+  cycle, def, delimiters, downto, else, elseif, end, enddef, endfig,%
+  endfor, endgroup, etex, exitif, exitunless, expr, fi, for, forever,%
+  forsuffixes, if, input, numtok, outer, primary, primarydef, range,%
+  relax, scantokens, secondary, secondarydef, step, suffix, tension,%
+  tertiary, tertiarydef, text, thru, until, upto, vardef, within},%
+% keywords[2] = Operators - nullary, unary, binary, thing x of y
+keywords=[2]{abs, and, angle, arclength, arctime, ASCII, bbox,%
+  blackpart, bluepart, bot, bounded, byte, ceiling, center, char,%
+  clipped, colormodel, colorpart, cosd, counterclockwise, cutafter,%
+  cutbefore, cyanpart, dashpart, decimal, dir, direction,%
+  directionpoint, directiontime, div, dotprod, false, filled, floor,%
+  fontpart, fontsize, glyph, gobbled, greenpart, greypart, hex,%
+  infont, intersectionpoint, intersectiontimes, inverse, known,%
+  length, lft, llcorner, lrcorner, magentapart, makepath, makepen,%
+  mexp, mlog, mod, normaldeviate, not, nullpen, nullpicture, oct,%
+  odd, of, or, pathpart, pencircle, penoffset, penpart, point,%
+  postcontrol, precontrol, readfrom, redpart, reflectedabout,%
+  reverse, rotated, rotatedabout, rotatedaround, round, rt, scaled,%
+  shifted, sind, slanted, softjoin, sqrt, str, stroked, subpath,%
+  substring, textpart, textual, top, transformed, true,%
+  turningnumber, ulcorner, uniformdeviate, unitvector, unknown,%
+  urcorner, whatever, xpart, xscaled, xxpart, xypart, yellowpart,%
+  ypart, yscaled, yxpart, yypart, zscaled},%
+% keywords[3] = Commands
+keywords=[3]{addto, also, batchmode, clearit, clearpen, clearxy,%
+  clear_pen_memory, clip, closefrom, contour, cutdraw, dotlabel,%
+  doublepath, draw, drawarrow, drawdblarrow, drawdot, drawoptions,%
+  errhelp, errmessage, errorstopmode, filenametemplate, fill,%
+  filldraw, fontmapfile, fontmapline, interim, label, let,%
+  loggingall, makelabel, message, newinternal, nonstopmode,%
+  penstroke, pickup, randomseed, readstring, save, savepen,%
+  scrollmode, setbounds, shipit, shipout, show, showdependencies,%
+  showtoken, showvariable, special, to, tracingall, tracingnone,%
+  undraw, undrawdot, unfill, unfilldraw, write},%
+% keywords[4] = Specials, fancy macros, etc
+keywords=[4]{boxit, boxjoin, bpath, buildcycle, circleit, dashed,%
+  dashpattern, decr, dotlabels, drawboxed, drawboxes, drawunboxed,%
+  erase, fixpos, fixsize, flex, gobble, hide, image, incr, interact,%
+  interpath, labels, magstep, max, min, off, on, penlabels, penpos,%
+  solve, stop, superellipse, takepower, tensepath, thelabel,%
+  withcmykcolor, withcolor, withgreyscale, withoutcolor, withpen,%
+  withpostscript, withprescript, withrgbcolor, z},%
+% keywords[5] = Predefined variables
+keywords=[5]{ahangle, ahlength, arrowhead, background, bboxmargin,%
+  charcode, circmargin, currentpen, currentpicture, cuttings, day,%
+  defaultcolormodel, defaultdx, defaultdy, defaultfont, defaultpen,%
+  defaultscale, dotlabeldiam, eps, extra_beginfig, extra_endfig,%
+  hour, hppp, jobname, join_radius, labeloffset, laboff, labxf,%
+  labyf, linecap, linejoin, minute, miterlimit, month, mpprocset,%
+  numberprecision, numbersystem, outputfilename, outputformat,%
+  outputformatoptions, outputtemplate, pausing, pen_bot, pen_lft,%
+  pen_rt, pen_top, prologues, restoreclipcolor, showstopping, time,%
+  tolerance, tracingcapsules, tracingchoices, tracingcommands,%
+  tracingequations, tracinglostchars, tracingmacros, tracingonline,%
+  tracingoutput, tracingrestores, tracingspecs, tracingstats,%
+  tracingtitles, troffmode, truecorners, vppp, warningcheck, year},%
+% keywords[6] = Constants
+keywords=[6]{base_name, base_version, beveled, black,%
+  blankpicture, blue, bp, butt, cc, cm, dd, ditto, down, EOF,%
+  epsilon, evenly, fullcircle, green, halfcircle, identity, in, left,%
+  llft, lrt, mitered, mm, mpversion, origin, pc, penrazor, penspeck,%
+  pensquare, pt, quartercircle, red, right, rounded, squared, ulft,%
+  unitsquare, up, urt, white, withdots, infinity},%
+% keywords[7] = Types
+keywords=[7]{boolean, cmykcolor, color, numeric, pair, path, pen,%
+  picture, rgbcolor, string, transform},%
+sensitive=true,%
+alsoother={0123456789$@},%
+morestring=[s]{verbatimtex}{etex},%
+morestring=[s]{btex}{etex}%
 }}
 \lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily,#1}}{}
 \lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
@@ -51,6 +114,7 @@ columns=fullflexible,
 keepspaces=true,
 xleftmargin=\parindent,
 showstringspaces=false,
+morekeywords={mplibtextextlabel, mplibnumbersystem, mplibsetformat, mplibshowlog},
 }}
 \lstnewenvironment{texcode}[1][]{\texstyle\lstset{basicstyle=\small\ttfamily,#1}}{}
 \newcommand\txl[1]{{\texstyle\lstinline!#1!}}

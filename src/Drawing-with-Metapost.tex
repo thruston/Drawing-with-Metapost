@@ -2667,7 +2667,7 @@ ABC$, then you could simplify this and make it more efficient by using
 $e = \frac12[p,q]$
 instead of calling the triangle macro at all.  However the macro is still making two
 calls to \mpl{intersectionpoint}.  If you wanted to eliminate this you could use the
-useful plain \MP\ macro "unitvector" to produce a solution based on adding two equal
+useful plain \MP\ macro \mpl{unitvector} to produce a solution based on adding two equal
 length vectors from the corner to the two other points.  Another approach is to
 exploit another geometric theorem that states that the bisector of an angle in a
 triangle divides the opposite side in the ratio of the two other sides.
@@ -3793,7 +3793,7 @@ the other in §\ref{btex}.
 
 \subsection{Simple strings in PostScript fonts with \texttt{infont}}\label{infont}
 
-The first mechanism is the primitive binary operation "infont".  As explained in
+The first mechanism is the primitive binary operation \mpl{infont}.  As explained in
 section~8.3 of the \MP\ manual, it takes two strings as arguments: the left hand
 argument is the string of text to be printed; the right hand argument is the name of
 the font to use; and the result is a "picture" primary.\vadjust{
@@ -3802,7 +3802,7 @@ the font to use; and the result is a "picture" primary.\vadjust{
 To find the name of a suitable font, you have to consult your local "psfonts.map"
 file, and probably the PSNFSS documentation.
 Here are a few of the many fonts available on my local \TeX\ installation; the name
-to use with "infont" is in the first column.
+to use with \mpl{infont} is in the first column.
 $$\includegraphics{trad-font-samples}$$
 The text example in the first line
 of this table was produced with
@@ -3867,7 +3867,7 @@ developed by Knuth for \TeX, and unfortunately, this is encoded using the \TeX\ 
 font encoding (also known as `OT1', and as shown in the first table in Appendix~F of the {\sl \TeX book}).
 \mpic{-108pt}{trad-font-tables}
 From the point of
-view of using "infont" to make simple labels, this means that the characters for
+view of using \mpl{infont} to make simple labels, this means that the characters for
 space and seven other characters ("< > \ _ { | }") are in the wrong place.
 You are likely to notice this first if you try to set a label with two words; the
 space will come out as a small diagonal stroke accent that is used in plain \TeX\
@@ -3885,16 +3885,16 @@ arrangement or "8r" to get the arrangement shown in the lower table.
 
 Choosing a font with one of these encodings means that if you use Windows code page
 1252 or ISO Latin 1 as the encoding for your text editor, you can create labels with
-accented characters using "infont" and without resorting to "btex" \dots\ "etex".
+accented characters using \mpl{infont} and without resorting to \mpl{btex ... etex}.
 But if you are using UTF-8 characters (as many of us are now), then you have to do
-some extra work to get them printed correctly with "infont".  A solution is shown on
+some extra work to get them printed correctly with \mpl{infont}.  A solution is shown on
 the next page.
 
-In the normal course of labelling a drawing, it is always possible to
-use "btex" \dots\ "etex" to produce your accented characters as discussed in section
-\ref{btex} below; but it may be that you are using \MP\ to represent data and labels
-supplied from some other program or a website.  In this case it can be useful to be
-able to work with at least a subset of UTF-8 input.
+When labelling a drawing, it is always possible to use \mpl{btex ... etex} to
+produce your accented characters as discussed in section \ref{btex} below; but it
+may be that you are using \MP\ to represent data and labels supplied from some other
+program or a website.  In this case it can be useful to be able to work with at
+least a subset of UTF-8 input.  This is discussed in the next section.
 
 \newpage
 \subsubsection{Mapping a subset of UTF-8 for \texttt{infont}}
@@ -3912,7 +3912,7 @@ UTF-8.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\parindent 0pt
   then pick the appropriate character in your encoding with "char".  But your
   output is still, of course, limited to the 256 characters in your encoded font.
 
-\item If you get tired of writing "decode", you could define a short cut with a
+\item If you get tired of typing "decode", you could define a short cut with a
   shorter name.  You could even write it as a primary without parentheses like
   this:
 \begin{code}
@@ -3923,9 +3923,9 @@ which would let you write:
 label.rt(U"café à la möde", (x,y));
 \end{code}
 
-\item However, there's no point in making any of this too elaborate.  If you
+\item \red{However, there's no point in making any of this too elaborate.  If you
     really want proper Unicode support you should use \MP\ with Lua\TeX. (See 
-    below in §\ref{sec:neo-labels}).
+    below in §\ref{sec:neo-labels}).}
 \vss}}
 \begin{code}[xrightmargin=-10pt]
 vardef decode(expr given) =
@@ -3947,7 +3947,7 @@ vardef decode(expr given) =
   out
 enddef;
 \end{code}
-Use it with "infont" like this: \verb|decode("café") infont "ptmr8r"| to produce a
+Use it with \mpl{infont} like this: \verb|decode("café") infont "ptmr8r"| to produce a
 normal "picture" that can be passed to \mpl{draw} or saved as
 usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt
 \noindent The fragment on the left produces:
@@ -3963,8 +3963,8 @@ label.rt("café noir £2.50", 24 down);
 label.rt(decode("café noir £2.50"), 36 down);
 \end{code}
 Note that you can't just use \mpl{draw} with a string variable; you have to use
-"infont" to turn the string into a picture.
-On the other hand, "label" calls "infont" automatically, but you must explicitly set
+\mpl{infont} to turn the string into a picture.
+On the other hand, "label" calls \mpl{infont} automatically, but you must explicitly set
 the default font, preferably to one with an encoding that
 is compatible with ISO Latin~1.
 
@@ -4005,7 +4005,7 @@ width of each character and provide a kerning table to adjust the space between
 particular pairs.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
 $$\includegraphics{infont-example}$$
 }} This means that certain characters will overlap each other or stick out
-beyond the bounding box of the picture produced by "infont".  This is not normally a
+beyond the bounding box of the picture produced by \mpl{infont}.  This is not normally a
 problem unless the picture happens to be at the edge of your figure.  In the first
 example observe how the last letter sticks out to the right; in the second a
 wider baseline has been added to prevent this.
@@ -4149,14 +4149,14 @@ letters, see §\ref{sec:neo-otf}.
 \subsection{Setting text with \texttt{btex ... etex}}\label{btex}
 
 As soon as you need anything complicated in a label, like multiple fonts, multiple
-lines, or mathematics, you will find it easier to switch from "infont" to the
-"btex ... etex" mechanism that calls \TeX\ to create your textual picture.  In fact
+lines, or mathematics, you will find it easier to switch from \mpl{infont} to the
+\mpl{btex ... etex} mechanism that calls \TeX\ to create your textual picture.  In fact
 you might prefer to use \TeX\ for all your labels, even simple strings, for the sake
 of consistency.  The only downside is that this mechanism is a little bit slower.
 
-The "btex" mechanism produces a textual picture just as "infont" does with a height,
+The "btex" mechanism produces a textual picture just as \mpl{infont} does with a height,
 width, and depth that you can measure, and adjust, as discussed in
-section~\ref{infontbbox}.  And again, just like "infont" you can either use \mpl{draw}
+section~\ref{infontbbox}.  And again, just like \mpl{infont} you can either use \mpl{draw}
 to place the resulting picture directly, or pass it to the "label" macro.
 
 What you need to be aware of is that \MP\ places everything you put between the
@@ -4238,26 +4238,25 @@ table as it were.
 Note also that the definition of "\s" as given will centre each line of the text under
 the one above.  If you want them left aligned or right aligned, omit one of the
 "\hfil" commands. \mpic{-160pt}{split-labels}
-The three examples from this page are typeset over here \rightarrow\break
+The three examples given above are typeset over here $\longrightarrow$\break
 The small red circle show the reference points and the pale blue lines the
 bounding boxes of the pictures that \MP\ gets back from \TeX.
 
 You can of course achieve the same effects using \LaTeX\ tabular structures, but
-then you have to use the "-tex=latex" option to run
-\MP.
+then you have to use the "-tex=latex" option to run \MP.
 
 \smallskip\noindent
 \textbf{Note}: In case it's not obvious, if you want text wrapping or tabular
-arrangements as discussed here, you need to use \texttt{btex ... etex} to set your
-labels.  There's no text wrapping with "infont".  On the other hand if all of your
-labels are in "infont" but you just want one extra that has two lines, you can split
+arrangements as discussed here, you need to use \mpl{btex ... etex} to set your
+labels.  There's no text wrapping with \mpl{infont}.  On the other hand if all of your
+labels are done with \mpl{infont}, but you just want one extra that has two lines, you can split
 the text into two separate labels and position them independently.
 
 \newpage
 \subsubsection{Dynamic labels}\label{sec:old-and-dynamic}
 
 If you are a maven of programming language syntax you may have noticed that
-"btex ... etex" fits into the type system that \MP\ inherits from \MF\ as a "picture" and
+\mpl{btex ... etex} fits into the type system that \MP\ inherits from \MF\ as a "picture" and
 not as a "string".  Effectively, "btex" and "etex" act as a special pair of quotation
 marks that create a picture; however the contents are used verbatim, so that the
 whole construction is a syntactical atom.  This means that you \textbf{cannot} write
@@ -4269,9 +4268,9 @@ endfor
 \end{code}
 Given this input \MP\ would attempt to get \TeX\
 to typeset
-\begin{code}
+\begin{texcode}
 \hbox{"$p_" & decimal i & "$"}
-\end{code}
+\end{texcode}
 which would probably result in a
 `Misplaced alignment tab character' error.
 To get round this problem, \MP\ provides a general mechanism to write out a
@@ -4498,8 +4497,8 @@ as explained above in §\ref{sec:sa-lua-flow}.
 \medskip\noindent
 The first thing to say is that everything in the preceding section
 will continue to work more or less the same when you use "luamplib" with Lua\LaTeX.
-It is designed to be backwards-compatible, so that existing \MP\ programs using "infont" and
-"btex" \dots\ "etex" will continue to work without change.  The only differences are:
+It is designed to be backwards-compatible, so that existing \MP\ programs using \mpl{infont} and
+\mpl{btex ... etex} will continue to work without change.  The only differences are:
 that the "TEX()" macro is re-implemented with internal library functions
 so that it no longer uses temporary files, and is therefore very much faster; and it
 is easier to integrate your drawings into \LaTeX\ because you no longer need to muck
@@ -4545,7 +4544,7 @@ $$\includegraphics{neo-labels.pdf}$$
 Note that "defaultfont" is still "cmr10" with the encoding that has the small stroke
 (that plain \TeX\ uses for the \L\ character) instead of a space, and that you can
 still use PostScript fonts like "phvr8r".  But also notice that the "TEX()" macro
-and the "btex" \dots\ "etex" construction have picked up the font set by the \LaTeX\
+and the \mpl{btex ... etex} construction have picked up the font set by the \LaTeX\
 wrapper.  As you can see they produce exactly the same output; "TEX()" is generally
 more useful because you can pass a primary string variable as an argument, which
 makes it easier to construct dynamic labels.  "TEX()" also has the synonym
@@ -4694,10 +4693,10 @@ label("\vbox{\hsize 4in It is a truth universally acknowledged,"
 taking care to include the necessary spaces, which can get fiddly.
 \mpic{-15mm}{multi-line-labels}
 
-But this is where the "btex" \dots\ "etex" construction comes into play, even with
+But this is where the \mpl{btex ... etex} construction comes into play, even with
 "luamplib".  As we saw in the preceding section the construction fits into the \MP\
 syntax scheme as a special pair of quotation marks that produces a \<picture>.
-Unlike regular string token, a "btex" \dots\ "etex" picture token can span several
+Unlike regular string token, a \mpl{btex ... etex} picture token can span several
 lines of source code, so you can (more easily) write long \TeX\ labels like this:
 \begin{code}
 label(btex \vbox{\hsize 4in
@@ -4773,7 +4772,7 @@ for i=0 upto 11:
 endfor
 \end{code}
 
-\smallskip\noindent\nb But note that you can't do this string concatenation with "btex" \dots\ "etex";
+\smallskip\noindent\nb But note that you can't do this string concatenation with \mpl{btex ... etex};
 although they might appear to be special quotation marks, they produce a
 \<picture>, and \mpl{&} only works with strings or paths.
 
@@ -5589,46 +5588,48 @@ The red braces are a more complex variation on this theme $\longrightarrow$
 
 The PostScript language defines parameters that affect how the ends of each line are
 drawn and how lines are joined together.  Plain \MP\ provides access to these
-parameters through internal variables called "linecap" and "linejoin"; it sets both
-of them to the value "rounded" at the start of each job.
-\mpic{0pt}{line-caps-and-joins}
+parameters through internal variables called \mpl{linecap} and \mpl{linejoin}; it
+sets both of them to the value \mpl{rounded} at the start of each job.
+\mwpic{-20pt}{line-caps-and-joins}
 
 The figure on the right shows the affect of the different settings, using an
 exaggerated line width of 2 points (instead of the usual 0.5 points).  Some
 observations
 to note:
 \begin{itemize}
-    \item When $\id{linecap}=\id{squared}$ then \kw{drawdot} produces diamond-shaped
+    \item When \mpl{linecap = squared} then \mpl{drawdot} makes diamond-shaped
         dots, even when you are drawing with the default circular pen.
 
-    \item When $\id{linecap}=\id{butt}$ then \kw{drawdot} produces invisible dots.
+    \item When \mpl{linecap = butt} then \mpl{drawdot} produces invisible dots.
         They still count towards the bounding box of the picture but there's no mark
         on the page.
 
-    \item When $\id{linecap}=\id{squared}$ then \kw{drawarrow} produces some
-        unpleasant results; even when $\id{linejoin}=\id{mitered}$, you can still
+    \item When \mpl{linecap = squared} then \mpl{drawarrow} produces some
+        unpleasant results; even when \mpl{linejoin = mitered}, you can still
         see small jaggies on the slopes of the arrows.
 
     \item The arrows are nice and sharp when
-        $\id{linejoin}=\id{mitered}$, but they over shoot the mark slightly.
+        \mpl{linejoin = mitered}, but they over shoot the mark slightly.
 
-    \item If you zoom in, you can see the effect of $\id{linejoin}$ on the corners of the grey box
-        as well as on the arrow heads, but you might not notice the difference when
-        the picture is printed unless you have a very high resolution printer.
+    \item If you zoom in, you can see the effect of \mpl{linejoin} on the corners in
+        the centre as well as on the arrow heads, but you might not notice the
+        difference when the picture is printed unless you have a very high
+        resolution printer.
 
     \item
         This drawing was done with \mpl{pencircle scaled 2}, so that the dots
         would be easy to see. This does make the arrows drawn with the
         default line modes (rounded caps and rounded joins) looks a bit fat;
-        they look better with the usual \mpl{pencircle scaled .5}.
+        they look better with the usual \mpl{pencircle scaled .5}, Like this: 
+        \begin{mplibcode}beginfig(1);drawdblarrow (left--right) scaled 20; endfig;\end{mplibcode}
 
 \end{itemize}
 
-There is one more PostScript parameter affecting line joins. \MP\ makes it available as "miterlimit"
-and it affects how much a mitered join is allowed to stick out at each corner.  Plain \MP\ sets
-"miterlimit=10;" which is correct for nearly all drawings.  If you set
-"miterlimit:=0;" then the mitered line join mode becomes more or less the same as the
-beveled mode.
+There is one more PostScript parameter affecting line joins. \MP\ makes it available
+as \mpl{miterlimit} and it affects how much a mitered join is allowed to stick out
+at each corner.  Plain \MP\ sets \mpl{miterlimit = 10;} which works well for most
+drawings.  If you set \mpl{miterlimit := 0;} then the mitered line join mode becomes
+more or less the same as the beveled mode.
 
 \newpage
 \section{Plotting functions}\label{func}
