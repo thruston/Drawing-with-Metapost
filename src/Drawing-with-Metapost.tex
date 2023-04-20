@@ -89,6 +89,15 @@ going on.  \MP\ is a very subtle language, and it’s possible to do some very c
 and completely inscrutable things with it;  in contrast I’ve tried to be as clear as
 possible in my examples.
 
+\vbox to 0pt{
+\vskip 1in
+\noindent
+\begingroup\footnotesize\blue{
+Copyright \copyright\ 2023 by Toby Thurston. This material may be distributed only
+subject to the terms and conditions set forth in the Open Publication License,~v1.0
+or later (the latest version is presently available at
+"http://www.opencontent.org/openpub/").}\endgroup\par\vss}
+
 \newpage
 \section{Some features of the syntax}
 
@@ -1235,7 +1244,7 @@ primarydef x ** y = 1 for n=1 upto y: * x endfor enddef;
 
 
 \newpage
-\section{Pairs, triples, and other tuples}
+\section{Pairs, triple, and other tuples}
 
 \vpic{7pt}{random-selection}
 
@@ -7693,9 +7702,12 @@ so good, so you need to clip the whole picture to a neat square.
 \newpage
 \section{Recursion and iteration}
 
+\vpic{10pt}{rec-bush}
+
+\noindent
 \textsc{This chapter is not a tutorial} on recursion or iteration \textit{per se}, but rather
 more of an exploration of the \MP\ techniques you can use to create some particular types
-of drawing such as trees, plane-filling curves, non-periodic tilings, and fractals.\mwpic{-48pt}{rec-bush}
+of drawing such as trees, plane-filling curves, non-periodic tilings, and fractals.
 
 \medskip\noindent
 Even so, 
@@ -8053,12 +8065,14 @@ endfig;
 \noindent
 \textsc{To get plants that look more natural} you can introduce some random factors.
 Strictly these are not fractal because they are not
-self-similar. The only change from the previous \mpl{make_tree} is to replace
+self-similar. The only change from the previous \mpl{make_tree} was to replace
 \mpl{scaled r rotated theta} with 
-\begin{smallcode}[xleftmargin=0pt]
+\begin{smallcode}
 scaled (r + 1/16 normaldeviate) rotated (theta + 8 normaldeviate) 
 \end{smallcode}
-The bush is similar, except that it splits into four branches at each step instead of
+
+\smallskip\noindent
+\textsc{The bush} is similar, except that it splits into four branches at each step instead of
 two and only the lengths randomized.\mwpic{-96pt}{rec-bush}
 The colouring was a happy accident.
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-100pt]
@@ -8066,7 +8080,7 @@ input colorbrewer-rgb
 vardef bush(expr start, aim, level, limit) = 
   save s, target; numeric s; pair target; s = level / limit;
   for a = -32, -8, 8, 16:
-    target = aim scaled ((32 + 16 normaldeviate) * s) rotated a shifted start;
+    target = aim scaled ((64 + 32 normaldeviate) * s) rotated a shifted start;
     draw start -- target withpen pencircle scaled s withcolor BrBG[limit][limit-level];
     if level > 1: bush(target, aim rotated a, level - 1, limit); fi
   endfor
@@ -8190,8 +8204,6 @@ Notice that to make the dissection work, it is important to pass the three
 - the eye, hand
 
 - physics diagrams, pendulum, indicating movement and vibration
-
-- examining a glyph
 
 - all sorts of arrow, arrows between arrows, arrows next to a path (handles)
 

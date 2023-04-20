@@ -9,7 +9,7 @@ vardef bush(expr start, aim, level, limit) =
     numeric s; s = level / limit;
     for a = -32, -8, 8, 16:
         pair target; 
-        target = aim scaled ((32 + 16 normaldeviate) * s) rotated a shifted start;
+        target = aim scaled ((64 + 32 normaldeviate) * s) rotated a shifted start;
         draw start -- target 
             withpen pencircle scaled s
             withcolor BrBG[limit][limit-level];
