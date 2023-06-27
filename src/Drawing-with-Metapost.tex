@@ -7698,6 +7698,45 @@ choose a different colour for each filler. Using the \mpl{transparent} macro fro
 Metafun automatically mixes the colours for the overlaps.  But the edges don't look
 so good, so you need to clip the whole picture to a neat square.
 
+\newpage
+\subsection{Colouring with a set number of colours}
+
+\textsc{This “attractive and ingenious” pattern of squares} is given in Grünbaum \&
+Shephard, chapter 8, and is shown here coloured with three colours so that no two
+squares with the same colour touch each other.\mpic{-12pt}{tiling-pp48a}
+
+\begin{code}
+input colorbrewer-rgb
+beginfig(1);
+numeric r, s; s = 9; r = 2s * (sind(75)-sind(45));
+path a; a = unitsquare rotated -45 scaled s shifted (r, 0);
+picture unit; unit = image(
+    for t=0 upto 5:
+        fill a rotated 60t withcolor Spectral[6][t mod 3 + 3];
+        draw a rotated 60t;
+    endfor
+);
+pair u, v;
+u = (2s * sind(75), 0); u := u + u rotated 60; u := u rotated 60;
+v = u rotated 60;
+numeric n; n = 5;
+for i = -n upto n:
+    for j = -n upto n:
+        draw unit shifted (i*u + j*v - floor(j/2)*u);
+    endfor
+endfor
+endfig
+\end{code}
+The points of interest here are
+\begin{itemize}
+    \item The use of the \mpl{sind} function to position the square in the unit so
+        that it makes the six-pointed star when rotated.
+    \item The expression “\mpl{t mod 3 + 3}” which cycles through 3, 4, and 5 for
+        different values of $t$.
+\end{itemize}
+Many different colourings are possible but you might need to make a more complex
+unit drawing for some of them.
+
 
 \newpage
 \section{Recursion and iteration}
