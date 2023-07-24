@@ -1244,7 +1244,7 @@ primarydef x ** y = 1 for n=1 upto y: * x endfor enddef;
 
 
 \newpage
-\section{Pairs, triple, and other tuples}
+\section{Pairs, triples, and other tuples}
 
 \vpic{7pt}{random-selection}
 
@@ -2106,27 +2106,25 @@ random walks, with various levels of analysis.
 \begin{code}
 beginfig(1);
 numeric w, h, n; w = 377; h = 80; n = 500;
+pair zenith, nadir; zenith = nadir = origin;
 draw (origin--right) scaled w;
 draw (origin--right) scaled w shifted (0,+h/2) withcolor 3/4;
 draw (origin--right) scaled w shifted (0,-h/2) withcolor 3/4;
-pair zenith, nadir; zenith = nadir = origin;
-path walk[];
 for i=1 upto 8:
-    numeric y; y = 0;
-    walk[i] = origin for x=w/n step w/n until w: 
-        hide(
-            y := y if uniformdeviate 1 < 1/2: + else: - fi 1;
-            if y > ypart zenith: zenith := (x,y) ; fi
-            if y < ypart nadir:  nadir  := (x,y) ; fi
-        ) 
-        -- (x,y) 
-    endfor;
-    undraw walk[i] withpen pencircle scaled 3/4;
-    draw walk[i] withcolor (1/2+y/h)[red, blue]
+  numeric y; y = 0;
+  path walk; walk = origin for x=w/n step w/n until w: 
+    hide(
+      y := y if uniformdeviate 1 < 1/2: + else: - fi 1;
+      if y > ypart zenith: zenith := (x,y) ; fi
+      if y < ypart nadir:  nadir  := (x,y) ; fi
+    ) 
+    -- (x,y) 
+  endfor;
+  undraw walk withpen pencircle scaled 3/4;
+  draw walk withcolor (1/2+y/h)[red, blue];
 endfor
-drawarrow (12 up -- 2 up) shifted zenith withcolor blue;
-drawarrow (12 down -- 2 down) shifted nadir withcolor red;
-endfig;
+drawarrow (12 up   -- 2 up  ) shifted zenith withcolor blue;
+drawarrow (12 down -- 2 down) shifted nadir  withcolor red;
 \end{code}
 
 \smallskip\noindent
@@ -2153,12 +2151,51 @@ y := y if uniformdeviate 1 < p: + 2 else: - 1 fi;
 \end{code}
 will set the delta to $+2$ with probability $p$ and and to $-1$ with probability $1-p$.
 
+\newpage
+\subsubsection{Random walks with different constraints}
+
+\textsc{Formally}, a random walk is constrained to move one unit at a time, but if you relax
+that constraint and use `\kw{normaldeviate}' in place of `\kw{uniformdeviate}' you
+may get more “realistic” patterns.
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.2in\kern2\baselineskip\noindent
+The drawing here is much the same as the previous page, except that the definition of
+\id{walk} in the central loop is simplified to this:
+\begin{code}
+path walk; walk = (0, y) for x=w/n step w/n until w: 
+  hide(y := y + 2 normaldeviate)
+  -- (x, y)
+endfor;
+\end{code}}}
+$$\includegraphics[width=\textwidth]{random-walks-normal}$$
+Alternatively you could add an extra constraint that the final value should be zero
+(or some other desired target value); this is the so-called “brownian bridge”.
+$$\includegraphics[width=\textwidth]{random-walks-normal-bridge}$$
+To do this, you make a random walk path, as above, with \id{n} points, and then copy
+it into a new path where the $i$-th point is adjusted by $i/n\times(t-y)$ where $t$
+is the target value, and $y$ is the $y$-value of the last point on the walk path.
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.2in\vss
+\begin{code}
+numeric w, h, n; w = 377; h = 80; n = 500;
+draw (origin--right) scaled w;
+draw (origin--right) scaled w shifted (0,+h/2) withcolor 3/4;
+draw (origin--right) scaled w shifted (0,-h/2) withcolor 3/4;
+numeric t, y; t = 0; y = 0;
+path walk; walk = (0, y) for x=w/n step w/n until w: 
+  hide(y := y + 4 normaldeviate)
+  -- (x, y)
+endfor;
+path bridge; bridge = point 0 of walk for i=1 upto n:
+  -- point i of walk + (0, i/n * (t-y)) endfor;
+draw walk withcolor 7/8;  % so you can see how it works
+undraw bridge withpen pencircle scaled 3/4;
+draw bridge withcolor 3/4 blue;
+\end{code}}}
+
 \newpage\subsection{Brownian motion}
 
-A random walk is normally constrained to move one unit at a time, but if you relax
-that constraint and use `\kw{normaldeviate}' in place of `\kw{uniformdeviate}' you
-can get rather more interesting patterns.\vadjust{\moveright5.5in\vbox to 0pt{
-\hsize4.2in\kern -20pt
+Relaxing all the contraints, can give you even more
+interesting patterns.\vadjust{\moveright5.5in\vbox to 0pt{
+\hsize4.2in
 \begin{code}
 beginfig(2);
 for n=1 upto 4:
@@ -2187,7 +2224,8 @@ using a random number at the top of your program.
     randomseed := uniformdeviate infinity;
 \end{code}
 Now \MP\ writes the (random) value used in the log for you to copy. Note that if you are using
-"luamplib" you need to add the "\mplibshowlog{enable}" option.
+"luamplib" you need to add the "\mplibshowlog{enable}" option to get this value in
+the log.
 \vss}}
 If you also allow the $x$-coordinates to
 wander at random as well as the $y$-coordinates you get two-dimensional random
