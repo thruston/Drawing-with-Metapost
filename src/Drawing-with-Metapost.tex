@@ -256,7 +256,7 @@ more effective integration with \LaTeX, in particular with the font environment.
 Since this only works with "lualatex" you have to use the "fontspec" package, as
 explained in section \ref{sec:neo-labels}.
 
-\subsection{Integrated graphics with Lua\LaTeX}
+\subsection{Integrated graphics with Lua\LaTeX}\label{sec:lua-integrated}
 
 If you are ready to use "lualatex" for processing your entire document, then you can
 directly embed your \MP\ drawings in a series of "mplibcode" environments.  Each one
@@ -5639,7 +5639,7 @@ parameters through internal variables called \mpl{linecap} and \mpl{linejoin}; i
 sets both of them to the value \mpl{rounded} at the start of each job.
 \mwpic{-20pt}{line-caps-and-joins}
 
-The figure on the right shows the affect of the different settings, using an
+The figure on the right shows the effect of the different settings, using an
 exaggerated line width of 2 points (instead of the usual 0.5 points).  Some
 observations
 to note:
@@ -7203,8 +7203,10 @@ beginfig(1);
 endfig;
 \end{smallcode}
 This works nicely with any of the "egg" paths defined in this section.
+
+\vfill\noindent
 And finally, if all that has made you feel peckish, then how about
-these?\mwpic{12pt}{eggs-fried}
+these?\mwpic{0pt}{eggs-fried}
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-24pt]
 path yolk, base;
 color cooked_egg_yolk, cooked_egg_white;
@@ -7232,17 +7234,45 @@ for i=0 upto 1: draw fried_egg(40) shifted 120 dir 120i; endfor
 \textsc{Graphs and other displays} that show data, rather than a mathematical
 function, are presented in this section, with a focus on illustrations for books and
 technical papers.  Most of the examples here follow those developed in Edward
-Tufte's \textsl{The Visual Display of Quantitative Information}.
+Tufte's books on graphics.\vadjust{\moveright5.5in\vbox to 0pt{\vskip-42pt\noindent
+\begin{itemize}
+\item \textsl{The Visual Display of Quantitative Information}
+\item \textsl{Visual Explanations}
+\item \textsl{Beautiful Evidence}
+\item \dots\ and others, at \texttt{https://edwardtufte.com}
+\end{itemize}\vss}}
 
 \bigskip\noindent
-Most of them have a pale manilla background, which was added using the technique
-from §\ref{backgrounds}, like this:
+Most of the drawings here have a pale manilla background, which was added using the technique
+from §\ref{backgrounds}.  At the beginning, the background colour 
+is changed like this:
+\begin{code}
+background := (1, 1, 31/32);
+\end{code}
+Then at the end of the figure, you can do this:
 \begin{code}
 picture p; p = currentpicture; currentpicture := nullpicture;
-bboxmargin := 12;
-fill bbox p withcolor 1/32(32, 32, 31);
-draw p;
+bboxmargin := 12; unfill bbox p; draw p;
 \end{code}
+If you are writing something with lots of figures like these, then you could use the
+begin and end figure “hooks” to do this automatically.  There are two ways to do
+this. (1) Plain \MP\ provides two \<string> variables called \mpl{extra_beginfig}
+and \mpl{extra_endfig} which are automatically read by \mpl{beginfig} and
+\mpl{endfig}, so you could create a file containing these lines:
+\begin{smallcode}[xrightmargin=-80pt]
+extra_beginfig = "background := (1, 1, 31/32);";
+extra_endfig = "picture p; p = currentpicture; currentpicture := nullpicture;"
+             & "bboxmargin := 12; unfill bbox p; draw p;";
+\end{smallcode}
+and then \mpl{input} the file when needed.  (2) 
+Lua\LaTeX\ $+$ \texttt{luamplib} (as described in §\ref{sec:lua-integrated}) 
+provide another level to do this, so that you can add something like this to your
+document preamble:
+\begin{texcode}[xrightmargin=-80pt]
+\everymplib{beginfig(0);background := (1, 1, 31/32);}
+\everyendmplib{picture p; p = currentpicture; currentpicture := nullpicture;
+  bboxmargin := 12; unfill bbox p; draw p;endfig;}
+\end{texcode}
 
 \newpage
 \subsection{Simple time lines}
@@ -7357,10 +7387,15 @@ endfig;
 \subsection{Time line with more complex dates}
 
 If the dates in your time line are more granular than years, then you need a 
-better way to deal with them.  This chart shows the £/€ exchange rate by month.
-$$\includegraphics[width=\textwidth]{tufte-currency}$$
-The dates on the horizontal axis where transformed from calendar dates to a
-serial number using this routine:
+better way to deal with them.  This chart below shows the £/€ exchange rate by month.
+The dates on the horizontal axis were transformed from calendar dates to a
+serial number using the routine shown on the right, 
+which allows you to do this:
+\begin{code}
+dotlabel.bot("Brexit vote", (base(2016, 6, 24) * u, 78 v));
+\end{code}
+for suitable values of $u$ and $v$.
+\vadjust{\moveright5.5in\vbox to 0pt{\vss
 \begin{code}
 vardef base(expr Y, M, d) = 
   save m, y; numeric m, y;
@@ -7369,12 +7404,75 @@ vardef base(expr Y, M, d) =
   365/1024 y + (floor(y/4) - floor(y/100) + floor(y/400) 
     + floor((2+3m)/5) + 30m + d - 307) / 1024
 enddef;
-\end{code}
-which allows you to add events like this:
-\begin{code}
-dotlabel.bot("Brexit vote", (base(2016, 6, 24) * u, 78 v));
-\end{code}
-for suitable values of $u$ and $v$.
+\end{code}}}
+
+\bigskip
+\noindent\hbox to \textwidth{\includegraphics[scale=0.93]{tufte-currency}\hss}
+
+\newpage
+\subsection{Daily events with annotation}
+
+\textsc{This chart} is adapted from Edward Tufte's \textsl{Visual explanations},
+p.33;\vadjust{\moveright5.5in\vbox to 0pt{\hsize=4in\vskip -18pt
+\begin{smallcode}[xleftmargin=0pt]
+numeric i, deaths[], dmax; i = 0; dmax = 0;
+for n =                    1, 
+         0, 2, 0, 0, 2, 0, 0,
+         1, 0, 1, 2, 3,70,127,
+        76,71,45,37,32,30,24,
+        18,15, 6,13, 6, 8, 6,
+         5, 2, 3, 0, 0, 2, 3,
+         0, 0, 2, 0, 2, 1, 0:
+  deaths[incr i] = n; if n > dmax: dmax := n; fi
+endfor
+numeric ymax; ymax = 20 * ceiling (dmax / 20);
+numeric days, day_number[]; days = 0;
+for n =                   19,
+        20,21,22,23,24,25,26,
+        27,28,29,30,31, 1, 2,
+         3, 4, 5, 6, 7, 8, 9,
+        10,11,12,13,14,15,16,
+        17,18,19,20,21,22,23,
+        24,25,26,27,28,29,30:
+  day_number[incr days] = n;
+endfor
+numeric u, v; days * u = 5in = ymax * 2v;
+path xx; xx = origin -- (days * u, 0);
+path yy; yy = origin -- (0, dmax * v);
+beginfig(1);
+  for x = 1 upto days:
+    cutdraw (x * u, 0) -- (x * u, deaths[x] * v) 
+      withpen pencircle scaled 2 
+      withcolor 5/8[2/3 red, white];
+    draw (origin -- 2 down) shifted (x * u, 0);
+  endfor
+  for y = 10 step 10 until ymax:
+    draw (origin -- 2 left) shifted (0, y * v);
+    undraw xx shifted (0, y * v) withpen pencircle scaled 1/2;
+  endfor
+  draw xx; draw yy;
+endfig;
+\end{smallcode}
+\noindent\hey \textit{The code for the labels was removed from this example to save space.  See the source
+file for details}.
+\vss}}
+it presents the data from John Snow's table of daily deaths in the London
+cholera epidemic of 1854 in a simple bar chart form, with annotation pointing out
+that the epidemic was already declining when the supposedly decisive intervention of
+removing the handle from the water pump at the centre of the outbreak was made.
+
+\medskip\noindent\includegraphics[width=\textwidth]{tufte-snow}
+
+\bigskip
+\noindent
+The data for the chart was edited directly into the \MP\ source, using a text editor
+to copy the data from the source table, and format them into lists so that you can use
+loops to capture the values in two parallel indexed numeric variables \mpl{deaths[]}
+and \mpl{day_number[]}. It is useful to be able to group the data into weeks to
+reduce the chance of errors, but there is no other significance.
+
+Note that the bars are drawn with a wide pen and \mpl{cutdraw} in order to get nice square ends
+on the bars; then \mpl{undraw} is used to make implicit grid lines.
 
 \newpage
 \section{Commutative diagrams}
@@ -8273,18 +8371,13 @@ Notice that to make the dissection work, it is important to pass the three
 \section*{To do...}
 
 - angle marks, including curved angle marks
-
 - drawing knots, double lines, ropes
-
 - decorating lines
+- all sorts of arrow, arrows between arrows, arrows next to a path (handles)
 
 - the eye, hand
 
 - physics diagrams, pendulum, indicating movement and vibration
-
-- all sorts of arrow, arrows between arrows, arrows next to a path (handles)
-
-- faking 3d
 
 - functions, def, vardef, recursion, primarydef etc, of syntax, expr suffix text
 

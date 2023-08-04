@@ -7,6 +7,7 @@
 \mplibtextextlabel{enable}
 \begin{mplibcode}
 beginfig(1);
+background := 1/32(32, 32, 31);
 path data, p;
 data = (1978, 18)
     -- (1979, 19)
@@ -45,9 +46,7 @@ new cars built from 1978 to 1985\cr}} etex,
 point 5/2 of bbox currentpicture shifted 21 up);
 
 picture p; p = currentpicture; currentpicture := nullpicture;
-bboxmargin := 12;
-fill bbox p withcolor 1/32(32, 32, 31);
-draw p;
+bboxmargin := 12; unfill bbox p; draw p;
 
 endfig;
 \end{mplibcode}

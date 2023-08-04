@@ -3,7 +3,7 @@
 \usepackage{unicode-math}
 \setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
 \setmathfont{TeX Gyre Pagella Math}
-\def\tl#1{\vbox{\tiny\let\\\cr\halign{\hss ##\hss\cr#1\crcr}}}
+\def\tl#1{\vbox{\small\let\\\cr\halign{\hss ##\hss\cr#1\crcr}}}
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
@@ -290,28 +290,50 @@ euro =
   -- (base(2022, 02, 28), 83.827900)
   -- (base(2022, 03, 31), 83.615400)
   -- (base(2022, 04, 30), 83.557800)
-  -- (base(2022, 05, 22), 84.892600)
+  -- (base(2022, 05, 31), 84.954600)
+  -- (base(2022, 06, 30), 85.784300)
+  -- (base(2022, 07, 31), 84.922300)
+  -- (base(2022, 08, 31), 84.566100)
+  -- (base(2022, 09, 30), 87.545600)
+  -- (base(2022, 10, 31), 87.084200)
+  -- (base(2022, 11, 30), 86.959400)
+  -- (base(2022, 12, 31), 86.945600)
+  -- (base(2023, 01, 31), 88.136600)
+  -- (base(2023, 02, 28), 88.710800)
+  -- (base(2023, 03, 31), 88.288100)
+  -- (base(2023, 04, 30), 88.306300)
+  -- (base(2023, 05, 31), 87.190600)
+  -- (base(2023, 06, 30), 85.824200)
+  -- (base(2023, 07, 25), 85.861600)
   ;
 
-years = (base(1999, 01, 01), 1999) for y=2000 upto 2022: -- (base(y, 1, 1), y) endfor;
+years = (base(1999, 01, 01), 1999) for y=2000 upto 2023: -- (base(y, 1, 1), y) endfor;
 
+numeric u, v;  u = 72; v = 6;
 numeric offset;
 offset = base(1999, 1, 1);
-euro  := euro  shifted -(offset, 0) xscaled 42 yscaled 3;
-years := years shifted -(offset, 0) xscaled 42;
+euro  := euro  shifted -(offset, 0) xscaled u yscaled v;
+years := years shifted -(offset, 0) xscaled u;
 
 beginfig(1);
-draw euro withcolor 3/4 blue;
-numeric baseline; baseline = 54*3;
-draw (xpart point 0 of euro, baseline) -- (xpart point infinity of euro, baseline);
+
+draw euro 
+    withpen pencircle scaled 1/4 withcolor 3/4;
+for t=0 upto length euro: draw point t of euro 
+    withpen pencircle scaled if t mod 12 = 0: 3/2 else: 1 fi
+    withcolor 3/4 blue; endfor
+numeric baseline_height; baseline_height = 54v;
+draw (xpart point 0 of euro, baseline_height) -- (xpart point infinity of euro, baseline_height);
 for t = 1 upto length years:
-    numeric x, y, q; (x, y) = point t of years; 4q = xpart (point t-1 of years - point t of years);  
-    draw (x, baseline) -- (x, baseline + 4);
+    numeric x, y, q; 
+    (x, y) = point t of years; 
+    4q = xpart (point t-1 of years - point t of years);  
+    draw (x, baseline_height) -- (x, baseline_height + 4);
     for i=1 upto 3:
-        draw (x + i*q, baseline) -- (x + i*q, baseline + 2);
+        draw (x + i*q, baseline_height) -- (x + i*q, baseline_height + 2);
     endfor
     if not odd y:
-        label.bot("\small\strut " & decimal y, (x, baseline));
+        label.bot("\small\strut " & decimal y, (x, baseline_height));
     fi
 endfor
 numeric minx, miny, maxx, maxy;
@@ -322,41 +344,49 @@ for i=0 upto length euro:
     if y > maxy: maxy := y; maxx := x; fi
     if y < miny: miny := y; minx := x; fi
 endfor
-draw (2 up -- up) scaled 2 shifted (maxx, maxy) withcolor red;
-draw (2 down -- down) scaled 2 shifted (minx, miny) withcolor red;
+fill ((0,1)--(1,4)--(-1,4)--cycle) scaled 2 shifted (maxx, maxy) withcolor 1/2 green;
+fill ((0,-1)--(1,-4)--(-1,-4)--cycle) scaled 2 shifted (minx, miny) withcolor 3/4 red;
 
-numeric left_axis, right_axis; left_axis = -16; right_axis = 368;
+numeric left_axis_x, right_axis_x; 
+left_axis_x = xpart point 0 of euro - 24; 
+right_axis_x = xpart point infinity of euro + 24;  
 
-draw (left_axis, miny) -- (left_axis, maxy);
+draw (left_axis_x, miny) -- (left_axis_x, maxy);
 for y = 60 step 10 until 100:
-    draw (left_axis, 3y) -- (left_axis + 2, 3y);
-    label.lft("\small\strut " & if y < 100: "0." & decimal y else: "1.00" fi, (left_axis, 3y));
+    draw (left_axis_x, y * v) -- (left_axis_x + 2, y * v);
+    label.lft("\small\strut " & if y < 100: "0." & decimal y else: "1.00" fi, (left_axis_x, y * v));
 endfor
 
-draw (right_axis, miny) -- (right_axis, maxy);
+draw (right_axis_x, miny) -- (right_axis_x, maxy);
 for eur = 100 step 10 until 170:
     numeric y; y = 100/eur * 100;
-    draw (right_axis, 3y) -- (right_axis - 2, 3y);
-    label.rt("\small\strut " & if eur=100: "1.00" else: "1." & decimal (eur mod 100) fi, (right_axis, 3y));
+    draw (right_axis_x, y * v) -- (right_axis_x - 2, y * v);
+    label.rt("\small\strut " & if eur=100: "1.00" else: "1." & decimal (eur mod 100) fi, (right_axis_x, y * v));
 endfor
 
-label.top("\small £/€", (left_axis - 10, 310));
-label.top("\small €/£", (right_axis + 10, 310));
+label.ulft("\small £/€", (left_axis_x, 103v));
+label.urt ("\small €/£", (right_axis_x, 103v));
+label.top("Monthly average exchange rates Sterling v. Euro", (1/2 left_axis_x + 1/2 right_axis_x, 103v));
 
-interim dotlabeldiam := 3/2;
-dotlabel.top("\tiny Creation",              (base(1999, 1,  1) - offset, 71) xscaled 42 yscaled 3);
-dotlabel.top("\tiny 9/11",                  (base(2001, 9, 11) - offset, 64) xscaled 42 yscaled 3);
-dotlabel.lrt("\tl{Lehmans\\collapse}",      (base(2008, 9, 15) - offset, 77) xscaled 42 yscaled 3);
-dotlabel.lrt("\tl{Brexit\\vote}",           (base(2016, 6, 24) - offset, 77) xscaled 42 yscaled 3);
-dotlabel.bot("\tl{UK leaves\\EU}",          (base(2020, 1, 31) - offset, 83) xscaled 42 yscaled 3);
-dotlabel.top("\tl{WHO declares\\pandemic}", (base(2020, 3, 11) - offset, 91) xscaled 42 yscaled 3);
-dotlabel.bot("\tl{Ukraine\\invaded}",       (base(2022, 2, 24) - offset, 82.5) xscaled 42 yscaled 3);
+vardef event_label@#(expr t, z) = 
+    fill unitsquare shifted -(1/2,1/2) rotated 45 scaled 2 shifted z;
+    label@#(t, z);
+enddef;
 
+event_label.top("\small Creation",             (base(1999, 1,  1) - offset, 71) xscaled u yscaled v);
+event_label.top("\small 9/11",                 (base(2001, 9, 11) - offset, 64) xscaled u yscaled v);
+event_label.lrt("\tl{US / UK\\invade Iraq}",   (base(2003, 3, 20) - offset, 64) xscaled u yscaled v);
+event_label.lrt("\tl{Lehmans\\collapse}",      (base(2008, 9, 15) - offset, 77) xscaled u yscaled v);
+event_label.lrt("\tl{Brexit\\vote}",           (base(2016, 6, 24) - offset, 77) xscaled u yscaled v);
+event_label.bot("\tl{UK leaves\\EU}",          (base(2020, 1, 31) - offset, 83) xscaled u yscaled v);
+event_label.top("\tl{WHO declares\\pandemic}", (base(2020, 3, 11) - offset, 91) xscaled u yscaled v);
+event_label.bot("\tl{Ukraine\\invaded}",       (base(2022, 2, 24) - offset, 82.5) xscaled u yscaled v);
 
 picture p; p = currentpicture; currentpicture := nullpicture;
 bboxmargin := 12;
 fill bbox p withcolor 1/32(32, 32, 31);
 draw p;
+label.lrt("\tiny\texttt{Source: tufte-currency.mp}", llcorner currentpicture);
 
 endfig;
 \end{mplibcode}

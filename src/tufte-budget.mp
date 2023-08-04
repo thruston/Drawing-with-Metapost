@@ -7,6 +7,7 @@
 \mplibtextextlabel{enable}
 \begin{mplibcode}
 beginfig(1);
+background := 1/32(32, 32, 31);
 path data, p;
 data = (1967, 311)
     -- (1968, 332)
@@ -55,9 +56,7 @@ Per capita\cr budget expenditure\cr in constant dollars\cr}} etex,
 (0, (410 - 300) * v));
 
 picture p; p = currentpicture; currentpicture := nullpicture;
-bboxmargin := 12;
-fill bbox p withcolor 1/32(32, 32, 31);
-draw p;
+bboxmargin := 12; unfill bbox p; draw p;
 
 endfig;
 \end{mplibcode}
