@@ -7242,10 +7242,10 @@ Tufte's books on graphics.\vadjust{\moveright5.5in\vbox to 0pt{\vskip-42pt\noind
 \item \dots\ and others, at \texttt{https://edwardtufte.com}
 \end{itemize}\vss}}
 
-\bigskip\noindent
-Most of the drawings here have a pale manilla background, which was added using the technique
-from §\ref{backgrounds}.  At the beginning, the background colour 
-is changed like this:
+\vfill\noindent
+Most of the drawings in this section have a pale manilla background, which was added
+using the technique from §\ref{backgrounds}.  At the beginning, the background
+colour is changed like this:
 \begin{code}
 background := (1, 1, 31/32);
 \end{code}
@@ -7386,7 +7386,7 @@ endfig;
 \newpage
 \subsection{Time line with more complex dates}
 
-If the dates in your time line are more granular than years, then you need a 
+If the dates in your time line are more granular, then you need a 
 better way to deal with them.  This chart below shows the £/€ exchange rate by month.
 The dates on the horizontal axis were transformed from calendar dates to a
 serial number using the routine shown on the right, 
@@ -7407,7 +7407,8 @@ enddef;
 \end{code}}}
 
 \bigskip
-\noindent\hbox to \textwidth{\includegraphics[scale=0.93]{tufte-currency}\hss}
+\noindent\hbox to \textwidth{\includegraphics{tufte-currency}\hss}
+
 
 \newpage
 \subsection{Daily events with annotation}
@@ -7473,6 +7474,50 @@ reduce the chance of errors, but there is no other significance.
 
 Note that the bars are drawn with a wide pen and \mpl{cutdraw} in order to get nice square ends
 on the bars; then \mpl{undraw} is used to make implicit grid lines.
+
+\newpage
+\subsection{Scatter plot with annotations and simple jitter}
+
+\textsc{This chart} is from Tufte’s analysis of the Challenger space shuttle
+disaster.  His objective here was to show all the available
+data relating launch temperature and damage to the booster rockets, and to point 
+out that the forecast for 28 January 1986 was very much colder than any other
+launch.\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.2in\vskip -48pt
+\begin{smallcode}[xleftmargin=0pt]
+numeric r; r = 1/5;  % adjustment of the marks where required...
+path damage; damage = origin .. (53, 11) .. (57, 4) .. (58, 4) .. 
+  (63, 2).. 
+  (66, 0)..
+  (67, 0 + 2r) ..  % because the data set is quite small
+  (67, 0) ..       % the simplest way to show multiple points
+  (67, 0 - 2r) ..  % at the same (x, y) location is to add
+  (68, 0)..        % this little vertical shift by hand
+  (69, 0)..
+  (70, 4 + r)..    % the data is captured in a path, but only the 
+  (70, 4 - r)..    % points are drawn, not the lines between them
+  (70, 0 + r)..
+  (70, 0 - r)..
+  (72, 0)..
+  % and so on
+\end{smallcode}
+\vss}}
+
+The data was again edited directly into the \MP\ source, but this time captured
+as a \<path> variable.  One advantage of this is that it allows you to process 
+all the values in parallel using \mpl{scaled} or \mpl{shifted} on the whole path.
+\begin{smallcode}[xleftmargin=0pt]
+numeric u, v; u = 10.8; 5u = 4v; 
+damage := damage xscaled u yscaled v;
+\end{smallcode}
+The individual points are accessed using the \mpl{point n of p} syntax:
+\begin{smallcode}[xleftmargin=0pt, xrightmargin=-36pt]
+for i = 1 upto length damage:
+  draw point i of damage withpen pencircle scaled (3/2r * v) withcolor 2/3 red;
+endfor
+\end{smallcode}
+
+\vfill
+\noindent\hbox to \textwidth{\includegraphics{tufte-srm-damage}\hss}
 
 \newpage
 \section{Commutative diagrams}

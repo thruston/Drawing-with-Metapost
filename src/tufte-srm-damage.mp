@@ -1,4 +1,4 @@
-\documentclass[border=5mm]{standalone}
+\documentclass{standalone}
 \usepackage{fontspec}
 \setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
 \usepackage{luamplib}
@@ -58,8 +58,8 @@ path damage; damage = origin ..
 (81, 0);
 
 beginfig(1);
-  numeric u, v; u = 12; 5u = 4v;
-
+    background := (1, 1, 31/32);
+  numeric u, v; u = 10.8; 5u = 4v; 
   damage := damage xscaled u yscaled v;
 
   path xx, yy;
@@ -102,11 +102,13 @@ beginfig(1);
     of space shuttle Challenger on 28 January\cr
   }\vss} etex, z1 shifted 2 left);
 
-  label.rt(btex \vbox to 0pt{\vskip-6pt\openup 2pt\halign{#\hss\cr
+  label.rt(btex \vbox to 0pt{\openup 2pt\halign{#\hss\cr
     O-ring damage index,\cr
     for each launch\cr
-  }\vss} etex, (23u, 14v));
-
+  }\vss} etex, (23u, 14.4v));
+  picture p; p = currentpicture; currentpicture := nullpicture; unfill bbox p; draw p;
+% input ruler-inch
+label.lrt("\tiny\texttt{Source: tufte-srm-damage.mp}", llcorner currentpicture);
 endfig;
 \end{mplibcode}
 \end{document}

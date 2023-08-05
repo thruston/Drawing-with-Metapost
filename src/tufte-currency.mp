@@ -309,13 +309,14 @@ euro =
 
 years = (base(1999, 01, 01), 1999) for y=2000 upto 2023: -- (base(y, 1, 1), y) endfor;
 
-numeric u, v;  u = 72; v = 6;
+numeric u, v;  u = 67; v = 5;
 numeric offset;
 offset = base(1999, 1, 1);
 euro  := euro  shifted -(offset, 0) xscaled u yscaled v;
 years := years shifted -(offset, 0) xscaled u;
 
 beginfig(1);
+background := (1, 1, 31/32);
 
 draw euro 
     withpen pencircle scaled 1/4 withcolor 3/4;
@@ -383,11 +384,8 @@ event_label.top("\tl{WHO declares\\pandemic}", (base(2020, 3, 11) - offset, 91) 
 event_label.bot("\tl{Ukraine\\invaded}",       (base(2022, 2, 24) - offset, 82.5) xscaled u yscaled v);
 
 picture p; p = currentpicture; currentpicture := nullpicture;
-bboxmargin := 12;
-fill bbox p withcolor 1/32(32, 32, 31);
-draw p;
+bboxmargin := 12; unfill bbox p; draw p;
 label.lrt("\tiny\texttt{Source: tufte-currency.mp}", llcorner currentpicture);
-
 endfig;
 \end{mplibcode}
 \end{document}
