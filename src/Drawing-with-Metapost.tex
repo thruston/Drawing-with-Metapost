@@ -2,7 +2,8 @@
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
-% \loop\iftrue \errmessage{This manual is copyrighted and should not be compiled as is}\repeat
+% \loop\iftrue \errmessage{This manual is copyrighted and should not be compiled as
+% is.}\repeat
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
@@ -20,7 +21,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – April 2023}
+\date{March 2017 – September 2023}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -83,10 +84,10 @@ be useful and then see how it’s done.
 
 And when I say \textit{plain} \MP\ I mean \MP\ with the default format (as defined
 in the file "plain.mp") loaded and only a few simple external packages (like
-"boxes.mp" occasionally).  Nearly all of the examples here are supposed to be self
+"colorbrewer" occasionally).  Nearly all of the examples here are supposed to be self
 contained, and any macros are defined locally so you can get to grips with what’s
 going on.  \MP\ is a very subtle language, and it’s possible to do some very clever
-and completely inscrutable things with it;  in contrast I’ve tried to be as clear as
+and completely inscrutable things with it;  but here I have tried to be as clear as
 possible in my examples.
 
 \vbox to 0pt{
@@ -3740,7 +3741,115 @@ endfig;
 \end{smallcode}
 
 \newpage
-\section{Trigonometry functions}\label{trig}
+\subsection{Drawing angle marks}
+
+\textsc{Observant readers} will have noticed that the occasional angle marks in the
+preceding examples are generally drawn using plain \MP\ commands rather than a
+macro.  This is partly in order to make the examples self-contained and partly to
+show what can be done with the default plain \MP\ format. 
+
+\smallskip\noindent
+To mark a right angle at point $a$ on the line $a\to b$ you can do something like
+this:
+\begin{code}
+draw unitsquare scaled 5 rotated angle (b-a) shifted a;
+\end{code}
+with a suitable pen and a suitable colour.  You \textit{could} write a macro to do
+this, but it hardly seems worth the effort.%
+\vadjust{\moveright 5.5in\vbox to 0pt{\hsize 4.2in\vskip -108pt\noindent
+For example, this is one way to annotate a right-angle triangle:
+\begin{code}
+pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
+c - a = whatever * (b - a rotated 90); ypart c = ypart b;
+draw unitsquare scaled 5 rotated angle (b-a) shifted a 
+    withcolor 3/4;
+draw a--b--c--cycle;
+\end{code}
+which produces this:
+$$\begin{mplibcode}
+pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
+c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
+beginfig(0);
+draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
+draw a--b--c--cycle; 
+    dotlabel.llft("$a$", a);
+    dotlabel.rt  ("$b$", b);
+    dotlabel.ulft("$c$", c);
+endfig;
+\end{mplibcode}$$
+
+\bigskip\noindent
+Equipped with the macro shown on the left, you could add this:
+\begin{code}
+    draw angle_mark(a, c, b, 16) withcolor 2/3 red;
+\end{code}
+to get this:
+$$\begin{mplibcode}
+pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
+c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
+vardef angle_mark(expr P, O, Q, r) = 
+  fullcircle scaled 2r rotated angle (P - O) 
+    shifted O cutafter (O -- Q)
+enddef;
+beginfig(0);
+draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
+draw angle_mark(a, c, b, 16) withcolor 2/3 red;
+draw a--b--c--cycle;
+    dotlabel.llft("$a$", a);
+    dotlabel.rt  ("$b$", b);
+    dotlabel.ulft("$c$", c);
+endfig;
+\end{mplibcode}$$
+Or, using the fancier macro:
+$$\begin{mplibcode}
+pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
+c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
+vardef angle_label(expr P, O, Q, r) = image(
+  save a; path a; a = fullcircle scaled 2r rotated angle (P - O) shifted O cutafter (O -- Q);
+  fill O -- a -- cycle withcolor 7/8[red, white]; draw a withcolor 2/3 red;
+    save t; string t; t = decimal abs(round((angle (P-O) - angle (Q-O)))) & "°";
+    label(t, O + r * (unitvector(P-O) + unitvector(Q-O)));
+) enddef;
+beginfig(0);
+draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
+draw angle_label(a, c, b, 16);
+draw a--b--c--cycle;
+    dotlabel.llft("$a$", a);
+    dotlabel.rt  ("$b$", b);
+    dotlabel.ulft("$c$", c);
+endfig;
+\end{mplibcode}$$
+\vss}}
+
+\smallskip\noindent
+On the other hand, you might want to make a macro for a curved angle mark since, it
+is a bit more cumbersome.  It is probably simplest make the macro create only the
+required path, so you can use it with \mpl{draw} or \mpl{fill} as required.  The
+idea here is that $P$, $O$, and $Q$ are \<pair> variables and $r$ is a \<numeric>
+representing the desired radius.
+\begin{code}
+vardef angle_mark(expr P, O, Q, r) = 
+  fullcircle scaled 2r rotated angle (P - O)
+    shifted O cutafter (O -- Q)
+enddef;
+\end{code}
+Note that \mpl{(P-O)} returns a \<pair>, but \mpl{(O--Q)} make a \<path>.
+You could go on to make it much fancier, but less is usually more in coordinate
+geometry diagrams.
+\begin{smallcode}[xrightmargin=-40pt]
+vardef fancier_angle_label(expr P, O, Q, r) = image(
+  save a, t; path a; string t;
+  a = fullcircle scaled 2r rotated angle (P - O) shifted O cutafter (O -- Q);
+  fill O -- a -- cycle withcolor 7/8[red, white]; draw a withcolor 2/3 red;
+  t = decimal abs(round((angle (P-O) - angle (Q-O)))) & "°";
+  label(t, O + r * (unitvector(P-O) + unitvector(Q-O)));
+) enddef;
+\end{smallcode}
+Note that it is tediously time-consuming to make this sort of macro completely
+general and fool-proof.
+
+\newpage
+\section{The missing trigonometry functions}\label{trig}
 
 \MP\ provides only two basic trigonometry functions, "sind" and "cosd".  This lack
 appears to be a deliberate design;  in general it's much easier to use the "rotated"
@@ -4819,9 +4928,68 @@ for i=0 upto 11:
 endfor
 \end{code}
 
-\smallskip\noindent\nb But note that you can't do this string concatenation with \mpl{btex ... etex};
-although they might appear to be special quotation marks, they produce a
-\<picture>, and \mpl{&} only works with strings or paths.
+\smallskip\noindent\nb Note that you can't do this string concatenation with \mpl{btex ... etex};
+although these operators might appear to be special quotation marks, they produce
+\<picture> values, and in this context \mpl{&} only works with \<string> values.
+
+\newpage
+\subsection{Pins and braces}
+
+\textsc{In some awkward corners}, you may find that you just can't get your label in
+the right place with \mpl{dotlabel} even if you adjust \mpl{labeloffset}.  In these
+cases there are two simple techniques you can use.  First, you could separate
+drawing the dot from placing the label; given a point $P$ you can try:\mpic{0pt}{callout}
+\begin{code}
+drawdot P withpen pencircle scaled dotlabeldiam;
+label("$P$", P shifted 10 dir 68);
+\end{code}
+Using \mpl{dotlabeldiam} ensures that your dots match any others done with
+\mpl{dotlabel}.
+Secondly, if that's not enough, use a temporary pair to create a call out line:
+\begin{code}
+z0 = P + 20 dir -20; 
+draw z0 -- P 
+    cutafter fullcircle scaled 8 shifted P
+    withpen pencircle scaled 1/4;
+label.rt("\textit{pole}", z0);
+\end{code}
+If you want to do this sort of thing often, then it might be worth making a macro.
+It is hard to write anything completely general, but see §\ref{sec:extimage} for an
+example.
+
+\medskip\noindent
+\textsc{You might also want} to mark a straight line between two points.  
+\vadjust{\moveright5.3in\vbox to 0pt{\hsize 4.2in
+\begin{smallcode}
+vardef do_brace(expr a,b,m,r) =
+  save d, e, n, bb; numeric d, n; pair e; path bb;
+  n = 1/2 m; d = angle (b-a); 
+  e = up scaled m rotated d shifted r[a,b];
+  bb = ((origin {0,n} .. {right} (abs n,n)) 
+          rotated d shifted a --
+        ((-abs n,-n){right} .. {0,n} origin {0,-n} .. {right}(abs n,-n)) 
+          rotated d shifted e --
+        ((-abs n,n){right} .. {0,-n} origin) 
+          rotated d shifted b
+       ) shifted (up scaled n rotated d);
+   draw bb withpen pencircle yscaled .6 xscaled .1666 rotated d;
+   point 3 of bb
+enddef;
+
+label.lrt("Here",do_brace(z1, z2, -12, 3/4)); 
+\end{smallcode}
+Note that, as well as drawing the braces, the macro uses the grouping provided by \mpl{vardef} to return the 
+mid point so that you can put a label next to it.
+\vss}}
+The simplest way to do this is just to use \mpl{drawdblarrow} on a copy of your straight
+path shifted to one side, like so:
+\begin{code}
+drawdblarrow (z1--z2) shifted (12 up rotated angle (z2-z1));
+\end{code}
+If you combine this with temporarily setting \mpl{ahangle:=180}, you get the simple
+dimension line shown in blue.
+$$\includegraphics{braces}$$
+The red braces are a more complex variation on this theme $\longrightarrow$
 
 \newpage
 \subsection{Drawing on an external image}\label{sec:extimage}
@@ -5572,63 +5740,6 @@ shaped copies of the decorated rectangle, pieces them together around $P$, and r
 \<picture>.
 
 \newpage
-\section{Annotations}
-
-\textsc{In some awkward corners}, you may find that you just can't get your label in
-the right place with \mpl{dotlabel} even if you adjust \mpl{labeloffset}.  In these
-cases there are two simple techniques you can use.  First, you could separate
-drawing the dot from placing the label; given a point $P$ you can try:\mpic{0pt}{callout}
-\begin{code}
-drawdot P withpen pencircle scaled dotlabeldiam;
-label("$P$", P shifted 10 dir 68);
-\end{code}
-Using \mpl{dotlabeldiam} ensures that your dots match any others done with
-\mpl{dotlabel}.
-Secondly, if that's not enough, use a temporary pair to create a call out line:
-\begin{code}
-z0 = P + 20 dir -20; 
-draw z0 -- P 
-    cutafter fullcircle scaled 8 shifted P
-    withpen pencircle scaled 1/4;
-label.rt("\textit{pole}", z0);
-\end{code}
-If you want to do this sort of thing often, then it might be worth making a macro.
-It is hard to write anything completely general, but see §\ref{sec:extimage} for an
-example.
-
-\medskip\noindent
-\textsc{You might also want} to mark a straight line between two points.  
-\vadjust{\moveright5.3in\vbox to 0pt{\hsize 4.2in
-\begin{smallcode}
-vardef do_brace(expr a,b,m,r) =
-  save d, e, n, bb; numeric d, n; pair e; path bb;
-  n = 1/2 m; d = angle (b-a); 
-  e = up scaled m rotated d shifted r[a,b];
-  bb = ((origin {0,n} .. {right} (abs n,n)) 
-          rotated d shifted a --
-        ((-abs n,-n){right} .. {0,n} origin {0,-n} .. {right}(abs n,-n)) 
-          rotated d shifted e --
-        ((-abs n,n){right} .. {0,-n} origin) 
-          rotated d shifted b
-       ) shifted (up scaled n rotated d);
-   draw bb withpen pencircle yscaled .6 xscaled .1666 rotated d;
-   point 3 of bb
-enddef;
-
-label.lrt("Here",do_brace(z1, z2, -12, 3/4)); 
-\end{smallcode}
-Note that, as well as drawing the braces, the macro uses the grouping provided by \mpl{vardef} to return the 
-mid point so that you can put a label next to it.
-\vss}}
-The simplest way to do this is just to use \mpl{drawdblarrow} on a copy of your straight
-path shifted to one side, like so:
-\begin{code}
-drawdblarrow (z1--z2) shifted (12 up rotated angle (z2-z1));
-\end{code}
-If you combine this with temporarily setting \mpl{ahangle:=180}, you get the simple
-dimension line shown in blue.
-$$\includegraphics{braces}$$
-The red braces are a more complex variation on this theme $\longrightarrow$
 
 \newpage
 \section{Line caps and line joins}
