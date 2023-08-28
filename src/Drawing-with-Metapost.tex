@@ -3807,7 +3807,7 @@ c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
 vardef angle_label(expr P, O, Q, r) = image(
   save a; path a; a = fullcircle scaled 2r rotated angle (P - O) shifted O cutafter (O -- Q);
   fill O -- a -- cycle withcolor 7/8[red, white]; draw a withcolor 2/3 red;
-    save t; string t; t = decimal abs(round((angle (P-O) - angle (Q-O)))) & "°";
+    save t; string t; t = decimal (round(angle (Q-O) - angle (P-O)) mod 360) & "°";
     label(t, O + r * (unitvector(P-O) + unitvector(Q-O)));
 ) enddef;
 beginfig(0);
@@ -3833,20 +3833,21 @@ vardef angle_mark(expr P, O, Q, r) =
     shifted O cutafter (O -- Q)
 enddef;
 \end{code}
-Note that \mpl{(P-O)} returns a \<pair>, but \mpl{(O--Q)} make a \<path>.
-You could go on to make it much fancier, but less is usually more in coordinate
-geometry diagrams.
+Note that \mpl{(P-O)} returns a \<pair>, but \mpl{(O--Q)} make a \<path>.  Less is
+usually more in coordinate geometry diagrams, but you could go on to make it much
+fancier if you wanted:
 \begin{smallcode}[xrightmargin=-40pt]
 vardef fancier_angle_label(expr P, O, Q, r) = image(
   save a, t; path a; string t;
   a = fullcircle scaled 2r rotated angle (P - O) shifted O cutafter (O -- Q);
   fill O -- a -- cycle withcolor 7/8[red, white]; draw a withcolor 2/3 red;
-  t = decimal abs(round((angle (P-O) - angle (Q-O)))) & "°";
+  t = decimal (round(angle (Q-O) - angle (P-O)) mod 360) & "°";
   label(t, O + r * (unitvector(P-O) + unitvector(Q-O)));
 ) enddef;
 \end{smallcode}
-Note that it is tediously time-consuming to make this sort of macro completely
-general and fool-proof.
+Note that the angle label is calculated automatically.  But 
+it is tediously time-consuming to make this sort of macro completely
+general and fool-proof, so this example might not work for all angles.
 
 \newpage
 \section{The missing trigonometry functions}\label{trig}
@@ -5742,7 +5743,26 @@ shaped copies of the decorated rectangle, pieces them together around $P$, and r
 \newpage
 
 \newpage
-\section{Line caps and line joins}
+\section{Drawing and decorating lines}
+
+\subsection{Pens and dash patterns}
+
+\subsection{Multiple lines}
+
+\subsection{Piping and rope-work}
+
+\subsection{Patterns}
+
+\subsection{Fading color and tapering width}
+
+\subsection{Showing crossings}
+
+\subsection{Arrow styles}
+
+\subsection{Adjacent arrows}
+
+\newpage
+\subsection{Line caps and line joins}
 
 The PostScript language defines parameters that affect how the ends of each line are
 drawn and how lines are joined together.  Plain \MP\ provides access to these
@@ -5788,6 +5808,9 @@ as \mpl{miterlimit} and it affects how much a mitered join is allowed to stick o
 at each corner.  Plain \MP\ sets \mpl{miterlimit = 10;} which works well for most
 drawings.  If you set \mpl{miterlimit := 0;} then the mitered line join mode becomes
 more or less the same as the beveled mode.
+
+\newpage
+\subsection{Decorations}
 
 \newpage
 \section{Plotting functions}\label{func}
@@ -8526,7 +8549,6 @@ Notice that to make the dissection work, it is important to pass the three
 \newpage
 \section*{To do...}
 
-- angle marks, including curved angle marks
 - drawing knots, double lines, ropes
 - decorating lines
 - all sorts of arrow, arrows between arrows, arrows next to a path (handles)
