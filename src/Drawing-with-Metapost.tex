@@ -43,6 +43,14 @@ endfor currentpicture := currentpicture scaled 1/2; endfig;\end{mplibcode}}$\ }
 \def\<#1>{\ensuremath{\langle\hbox{#1}\rangle}}
 \usepackage{pifont}
 \def\hey{\llap{{\ding{43}}\ }}
+\newcommand\fleuron{\begin{mplibcode}beginfig(1);
+  -z1 = z4 = 7 dir 8; 
+  y2 - y1 = y4 - y3 = 3(y4 - y1);
+  z2 - z1 = z4 - z3 = whatever * dir 50;
+  draw z1 .. controls z2 and z3 .. z4 
+    withpen pencircle xscaled 1.2 yscaled 0.2 rotated 50;
+  currentpicture := currentpicture rotated - angle z4;
+endfig;\end{mplibcode}}
 %
 \begin{document}
 \let\folio\thepage
@@ -4934,7 +4942,7 @@ although these operators might appear to be special quotation marks, they produc
 \<picture> values, and in this context \mpl{&} only works with \<string> values.
 
 \newpage
-\subsection{Pins and braces}
+\subsection{Pins and braces}\label{sec:braces}
 
 \textsc{In some awkward corners}, you may find that you just can't get your label in
 the right place with \mpl{dotlabel} even if you adjust \mpl{labeloffset}.  In these
@@ -5741,8 +5749,6 @@ shaped copies of the decorated rectangle, pieces them together around $P$, and r
 \<picture>.
 
 \newpage
-
-\newpage
 \section{Drawing and decorating lines}
 
 \textsc{This section} is all about the lines you make on the page when you apply
@@ -5751,19 +5757,89 @@ to apply ink to the page.
 
 \subsection{Pens}
 
-Pens are another whole class of variables in \MP.  You may never need to create a
-\<pen> variable, but you can if none of the four provided by plain \MP\ is quite
-suitable. The default, built-in, pen is \mpl{pencircle} -- at the start of every job
+\MP\ inherits a rather complicated system of pens from \MF.  As \mfbook\ explains,
+the original intention of the pen system was to improve the digitisation of font
+characters so that low-resolution raster versions would look aesthetically pleasing.
+This is not really a problem for graphics that you might produce with \MP, and so
+for all practical purposes you can stick to the default circular pen, and not worry
+about using \mpl{pensquare}, \mpl{penrazor}, and \mpl{penspeck}, nor creating your own \<pen>
+variables.  It is useful to understand the mechanisms though, and you might need at
+least to change the size and shape of the default pen.
+
+The default, built-in, pen is \mpl{pencircle} -- at the start of every job
 this pen is scaled to $0.5\unit{bp}$ and saved as \mpl{currentpen} and
 \mpl{defaultpen}.  Every time you use \mpl{draw}, \MP\ automatically adds
 \mpl{withpen currentpen} unless you have added your own \mpl{withpen}.
 \begin{code}[xrightmargin=-42pt]
 draw origin -- 20 right;  % uses "currentpen"
-draw (0,10) -- (20,10) withpen pencircle scaled 2;  % uses a thick pen
+draw (0,10) -- (20,10) withpen pencircle scaled 2; % thick pen
 \end{code}
-If you tired of typing \mpl{withpen}, 
+If you get tired of typing \mpl{withpen}, 
 you can change pens with the \mpl{pickup} macro;  essentially this just updates the value of
-\mpl{currentpen}.  You can change back with \mpl{pickup defaultpen}.
+\mpl{currentpen}.\vadjust{\moveright 4in\vbox to 0pt{\bigskip
+\begin{mplibcode}beginfig(0);
+draw origin -- 42 right;  % uses "currentpen"
+pickup pencircle scaled 2; % use a thick pen
+draw (0,-24) -- (42,-24); 
+draw (0,-36) -- (42,-36); 
+pickup defaultpen;  % change back to default
+endfig;\end{mplibcode}\vss}}
+\begin{code}
+draw origin -- 42 right;  % uses "currentpen"
+pickup pencircle scaled 2; % use a thick pen
+draw (0,-24) -- (42,-24); 
+draw (0,-36) -- (42,-36); 
+pickup defaultpen;  % change back to default
+\end{code}
+If you are using a fat pen and you don't like the big rounded ends, then 
+you can use \mpl{cutdraw} or set \mpl{linecap := squared;} — see
+§\ref{sec:linecaps} for more.
+\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4.4in\noindent
+Here is an example that makes use of a pen scaled to a thin ellipse. This is 
+similar to the pen used to draw the braces for the dimension label shown in
+§\ref{sec:braces}.
+\begin{texcode}
+\documentclass[border=5mm]{standalone}
+\usepackage{luamplib}
+\newcommand\fleuron{\begin{mplibcode}
+\end{texcode}
+\vskip-\baselineskip
+\begin{smallcode}
+beginfig(1);
+  -z1 = z4 = 7 dir 8; 
+  y2 - y1 = y4 - y3 = 3(y4 - y1);
+  z2 - z1 = z4 - z3 = whatever * dir 50;
+  draw z1 .. controls z2 and z3 .. z4 
+    withpen pencircle xscaled 1.2 yscaled 0.2 rotated 50;
+  currentpicture := currentpicture rotated - angle z4;
+endfig;
+\end{smallcode}
+\vskip-\baselineskip
+\begin{texcode}
+\end{mplibcode}}
+\begin{document}
+Here is a \fleuron\ mark.
+\end{document}
+\end{texcode}
+This example shows how to use an elliptical pen to draw a little twiddle mark 
+— and incidentally how to define a La\TeX\ command that draws a \MP\
+figure — that comes out looking like this: \fleuron.  The idea is that you could use
+it as a decoration.  
+
+\medskip
+\centerline{\fleuron\quad \textit{A typographical ornament} \quad\fleuron}
+\medskip
+
+\noindent 
+With a little work, you could also use it as a fancy rule between
+sections.
+$$\includegraphics{pens-fleuron}$$
+The important parts are that \mpl{pencircle} is scaled to be wider than it is tall,
+and then rotated so that it is at the correct angle at the start and at the end of
+the path. Think of it as a calligraphic nib.
+
+
+}}
 
 \subsection{Dash patterns}
 
@@ -5782,7 +5858,7 @@ you can change pens with the \mpl{pickup} macro;  essentially this just updates 
 \subsection{Adjacent arrows}
 
 \newpage
-\subsection{Line caps and line joins}
+\subsection{Line caps and line joins}\label{sec:linecaps}
 
 The PostScript language defines parameters that affect how the ends of each line are
 drawn and how lines are joined together.  Plain \MP\ provides access to these
