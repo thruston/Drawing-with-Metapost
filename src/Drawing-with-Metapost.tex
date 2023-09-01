@@ -5745,7 +5745,27 @@ shaped copies of the decorated rectangle, pieces them together around $P$, and r
 \newpage
 \section{Drawing and decorating lines}
 
-\subsection{Pens and dash patterns}
+\textsc{This section} is all about the lines you make on the page when you apply
+\mpl{draw} to a \<path>, as well as a number of other more sophisticated techniques
+to apply ink to the page.
+
+\subsection{Pens}
+
+Pens are another whole class of variables in \MP.  You may never need to create a
+\<pen> variable, but you can if none of the four provided by plain \MP\ is quite
+suitable. The default, built-in, pen is \mpl{pencircle} -- at the start of every job
+this pen is scaled to $0.5\unit{bp}$ and saved as \mpl{currentpen} and
+\mpl{defaultpen}.  Every time you use \mpl{draw}, \MP\ automatically adds
+\mpl{withpen currentpen} unless you have added your own \mpl{withpen}.
+\begin{code}[xrightmargin=-42pt]
+draw origin -- 20 right;  % uses "currentpen"
+draw (0,10) -- (20,10) withpen pencircle scaled 2;  % uses a thick pen
+\end{code}
+If you tired of typing \mpl{withpen}, 
+you can change pens with the \mpl{pickup} macro;  essentially this just updates the value of
+\mpl{currentpen}.  You can change back with \mpl{pickup defaultpen}.
+
+\subsection{Dash patterns}
 
 \subsection{Multiple lines}
 
@@ -5810,7 +5830,49 @@ drawings.  If you set \mpl{miterlimit := 0;} then the mitered line join mode bec
 more or less the same as the beveled mode.
 
 \newpage
-\subsection{Decorations}
+\subsection{Line caps and line joins with square pens}
+
+\textsc{The parameters explained} in the previous section were designed (or at least
+named) for use with the default pen \mpl{pencircle}.\mwpic{-60pt}{pen-oddity}
+You will get some rather odd shapes if you use them with any other pen, such as
+\mpl{pensquare}, especially if you use a large pen.  In the drawings on the right,
+the thin red lines are drawn with each pen  scaled to $0.5\unit{bp}$ (the default
+size), and 
+the large grey and blue areas show what would be draw with the same pens scaled to
+16\unit{bp}, so that you can see the artefacts more clearly.  
+From these drawings you can see:
+\begin{itemize}
+    \item The default setting \mpl{linecap := rounded} actually seems to mean “draw
+        a dot with the current pen at each end of the path”, so with
+        \mpl{pensquare} you get a square dot on the end and it's not rounded at all.
+
+    \item With \mpl{linecap := butt}, \MP\ appears to draw the terminal dots using 
+        half of the current pen.  With the square pen, this has the unfortunate
+        effect of cutting the pen at 45°, so that the end of the lines appear
+        bevelled rather than squared off.   Notice also that the cut is correctly
+        rotated with the circular pen, but remains at 45° with the square pen.
+
+    \item You get a similar effect with \mpl{linecap := squared}.   \MP\ uses the
+        same cut “across” the pen, but pushes it out so that it just touches the
+        far egde of the pen-sized dot that would be drawn with \mpl{linecap := rounded}.
+    
+\end{itemize}
+
+You can also see from the drawings that the effect of the \mpl{linejoin} setting, which is
+admittedly pretty subtle with a circular pen, is null with the square pen.   And
+that the single point dots disappear unless you have \mpl{linecap := rounded}.
+
+\bigskip
+\noindent
+If you need to use a large square pen, then you can mitigate some of the artefacts
+if you rotate the pen by 45°.  Using \mpl{pensquare rotated 45} corrects most of the
+faults, except that \mpl{linecap := rounded} will give you lines with pointed ends,
+and that the squared off ends of the lines with the other settings may not be
+exactly orthogonal to the direction of the path at each end.   
+
+
+\newpage
+\subsection{Borders and other decorations}
 
 \newpage
 \section{Plotting functions}\label{func}
