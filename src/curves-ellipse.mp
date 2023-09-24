@@ -7,7 +7,7 @@ secondarydef a through b =
     begingroup; save d; numeric d; d = abs(a-b); (1+12/d)[b,a] -- (1+12/d)[a,b] endgroup
 enddef;
 beginfig(1);
-    path ellipse; ellipse = fullcircle scaled 300 yscaled 5/8 rotated 13;
+    path ellipse; ellipse = fullcircle scaled 300 yscaled 5/8 rotated 13 shifted 20 right;
     numeric a, b, e;
     2a = abs (point 4 of ellipse - point 0 of ellipse);
     2b = abs (point 6 of ellipse - point 2 of ellipse);

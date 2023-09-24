@@ -5846,6 +5846,16 @@ to get a close approximation to \mpl{dashed evenly} that exactly fits the path.
 \newpage
 \subsection{Multiple lines}
 
+\begin{mplibcode}
+    beginfig(1);
+    path a; a = origin {right} .. 140 dir 45 {left} .. 200 right {right};
+    draw a cutafter fullcircle scaled 2ahlength shifted point infinity of a withpen pencircle scaled 2;
+    draw a cutafter fullcircle scaled 2ahlength shifted point infinity of a withpen
+    pencircle scaled 5/4 withcolor background;
+    drawarrow a;
+    endfig;
+\end{mplibcode}
+
 \subsection{Piping and rope-work}
 
 \subsection{Patterns}
@@ -6767,8 +6777,6 @@ ellipse;  the following snippet would produce the same elliptical path:
 numeric a, b; a = 160; b = 100; path ellipse;   
 ellipse = fullcircle xscaled 2a yscaled 2b rotated 13; 
 \end{code}
-
-\bigskip\noindent
 The “eccentricity”, $e$, of the ellipse is the ratio between the distance from the centre
 to each focus and the semi-major axis, $a$.  By definition, the distance from $F_1$
 to $T$ to $F_2$ is constant as $T$ moves round the ellipse and is equal to $2a$.
@@ -6778,14 +6786,24 @@ a^2e^2$, and $e^2=1-b^2/a^2$:
 numeric e; e = 1 +-+ b/a; % the Pythagorean difference operator
 \end{code}
 The focus points can then be found like this:
-\begin{code}
-z0 = 1/2[point 0 of ellipse, point 4 of ellipse];
+\begin{code}[xrightmargin=-10pt]
+z0 = 1/2[point 0 of ellipse, point 4 of ellipse];  % ellipse centre
 z1 = e[z0, point 0 of ellipse];
 z2 = e[z0, point 4 of ellipse];
 \end{code}
+Note that in the example above the ellipse is centred at the origin, because 
+the \mpl{fullcircle} path was only scaled and rotated, not shifted.  But the method
+shown will foind the centre of any ellipse no matter where you have placed it.
+
 \vfill
-\moveright 384pt\vbox to 0pt{\vss
-The tangent and the normal at $T$ were added like this:
+
+\noindent
+\hey If you already have the two focus points, then the distance between them will be
+$2ae$, so if you also have $a$ or $e$ you can calculate $b$ and hence draw your
+ellipse appropriately scaled, rotated, and shifted.
+
+\moveright 5.5in\vbox to 0pt{\vss\noindent
+The tangent and the normal at $T$ above were added like this:
 \begin{code}
 numeric t; t = 1.732;
 draw (left--right) scaled 21 
