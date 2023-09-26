@@ -7,6 +7,7 @@
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
+\everymplib{beginfig(0);} \everyendmplib{endfig;}
 \usepackage{fontspec}
 \newfontfamily{\demo}{TeX Gyre Pagella}
 \DeclareTextFontCommand{\textdemo}{\demo}
@@ -35,22 +36,22 @@
 \def\mnote#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\noindent #2\par\vss}}}
 \def\mwpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=4in]{#2}}\vss}}}
 \def\mxpic#1#2#3{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=#2]{#3}}\vss}}}
-\def\nb{$\vcenter{\begin{mplibcode}beginfig(1);
+\def\nb{$\vcenter{\begin{mplibcode}
 for t=0 upto 3: fill unitsquare scaled 4 shifted right shifted up rotated 45 rotated 90t;
-endfor currentpicture := currentpicture scaled 1/2; endfig;\end{mplibcode}}$\ }
+endfor currentpicture := currentpicture scaled 1/2; \end{mplibcode}}$\ }
 \def\unit#1{\ifmmode\,\else\thinspace\fi\hbox{#1}}
 \def\to{\mathrel{\ldotp\ldotp}}
 \def\<#1>{\ensuremath{\langle\hbox{#1}\rangle}}
 \usepackage{pifont}
 \def\hey{\llap{{\ding{43}}\ }}
-\newcommand\fleuron{\begin{mplibcode}beginfig(1);
+\newcommand\fleuron{\begin{mplibcode}
   -z1 = z4 = 7 dir 8; 
   y2 - y1 = y4 - y3 = 3(y4 - y1);
   z2 - z1 = z4 - z3 = whatever * dir 50;
   draw z1 .. controls z2 and z3 .. z4 
     withpen pencircle xscaled 1.2 yscaled 0.2 rotated 50;
   currentpicture := currentpicture rotated - angle z4;
-endfig;\end{mplibcode}}
+\end{mplibcode}}
 %
 \begin{document}
 \let\folio\thepage
@@ -1017,7 +1018,7 @@ This behaviour is usually what you want.
 \vadjust{\moveright 266pt \vbox to 0pt{\noindent  
 \begin{mplibcode}
 input clocks
-beginfig(1); draw clock(hour, minute) scaled 0.8; endfig;
+draw clock(hour, minute) scaled 0.8;
 \end{mplibcode}\vss}}
 For example we can use it to turn the time of day into an appropriate rotation for
 the hands of a clock.%
@@ -1095,7 +1096,6 @@ caught out by the \mpl{**} operator.  As the table on the right shows, you may g
 an approximate answer from \mpl{x ** y} even when $x$ and $y$ are both integers.
 \vadjust{\moveright 384pt\vbox to 0pt{\kern -2pt
 $$\begin{mplibcode}
-beginfig(0);
 %primarydef x ** y = 1 for n=1 upto y: * x endfor enddef;
 for x=1 upto 19:
     for y = 1 upto 7:
@@ -1111,7 +1111,6 @@ endfor
 label.lft("Results of \mpl{x**y} for small values, using", lrcorner currentpicture shifted 36 up);
 label.lft("the default \mpl{scaled} number system", lrcorner currentpicture shifted 24 up);
 currentpicture := currentpicture scaled 0.8;
-endfig;
 \end{mplibcode}$$\vss}}
 Note that the squares are all integers, and the powers of two appear to be ok
 (although if the page was wider you would see that \mpl{2**9} is $512.00002$), but
@@ -3673,13 +3672,11 @@ which produces this:
 $$\begin{mplibcode}
 pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
 c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
-beginfig(0);
 draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
 draw a--b--c--cycle; 
-    dotlabel.llft("$a$", a);
-    dotlabel.rt  ("$b$", b);
-    dotlabel.ulft("$c$", c);
-endfig;
+dotlabel.llft("$a$", a);
+dotlabel.rt  ("$b$", b);
+dotlabel.ulft("$c$", c);
 \end{mplibcode}$$
 
 \bigskip\noindent
@@ -3695,14 +3692,12 @@ vardef angle_mark(expr P, O, Q, r) =
   fullcircle scaled 2r rotated angle (P - O) 
     shifted O cutafter (O -- Q)
 enddef;
-beginfig(0);
 draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
 draw angle_mark(a, c, b, 16) withcolor 2/3 red;
 draw a--b--c--cycle;
     dotlabel.llft("$a$", a);
     dotlabel.rt  ("$b$", b);
     dotlabel.ulft("$c$", c);
-endfig;
 \end{mplibcode}$$
 Or, using the fancier macro:
 $$\begin{mplibcode}
@@ -5656,10 +5651,11 @@ shaped copies of the decorated rectangle, pieces them together around $P$, and r
 the original intention of the pen system was to improve the digitisation of font
 characters so that low-resolution raster versions would look aesthetically pleasing.
 This is not really a problem for graphics that you might produce with \MP, and so
-for all practical purposes you can stick to the default circular pen, and not worry
-about using \mpl{pensquare}, \mpl{penrazor}, and \mpl{penspeck}, nor creating your own \<pen>
-variables.  On the other hand, it is useful to understand the mechanisms, and you might need
-to change the size and shape of the pen occasionally.
+for most purposes you can stick to the default circular pen, and not worry about
+using \mpl{pensquare}, \mpl{penrazor}, and \mpl{penspeck}, nor creating your own
+\<pen> variables.  On the other hand, you probably will need to change the size and
+shape of the pen occasionally, and it is good to understand the mechanisms
+available.
 
 The default, built-in, pen is \mpl{pencircle} -- at the start of every job
 this pen is scaled to $0.5\unit{bp}$ and saved as \mpl{currentpen} and
@@ -5672,13 +5668,13 @@ draw (0,10) -- (20,10) withpen pencircle scaled 2; % thick pen
 If you get tired of typing \mpl{withpen}, 
 you can change pens with the \mpl{pickup} macro;  essentially this just updates the value of
 \mpl{currentpen}.\vadjust{\moveright 4in\vbox to 0pt{\bigskip
-\begin{mplibcode}beginfig(0);
+\begin{mplibcode}
 draw origin -- 42 right;  % uses "currentpen"
 pickup pencircle scaled 2; % use a thick pen
 draw (0,-24) -- (42,-24); 
 draw (0,-36) -- (42,-36); 
 pickup defaultpen;  % change back to default
-endfig;\end{mplibcode}\vss}}
+\end{mplibcode}\vss}}
 \begin{code}
 draw origin -- 42 right;  % uses "currentpen"
 pickup pencircle scaled 2; % use a thick pen
@@ -5690,7 +5686,7 @@ If you are using a fat pen and you don't like the big rounded ends, then
 you can use \mpl{cutdraw} or set \mpl{linecap := squared;} — see
 §\ref{sec:linecaps} for more.
 \vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4.4in\noindent
-Here is an example that makes use of a pen scaled to a thin ellipse. 
+Here is an example that makes use of a circular pen transformed to a thin ellipse. 
 \begin{texcode}
 \documentclass[border=5mm]{standalone}
 \usepackage{luamplib}
@@ -5751,7 +5747,6 @@ vardef gooddots(expr a) =
     save m; numeric m; 2m = (a-5) / round(a/5);
     dashpattern(off m on 0 off m)
 enddef;
-    beginfig(1);
     for i=2 upto 8:
         path c[];
         c1 = fullcircle scaled 16i shifted 80 left;
@@ -5761,7 +5756,6 @@ enddef;
         %draw c1 shifted 160 down dashed withdots withcolor 2/3 blue;
         %draw c2 shifted 160 down dashed gooddots(arclength c2) withcolor 1/2 red;
     endfor
-    endfig;
 \end{mplibcode}
 $$
 
@@ -5778,7 +5772,6 @@ vardef exactly(expr a, u) =
     save m; numeric m; 2m = a / round(a/u);
     dashpattern(on m off m)
 enddef;
-    beginfig(1);
     for i=2 upto 8:
         path c[];
         c1 = unitsquare shifted -(1/2, 1/2) scaled 16i shifted 80 left;
@@ -5786,7 +5779,6 @@ enddef;
         draw c1 dashed evenly withcolor 2/3 blue;
         draw c2 dashed (exactly(arclength c2, 8) shifted 6 right) withcolor 1/2 red;
     endfor
-    endfig;
 \end{mplibcode}
 $$
 Other paths may require a bit more ingenuity and thought.  Because the square paths
@@ -5846,18 +5838,60 @@ to get a close approximation to \mpl{dashed evenly} that exactly fits the path.
 \newpage
 \subsection{Multiple lines}
 
+\textsc{The pens available} in \MP\ are all simple convex polygons without holes, so
+if you want to draw double or triple lines, you have to draw the individual parts of
+the marks you want along the path.
+
+The simplest approach is to draw the path with a thicker pen, then draw over it with
+a thinner pen using the background colour, like this:
+\begin{code}
+path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
+draw a withpen pencircle scaled 3/2;
+draw a withpen pencircle scaled 1/2 withcolor background;
+\end{code}
+which produces this:
 \begin{mplibcode}
-    beginfig(1);
-    path a; a = origin {right} .. 140 dir 45 {left} .. 200 right {right};
-    draw a cutafter fullcircle scaled 2ahlength shifted point infinity of a withpen pencircle scaled 2;
-    draw a cutafter fullcircle scaled 2ahlength shifted point infinity of a withpen
-    pencircle scaled 5/4 withcolor background;
-    drawarrow a;
-    endfig;
+    path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
+draw a withpen pencircle scaled 3/2;
+draw a withpen pencircle scaled 1/2 withcolor background;
+\end{mplibcode}\enspace
+Notice that the lines have been drawn with the default rounded ends.  If you don't
+want this then use \mpl{cutdraw} for the background lines (or set \mpl{linecap :=
+butt}), so that you get ends that look open, like this:
+\begin{mplibcode}
+    path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
+cutdraw a withpen pencircle scaled 3/2;
+draw a withpen pencircle scaled 1/2 withcolor background;
+\end{mplibcode}\enspace
+Beware that you will need to be careful if the line needs to have an arrowhead or to
+touch another object.  Beware also that drawing with the background colour does not
+erase anything, it just draws over the path with an opaque line that happens to be
+the same colour as the background, so you will not see
+anything that happens to lie under the line even if you want to.
+
+For triple lines, you will need to draw three times: first broad, then medium with
+the background colour, then thin in the middle; and so on.  At this point you might
+rightly conclude that your drawing would look better and simpler with single lines.
+But there is a related three-dimensional decorative technique that can be effective
+with knot diagrams, (provided that you don't think of toothpaste).
+$$
+\begin{mplibcode}
+path a; a = origin .. (72, 10) .. (144, -10) .. (216, 0);
+for i=4 step -1/8 until 1/2:
+    draw a withpen pencircle scaled i withcolor (i*i/16)[white, 1/2 blue];
+endfor
 \end{mplibcode}
+$$
+This tube-like effect can be created with a loop like this:
+\begin{smallcode}
+path a; a = origin .. (72, 10) .. (144, -10) .. (216, 0);
+for i=4 step -1/8 until 1/2:
+  draw a withpen pencircle scaled i withcolor (i*i/16)[white, 1/2 blue];
+endfor
+\end{smallcode}
 
-\subsection{Piping and rope-work}
 
+\newpage
 \subsection{Patterns}
 
 \subsection{Fading color and tapering width}
@@ -5906,7 +5940,7 @@ to note:
         would be easy to see. This does make the arrows drawn with the
         default line modes (rounded caps and rounded joins) looks a bit fat;
         they look better with the usual \mpl{pencircle scaled .5}, Like this: 
-        \begin{mplibcode}beginfig(1);drawdblarrow (left--right) scaled 20; endfig;\end{mplibcode}
+        \begin{mplibcode}drawdblarrow (left--right) scaled 20;\end{mplibcode}
 
 \end{itemize}
 
@@ -6112,10 +6146,10 @@ dotlabel.lrt("$H$", H);
 \end{smallcode}\vss}}
 $$\includegraphics[width=\textwidth]{angles-lines.pdf}$$
 The lines are both trimmed to a convenient path (\id{boundary}) when they are
-drawn.\vadjust{\moveright296pt\vbox to 0pt{\vskip 80pt\begin{mplibcode}beginfig(0);drawarrow
+drawn.\vadjust{\moveright296pt\vbox to 0pt{\vskip 80pt\begin{mplibcode}drawarrow
 origin {right} .. {dir 70} 42 dir 60;
     label.lft("\small \dots continues", origin);
-endfig;\end{mplibcode}\vss}}
+\end{mplibcode}\vss}}
 
 \begin{smallcode}
 numeric u; u = 1cm;
@@ -6516,7 +6550,6 @@ flex(z5,z6,z7) & flex(z7,z8,z9,z1) & cycle;
 \end{code}
 (with appropriate definitions of the points), produces this:
 \lower 12pt\hbox{\smash{\begin{mplibcode}
-beginfig(0);
 z1=(0,509);
 z2=(-14,492);
 z3=(-32,481);
@@ -6530,7 +6563,6 @@ z9=(4,493);
 flex(z5,z6,z7) & flex(z7,z8,z9,z1) & cycle;
     for i=1 upto 9: draw z[i] withpen pencircle scaled 2 withcolor red; endfor
     currentpicture := currentpicture scaled 0.7071 rotatedabout(z3, -20);
-endfig;
 \end{mplibcode}}}
 
 \bigskip\noindent
@@ -7971,8 +8003,7 @@ input colorbrewer-rgb
 path t, tt; 
 t = for i=0 upto 2: (0,8) rotated 120i --endfor cycle;
 tt = t reflectedabout(point 2 of t, point 0 of t);
-    beginfig(0);
-fill t withcolor Reds 8 2; fill tt withcolor Blues 8 2; draw t; draw tt; endfig;
+fill t withcolor Reds 8 2; fill tt withcolor Blues 8 2; draw t; draw tt; 
 \end{mplibcode}}$ so that the tiling actually filled the plane. In the hexagonal
 tiling there are no gaps to fill, but in order to get a non-adjacent colouring, the
 unit picture was defined as three shifted copies of the hexagon each filled with a
@@ -7994,8 +8025,8 @@ for i=3,6:
         endfor 
         draw p[i]); 
 endfor
-    beginfig(0); draw P3; draw P3 reflectedabout(point 0 of p3, point 2 of p3);
-    draw P6 shifted (60, 3); endfig;
+    draw P3; draw P3 reflectedabout(point 0 of p3, point 2 of p3);
+    draw P6 shifted (60, 3); 
 \end{mplibcode}
 $$
 This has the effect of
@@ -8139,7 +8170,6 @@ macro that takes a parameter and returns a picture to draw.\mwpic{-36pt}{arch-3-
 \mplibsetformat{metafun}  % <-- for the "transparent" macro
 \begin{mplibcode}
 input colorbrewer-rgb
-beginfig(1);
 numeric r; r = 5;
 path d; d = for i=1 upto 12:
     (0, r) shifted (r * (sqrt(3)+2), 0) rotated 30i -- 
@@ -8161,7 +8191,6 @@ for i=-n upto n:
     endfor
 endfor
 clip currentpicture to unitsquare shifted -(1/2, 1/2) scaled (n * 9 r);
-endfig;
 \end{mplibcode}
 \end{smallcode}
 Instead of defining six triangles, six squares, and a hexagon, you can just define
