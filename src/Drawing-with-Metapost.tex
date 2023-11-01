@@ -22,7 +22,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – September 2023}
+\date{March 2017 – November 2023}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -5729,8 +5729,120 @@ the path. Think of it as a calligraphic nib. For another example, look at
 §\ref{sec:braces}, which uses a similar pen to draw the braces for the dimension
 label.}}
 
+
 \newpage
-\subsection{Using dash patterns}
+\subsection{Multiple lines}
+
+\textsc{The pens available} in \MP\ are all simple convex polygons without holes, so
+if you want to draw double or triple lines, you have to draw the individual parts of
+the marks you want along the path.
+
+The simplest approach is to draw the path with a thicker pen, then draw over it with
+a thinner pen using the background colour, like this:
+\begin{code}
+path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
+draw a withpen pencircle scaled 3/2;
+draw a withpen pencircle scaled 1/2 withcolor background;
+\end{code}
+which produces this:
+\begin{mplibcode}
+    path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
+draw a withpen pencircle scaled 3/2;
+draw a withpen pencircle scaled 1/2 withcolor background;
+\end{mplibcode}\enspace
+Notice that the lines have been drawn with the default rounded ends.  If you don't
+want this then use \mpl{cutdraw} for the background lines (or set \mpl{linecap :=
+butt}), so that you get ends that look open, like this:
+\begin{mplibcode}
+    path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
+cutdraw a withpen pencircle scaled 3/2;
+draw a withpen pencircle scaled 1/2 withcolor background;
+\end{mplibcode}\enspace
+For triple lines, you will need to draw three times: first broad, then medium with
+the background colour, then thin in the middle; and so on.
+
+Beware that you will need to be careful if the line needs to have an arrowhead or to
+touch another object.  Beware also that drawing with the background colour does not
+erase anything, it just draws over the path with an opaque line that happens to be
+the same colour as the background, so you will not see
+anything that happens to lie under the line even if you want to.
+
+If you want to draw real separate parallel lines, then the simplest approach is just to shift 
+the path sideways using something like this:
+\begin{smallcode}
+path p; p = origin -- 100 dir 30; draw p; 
+draw p shifted 4 unitvector(direction 1/2 of p rotated 90);
+\end{smallcode}
+If your path is a regular cycle, like a circle or a polygon, then another approach
+is to draw a scaled copy.  
+\begin{smallcode}[xrightmargin=-20pt]
+path p; p = fullcircle scaled 100 shifted 42(normaldeviate, normaldeviate);
+draw p; draw p shifted -center p scaled 0.98 shifted center p;
+\end{smallcode}
+but if your path is more complex, then you need something like the macro
+shown at the right.  The piano-shaped path $p$ is drawn in black; the outer blue path
+was drawn with \mpl{draw beside(p, 2)} and the red one with 
+\mpl{draw beside(p, -2)}.
+
+
+\moveright5.5in\vbox to 0pt{\vss\hsize 4.4in\noindent
+\begin{smallcode}
+vardef extended(expr p) = 
+  -42 unitvector(direction 0 of p) shifted point 0 of p .. p .. 
+  +42 unitvector(direction 1 of p) shifted point 1 of p
+enddef;
+
+vardef chopper expr t of p =
+  (up--down) scaled 42 
+  rotated 1/2(angle direction t-eps of p + angle direction t+eps of p)
+  shifted point t of p
+enddef;
+
+vardef beside(expr p, d) = 
+  save n, a, b, aa, bb; numeric n; n = length p;
+  pair a, b, aa, bb; path _part[];
+  for i = 1 upto n:
+    aa := postcontrol i-1 of p - point i-1 of p; 
+    bb := point i of p - precontrol i of p;    
+    a := unitvector(aa) rotated -90 scaled d;
+    b := unitvector(bb) rotated -90 scaled d;
+    _part[i] = extended(
+      point i-1 of p shifted a {aa} .. point i of p shifted b {bb}
+    ) cutbefore chopper i-1 of p cutafter chopper i of p;
+  endfor
+  _part[1] for i=2 upto n: .. _part[i] endfor if cycle p: .. cycle fi
+enddef;
+\end{smallcode}
+
+$$\includegraphics[width=4in]{pens-besides.pdf}$$
+
+\vskip -1in
+}
+
+
+\newpage
+\subsection{Tubes}
+
+There is a related three-dimensional decorative technique that can be effective
+with knot diagrams (provided that you don't think of toothpaste):
+$$
+\begin{mplibcode}
+path a; a = origin .. (72, 10) .. (144, -10) .. (216, 0);
+for i=4 step -1/8 until 1/2:
+    draw a withpen pencircle scaled i withcolor (i*i/16)[white, 1/2 blue];
+endfor
+\end{mplibcode}
+$$
+This tube-like effect can be created with a loop like this:
+\begin{smallcode}
+path a; a = origin .. (72, 10) .. (144, -10) .. (216, 0);
+for i=4 step -1/8 until 1/2:
+  draw a withpen pencircle scaled i withcolor (i*i/16)[white, 1/2 blue];
+endfor
+\end{smallcode}
+
+\newpage
+\subsection{Using dash patterns with extra precision}
 
 \textsc{As you may know}, plain \MP\ provides two 
 built-in dash patterns, so that you can draw a path \mpl{dashed withdots} or
@@ -5834,65 +5946,8 @@ draw c dashed exactly(arclength c, 6);
 \end{code}
 to get a close approximation to \mpl{dashed evenly} that exactly fits the path.
 
-
 \newpage
-\subsection{Multiple lines}
-
-\textsc{The pens available} in \MP\ are all simple convex polygons without holes, so
-if you want to draw double or triple lines, you have to draw the individual parts of
-the marks you want along the path.
-
-The simplest approach is to draw the path with a thicker pen, then draw over it with
-a thinner pen using the background colour, like this:
-\begin{code}
-path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
-draw a withpen pencircle scaled 3/2;
-draw a withpen pencircle scaled 1/2 withcolor background;
-\end{code}
-which produces this:
-\begin{mplibcode}
-    path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
-draw a withpen pencircle scaled 3/2;
-draw a withpen pencircle scaled 1/2 withcolor background;
-\end{mplibcode}\enspace
-Notice that the lines have been drawn with the default rounded ends.  If you don't
-want this then use \mpl{cutdraw} for the background lines (or set \mpl{linecap :=
-butt}), so that you get ends that look open, like this:
-\begin{mplibcode}
-    path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
-cutdraw a withpen pencircle scaled 3/2;
-draw a withpen pencircle scaled 1/2 withcolor background;
-\end{mplibcode}\enspace
-Beware that you will need to be careful if the line needs to have an arrowhead or to
-touch another object.  Beware also that drawing with the background colour does not
-erase anything, it just draws over the path with an opaque line that happens to be
-the same colour as the background, so you will not see
-anything that happens to lie under the line even if you want to.
-
-For triple lines, you will need to draw three times: first broad, then medium with
-the background colour, then thin in the middle; and so on.  At this point you might
-rightly conclude that your drawing would look better and simpler with single lines.
-But there is a related three-dimensional decorative technique that can be effective
-with knot diagrams (provided that you don't think of toothpaste):
-$$
-\begin{mplibcode}
-path a; a = origin .. (72, 10) .. (144, -10) .. (216, 0);
-for i=4 step -1/8 until 1/2:
-    draw a withpen pencircle scaled i withcolor (i*i/16)[white, 1/2 blue];
-endfor
-\end{mplibcode}
-$$
-This tube-like effect can be created with a loop like this:
-\begin{smallcode}
-path a; a = origin .. (72, 10) .. (144, -10) .. (216, 0);
-for i=4 step -1/8 until 1/2:
-  draw a withpen pencircle scaled i withcolor (i*i/16)[white, 1/2 blue];
-endfor
-\end{smallcode}
-
-
-\newpage
-\subsection{Patterns}
+\subsection{Decorating a path with complicated patterns}
 
 \subsection{Fading color and tapering width}
 
