@@ -1,3 +1,9 @@
+\documentclass{standalone}
+\usepackage{luamplib}
+\begin{document}
+\mplibtextextlabel{enable}
+\begin{mplibcode}
+beginfig(1);
 % define the end points of the three rays
 z1 = right scaled 200 rotated 10;
 z2 = right scaled 100 rotated 135;
@@ -29,6 +35,9 @@ drawoptions();
 dotlabel.urt(btex $Q$ etex, Q);
 dotlabel.top(btex $A$ etex, A);
 dotlabel.lrt(btex $R$ etex, R) withcolor .67 blue;
-label.top (btex $B$ etex, B);
-label.llft(btex $P$ etex, P);
-label.llft(btex $O$ etex, origin);
+dotlabel.top (btex $B$ etex, B);
+dotlabel.llft(btex $P$ etex, P);
+dotlabel.llft(btex $O$ etex, origin);
+endfig;
+\end{mplibcode}
+\end{document}

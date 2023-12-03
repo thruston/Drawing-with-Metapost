@@ -3542,49 +3542,16 @@ endfig;
 \vskip -42pt}
 
 \newpage
-\moveright5.5in\vbox to 0pt{\vskip10pt\includegraphics[width=4.2in]{trisection-triangles}\vss}
-\vskip-\baselineskip
-\begin{code}[xleftmargin=0pt, xrightmargin=-80pt]
-randomseed := 2485.81543;
-vardef measured_angle(expr p, o, q) =
-   (angle (p-o) - angle (q-o)) mod 360
-enddef;
-beginfig(1);
-picture T;
-for i=0 upto 1:
-  for j=0 upto 1:
-    clearxy;
-    T := image(
-      z1 = (120 + uniformdeviate 21, 0);
-      z2 = (120 + uniformdeviate 21, 0) rotated 120 rotated 21 normaldeviate;
-      z3 = (120 + uniformdeviate 21, 0) rotated 240 rotated 21 normaldeviate;
-      numeric a, b, c;
-      a = measured_angle(z3, z1, z2);
-      b = measured_angle(z1, z2, z3);
-      c = measured_angle(z2, z3, z1);
-      z4 = whatever [z1, z2 rotatedabout(z1, 1/3 a)]
-         = whatever [z2, z3 rotatedabout(z2, 2/3 b)];
-      z5 = whatever [z2, z3 rotatedabout(z2, 1/3 b)]
-         = whatever [z3, z1 rotatedabout(z3, 2/3 c)];
-      z6 = whatever [z3, z1 rotatedabout(z3, 1/3 c)]
-         = whatever [z1, z2 rotatedabout(z1, 2/3 a)];
-      fill z4--z5--z6--cycle withcolor 3/4[red + 1/2 green, white];
-      draw z4--z5--z6--cycle;
-      draw z1 -- z4 -- z2 -- z5 -- z3 -- z6 -- cycle
-           dashed withdots scaled 1/4;
-      draw z1 -- z2 -- z3 -- cycle;
-    );
-    draw T shifted (200i, 240j);
-  endfor
-endfor
-label.rt(btex \vbox{\halign{#\hfil\cr The trisectors of each angle\cr
-in any given triangle form a\cr central equilateral triangle.\cr}} etex, (24, 128));
-endfig;
-\end{code}
+\vpic{-36pt}{geometry-examples-trisections}
+\vbox to 0pt{
+    \mpexternal[xleftmargin=0pt,xrightmargin=-80pt,firstline=6,lastline=40]{geometry-examples-trisections.mp}
+\vss}
 \newpage
-\kern-\baselineskip
-\vpic{1in}{projections}
-\mpexternal[xleftmargin=0pt]{projections-code.mp}
+\kern-3\baselineskip
+\vpic{1in}{geometry-examples-projections}
+\vbox to 0pt{
+    \mpexternal[xleftmargin=0pt,firstline=6,lastline=41]{geometry-examples-projections.mp}
+\vss}
 
 \newpage
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent This needs an \mpl{invert} macro, such
@@ -3709,14 +3676,12 @@ vardef angle_label(expr P, O, Q, r) = image(
     save t; string t; t = decimal (round(angle (Q-O) - angle (P-O)) mod 360) & "°";
     label(t, O + r * (unitvector(P-O) + unitvector(Q-O)));
 ) enddef;
-beginfig(0);
 draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
 draw angle_label(a, c, b, 16);
 draw a--b--c--cycle;
     dotlabel.llft("$a$", a);
     dotlabel.rt  ("$b$", b);
     dotlabel.ulft("$c$", c);
-endfig;
 \end{mplibcode}$$
 \vss}}
 
@@ -5279,7 +5244,7 @@ picture cb; cb = image(
     \item Examples 2, 3, and 4 show what happens if you change the pen, or the
         colour, or both.
 
-    \item Example 5 shows you how to make a bagel in \MP.
+    \item Example 5 shows you how to make a pretzel in \MP.
 
     \item Example 6 shows you the slightly tricky syntax to extract the paths, pens,
         and colours from the \<picture> and adjust them as needed.

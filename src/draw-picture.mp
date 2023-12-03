@@ -1,5 +1,6 @@
-\documentclass[border=5mm]{standalone}
+\documentclass{standalone}
 \usepackage{luamplib}
+\usepackage{dwmpcode}
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
@@ -29,21 +30,21 @@ beginfig(1);
 
     picture P[];
 
-    P1 = image(draw cb; label.rt("\texttt{draw cb;}", point 3/2 of bbox currentpicture)); 
-    P2 = image(draw cb withpen pencircle scaled 4; label.rt("\texttt{draw cb withpen pencircle scaled 4;}", point 3/2 of bbox currentpicture));
-    P3 = image(draw cb withcolor 1/2; label.rt("\texttt{draw cb withcolor 1/2;}", point 3/2 of bbox currentpicture));
-    P4 = image(draw cb withpen pencircle scaled 4 withcolor 1/2; label.rt("\texttt{draw cb withpen pencircle scaled 4 withcolor 1/2;}", point 3/2 of bbox currentpicture));
+    P1 = image(draw cb; label.rt("\mpl{draw cb;}", point 3/2 of bbox currentpicture)); 
+    P2 = image(draw cb withpen pencircle scaled 4; label.rt("\mpl{draw cb withpen pencircle scaled 4;}", point 3/2 of bbox currentpicture));
+    P3 = image(draw cb withcolor 1/2; label.rt("\mpl{draw cb withcolor 1/2;}", point 3/2 of bbox currentpicture));
+    P4 = image(draw cb withpen pencircle scaled 4 withcolor 1/2; label.rt("\mpl{draw cb withpen pencircle scaled 4 withcolor 1/2;}", point 3/2 of bbox currentpicture));
     P5 = image(
-        color bagel; bagel = 1/256(187, 146, 79);
-        for i=4 step -1/4 until 1/2:
+        color pretzel; pretzel = 1/256(187, 146, 79);
+        for i=8 step -1/2 until 1/2:
             draw cb withpen pencircle scaled i
-                withcolor (i/4)[white, bagel];
+                withcolor (i/8)[white, pretzel];
         endfor
-        label.rt(btex \vbox{\halign{\texttt{#}\cr
-        for i=4 step -1/4 until 1/2:\cr
-        \quad draw cb withpen pencircle scaled i \cr
-        \qquad withcolor sqrt(i/4)[white, bagel];\cr
-        endfor\cr}} etex, point 3/2 of bbox currentpicture);
+        label.rt(btex \vbox{\halign{#\cr
+        \mpl{for i=8 step -1/2 until 1/2:}\cr
+        \quad\mpl{draw cb withpen pencircle scaled i}\cr
+        \qquad\mpl{withcolor sqrt(i/8)[white, pretzel];}\cr
+        \mpl{endfor}\cr}} etex, point 3/2 of bbox currentpicture);
     );
     
     P6 = image(
@@ -51,11 +52,11 @@ beginfig(1);
             draw pathpart e withpen penpart e scaled 4
                 withcolor 7/8[colorpart e, background];
         endfor
-        label.rt(btex \vbox{\halign{\texttt{#}\cr
-        for e within cb:\cr
-        \quad draw pathpart e withpen penpart e scaled 4\cr
-        \qquad  withcolor 7/8[colorpart e, background];\cr
-        endfor\cr}} etex, point 3/2 of bbox currentpicture);
+        label.rt(btex \vbox{\halign{#\cr
+        \mpl{for e within cb:}\cr
+        \quad\mpl{draw pathpart e withpen penpart e scaled 4}\cr
+        \qquad\mpl{withcolor 7/8[colorpart e, background];}\cr
+        \mpl{endfor}\cr}} etex, point 3/2 of bbox currentpicture);
     );
 
     for i=1 upto 6:
