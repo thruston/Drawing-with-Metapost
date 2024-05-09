@@ -1,4 +1,4 @@
-% Copyright (c) 2023 by Toby Thurston. This material may be distributed only
+% Copyright (c) 2024 by Toby Thurston. This material may be distributed only
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
@@ -22,7 +22,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – November 2023}
+\date{March 2017 – June 2024}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -2758,7 +2758,7 @@ rectangles.  The two times returned by \mpl{intersectiontimes} are the midpoints
 the subpaths enclosed by these two tiny rectangles, which is why they do not always
 refer to exactly the same point.}}
 
-\subsubsection{Finding all intersection points}
+\subsubsection{Finding all intersection points}\label{sec:allxp}
 
 As noted above, the \mpl{intersectiontimes} algorithm will stop at the first
 intersection of the two paths, but it is possible that the two paths will intersect
@@ -5616,7 +5616,7 @@ shaped copies of the decorated rectangle, pieces them together around $P$, and r
 \textsc{This section} is all about making marks along a \<path> using 
 \mpl{draw} and a number of other more sophisticated techniques.
 
-\subsection{Pens}
+\subsection{Choosing a pen}
 
 \MP\ inherits a rather complicated system of pens from \MF.  As explained in \mfbook,
 the original intention of this system was to improve the digitisation of font
@@ -5790,12 +5790,11 @@ $$\includegraphics[width=4in]{pens-besides.pdf}$$
 \vskip -1in
 }
 
-
 \newpage
-\subsection{Tubes}
+\subsubsection{Making tubes}
 
-There is a related three-dimensional decorative technique that can be effective
-with knot diagrams (provided that you don't think of toothpaste):
+Drawing with multiple lines can also produce a three-dimensional effect for 
+knot diagrams (provided that you don't think of toothpaste).  
 $$
 \begin{mplibcode}
 path a; a = origin .. (72, 10) .. (144, -10) .. (216, 0);
@@ -5811,6 +5810,35 @@ for i=4 step -1/8 until 1/2:
   draw a withpen pencircle scaled i withcolor (i*i/16)[white, 1/2 blue];
 endfor
 \end{smallcode}
+The idea is to 
+draw a path repeatedly with lines that get thinner and use a lighter shade
+Notice the colour fades from white to dark blue using the mediation syntax.
+You might like to experiment with linear or quadratic transitions until you get a
+gradient that you like.  In the loop above as $i$ varies from 4 down to $\frac12$, 
+the mediation fraction varies from 1 down to $\frac1{64}$, like this:
+$$\vbox{\halign{\hss #:\quad&&\hss #\hss\cr
+$i$      & 4.00 & 3.75 & 3.50 & 3.25 & 3.00 & 2.75 & 2.50 & 2.25 & 2.00 & 1.75 & 1.50 & 1.25 & 1.00 & 0.75 & 0.50 \cr
+$i^2/16$ & 1.00 & 0.88 & 0.77 & 0.66 & 0.56 & 0.47 & 0.39 & 0.32 & 0.25 & 0.19 & 0.14 & 0.10 & 0.06 & 0.04 & 0.02 \cr
+}}$$
+which makes the gradient steeper nearer the edges.
+If you don't want the rounded ends, then you should use \mpl{cutdraw} instead of
+\mpl{draw}.
+
+\subsubsection{Showing crossings}
+
+In general it is a good idea to avoid line crossings completely, but
+occasionally you may end up with a diagram where one or more lines
+has to cross another.  The simple way to deal with this is to use the technique 
+shown in §\ref{sec:cd}; capture the line to be drawn in a \<path>
+variable, and then do
+\begin{smallcode}
+cutdraw line withpen pencircle scaled 4 withcolor background; draw line;
+\end{smallcode}
+so that you erase behind the line before you draw it.  Alternatively you could use
+the ideas in §\ref{sec:allxp} to find all the intersections between two paths
+and mark them appropriately. But the marks might not improve legibility; compare
+these two \rlap{$\longrightarrow$}\mpic{-6in}{pens-crossings}
+
 
 \newpage
 \subsection{Using dash patterns with extra precision}
@@ -5922,7 +5950,6 @@ to get a close approximation to \mpl{dashed evenly} that exactly fits the path.
 
 \subsection{Fading color and tapering width}
 
-\subsection{Showing crossings}
 
 \subsection{Arrow styles}
 
@@ -7869,7 +7896,7 @@ endfor
 \noindent\hbox to \textwidth{\includegraphics{tufte-srm-damage}\hss}
 
 \newpage
-\section{Commutative diagrams}
+\section{Commutative diagrams}\label{sec:cd}
 
 \textsc{If you want lots} of complex bells and whistles on your commutative diagrams, then
 you probably want to use specialist tools like "tikz-cd" or "xypic", but if your
