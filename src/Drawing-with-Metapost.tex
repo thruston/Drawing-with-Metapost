@@ -1,4 +1,4 @@
-% Copyright (c) 2024 by Toby Thurston. This material may be distributed only
+% Copyright (c) 2024 by Toby Thurston. This material may be distributed only}
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
@@ -3782,7 +3782,9 @@ multiple of $1\over65536$ (which turns out to be $3.14159$). The same applies to
 an error if you supply more digits that the default precision.  So in general
 it's best to use no more than 32 digits.  It's also possible, but not really worth
 the trouble, to define a routine to calculate $\pi$ to the current
-precision.\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}  However you define it, once you are armed with a value for $\pi$ you can
+precision.\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}} 
+
+However you define it, once you are armed with a value for $\pi$ you can
 then define functions to convert between degrees and radians, and some more `normal'
 versions of sine and cosine.
 
@@ -5946,11 +5948,54 @@ draw c dashed exactly(arclength c, 6);
 to get a close approximation to \mpl{dashed evenly} that exactly fits the path.
 
 \newpage
-\subsection{Decorating a path with complicated patterns}
+\subsection{Decorating a path}
 
-\subsection{Fading color and tapering width}
+\textsc{A little decoration} generally goes a long way, so you may want to restrain
+your creativity before you apply too many of the ideas from this page.  There are
+two basic techniques shown here: creative use of dash patterns and drawing shapes
+along the path.\mpic{-48pt}{pens-strokes} 
+
+\smallskip\noindent
+With a curved path $S$, the first “with a dash pattern” was drawn like this:
+\begin{smallcode}
+draw S dashed dashpattern(on 4 off 2 on 1 off 2 on 1 off 2);     
+\end{smallcode}
+Notice that the default rounded pen makes dots and dashes with rounded ends.
+The second line “with a sharp dash pattern” uses \mpl{cutdraw} to change the line
+ends.
+\begin{smallcode}
+cutdraw S dashed dashpattern(on 4 off 1 on 1 off 1 on 1 off 1);     
+\end{smallcode}
+The “railway line” uses a combination of three drawing operations:
+\begin{smallcode}
+cutdraw S withpen pencircle scaled 2;
+undraw S withpen pencircle scaled 5/4;
+cutdraw S dashed evenly scaled 2 withpen pencircle scaled 5/4;
+\end{smallcode}
+
+\smallskip\noindent
+The “plainer railway line” was done like this:
+\begin{smallcode}
+draw S;
+for a = 1 step 6 until arclength S:
+  numeric t; t = arctime a of S;
+  draw (down--up) rotated angle direction t of S shifted point t of S;
+endfor
+\end{smallcode}
+Note that it's essential to use \mpl{arctime} and \mpl{arclength} in order to get
+the markers evenly spaced.  But you don't need to worry about the rotation in order
+to get the “fading away” effect:
+\begin{smallcode}
+numeric A; A = arclength S;
+for a = 0 step 1/8 until A:
+  draw point arctime a of S of S withcolor (a / A);
+endfor
+\end{smallcode}
+The remaining three are just fancy variations on the same theme. You might
+like to try to re-create them as an exercise, or you can look in the source file.
 
 
+\newpage
 \subsection{Arrow styles}
 
 \subsection{Adjacent arrows}
