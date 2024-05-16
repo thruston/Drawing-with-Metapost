@@ -5994,6 +5994,33 @@ endfor
 The remaining three are just fancy variations on the same theme. You might
 like to try to re-create them as an exercise, or you can look in the source file.
 
+\newpage
+\subsection{Morphing a path}
+
+A more flexible, but more complicated, decoration technique is to use a macro
+to morph your path before you actually draw it.  This is how the venerable "feynmp"
+package marks photons and gluons etc in Feynmann diagrams.  Since "feynmp" is a
+standard part of the base \MP\ distribution you can use these macros in normal
+drawings; so to draw a zigzag line you can do:
+\begin{code}
+input feynmp
+path S; S = (left {dir 30} .. right {dir 30}) scaled 100;
+draw zigzag S;
+\end{code}
+The package also provides "curly", and "wiggly", as shown at the
+right.\mwpic{-128pt}{pens-feynmp-styles}, and defines a number of parameters
+to control the sizes of the shapes:
+\begin{itemize}
+    \item "curly_len" sets the wave length of the loops, default 8.5
+    \item "wiggly_len" ditto for waves, default 11.34
+    \item "zigzag_len" ditto for zigs, default 5.67
+    \item "wiggly_slope" steepness of waves, default 60°
+    \item "zigzag_width", amplitude of zigs, default 4
+\end{itemize}
+
+
+
+
 
 \newpage
 \subsection{Arrow styles}
