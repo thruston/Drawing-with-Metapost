@@ -19,6 +19,7 @@
 \def\mfbook{\textsl{The \MF\kern1pt book}}
 \def\texbook{\textsl{The \TeX\kern1pt book}}
 \usepackage{shortvrb}\MakeShortVerb{"}
+\usepackage{enumitem}
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
@@ -6008,15 +6009,37 @@ path S; S = (left {dir 30} .. right {dir 30}) scaled 100;
 draw zigzag S;
 \end{code}
 The package also provides "curly", and "wiggly", as shown at the
-right.\mwpic{-128pt}{pens-feynmp-styles}, and defines a number of parameters
+right\mwpic{-128pt}{pens-feynmp-styles}, and defines a number of parameters
 to control the sizes of the shapes:
-\begin{itemize}
+\begin{itemize}[itemsep=0pt]
     \item "curly_len" sets the wave length of the loops, default 8.5
     \item "wiggly_len" ditto for waves, default 11.34
     \item "zigzag_len" ditto for zigs, default 5.67
     \item "wiggly_slope" steepness of waves, default 60°
     \item "zigzag_width", amplitude of zigs, default 4
 \end{itemize}
+
+You might like to try your hand at defining your own. Here is one that does
+a vaguely Hellenic Meander pattern, adapted to cope with curved
+paths.\mwpic{100pt}{deco-greek-meander}
+\begin{smallcode}[xrightmargin=-42pt]
+vardef meander expr p = 
+  save a, u, v, d, dy; numeric a, u, v, d; pair dy; 
+  d = 2 xpart urcorner makepath currentpen;
+  a = arclength p; v = round(a/8d); u = a if v > 1: / v fi;
+  if not cycle p: point 0 of p -- fi for t = 0 step u until a - 4 eps:
+    hide(dy := d * unitvector(direction arctime t+1/2u of p of p rotated 90))
+    subpath(arctime t of p, arctime t + u - 2d of p) of p shifted 3dy
+    -- 
+    subpath(arctime t + u - 2d of p, arctime t + 1/2 u of p) of p shifted -dy
+    --
+    subpath(arctime t + 1/2u of p, arctime t + 2d of p) of p shifted dy
+    --
+    subpath(arctime t + 2d of p, arctime t + u of p) of p shifted -3dy
+    --
+  endfor if cycle p: cycle else: point infinity of p fi
+enddef;
+\end{smallcode}
 
 
 

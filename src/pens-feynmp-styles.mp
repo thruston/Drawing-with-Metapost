@@ -18,7 +18,7 @@ beginfig(1);
     p3 = fullcircle scaled 72 yscaled 4/5;
     p4 = unitsquare shifted -(1/2, 1/2) scaled 50;
 
-    interim labeloffset := 13;
+     interim labeloffset := 13;
     interim ahangle := 30;
     for i=1, 2, 3, 4:
         numeric y; y = 0;
@@ -32,7 +32,7 @@ beginfig(1);
 label.bot("The un-morphed paths are drawn faintly in colour behind the morphed paths.", point 1/2 of bbox currentpicture);
 label.bot("The macros work on open or closed paths, provided there are no sharp corners.", point 1/2 of bbox currentpicture shifted 7 up);
 
-label.top("Hmmm...", point 2 of p4 shifted (4*96, 104)) withcolor 1/2[red, white];
+label.ulft("Hmmm...", point 2 of p4 shifted (4*96, 104)) withcolor 1/2[red, white];
 
 
 endfig;
