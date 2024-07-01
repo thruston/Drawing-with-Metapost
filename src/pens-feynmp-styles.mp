@@ -1,4 +1,4 @@
-\documentclass[border=5mm]{standalone}
+\documentclass{standalone}
 \usepackage{luamplib}
 \usepackage{dwmpcode}
 \begin{document}
@@ -33,7 +33,6 @@ label.bot("The un-morphed paths are drawn faintly in colour behind the morphed p
 label.bot("The macros work on open or closed paths, provided there are no sharp corners.", point 1/2 of bbox currentpicture shifted 7 up);
 
 label.ulft("Hmmm...", point 2 of p4 shifted (4*96, 104)) withcolor 1/2[red, white];
-
 
 endfig;
 \end{mplibcode}

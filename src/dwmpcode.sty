@@ -2,6 +2,7 @@
 \ProvidesPackage{dwmpcode}[2021/12/30 v0.01 Code setting in DwMP]
 \RequirePackage{listings}
 \RequirePackage{xcolor}
+\RequirePackage{luamplib}
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
 \definecolor{textgreen}{rgb}{0,0.43,0}
@@ -118,5 +119,14 @@ morekeywords={everymplib, everyendmplib, mplibtextextlabel, mplibnumbersystem, m
 }}
 \lstnewenvironment{texcode}[1][]{\texstyle\lstset{basicstyle=\small\ttfamily,#1}}{}
 \newcommand\txl[1]{{\texstyle\lstinline!#1!}}
+%
+% Labels..
+%
+\newcommand\sep[1]{$\vcenter{\begin{mplibcode}
+picture T; T = thelabel(TEX("\ttfamily " & #1), origin); interim bboxmargin := 3; path p; p = bbox T;
+path S; S = superellipse(point 3/2 of p, point 5/2 of p, point 7/2 of p, point 1/2 of p, 0.78);
+string x; x = substring (0, 1) of #1;
+fill S withcolor if x = "m": 7/8[red, white] elseif x = "c": 7/8[blue, white] else: white fi;
+draw S; draw T;\end{mplibcode}}$}
 %
 \endinput

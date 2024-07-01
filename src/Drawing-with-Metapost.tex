@@ -23,7 +23,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – June 2024}
+\date{March 2017 – July 2024}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -104,7 +104,7 @@ possible in my examples.
 \vskip 1in
 \noindent
 \begingroup\footnotesize\blue{
-Copyright \copyright\ 2023 by Toby Thurston. This material may be distributed only
+Copyright \copyright\ 2024 by Toby Thurston. This material may be distributed only
 subject to the terms and conditions set forth in the Open Publication License,~v1.0
 or later (the latest version is presently available at
 "http://www.opencontent.org/openpub/").}\endgroup\par\vss}
@@ -5827,10 +5827,10 @@ which makes the gradient steeper nearer the edges.
 If you don't want the rounded ends, then you should use \mpl{cutdraw} instead of
 \mpl{draw}.
 
-\subsubsection{Showing crossings}
+\subsection{Showing crossings}
 
 In general it is a good idea to avoid line crossings completely, but
-occasionally you may end up with a diagram where one or more lines
+occasionally you may end up with a diagram where at least one line
 has to cross another.  The simple way to deal with this is to use the technique 
 shown in §\ref{sec:cd}; capture the line to be drawn in a \<path>
 variable, and then do
@@ -6009,7 +6009,7 @@ path S; S = (left {dir 30} .. right {dir 30}) scaled 100;
 draw zigzag S;
 \end{code}
 The package also provides "curly", and "wiggly", as shown at the
-right\mwpic{-128pt}{pens-feynmp-styles}, and defines a number of parameters
+right\mwpic{-100pt}{pens-feynmp-styles}, and defines a number of parameters
 to control the sizes of the shapes:
 \begin{itemize}[itemsep=0pt]
     \item "curly_len" sets the wave length of the loops, default 8.5
@@ -6019,13 +6019,14 @@ to control the sizes of the shapes:
     \item "zigzag_width", amplitude of zigs, default 4
 \end{itemize}
 
+\noindent
 You might like to try your hand at defining your own. Here is one that does
-a vaguely Hellenic Meander pattern, adapted to cope with curved
-paths.\mwpic{100pt}{deco-greek-meander}
+a vaguely hellenic meander pattern, adapted to cope with curved
+paths.\mwpic{80pt}{pens-greek-meander}
 \begin{smallcode}[xrightmargin=-42pt]
 vardef meander expr p = 
   save a, u, v, d, dy; numeric a, u, v, d; pair dy; 
-  d = 2 xpart urcorner makepath currentpen;
+  d = 2 xpart urcorner makepath currentpen;  % this sets meander size
   a = arclength p; v = round(a/8d); u = a if v > 1: / v fi;
   if not cycle p: point 0 of p -- fi for t = 0 step u until a - 4 eps:
     hide(dy := d * unitvector(direction arctime t+1/2u of p of p rotated 90))
@@ -6042,13 +6043,54 @@ enddef;
 \end{smallcode}
 
 
-
-
-
 \newpage
 \subsection{Arrow styles}
 
-\subsection{Adjacent arrows}
+Plain \MP\ provides just two commands for drawing arrows: \mpl{drawarrow} and
+\mpl{drawdblarrow}.  The default arrows are shown at
+\sep{"1"}\mwpic{-48pt}{pens-arrow-styles} in the drawing on the
+right.\rlap{$\rightarrow$} 
+
+There are two parameters that you can set to control the shape.  The length of the
+arrow head is defined by \mpl{ahlength} which is set to 4pt, and the angle is
+defined by \mpl{ahangle} which starts at 45°.  In some diagrams your arrows may look
+more elegant if they are a bit longer and slightly sharper.  The arrows shown at
+\sep{"2"} were created by setting \mpl{ahangle := 20;} and \mpl{ahlength := 6;}
+(note that you need to use the assignment operator to update them).
+
+\bigskip
+
+If your diagrams needs a wider range of arrow head styles, perhaps because you are
+drawing UML digrams, then you can use the "mparrows" package from CTAN.   Assuming
+that you have a complete \TeX\ distribution installed, you can just put \mpl{input
+mparrows} near the top of your program, and then use the "setarrows" macro
+to change the arrow style.  
+In the drawing on the right
+\begin{itemize}
+    \item \sep{"mp1"} shows the result of \mpl{setarrows(open)}, 
+    \item \sep{"mp2"} shows \mpl{setarrows(defaultunfilled)}, and
+    \item \sep{"mp3"} shows \mpl{setarrows(barbed)}.
+\end{itemize}
+
+\noindent
+The package uses the same length and angle parameters as the default arrows. It also
+provides an extra parameter called "barbedarrowindent" to control the shape of the
+barbed arrows. For full details try: "texdoc mparrows"
+
+\bigskip
+
+If you would rather have arrows in your drawings that match the various arrows
+provided by the Computer Modern font, then you can use the "cmarrows" pacakge from CTAN.  You can
+include this package by adding \mpl{input cmarrows} near the top of your program.
+It is slightly more complicated to control, but the details are explained in the
+manual.  At \sep{"cm1"} you can see the result of 
+\begin{smallcode}[xrightmargin=-40pt]
+setup_cmarrows(macro_name="drawarrow"; arrow_name="texarrow"; ... );
+setup_cmarrows(macro_name="drawdblarrow"; arrow_name="twowayarrow"; ...);
+\end{smallcode}
+Here I have chosen to override the built-in command, but you can assign a
+different macro name if you prefer.  The arrow names used at \sep{"cm2"} were
+"lefthalfarrow" and "paralleloppositelefthalfarrows".
 
 \newpage
 \subsection{Line caps and line joins}\label{sec:linecaps}
@@ -6139,9 +6181,8 @@ faults, except that \mpl{linecap := rounded} will give you lines with pointed en
 and that the squared off ends of the lines with the other settings may not be
 exactly orthogonal to the direction of the path at each end.   
 
-
-\newpage
-\subsection{Borders and other decorations}
+% \newpage
+% \subsection{Borders and other decorations}
 
 \newpage
 \section{Plotting functions}\label{func}
