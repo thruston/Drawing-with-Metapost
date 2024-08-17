@@ -1,10 +1,12 @@
 \documentclass[border=5mm]{standalone}
 \usepackage{luamplib}
 \begin{document}
-\mplibtextextlabel{enable}
-\mplibsetformat{metafun}
 \begin{mplibcode}
 input colorbrewer-rgb
+def withalpha expr a = 
+    withprescript "tr_alternative=2"
+    withprescript "tr_transparency=" & decimal a
+enddef;
 beginfig(1);
     numeric r; r = 5;
     path d; d = for i=1 upto 12:
@@ -20,7 +22,7 @@ beginfig(1);
     shade3 = Reds 8 3;
     
     vardef unit(expr n) = image(
-        fill d withcolor transparent (2, .9, shade[n mod 4]);
+        fill d withalpha 0.9 withcolor shade[n mod 4];
         draw d; 
     ) enddef;
     pair u, v;

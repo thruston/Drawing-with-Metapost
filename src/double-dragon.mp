@@ -16,9 +16,12 @@ vardef fizz(expr X) =
     x = X;
     forever:
         exitif x = 0;
-        m := m zscaled zinverse((-1, 1));
-        a := x mod 2;
-        n := n + a * m;
+        m := m zscaled (-1/2, -1/2); % zinverse((-1, 1));
+        % a := x mod 2;
+        % n := n + a * m;
+        if odd x:
+            n := n + m;
+        fi
         x := x div 2;
     endfor
     n
@@ -28,14 +31,17 @@ color shade[];
 shade0 = Reds 5 4; shade1 = Oranges 5 4;
 shade2 = Greens 5 4; shade3 = Blues 5 4;
 
-beginfig(1);
+beginfig(1);  
     numeric s, t; s = 256; t = 4;
     for n=0 upto (s/t*s/t-1):
-        numeric h, v;
-        h = floor 1/8 (n mod 32);
-        v = n mod 4;
-        fill fullcircle scaled t shifted (fizz(n) scaled s)
-            withcolor (1/2 + 1/8 v)[white, shade[h]];
+        % numeric h, v;
+        % h = floor 1/8 (n mod 32);
+        % v = n mod 4;
+        % fill fullcircle scaled t shifted (fizz(n) scaled s)
+        %     withcolor (1/2 + 1/8 v)[white, shade[h]];
+        draw fizz(n) scaled s
+            withpen pencircle scaled t
+            withcolor Blues[9][2 + n mod 8];
     endfor;
     path xx, yy;
     xx = (left--right) scaled (s+8);

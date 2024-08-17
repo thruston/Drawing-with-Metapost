@@ -33,6 +33,7 @@ endfor
 clip currentpicture to fullcircle scaled 180;
 draw fullcircle scaled 180;
 );
+undraw (left--right) scaled 2in;
 draw P1; draw P2 shifted 200 down;
 
 endfig;

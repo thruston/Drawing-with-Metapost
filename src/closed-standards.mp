@@ -5,8 +5,8 @@
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
-path unitse; unitse = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down,.8);
-path xx, yy; xx = (left -- right) scaled 144; yy = (down -- up) scaled 89;
+path unitse; unitse = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down, 13/16);  
+path xx, yy; xx = 72 left -- 144 right; yy = 42 down -- 89 up;
 path u, c, s;
 u = unitsquare scaled 72;
 c = fullcircle scaled 72;

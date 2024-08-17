@@ -32,13 +32,13 @@ beginfig(1);
     drawarrow point 3/2 of bbox EPS -- point 7/2 of bbox pdf;
     label.top("\texttt{epstopdf}", 1/2[center EPS, center pdf]);
 
-    drawarrow center EPS -- center u
-        cutbefore bbox EPS cutafter bbox u
-        dashed withdots scaled 1/2;
+    % drawarrow center EPS -- center u
+    %     cutbefore bbox EPS cutafter bbox u
+    %     dashed withdots scaled 1/2;
 
-    draw center EPS -- center p 
-        cutbefore bbox EPS cutafter bbox p
-        dashed withdots scaled 1/2;
+    % draw center EPS -- center p 
+    %     cutbefore bbox EPS cutafter bbox p
+    %     dashed withdots scaled 1/2;
 
 endfig;
 \end{mplibcode}

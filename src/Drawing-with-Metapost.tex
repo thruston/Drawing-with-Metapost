@@ -23,7 +23,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – July 2024}
+\date{March 2017 – September 2024}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -182,7 +182,7 @@ simple, and since the basic tutorials can go out of date, here are descriptions 
 my own workflows that you might find helpful.  You might also think I'm being really
 inefficient; if so please drop me a line and suggest an improvement.
 
-The common features of each of these workflows are: mac os, the MacVim editor to
+The common features of each of these workflows are: Mac~OS, the MacVim editor to
 edit \MP\ source code, and
 Skim.app to view PostScript and PDF files.  I have the complete MacTeX distribution
 installed; any commands mentioned below are supplied by MacTeX.
@@ -208,24 +208,24 @@ line means that the output will be written to files with an extension that match
 the chosen output format, which will be "png", "svg", or more usually "eps", which
 is the default (and suggests that the output is Encapsulated PostScript).
 
+\smallskip
+
 I then add drawing and label commands, using all the traditional facilities for
 typesetting labels described in section \ref{sec:trad-labels}.  I compile the source
 with "mpost". I usually do this from within MacVim using the command line ":!mpost %"
 where "!" means “this is an external command” and the "%" picks up the current file
 name.  Usually I need several attempts to get a diagram right, so I open Skim to preview the
-output with ":!open -a Skim %:r1.eps".  I have Skim set up so that when I recompile
-the source, it automatically updates the view of the PostScript output.
+output. 
 \vadjust{\moveright5.4in\vbox to 0pt{\vss\hsize 4in\noindent
 $$\includegraphics[width=4in]{workflow-plain.pdf}$$
-If I want to use the diagram in a \LaTeX\ document I can include the EPS file
-directly with
-\begin{texcode}
-    \includegraphics{some-diagram1.eps}
-\end{texcode}
-but usually I prefer to convert the EPS to PDF using "epstopdf" rather than rely on
-the automatic conversion.  This is mainly because the PDFs are generally more useful
-files to have about (I can include them in presentations etc).  Sometimes I do this
-manually but usually I use a small Python script to automate this process: run
+Until recent (2024) versions of Mac~OS, it was possible to get Skim to view the
+PostScript output directly, with automatic updates on recompile,
+but the conversion from PostScript no longer works properly, so 
+I now prefer to convert the EPS to PDF using "epstopdf". This 
+slightly complicates the edit, compile, and preview loop.  On the other hand
+the PDFs are generally more useful files to create, so it is worth the extra effort.  
+
+I use a small Python script to automate the process: run
 "mpost" with the "-recorder" option; scan the list of files to see what got
 produced; check which ones are PostScript; call "esptopdf" to make each one into a
 PDF file; remove each EPS file if successful.  Your mileage may vary.\par
@@ -334,7 +334,7 @@ point.
 \subsection{Predefined closed paths}
 
 There are several closed paths defined for you in plain \MP.
-\mpic{0pt}{closed-standards}
+\mpic{-36pt}{closed-standards}
 \begin{itemize}
     \item "unitsquare" is defined as the path
         \mpl{(0,0)--(1,0)--(1,1)--(0,1)--cycle}.  It runs counter-clockwise from the
@@ -355,19 +355,21 @@ There are several closed paths defined for you in plain \MP.
         like this:
 \begin{code}
 path s; 
-s = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down, .8);
+s = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down, 13/16);
 \end{code}
-        to create a ‘unit’ shape that matches \mpl{fullcircle} as shown on the right.  
-        The fifth parameter is the ‘superness’: the value
-        1 makes it look almost square, 0.8 is about right, 0.5 gives you a diamond,
-        and values outside the range $(0.5,1)$ give you rather weird propeller
+        to create a ‘unit’ shape that matches \mpl{fullcircle} as shown above.
+        The fifth parameter is the ‘superness’: the value \mpic{-132pt}{closed-superellipses}
+        1 makes it look almost square; $\frac12$ gives you a diamond; a value somewhere
+        between $\frac34$ and $\frac78$ looks about right.\quad$\longrightarrow$\\
+        Values outside the range $(0.5,1)$ give you rather weird propeller
         shapes.
 
-        Note that, unaccountably, $\id{superellipse}()$ is defined
-in \texttt{plain.mp} with a \kw{def} rather than a \kw{vardef}. 
-This means you need to enclose it in a group before you can
-transform it in any way. One way to do this is to use parentheses; or you 
-can assign it to a \<path> variable, as shown above.
+\noindent
+\hey Note that, unaccountably, $\id{superellipse}()$ is defined in
+        \texttt{plain.mp} with a \kw{def} rather than a \kw{vardef}.  This means you
+        need to enclose it in a group before you can transform it in any way. One
+        way to do this is to use parentheses; or you can assign it to a \<path>
+        variable, as shown above.
 
 \end{itemize}
 
@@ -8119,316 +8121,6 @@ enddef;
 \end{smallcode}
 
 \newpage
-\section{Tilings and tessellations}
-
-\textsc{In mathematical terms}, a “tiling” is a countable set of tiles 
-that cover the plane without gaps or overlaps.\footnote{Adapted from \textsl{Tilings
-and Patterns}, Branko Grünbaum \& G.\@ C.\@ Shephard, Freeman, 1987}
-This section loosely follows that idea, and presents some ideas and general
-techniques for creating tilings and other patterns or textures.
-
-You can make an effective grid by drawing repeated lines and then clipping to the
-size you want:\mpic{-42pt}{tiling-simple}
-\begin{code}
-for i = -10 upto 10:
-    draw (left--right) scaled 200 shifted (0, 20i);
-    draw (down--up) scaled 200 shifted (20i, 0);
-endfor
-clip currentpicture to fullcircle scaled 200;
-\end{code}
-but this is a bit limited.  If you want to produce more interesting tilings, you
-need to define a unit shape or picture, and a pair of vectors to repeat it.
-\begin{code}
-path unit; pair u, v; color a, b; 
-unit = unitsquare scaled 24;
-u = point 1 of unit - point 0 of unit;
-v = point 3 of unit - point 0 of unit;
-a = 3/4[red, white]; b = 3/4[blue, white];
-for i=-5 upto 5:
-  for j=-5 upto 5:
-    fill unit shifted (i*u + j*v) 
-      withcolor if odd (i+j): a else: b fi;
-    draw unit shifted (i*u + j*v);
-  endfor
-endfor
-clip currentpicture to fullcircle scaled 200;
-\end{code}
-In tilings with more complex shapes you may find that using \mpl{fill} and
-\mpl{draw} in the same loop causes uneven lines because the fill overlaps part of
-the line.  In these cases it is a good idea to duplicate the loops; use the first
-set for filling, the second for drawing.  
-
-\newpage
-\subsection{Tiling with regular polygons}\label{sec:regtiling}
-
-\textsc{After tiling with squares}, the two simplest tilings are with triangles and
-hexagons\mwpic{-24pt}{tiling-hex-trig}
-(using the regular polygons from §\ref{polygons}). The basic loop is the same as the
-previous page except
-that the vectors $u$ and $v$ are now at 60° to each other (as shown in blue and
-red in the examples to the right). All of these examples where drawn with the same 
-basic loop as before:
-\begin{code}
-for i = -n upto n:
-  for j = -n upto n:
-    draw P shifted (i * u + j * v);
-  endfor
-endfor;
-\end{code}
-In the first row, $P$ was set to a simple polygon path:
-\begin{code}
-triangle = for i=0 upto 2: (0, 16) rotated 120i -- endfor cycle;
-hexagon  = for i=0 upto 5: (0, 16) rotated  60i -- endfor cycle;
-\end{code}
-The vectors $u$ (in red) and $v$ (in blue) were defined as (for both tilings):
-\begin{code}
-u = point 0 of triangle - point 1 of triangle;
-v = u rotated -60;
-\end{code}
-To make the coloured versions, $P$ was defined as an appropriate \<picture>. 
-For the triangular tiling, it looked like this: $\vcenter{
-\begin{mplibcode}
-input colorbrewer-rgb
-path t, tt; 
-t = for i=0 upto 2: (0,8) rotated 120i --endfor cycle;
-tt = t reflectedabout(point 2 of t, point 0 of t);
-fill t withcolor Reds 8 2; fill tt withcolor Blues 8 2; draw t; draw tt; 
-\end{mplibcode}}$ so that the tiling actually filled the plane. In the hexagonal
-tiling there are no gaps to fill, but in order to get a non-adjacent colouring, the
-unit picture was defined as three shifted copies of the hexagon each filled with a
-different color. The unit vectors were therefore scaled by $\sqrt3$ and rotated by
-30° (as shown).
-
-The bottom row the unit pictures were replaced with drawings that connect the centre
-of each shape to the midpoint of each side (in red), like this:
-$$
-\begin{mplibcode}
-path p[]; input colorbrewer-rgb
-p3 = for i=0 upto 2: (0, 14) rotated 120i -- endfor cycle;
-p6 = for i=0 upto 5: (0, 14) rotated  60i -- endfor cycle;
-picture P[];
-for i=3,6: 
-    P[i] = image(
-        for j=1 upto length p[i]:
-            draw origin -- point j+1/2 of p[i] withcolor Reds 7 6; 
-        endfor 
-        draw p[i]); 
-endfor
-    draw P3; draw P3 reflectedabout(point 0 of p3, point 2 of p3);
-    draw P6 shifted (60, 3); 
-\end{mplibcode}
-$$
-This has the effect of
-connecting the centres of adjacent shapes in the tiling, which reveals that each
-tiling is the dual of the other. 
-
-\newpage
-\subsection{Separating filling and drawing}
-
-\textsc{Repeating a unit image} can sometimes cause unwanted overlaps, so as noted
-above, the solution is to make a filler unit and a drawing unit and do the filling
-first and the drawing second.  In this example\mwpic{-32pt}{arch-4-8-8} the drawing
-unit (the octagon) is simple so you can just draw that path instead of making another
-\<picture> for it.
-\begin{smallcode}
-input colorbrewer-rgb
-path o, r[];  % o is the octagon, r[] are the "corners"
-o = (for i=0 upto 7: 21 dir 45i -- endfor cycle) rotated -90/4;
-pair t; t = whatever[point 0 of o, point 1 of o]
-          = whatever[point 2 of o, point 3 of o];
-r1 = subpath (1,2) of o -- t -- cycle;
-r2 = r1 rotated 90;
-r3 = r2 rotated 90;
-r4 = r3 rotated 90;
-picture filler; filler = image(
-    filldraw r1 withcolor Reds 8 3;
-    filldraw r3 withcolor Reds 8 3;
-    filldraw r2 withcolor Blues 8 3;
-    filldraw r4 withcolor Blues 8 3;
-    filldraw o withcolor Purples 8 2;
-);
-pair u, v;
-u = point 0 of o - point 5 of o; v = u rotated 90;
-beginfig(1);
-numeric n;  n = 5;
-for i=-n upto n:
-    for j=-n upto n:
-        draw filler rotated ((i+j) mod 2 * 90) shifted (i*u + j * v);
-    endfor
-endfor
-for i=-n upto n:
-    for j=-n upto n:
-        draw o shifted (i*u + j * v);
-    endfor
-endfor
-\end{smallcode}
-Rotating every other \mpl{filler} allows you to get the alternate colours in the squares.
-\mpic{-60pt}{arch-4-8-8-parts}%
-Using \mpl{filldraw} ensures that there are no gaps between adjacent segments.
-
-\newpage
-\subsection{Tilings with more complex patterns}
-
-\textsc{The next example} also uses the square lattice,\mwpic{0pt}{arch-3-4-3-4}
-but the unit is more complicated, so the drawing needs two \<picture>
-variables, one for the colour fill and a second for the grid.  
-\begin{smallcode}
-input colorbrewer-rgb
-path s[], t[];
-s1 = unitsquare scaled 21 rotated 15; 
-s2 = s1 rotated 150;
-t1 = subpath (4, 3) of s1 -- point 1 of s2 -- cycle;
-t2 = t1 reflectedabout(point 1 of t1, point 2 of t1);
-t3 = t1 rotated 150;
-t4 = t1 rotated 210;
-picture color_unit, grid_unit;
-color_unit = image(
-    fill s1 withcolor Oranges 8 1;
-    fill s2 withcolor Oranges 8 2;
-    fill t1 withcolor Blues 8 1;
-    fill t2 withcolor Blues 8 2;
-    fill t3 withcolor Blues 8 3;
-    fill t4 withcolor Blues 8 4;
-);
-grid_unit = image(
-    draw s1; draw s2; 
-    draw t2; draw t3; draw t4;
-);
-pair u, v;
-u = point 1 of s1 - point 1 of s2;
-v = u rotated 90;
-numeric n; n = 4;
-forsuffixes $=color_unit, grid_unit:
-    for i=-n upto n:
-        for j=-n upto n:
-            draw $ shifted (i * u + j * v);
-        endfor
-    endfor
-endfor
-\end{smallcode}
-
-
-
-\newpage
-\subsection{Showing the dual tiling}
-
-\textsc{These tilings can be classified} by the configuration of the polygons that meet
-at each vertex.  This one is $(3^4, 6)$ because each vertex has four triangles and one
-hexagon. It exists in two enantiomorph forms.\mxpic{-80pt}{3.6in}{arch-snub-hexagon}
-The unit pictures look like this:
-\par\bigskip
-\vbox{\halign{#&\qquad\qquad\vbox to 48pt{\hsize=2.7in\noindent #\par\vss}\cr
-\includegraphics[scale=0.75]{arch-snub-hexagon-unit}
-&\hey\itshape To reveal the dual of the tiling, you can draw a line from 
-the median (or centroid if you prefer) of each polygon to the centre of each
-edge.\cr}}
-
-\bigskip
-\noindent They are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
-triangles surrounding it, and $t_7$ \& $t_8$ are the two “connecting” triangles,
-which swap sides to make the enantiomorphs.
-\begin{code}
-unit[k] = image(
-  for i=1 upto 6:
-    fill t[i] withcolor Blues 8 if odd i: 2 else: 3 fi;
-  endfor
-  for i=7 upto 8:
-    fill t[i] withcolor Oranges 8 if odd i: 3 else: 2 fi;
-  endfor
-  fill h withcolor Oranges 8 2;
-  forsuffixes S=h, t1, t2, t3, t4, t5, t6, t7, t8:
-    draw S withpen pencircle scaled 1/4 withcolor 3/4;
-    pair m; m = median(S);
-    for i=1 upto length S:
-      draw m -- point i - 1/2 of S withcolor 3/4;
-    endfor
-  endfor);
-\end{code}
-The $\id{median}()$ routine is from §\ref{polygons-given-side} and the colours are from 
-§\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
-from §\ref{sec:regtiling}.
-
-\newpage
-\subsection{Tiling with a dynamic unit}
-
-\textsc{In order to reveal} patterns in a tiling, you might want to vary the colours
-or line styles used in each repeated drawing unit.  In this case, you can write a
-macro that takes a parameter and returns a picture to draw.\mwpic{-36pt}{arch-3-4-6-4}
-
-\begin{smallcode}
-\mplibsetformat{metafun}  % <-- for the "transparent" macro
-\begin{mplibcode}
-input colorbrewer-rgb
-numeric r; r = 5;
-path d; d = for i=1 upto 12:
-    (0, r) shifted (r * (sqrt(3)+2), 0) rotated 30i -- 
-endfor cycle;
-color shade[]; 
-shade0 = Oranges 8 3;  shade2 = Greens 8 3;
-shade1 = Blues 8 3;    shade3 = Reds 8 3;
-vardef unit(expr n) = image(
-    fill d withcolor transparent (2, .9, shade[n mod 4]);
-    draw d; 
-) enddef;
-pair u, v;
-u = point 0 of d - point 3 of d;
-v = u rotated 60;
-numeric n; n = 6;
-for i=-n upto n:
-    for j=-n upto n:
-        draw unit(i*j) shifted ((i - floor(j / 2)) * u + j * v);
-    endfor
-endfor
-clip currentpicture to unitsquare shifted -(1/2, 1/2) scaled (n * 9 r);
-\end{mplibcode}
-\end{smallcode}
-Instead of defining six triangles, six squares, and a hexagon, you can just define
-the dodecagon and overlap each one.  Using a macro to create the unit, allows you to
-choose a different colour for each filler. Using the \mpl{transparent} macro from
-Metafun automatically mixes the colours for the overlaps.  But the edges don't look
-so good, so you need to clip the whole picture to a neat square.
-
-\newpage
-\subsection{Colouring with a set number of colours}
-
-\textsc{This “attractive and ingenious” pattern of squares} is given in Grünbaum \&
-Shephard, chapter 8, and is shown here coloured with three colours so that no two
-squares with the same colour touch each other.\mpic{-12pt}{tiling-pp48a}
-
-\begin{code}
-input colorbrewer-rgb
-beginfig(1);
-numeric r, s; s = 9; r = 2s * (sind(75)-sind(45));
-path a; a = unitsquare rotated -45 scaled s shifted (r, 0);
-picture unit; unit = image(
-    for t=0 upto 5:
-        fill a rotated 60t withcolor Spectral[6][t mod 3 + 3];
-        draw a rotated 60t;
-    endfor
-);
-pair u, v;
-u = (2s * sind(75), 0); u := u + u rotated 60; u := u rotated 60;
-v = u rotated 60;
-numeric n; n = 5;
-for i = -n upto n:
-    for j = -n upto n:
-        draw unit shifted (i*u + j*v - floor(j/2)*u);
-    endfor
-endfor
-endfig
-\end{code}
-The points of interest here are
-\begin{itemize}
-    \item The use of the \mpl{sind} function to position the square in the unit so
-        that it makes the six-pointed star when rotated.
-    \item The expression “\mpl{t mod 3 + 3}” which cycles through 3, 4, and 5 for
-        different values of $t$.
-\end{itemize}
-Many different colourings are possible but you might need to make a more complex
-unit drawing for some of them.
-
-
-\newpage
 \section{Recursion and iteration}
 
 \vpic{10pt}{rec-bush}
@@ -8436,13 +8128,11 @@ unit drawing for some of them.
 \noindent
 \textsc{This chapter is not a tutorial} on recursion or iteration \textit{per se}, but rather
 more of an exploration of the \MP\ techniques you can use to create some particular types
-of drawing such as trees, plane-filling curves, non-periodic tilings, and fractals.
+of drawing such as trees, plane-filling curves, fractals, and some types of tiling pattern [§\ref{aperiodic}].
 
 \medskip\noindent
-Even so, 
-it is perhaps useful to review some of the basic programming ideas
-involved.
-Consider for example the greatest common divisor algorithm presented in
+Even so, it is perhaps useful to review some of the basic programming ideas
+involved.  Consider for example the greatest common divisor algorithm presented in
 §\ref{sec:gcd}.
 \begin{smallcode}
 vardef gcd(expr a, b) = if b = 0: a else: gcd(b, a mod b) fi enddef;
@@ -8519,7 +8209,7 @@ detail.
 \subsection{Sierpinski's gaskets}
 
 \textsc{The second example} of recursive construction also dates from the early 20th
-century, but unlike von Koch's infinite curve, the area of Sierpinski's gasket tends
+century, but unlike the infinite length of von Koch's curve, the area of Sierpinski's gasket tends
 to zero.\mwpic{-12pt}{rec-sierpinski-triangle} In the original specification, you
 are supposed to remove the central quarter of each triangle, but this program does
 it the other way round and delays drawing the triangles until they are small enough.
@@ -8818,6 +8508,358 @@ beginfig(1); bush(origin, dir 80, 6, 8); endfig;
 \end{smallcode}
 
 \newpage
+\section{Periodic tilings}
+
+\textsc{In mathematical terms}, a “tiling” is a countable set of tiles 
+that cover the plane without gaps or overlaps.\footnote{Adapted from \textsl{Tilings
+and Patterns}, Branko Grünbaum \& G.\@ C.\@ Shephard, Freeman, 1987}
+A \textit{periodic} tiling is one that consists of a unit shape or pattern that is
+repeated by translation in two dimensions.\vadjust{\moveright5.5in\vbox to
+0pt{\hsize4in\vskip -60pt
+\centerline{For notes on drawing \textit{aperiodic} tilings, see below in §\ref{aperiodic}}\vss}}
+This section loosely follows that idea, and presents some ideas and general
+techniques for creating tilings and other patterns or textures. ——
+You can make an effective grid by drawing repeated lines and then clipping to the
+size you want:\mpic{-42pt}{tiling-simple}
+\begin{code}
+for i = -10 upto 10:
+    draw (left--right) scaled 200 shifted (0, 20i);
+    draw (down--up) scaled 200 shifted (20i, 0);
+endfor
+clip currentpicture to fullcircle scaled 200;
+\end{code}
+but this is a bit limited.  If you want to produce more interesting periodic 
+tilings, you need to define a unit shape or picture, and a pair of vectors to repeat it.
+\begin{code}
+path unit; pair u, v; color a, b; 
+unit = unitsquare scaled 24;
+u = point 1 of unit - point 0 of unit;
+v = point 3 of unit - point 0 of unit;
+a = 3/4[red, white]; b = 3/4[blue, white];
+for i=-5 upto 5:
+  for j=-5 upto 5:
+    fill unit shifted (i*u + j*v) 
+      withcolor if odd (i+j): a else: b fi;
+    draw unit shifted (i*u + j*v);
+  endfor
+endfor
+clip currentpicture to fullcircle scaled 200;
+\end{code}
+In tilings with more complex shapes you may find that using \mpl{fill} and
+\mpl{draw} in the same loop causes uneven lines because the fill overlaps part of
+the line.  In these cases it is a good idea to duplicate the loops; use the first
+set for filling, the second for drawing.  
+
+\newpage
+\subsection{Tiling with regular polygons}\label{sec:regtiling}
+
+\textsc{After tiling with squares}, the two simplest tilings are with triangles and
+hexagons\mwpic{-24pt}{tiling-hex-trig}
+(using the regular polygons from §\ref{polygons}). The basic loop is the same as the
+previous page except
+that the vectors $u$ and $v$ are now at 60° to each other (as shown in blue and
+red in the examples to the right). All of these examples where drawn with the same 
+basic loop as before:
+\begin{code}
+for i = -n upto n:
+  for j = -n upto n:
+    draw P shifted (i * u + j * v);
+  endfor
+endfor;
+\end{code}
+In the first row, $P$ was set to a simple polygon path:
+\begin{code}
+triangle = for i=0 upto 2: (0, 16) rotated 120i -- endfor cycle;
+hexagon  = for i=0 upto 5: (0, 16) rotated  60i -- endfor cycle;
+\end{code}
+The vectors $u$ (in red) and $v$ (in blue) were defined as (for both tilings):
+\begin{code}
+u = point 0 of triangle - point 1 of triangle;
+v = u rotated -60;
+\end{code}
+To make the coloured versions, $P$ was defined as an appropriate \<picture>. 
+For the triangular tiling, it looked like this: $\vcenter{
+\begin{mplibcode}
+input colorbrewer-rgb
+path t, tt; 
+t = for i=0 upto 2: (0,8) rotated 120i --endfor cycle;
+tt = t reflectedabout(point 2 of t, point 0 of t);
+fill t withcolor Reds 8 2; fill tt withcolor Blues 8 2; draw t; draw tt; 
+\end{mplibcode}}$ so that the tiling actually filled the plane. In the hexagonal
+tiling there are no gaps to fill, but in order to get a non-adjacent colouring, the
+unit picture was defined as three shifted copies of the hexagon each filled with a
+different color. The unit vectors were therefore scaled by $\sqrt3$ and rotated by
+30° (as shown).
+
+The bottom row the unit pictures were replaced with drawings that connect the centre
+of each shape to the midpoint of each side (in red), like this:
+$$
+\begin{mplibcode}
+path p[]; input colorbrewer-rgb
+p3 = for i=0 upto 2: (0, 14) rotated 120i -- endfor cycle;
+p6 = for i=0 upto 5: (0, 14) rotated  60i -- endfor cycle;
+picture P[];
+for i=3,6: 
+    P[i] = image(
+        for j=1 upto length p[i]:
+            draw origin -- point j+1/2 of p[i] withcolor Reds 7 6; 
+        endfor 
+        draw p[i]); 
+endfor
+    draw P3; draw P3 reflectedabout(point 0 of p3, point 2 of p3);
+    draw P6 shifted (60, 3); 
+\end{mplibcode}
+$$
+This has the effect of
+connecting the centres of adjacent shapes in the tiling, which reveals that each
+tiling is the dual of the other. 
+
+\newpage
+\subsection{Separating filling and drawing}
+
+\textsc{Repeating a unit image} can sometimes cause unwanted overlaps, so as noted
+above, the solution is to make a filler unit and a drawing unit and do the filling
+first and the drawing second.  In this example\mwpic{-32pt}{arch-4-8-8} the drawing
+unit (the octagon) is simple so you can just draw that path instead of making another
+\<picture> for it.
+\begin{smallcode}
+input colorbrewer-rgb
+path o, r[];  % o is the octagon, r[] are the "corners"
+o = (for i=0 upto 7: 21 dir 45i -- endfor cycle) rotated -90/4;
+pair t; t = whatever[point 0 of o, point 1 of o]
+          = whatever[point 2 of o, point 3 of o];
+r1 = subpath (1,2) of o -- t -- cycle;
+r2 = r1 rotated 90;
+r3 = r2 rotated 90;
+r4 = r3 rotated 90;
+picture filler; filler = image(
+    filldraw r1 withcolor Reds 8 3;
+    filldraw r3 withcolor Reds 8 3;
+    filldraw r2 withcolor Blues 8 3;
+    filldraw r4 withcolor Blues 8 3;
+    filldraw o withcolor Purples 8 2;
+);
+pair u, v;
+u = point 0 of o - point 5 of o; v = u rotated 90;
+beginfig(1);
+numeric n;  n = 5;
+for i=-n upto n:
+    for j=-n upto n:
+        draw filler rotated ((i+j) mod 2 * 90) shifted (i*u + j * v);
+    endfor
+endfor
+for i=-n upto n:
+    for j=-n upto n:
+        draw o shifted (i*u + j * v);
+    endfor
+endfor
+\end{smallcode}
+Rotating every other \mpl{filler} allows you to get the alternate colours in the squares.
+\mpic{-60pt}{arch-4-8-8-parts}%
+Using \mpl{filldraw} ensures that there are no gaps between adjacent segments.
+
+\newpage
+\subsection{Tilings with more complex patterns}
+
+\textsc{The next example} also uses the square lattice,\mwpic{0pt}{arch-3-4-3-4}
+but the unit is more complicated, so the drawing needs two \<picture>
+variables, one for the colour fill and a second for the grid.  
+\begin{smallcode}
+input colorbrewer-rgb
+path s[], t[];
+s1 = unitsquare scaled 21 rotated 15; 
+s2 = s1 rotated 150;
+t1 = subpath (4, 3) of s1 -- point 1 of s2 -- cycle;
+t2 = t1 reflectedabout(point 1 of t1, point 2 of t1);
+t3 = t1 rotated 150;
+t4 = t1 rotated 210;
+picture color_unit, grid_unit;
+color_unit = image(
+    fill s1 withcolor Oranges 8 1;
+    fill s2 withcolor Oranges 8 2;
+    fill t1 withcolor Blues 8 1;
+    fill t2 withcolor Blues 8 2;
+    fill t3 withcolor Blues 8 3;
+    fill t4 withcolor Blues 8 4;
+);
+grid_unit = image(
+    draw s1; draw s2; 
+    draw t2; draw t3; draw t4;
+);
+pair u, v;
+u = point 1 of s1 - point 1 of s2;
+v = u rotated 90;
+numeric n; n = 4;
+forsuffixes $=color_unit, grid_unit:
+    for i=-n upto n:
+        for j=-n upto n:
+            draw $ shifted (i * u + j * v);
+        endfor
+    endfor
+endfor
+\end{smallcode}
+
+
+
+\newpage
+\subsection{Showing the dual tiling}
+
+\textsc{These tilings can be classified} by the configuration of the polygons that meet
+at each vertex.  This one is $(3^4, 6)$ because each vertex has four triangles and one
+hexagon. It exists in two enantiomorph forms.\mxpic{-80pt}{3.6in}{arch-snub-hexagon}
+The unit pictures look like this:
+\par\bigskip
+\vbox{\halign{#&\qquad\qquad\vbox to 48pt{\hsize=2.7in\noindent #\par\vss}\cr
+\includegraphics[scale=0.75]{arch-snub-hexagon-unit}
+&\hey\itshape To reveal the dual of the tiling, you can draw a line from 
+the median (or centroid if you prefer) of each polygon to the centre of each
+edge.\cr}}
+
+\bigskip
+\noindent They are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
+triangles surrounding it, and $t_7$ \& $t_8$ are the two “connecting” triangles,
+which swap sides to make the enantiomorphs.
+\begin{code}
+unit[k] = image(
+  for i=1 upto 6:
+    fill t[i] withcolor Blues 8 if odd i: 2 else: 3 fi;
+  endfor
+  for i=7 upto 8:
+    fill t[i] withcolor Oranges 8 if odd i: 3 else: 2 fi;
+  endfor
+  fill h withcolor Oranges 8 2;
+  forsuffixes S=h, t1, t2, t3, t4, t5, t6, t7, t8:
+    draw S withpen pencircle scaled 1/4 withcolor 3/4;
+    pair m; m = median(S);
+    for i=1 upto length S:
+      draw m -- point i - 1/2 of S withcolor 3/4;
+    endfor
+  endfor);
+\end{code}
+The $\id{median}()$ routine is from §\ref{polygons-given-side} and the colours are from 
+§\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
+from §\ref{sec:regtiling}.
+
+\newpage
+\subsection{Tiling with a dynamic unit}
+
+\textsc{In order to reveal} patterns in a tiling, you might want to vary the colours
+or line styles used in each repeated drawing unit.  In this case, you can write a
+macro that takes a parameter and returns a picture to draw.\mwpic{-36pt}{arch-3-4-6-4}
+
+\begin{smallcode}
+def withalpha expr a =  % <-- this requires luamplib
+    withprescript "tr_alternative=2"
+    withprescript "tr_transparency=" & decimal a
+enddef;
+input colorbrewer-rgb
+numeric r; r = 5;
+path d; d = for i=1 upto 12:
+    (0, r) shifted (r * (sqrt(3)+2), 0) rotated 30i -- 
+endfor cycle;
+color shade[]; 
+shade0 = Oranges 8 3;  shade2 = Greens 8 3;
+shade1 = Blues 8 3;    shade3 = Reds 8 3;
+vardef unit(expr n) = image(
+    fill d withalpha 0.9 withcolor shade[n mod 4];
+    draw d; 
+) enddef;
+pair u, v;
+u = point 0 of d - point 3 of d;
+v = u rotated 60;
+numeric n; n = 6;
+for i=-n upto n:
+    for j=-n upto n:
+        draw unit(i*j) shifted ((i - floor(j / 2)) * u + j * v);
+    endfor
+endfor
+clip currentpicture to unitsquare shifted -(1/2, 1/2) scaled (n * 9 r);
+\end{smallcode}
+Instead of defining six triangles, six squares, and a hexagon, you can just define
+the dodecagon and overlap each one.  Using a macro to create the unit, allows you to
+choose a different colour for each filler. Using the transparency support from
+"luamplib" automatically mixes the colours for the overlaps.  But the edges don't look
+so good, so you need to clip the whole picture to a neat square.
+
+\newpage
+\subsection{Colouring with a set number of colours}
+
+\textsc{This “attractive and ingenious” pattern of squares} is given in Grünbaum \&
+Shephard, chapter 8, and is shown here coloured with three colours so that no two
+squares with the same colour touch each other.\mpic{-12pt}{tiling-pp48a}
+
+\begin{code}
+input colorbrewer-rgb
+beginfig(1);
+numeric r, s; s = 9; r = 2s * (sind(75)-sind(45));
+path a; a = unitsquare rotated -45 scaled s shifted (r, 0);
+picture unit; unit = image(
+    for t=0 upto 5:
+        fill a rotated 60t withcolor Spectral[6][t mod 3 + 3];
+        draw a rotated 60t;
+    endfor
+);
+pair u, v;
+u = (2s * sind(75), 0); u := u + u rotated 60; u := u rotated 60;
+v = u rotated 60;
+numeric n; n = 5;
+for i = -n upto n:
+    for j = -n upto n:
+        draw unit shifted (i*u + j*v - floor(j/2)*u);
+    endfor
+endfor
+endfig
+\end{code}
+The points of interest here are
+\begin{itemize}
+    \item The use of the \mpl{sind} function to position the square in the unit so
+        that it makes the six-pointed star when rotated.
+    \item The expression “\mpl{t mod 3 + 3}” which cycles through 3, 4, and 5 for
+        different values of $t$.
+\end{itemize}
+Many different colourings are possible but you might need to make a more complex
+unit drawing for some of them.
+
+
+\newpage
+\section{Aperiodic tiling}\label{aperiodic}
+
+\newpage
+\subsection{Pinwheel tiling}
+
+\textsc{Another non-periodic tiling} is the so-called pinwheel tiling, devised in 1994
+by Charles Radin, based on
+this dissection by John Conway.\mpic{-22pt}{pinwheel}
+$$\includegraphics{conway.pdf}$$
+Starting with a triangle of this shape, the tiling recursively divides into
+five smaller copies of itself.  The colouring is passed down each level but only used
+on the lowest.
+\begin{smallcode}
+input colorbrewer-rgb
+vardef pinwheel(expr level, a, b, c, s) = 
+  if level = 0:
+    fill a--b--c--cycle withcolor s;
+    draw a--b--c--cycle withpen pencircle scaled 1/8 withcolor white;
+  else:
+    save d, e, f, g; pair d, e, f, g; 
+    d = 2/5[b, c]; e = 4/5[b,c]; f = 1/2[e, a]; g = 1/2[a, b];
+    pinwheel(level - 1, e, a, c, Blues 9 4);
+    pinwheel(level - 1, f, g, a, Blues 9 3);
+    pinwheel(level - 1, f, g, e, Blues 9 2);
+    pinwheel(level - 1, d, e, g, Blues 9 5);
+    pinwheel(level - 1, d, b, g, Blues 9 6);
+  fi
+enddef;
+beginfig(1);
+  pinwheel(5, origin, 200 right, 100 up, "");
+  pinwheel(5, (200,100), 100 up, 200 right, "");
+endfig;
+\end{smallcode}
+Notice that to make the dissection work, it is important to pass the three 
+\<pair> arguments in the right order.
+
+
+\newpage
 \subsection{Penrose tilings}
 
 \textsc{Recursion is useful} for generating non-periodic tilings,%
@@ -8882,40 +8924,6 @@ half. No other shapes are produced, so the recursive process can be repeated
 indefinitely. At the desired lowest level the triangles are patched back into
 rhombus shapes simply by \textit{not} drawing the edges shown with dots.\par\vss}
 
-\newpage
-\subsection{Pinwheel tiling}
-
-\textsc{Another non-periodic tiling} is the so-called pinwheel tiling, devised in 1994
-by Charles Radin, based on
-this dissection by John Conway.\mpic{-22pt}{pinwheel}
-$$\includegraphics{conway.pdf}$$
-Starting with a triangle of this shape, the tiling recursively divides into
-five smaller copies of itself.  The colouring is passed down each level but only used
-on the lowest.
-\begin{smallcode}
-input colorbrewer-rgb
-vardef pinwheel(expr level, a, b, c, s) = 
-  if level = 0:
-    fill a--b--c--cycle withcolor s;
-    draw a--b--c--cycle withpen pencircle scaled 1/8 withcolor white;
-  else:
-    save d, e, f, g; pair d, e, f, g; 
-    d = 2/5[b, c]; e = 4/5[b,c]; f = 1/2[e, a]; g = 1/2[a, b];
-    pinwheel(level - 1, e, a, c, Blues 9 4);
-    pinwheel(level - 1, f, g, a, Blues 9 3);
-    pinwheel(level - 1, f, g, e, Blues 9 2);
-    pinwheel(level - 1, d, e, g, Blues 9 5);
-    pinwheel(level - 1, d, b, g, Blues 9 6);
-  fi
-enddef;
-beginfig(1);
-  pinwheel(5, origin, 200 right, 100 up, "");
-  pinwheel(5, (200,100), 100 up, 200 right, "");
-endfig;
-\end{smallcode}
-Notice that to make the dissection work, it is important to pass the three 
-\<pair> arguments in the right order.
-
 
 
 \newpage
@@ -8925,8 +8933,6 @@ Notice that to make the dissection work, it is important to pass the three
 \section*{To do...}
 
 - drawing knots, double lines, ropes
-- decorating lines
-- all sorts of arrow, arrows between arrows, arrows next to a path (handles)
 
 - the eye, hand
 
