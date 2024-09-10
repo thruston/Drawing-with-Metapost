@@ -243,8 +243,8 @@ the template I use:
 \begin{texcode}
 \documentclass[border=5mm]{standalone}
 \usepackage{luamplib}
-\begin{document}
 \mplibtextextlabel{enable}
+\begin{document}
 \begin{mplibcode}
 \end{texcode}
 \vskip-12pt
@@ -263,9 +263,14 @@ using the \texttt{standalone} class, which automatically adjusts the page size t
 fit the contents of document, so is ideal for single diagrams.  One small
 disadvantage is that you can only produce a single PDF output file, so you need to have a
 separate file for each picture, but the good news is that you get a much simpler and
-more effective integration with \LaTeX, in particular with the font environment.
-Since this only works with "lualatex" you have to use the "fontspec" package, as
-explained in section \ref{sec:neo-labels}.
+more effective integration with \LaTeX, in particular with the font environment, but
+as this only works with "lualatex" you have to use the "fontspec" package, as
+explained in section \ref{sec:neo-labels}.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\noindent
+\hey\small If you like the fancier \MP\ format provided with Con\TeX t, you can use it directly with this
+"luamplib" approach.  Just add this option to your preamble:
+\begin{texcode}
+\mplibsetformat{metafun}
+\end{texcode}}}
 
 \subsection{Integrated graphics with Lua\LaTeX}\label{sec:lua-integrated}
 
@@ -458,7 +463,8 @@ vardef median primary p =
   origin for i=1 upto length p: + point i of p / length p endfor
 enddef;
 \end{code}
-This should work for any closed path, not just regular polygons.
+This should work for any closed path, not just regular polygons.  For ways to 
+label the vertices neatly, as shown above, see §\ref{sec:new-dynamic}.
 
 \newpage
 \subsection{Regular polygons of a given side length}\label{polygons-given-side}
@@ -1094,8 +1100,8 @@ must remain less than 32767 if you are using the default number system.
 \newpage
 \subsection{Integer powers}
 
-\textsc{Even if you use} one of the new number systems, you may occasionally get
-caught out by the \mpl{**} operator.  As the table on the right shows, you may get
+\textsc{Occasionally} you might get
+caught out by the implementation of the \mpl{**} operator.  As the table on the right shows, you may get
 an approximate answer from \mpl{x ** y} even when $x$ and $y$ are both integers.
 \vadjust{\moveright 384pt\vbox to 0pt{\kern -2pt
 $$\begin{mplibcode}
@@ -1117,8 +1123,8 @@ currentpicture := currentpicture scaled 0.8;
 \end{mplibcode}$$\vss}}
 Note that the squares are all integers, and the powers of two appear to be ok
 (although if the page was wider you would see that \mpl{2**9} is $512.00002$), but
-that with a couple of exceptions cubes and higher powers are slightly off.  Changing
-the number system makes it worse; even $x^1$ is not always an integer.  The reason
+that with a couple of exceptions cubes and higher powers are all slightly off.  Changing
+to one of the new number systems makes it worse; even $x^1$ is not always an integer.  The reason
 can be found in the way that the \mpl{**} operator is defined in "plain.mp".
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-36pt]
 primarydef x ** y = if y = 2: x * x else: takepower y of x fi enddef;
@@ -1542,17 +1548,22 @@ Here's a toy example:
 \subsection{CMYK colours}
 
 \MP\ also implements a CMYK colour model, using tuples of four numerics.
-This is more or less a direct mapping onto the PostScript "cmykcolor" functions.
 In this model the four components represent cyan, magenta, yellow, and black.
 White is \mpl{(0,0,0,0)} and black is anything where the last component is 1.
-Beware however that the constants, \mpl{white} and \mpl{black} are defined in
-"plain.mp" as RGB colours, and you can't mix the two models, so anything like
-\mpl{1/2[(1,1,0,0), white]} will not work.  If you want to do lots of work with CMYK colours
-you might like to redefine the color constants.
+
+Beware that the five colour constants defined in "plain.mp" are defined as RGB
+colours, and you can't mix colour models, so anything like \mpl{1/2[(1,1,0,0),
+white]} will not work, unless you redefine the color constants as CMYK colours:
+\begin{smallcode}
+cmykcolor black, white, red, green, blue;
+black = (0,0,0,1); white = (0,0,0,0);
+red = (0,1,1,0); green = (1,0,1,0); blue = (1,1,0,0);
+\end{smallcode}
 $$\includegraphics[width=0.7\textwidth]{blended-color-circles}$$
 \hey The apparent blending of colours here is done by calculating the overlaps
-and filling them in order.  In plain \MP, there is no support for transparency in any of the
-colour models; this is because they are inherited directly from PostScript.
+and filling them in order.  With plain "mpost", there is no support for transparency in any of the
+colour models; but "luamplib" gives you access to PDF transparency, see
+§\ref{sec:transparent}.
 
 \moveright 384pt\vbox to 0pt{\vss
 \begin{code}
@@ -1762,19 +1773,19 @@ n = 128;
 
 picture B, W;
 B = image(for i=0 step 1/n until 1:
-              draw point 4-i of b -- point 1+i**2 of b
-                  withcolor 1-i**8;
+            draw point 4-i of b -- point 1+i**2 of b 
+              withcolor 1-i**8;
           endfor);
 
-    W = image(for i=0 step 1/n until 1:
-              draw point 4-i of w -- point 1+i**2 of w
-                  withcolor 3/4-i**8;
+W = image(for i=0 step 1/n until 1:
+            draw point 4-i of w -- point 1+i**2 of w 
+              withcolor 3/4-i**8;
           endfor);
 
 for i=-9 upto 9:
-    for j=-4 upto 4:
-        draw if odd (i+j): W else: B fi shifted (i*30,j*30);
-    endfor
+  for j=-4 upto 4:
+    draw if odd (i+j): W else: B fi shifted (i*30,j*30);
+  endfor
 endfor
 
 clip currentpicture to bbox currentpicture yscaled 7/8;
@@ -4285,6 +4296,65 @@ labels are done with \mpl{infont}, but you just want one extra that has two line
 the text into two separate labels and position them independently.
 
 \newpage
+\subsection{Pins and braces}\label{sec:braces}
+
+\textsc{In some awkward corners}, you may find that you just can't get your label in
+the right place with \mpl{dotlabel} even if you adjust \mpl{labeloffset}.  In these
+cases there are two simple techniques you can use.  First, you could separate
+drawing the dot from placing the label; given a point $P$ you can try:\mpic{0pt}{callout}
+\begin{code}
+drawdot P withpen pencircle scaled dotlabeldiam;
+label(btex $P$ etex, P shifted 10 dir 68);
+\end{code}
+Using \mpl{dotlabeldiam} ensures that your dots match any others done with
+\mpl{dotlabel}.
+Secondly, if that's not enough, use a temporary pair to create a call out line:
+\begin{code}
+z0 = P + 20 dir -20; 
+draw z0 -- P 
+    cutafter fullcircle scaled 8 shifted P
+    withpen pencircle scaled 1/4;
+label.rt(btex \textit{pole} etex, z0);
+\end{code}
+If you want to do this sort of thing often, then it might be worth making a macro.
+It is hard to write anything completely general, but see §\ref{sec:extimage} for an
+example.
+
+\medskip\noindent
+\textsc{You might also want} to mark a straight line between two points.  
+\vadjust{\moveright5.3in\vbox to 0pt{\hsize 4.2in
+\begin{smallcode}
+vardef do_brace(expr a,b,m,r) =
+  save d, e, n, bb; numeric d, n; pair e; path bb;
+  n = 1/2 m; d = angle (b-a); 
+  e = up scaled m rotated d shifted r[a,b];
+  bb = ((origin {0,n} .. {right} (abs n,n)) 
+          rotated d shifted a --
+        ((-abs n,-n){right} .. {0,n} origin {0,-n} .. {right}(abs n,-n)) 
+          rotated d shifted e --
+        ((-abs n,n){right} .. {0,-n} origin) 
+          rotated d shifted b
+       ) shifted (up scaled n rotated d);
+   draw bb withpen pencircle yscaled .6 xscaled .1666 rotated d;
+   point 3 of bb
+enddef;
+
+label.lrt("Here",do_brace(z1, z2, -12, 3/4)); 
+\end{smallcode}
+Note that, as well as drawing the braces, the macro uses the grouping provided by \mpl{vardef} to return the 
+mid point so that you can put a label next to it.
+\vss}}
+The simplest way to do this is just to use \mpl{drawdblarrow} on a copy of your straight
+path shifted to one side, like so:
+\begin{code}
+drawdblarrow (z1--z2) shifted (12 up rotated angle (z2-z1));
+\end{code}
+If you combine this with temporarily setting \mpl{ahangle:=180}, you get the simple
+dimension line shown in blue.
+$$\includegraphics{braces}$$
+The red braces are a more complex variation on this theme $\longrightarrow$
+
+\newpage
 \subsubsection{Dynamic labels}\label{sec:old-and-dynamic}
 
 If you are a maven of programming language syntax you may have noticed that
@@ -4517,10 +4587,10 @@ $$\includegraphics[width=0.9\textwidth]{verbatim-listing}$$
 
 
 \newpage
-\section{Modern labels and annotations}\label{sec:neo-labels}
+\section{Modern labels, annotations, and other goodies}\label{sec:neo-labels}
 
 This section is a re-working of the previous section, that attempts to show how much
-nicer it is to handle labels in the new world of "luamplib".  If this is all new
+nicer it is to work in the new-fangled world of "luamplib".  If this is all new
 to you, you probably should start by doing "texdoc luamplib" on your system
 and reading the documentation provided with the package.  In order to use these
 newfangled facilities you need to create your \MP\ diagrams inside a \TeX-wrapper
@@ -4778,7 +4848,7 @@ or wrap the formula in a "\vbox" with a suitable "\hsize".  Using "\displaystyle
 probably simpler.
 
 
-\subsection{Typographical minus signs and other dynamic labels}
+\subsection{Typographical minus signs and other dynamic labels}\label{sec:new-dynamic}
 
 This is really easy with "mplibtextextlabel" enabled, because we can assemble a string
 on the fly using standard \MP\ syntax:\mpic{0pt}{simple-number-line}
@@ -4797,10 +4867,11 @@ external files being used, so the complexities used above
 [§\ref{sec:old-and-dynamic}] to label points around a
 circle can be simplified without sacrificing speed:\mpic{-80pt}{simple-circle-labels}
 \begin{code}
-path C; C = fullcircle scaled 100; draw C withcolor 2/3 red;
-for i=0 upto 11:
-  drawdot point 2/3 i of C withpen pencircle scaled dotlabeldiam;
-  label("$p_{" & decimal i & "}$", point 2/3 i of C scaled 1.17);
+path P; P = for i=0 upto 8: 50 dir 40i -- endfor cycle; 
+draw P withcolor 2/3 red;
+for i=1 upto length P:
+    draw point i of P withpen pencircle scaled dotlabeldiam;
+    label("$p_{" & decimal i & "}$", point i of P scaled 1.2);
 endfor
 \end{code}
 
@@ -4808,64 +4879,6 @@ endfor
 although these operators might appear to be special quotation marks, they produce
 \<picture> values, and in this context \mpl{&} only works with \<string> values.
 
-\newpage
-\subsection{Pins and braces}\label{sec:braces}
-
-\textsc{In some awkward corners}, you may find that you just can't get your label in
-the right place with \mpl{dotlabel} even if you adjust \mpl{labeloffset}.  In these
-cases there are two simple techniques you can use.  First, you could separate
-drawing the dot from placing the label; given a point $P$ you can try:\mpic{0pt}{callout}
-\begin{code}
-drawdot P withpen pencircle scaled dotlabeldiam;
-label("$P$", P shifted 10 dir 68);
-\end{code}
-Using \mpl{dotlabeldiam} ensures that your dots match any others done with
-\mpl{dotlabel}.
-Secondly, if that's not enough, use a temporary pair to create a call out line:
-\begin{code}
-z0 = P + 20 dir -20; 
-draw z0 -- P 
-    cutafter fullcircle scaled 8 shifted P
-    withpen pencircle scaled 1/4;
-label.rt("\textit{pole}", z0);
-\end{code}
-If you want to do this sort of thing often, then it might be worth making a macro.
-It is hard to write anything completely general, but see §\ref{sec:extimage} for an
-example.
-
-\medskip\noindent
-\textsc{You might also want} to mark a straight line between two points.  
-\vadjust{\moveright5.3in\vbox to 0pt{\hsize 4.2in
-\begin{smallcode}
-vardef do_brace(expr a,b,m,r) =
-  save d, e, n, bb; numeric d, n; pair e; path bb;
-  n = 1/2 m; d = angle (b-a); 
-  e = up scaled m rotated d shifted r[a,b];
-  bb = ((origin {0,n} .. {right} (abs n,n)) 
-          rotated d shifted a --
-        ((-abs n,-n){right} .. {0,n} origin {0,-n} .. {right}(abs n,-n)) 
-          rotated d shifted e --
-        ((-abs n,n){right} .. {0,-n} origin) 
-          rotated d shifted b
-       ) shifted (up scaled n rotated d);
-   draw bb withpen pencircle yscaled .6 xscaled .1666 rotated d;
-   point 3 of bb
-enddef;
-
-label.lrt("Here",do_brace(z1, z2, -12, 3/4)); 
-\end{smallcode}
-Note that, as well as drawing the braces, the macro uses the grouping provided by \mpl{vardef} to return the 
-mid point so that you can put a label next to it.
-\vss}}
-The simplest way to do this is just to use \mpl{drawdblarrow} on a copy of your straight
-path shifted to one side, like so:
-\begin{code}
-drawdblarrow (z1--z2) shifted (12 up rotated angle (z2-z1));
-\end{code}
-If you combine this with temporarily setting \mpl{ahangle:=180}, you get the simple
-dimension line shown in blue.
-$$\includegraphics{braces}$$
-The red braces are a more complex variation on this theme $\longrightarrow$
 
 \newpage
 \subsection{Drawing on an external image}\label{sec:extimage}
@@ -4935,6 +4948,91 @@ begingroup;
   endfor
   drawoptions();
 endgroup;
+\end{smallcode}
+
+\newpage
+\subsection{Using PDF transparency}\label{sec:transparent}
+
+\textsc{Another limitation} of the plain "mpost" compiler is that it does not
+support any transparent colours.  However, if you use the "luamplib" package with
+"lualatex" you get access to the PDF 1.4 transparency functions.  Currently (2024) there
+is little documentation for this support and no ‘official’ macro for it, but you can
+add your own like this:
+\begin{code}
+def withalpha expr a = 
+    withprescript "tr_alternative=2"
+    withprescript "tr_transparency=" & decimal a
+enddef;
+\end{code}
+and then use it like this, adding \mpl{withalpha} after the
+colour specification:\mpic{-144pt}{new-fangled-transparency}
+\begin{code}
+path r, g, b; 
+r = fullcircle scaled 40 shifted 10 up;
+g = r rotated 120; b = g rotated 120;
+
+numeric a; a = 0.5;
+fill r withcolor 1/2[white, red] withalpha a;
+fill g withcolor 1/2[white, green] withalpha a;
+fill b withcolor 1/2[white, blue] withalpha a;
+draw r withcolor 1/2;
+draw g withcolor 1/2;
+draw b withcolor 1/2;
+\end{code}
+
+\smallskip\noindent
+The effect of changing the alpha value is shown on the right. The magic variable
+names "tr_transparency" and "tr_alternative" are only understood by the "luamplib" code,
+plain "mpost" simply ignores them. \textit{Note that since these are not documented anywhere
+except in the source code, they might change in future}.
+You can see from the figure that "tr_transparency"
+controls the alpha value, but the other variable is slightly more mysterious ---
+"tr_alternative" appears to control the PDF blending mode.  A value of 1 seems to apply PDF
+‘normal’ mode, which makes colours completely opaque with when alpha is 1; a value
+of 2, as used here, seems to apply PDF ‘multiply’ mode which blends all colours
+evenly, so that the order that you fill overlaps does not matter.  This mode works
+well with slightly lighter colours.
+
+\newpage\noindent
+Here is a slightly more ambitious example, using the same \mpl{withalpha}
+macro.\mwpic{100pt}{new-fangled-trilobe}
+\begin{smallcode}[xrightmargin=-80pt]
+numeric u; u = 24;
+color shade[]; string name[];
+shade0 = 1/256(166, 57, 65);  name0 = "R"; % rouge 
+shade1 = 1/256(219, 170, 72); name1 = "J"; % jaune
+shade2 = 1/256(36, 54, 84);   name2 = "B"; % bleu
+path edge[], arc[], ring[];
+for r=1 upto 8:
+  edge[r] = fullcircle rotated 90 scaled (2r * u) 
+    shifted (0, 7u / sqrt 3) rotated 60;
+endfor
+for i=2 upto 8:
+  edge[i] := edge[i] cutbefore edge8 rotated 120 cutafter edge8 rotated -120;
+endfor
+arc0 = point 0 of edge1 for i=2 upto 7: .. point 0 of edge[i] endfor;
+arc1 = point 0 of edge1 for i=2 upto 7: .. point infinity of edge[i] endfor;
+for i=1 upto 7:
+  ring[i] = edge[i] -- subpath (i-1, i) of arc1 -- 
+  reverse edge[i+1] -- subpath (i, i-1) of arc0 -- cycle;
+endfor
+for r=0, 1, 2:
+  for i=1 upto 6:
+
+    fill ring[i] rotated 120r withcolor (i/6)[white, shade[r]] withalpha 0.9;
+
+    label("$\textsf{" & name[r] & "}" if i<6: & "_" & decimal i fi & "$",
+      point i-1/2 of arc0 shifted (-6,8) rotated 120r);
+    label("$\textsf{" & name[r] & "}" if i<6: & "_" & decimal i fi & "$",
+      point i-1/2 of arc1 shifted (-8,2) rotated 120r);
+  endfor
+endfor
+for r=0, 1, 2:
+  for i=1 upto 7:
+    draw edge[i] rotated 120r withpen pencircle scaled 1 withcolor 7/8;
+  endfor
+  draw arc0 rotated 120r; draw arc1 rotated 120r;
+endfor
 \end{smallcode}
 
 \newpage
@@ -5270,17 +5368,19 @@ the red and blue strands crossing each other.  The \mpl{overdraw} macro tries to
 this by undrawing with a thick pen, then redrawing the upper strand on top.
 
 \newpage
-\subsection{Simulating transparency}
+\subsection{Simulating transparency with pictures}\label{sec:simulated_alpha}
 
-Filling with transparent colour can sometimes be a very effective graphic technique, but the
-underlying technical implementation is often dauntingly complex.  Plain \MP\
-provides no colour model that directly supports transparency for any output format,
-so if you need it you will have to resort to layering and managing the colour
-blending yourself.  This page presents an example of the basic technique, that can
-be adapted to more general purpose macros as required.  The technique is included in
-this section, because it involves more manipulation of \<picture> variables.
+Filling with transparent colour can sometimes be a very effective graphic technique,
+but plain \MP\ provides no colour model that directly supports transparency for any
+output format.  If you are using "mpost",  you will have to resort to layering and
+managing the colour blending yourself.  This section presents an example of the
+basic technique, that could be adapted to more general purpose macros as required. 
+But, the technique is quite laborious so you might prefer to switch to "luamplib"
+which provides support for the PDF transparency model, as discussed in
+§\ref{sec:transparent}.
 \vadjust{\moveright5.5in\vbox to 0pt{\vskip -128pt
 $$\includegraphics[width=3in]{fake-transparency}$$
+
 Omitting the simple grid, this drawing was produced like this:
 \begin{smallcode}
 % Large A
@@ -5308,6 +5408,8 @@ draw fg; % and put the fg drawing on top
 draw shape withcolor 3/4 blue; % make a nice edge
 \end{smallcode}
 \vss}}%
+
+\smallskip\noindent
 The two useful tools in the plain \MP\ kit bag are:
 \begin{itemize}
     \item The ability to loop through all the elements of a picture

@@ -10,7 +10,7 @@ beginfig(1);
 path C[], B[];
 
 % arrange each circle so that point 0 is outside the others
-C1 = fullcircle scaled 120 rotated 90 shifted 40 up;
+C1 = fullcircle scaled 100 rotated 90 shifted 40 up;
 C2 = C1 rotated 120;
 C3 = C2 rotated 120;
 
@@ -33,7 +33,7 @@ for x=0 upto 1:
           fill B1 withcolor s*(1,1,0,k);
           fill B0 withcolor s*(1,1,1,k);
           undraw C1; undraw C2; undraw C3;
-      ) shifted -(200x, 200y);
+      ) shifted -(200x, 180y);
       draw P;
       label.bot(("shade: " & decimal s & ", k: " & decimal k)
                  infont "phvr8r", point 1/2 of bbox P);
