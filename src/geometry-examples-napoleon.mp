@@ -6,30 +6,30 @@
 def equilateral_triangle_point(expr a, b) = 
   a rotatedabout(b, 60) 
 enddef;
-def beyond(expr z, o) = 
-  z scaled (1+o/abs(z)) 
-enddef;
+primarydef o beyond z = z scaled (1+o/abs(z)) enddef;
 beginfig(1);
   randomseed := 543.01811;
-  z1 = 91 dir (  0 + 18 normaldeviate);
-  z2 = 92 dir (120 + 18 normaldeviate);
-  z3 = 93 dir (240 + 18 normaldeviate);
 
-  z4 = equilateral_triangle_point(z1, z2);
-  z5 = equilateral_triangle_point(z2, z3);
-  z6 = equilateral_triangle_point(z3, z1);
+  pair A, B, C, D, E, F, G, H, I;
+  A = 91 dir (  0 + 18 normaldeviate);
+  B = 92 dir (120 + 18 normaldeviate);
+  C = 93 dir (240 + 18 normaldeviate);
 
-  z7 = 1/3(z1 + z2 + z4);
-  z8 = 1/3(z2 + z3 + z5);
-  z9 = 1/3(z3 + z1 + z6);
+  D = equilateral_triangle_point(A, B);
+  E = equilateral_triangle_point(B, C);
+  F = equilateral_triangle_point(C, A);
 
-  draw z1--z2--z3--cycle withcolor blue;
-  draw z1--z4--z2--z5--z3--z6--cycle withcolor 3/4;
-  draw z7--z8--z9--cycle withcolor 2/3 red;
+  G = 1/3(A + B + D);
+  H = 1/3(B + C + E);
+  I = 1/3(C + A + F);
 
-  for i=1 upto 9:
-    draw z[i] withpen pencircle scaled dotlabeldiam;
-    label("$" & char (64+i) & "$", beyond(z[i], 10));
+  draw A -- B -- C -- cycle withcolor blue;
+  draw A -- D -- B -- E -- C -- F -- cycle withcolor 3/4;
+  draw G -- H -- I -- cycle withcolor 2/3 red;
+
+  forsuffixes @ = A, B, C, D, E, F, G, H, I:
+    draw @ withpen pencircle scaled dotlabeldiam;
+    label("$" & str @ & "$", 10 beyond @);
   endfor
 
   label.bot("\textsc{Napoleon's Theorem}", 
