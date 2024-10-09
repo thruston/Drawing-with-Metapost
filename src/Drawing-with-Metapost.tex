@@ -2,8 +2,9 @@
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
-% \loop\iftrue \errmessage{This manual is copyrighted and should not be compiled as
-% is.}\repeat
+% \loop\iftrue 
+% \errmessage{This manual is copyrighted and should not be compiled as is.}
+% \repeat
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
@@ -23,7 +24,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – September 2024}
+\date{March 2017 – October 2024}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -94,7 +95,7 @@ be useful and then see how it’s done.
 
 And when I say \textit{plain} \MP\ I mean \MP\ with the default format (as defined
 in the file "plain.mp") loaded and only a few simple external packages (like
-"colorbrewer" occasionally).  Nearly all of the examples here are supposed to be self
+"colorbrewer") occasionally.  Nearly all of the examples here are supposed to be self
 contained, and any macros are defined locally so you can get to grips with what’s
 going on.  \MP\ is a very subtle language, and it’s possible to do some very clever
 and completely inscrutable things with it;  but here I have tried to be as clear as
@@ -3706,7 +3707,7 @@ pi := 1/4 arclength (quartercircle scaled 16);
 pi := 3.1415926535897932384626433832795;
 % as many digits as are needed...
 vardef getpi =
-  numeric lasts, t, s, n, na, d, da;
+  save lasts, t, s, n, na, d, da;
   lasts=0; s=t=3; n=1; na=0; d=0; da=24;
   forever:
     exitif lasts=s;
@@ -3721,19 +3722,19 @@ enddef;
 pi := getpi;
 
 % conversions
-vardef degrees(expr theta) = 180 / pi * theta enddef;
-vardef radians(expr theta) = pi / 180 * theta enddef;
+def degrees(expr theta) = 180 / pi * theta enddef;
+def radians(expr theta) = pi / 180 * theta enddef;
 % trig functions that expect radians
-vardef sin(expr theta) = sind(degrees(theta)) enddef;
-vardef cos(expr theta) = cosd(degrees(theta)) enddef;
+def sin(expr theta) = sind(degrees(theta)) enddef;
+def cos(expr theta) = cosd(degrees(theta)) enddef;
 % inverse trig functions
-vardef acosd(expr a) = angle (a,1+-+a) enddef;
-vardef asind(expr a) = angle (1+-+a,a) enddef;
-vardef acos(expr a) = radians(acosd(a)) enddef;
-vardef asin(expr a) = radians(asind(a)) enddef;
+def acosd(expr a) = angle (a,1+-+a) enddef;
+def asind(expr a) = angle (1+-+a,a) enddef;
+def acos(expr a) = radians(acosd(a)) enddef;
+def asin(expr a) = radians(asind(a)) enddef;
 % tangents
 vardef tand(expr theta) = save x,y; (x,y)=dir theta; y/x enddef;
-vardef atand(expr a) = angle (1,a) enddef;
+def atand(expr a) = angle (1,a) enddef;
 \end{code}
 \vss}}
 but if you are using one of the new number systems you might want more digits of
@@ -8873,41 +8874,45 @@ unit drawing for some of them.
 
 
 \newpage
-\section{Aperiodic tiling}\label{aperiodic}
+\section{Aperiodic tilings}\label{aperiodic}
+
+\textsc{Mathematical research in the 1960s and 1970s} established that it is also
+possible to tile an infinite plane with polygons that do not have any periodic
+repeating pattern.  There are various mathematical approaches to creating these
+tilings; this section explores substitution tilings, which lend themselves to
+recursive programming.  The rules for a substitution define a dissection for each
+shape that makes up the tiling.
+
+The idea is to define a recursive macro for each shape in the tiling, with
+parameters for the recursion level and points that define the shape. If
+$\id{level}=0$, draw or decorate that particular shape, otherwise work out
+the points for the dissection and call the appropriate macros for each shape with
+$level-1$. Here is an example:\mpic{-123pt}{tiling-subs-triangle.pdf}  
+
+\mpexternal[firstline=7,lastline=28]{tiling-subs-triangle.mp}
+
+\vbox to 0pt{\noindent
+These procedures are illustrated on the right. The completed 
+tiling was drawn with \mpl{tall(6, 173 dir 210, 173 dir 330, 173 dir 90)}.
+\par\vss}
 
 \newpage
 \subsection{Pinwheel tiling}
 
-\textsc{Another non-periodic tiling} is the so-called pinwheel tiling, devised in 1994
+\textsc{The second aperiodic tiling example} is the so-called pinwheel tiling, devised in 1994
 by Charles Radin, based on
-this dissection by John Conway.\mpic{-22pt}{pinwheel}
-$$\includegraphics{conway.pdf}$$
+this dissection by John Conway.\mpic{-22pt}{tiling-subs-pinwheel.pdf}
+$$\includegraphics[scale=0.8]{conway.pdf}$$
 Starting with a triangle of this shape, the tiling recursively divides into
 five smaller copies of itself.  The colouring is passed down each level but only used
 on the lowest.
-\begin{smallcode}
-input colorbrewer-rgb
-vardef pinwheel(expr level, a, b, c, s) = 
-  if level = 0:
-    fill a--b--c--cycle withcolor s;
-    draw a--b--c--cycle withpen pencircle scaled 1/8 withcolor white;
-  else:
-    save d, e, f, g; pair d, e, f, g; 
-    d = 2/5[b, c]; e = 4/5[b,c]; f = 1/2[e, a]; g = 1/2[a, b];
-    pinwheel(level - 1, e, a, c, Blues 9 4);
-    pinwheel(level - 1, f, g, a, Blues 9 3);
-    pinwheel(level - 1, f, g, e, Blues 9 2);
-    pinwheel(level - 1, d, e, g, Blues 9 5);
-    pinwheel(level - 1, d, b, g, Blues 9 6);
-  fi
-enddef;
-beginfig(1);
-  pinwheel(5, origin, 200 right, 100 up, "");
-  pinwheel(5, (200,100), 100 up, 200 right, "");
-endfig;
-\end{smallcode}
-Notice that to make the dissection work, it is important to pass the three 
-\<pair> arguments in the right order.
+
+\smallmpexternal[firstline=6,lastline=26]{tiling-subs-pinwheel.mp}
+
+\noindent
+\hey To make the dissection work, it is important to pass the three 
+\<pair> arguments in the right order.  Note also the manipulation of 
+\mpl{currentpicture} at the end.
 
 
 \newpage
@@ -8975,24 +8980,11 @@ half. No other shapes are produced, so the recursive process can be repeated
 indefinitely. At the desired lowest level the triangles are patched back into
 rhombus shapes simply by \textit{not} drawing the edges shown with dots.\par\vss}
 
-
+% \newpage{Physics and engineering}
+% - the eye, hand
+% - physics diagrams, pendulum, indicating movement and vibration
 
 \newpage
 \tableofcontents
 
-\newpage
-\section*{To do...}
-
-- drawing knots, double lines, ropes
-
-- the eye, hand
-
-- physics diagrams, pendulum, indicating movement and vibration
-
-- functions, def, vardef, recursion, primarydef etc, of syntax, expr suffix text
-
-- four box model charts - Tufte charts - Venn diagrams
-
-- tour of the plain format
-
-\end{document}
+\end{document}ll

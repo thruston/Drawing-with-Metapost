@@ -11,7 +11,7 @@ beginfig(1);
     ahangle := 10;
     unit = image(
         for i=-1 upto 1:
-            fill s rotated 60i withcolor Spectral[9][3+2i];
+            fill s rotated 60i withcolor Oranges 8 3;
             draw s rotated 60i;
         endfor
     );
@@ -24,7 +24,11 @@ beginfig(1);
             draw unit shifted (i * u + j * v);
         endfor
     endfor
-    clip currentpicture to fullcircle scaled 400;
+    
+    picture P; P = currentpicture; currentpicture := nullpicture;
+    fill fullcircle scaled 400 withcolor Blues 5 4;
+    clip P to fullcircle scaled 400;
+    draw P;
 endfig;
 \end{mplibcode}
 \end{document}
