@@ -47,56 +47,35 @@ vardef square(expr level, a, b) =
   fi
 enddef;
 
-path t;
-t = origin -- right -- center unitsquare -- cycle;
-
-
-vardef trig_hi(expr level, a, b) = 
-  save T; path T; T = t zscaled (b-a) shifted a;
-  if level = 0:
-    fill T withalpha 0.9 withcolor Oranges 8 2;
-    draw subpath (1, 3) of T withcolor 1/2;
-  else:
-    bounded_rhomb(level-1, point 0 of T, point q of T);
-    bounded_rhomb(level-1, point 2 of T, p[point 1/2 of T, point 2 of T]);
-    trig_hi(level-1, point 1 of T, point 2-p of T);
-    trig_hi(level-1, point 2 of T, point 3-p of T);
-    trig_lo(level-1, point q of T, point 1-q of T);
-  fi
-enddef;
-
-vardef trig_lo(expr level, a, b) = 
-  save T; path T; T = t zscaled (b-a) shifted a;
-  if level = 0:
-    fill T withalpha 0.9 withcolor Oranges 8 3;
-    draw subpath (1, 3) of T withcolor 1/2;
-  else:
-    bounded_rhomb(level-1, point 1 of T, point 1+p of T);
-    bounded_rhomb(level-1, point 2 of T, point 2+p of T);
-    trig_lo(level-1, point 1+p of T, point 2 of T);
-    trig_lo(level-1, point 2+p of T, point 3 of T);
-    trig_hi(level-1, point q of T, point 1-q of T);
-  fi
-enddef;
-
+path t[];
+t0 = origin -- right -- point 3 of s -- cycle;
+t1 = origin -- right -- point 1 of s -- cycle;
 vardef bounded_rhomb(expr level, a, b) = 
   save R; path R; R = r zscaled (b-a) shifted a;
   if level = 0:
-    fill subpath (0, 2) of R -- cycle withalpha 0.9 withcolor Blues 9 3;
-    fill subpath (2, 4) of R -- cycle withalpha 0.9 withcolor Blues 9 4;
+    fill subpath (0, 2) of R -- cycle withcolor Blues 9 4;
+    fill subpath (2, 4) of R -- cycle withcolor Blues 9 5;
     draw R withcolor 1/2;
   else:
-    save c, d, e;
-    pair c, d, e;
-    c = p[a, b];
-    d = p[point 2 of R, point 3 of R];
-    e = p[point 2 of R, point 0 of R];
-    bounded_rhomb(level-1, a, c);
-    bounded_rhomb(level-1, b, e);
-    bounded_rhomb(level-1, point 2 of R, d);
-    trig_lo(level-1, point p of R, point 1 of R);
-    trig_hi(level-1, point 1 of R, point 2-p of R);
-    trig_lo(level-1, point 2+p of R, point 3 of R);
-    trig_hi(level-1, point 3 of R, point 4-p of R);
+    bounded_rhomb(level-1, a, p[a,b]);
+    bounded_rhomb(level-1, b, p[b,a]);
+    bounded_rhomb(level-1, point 1 of R, point 3 of R);
+    half_square(level-1, point 1 of R, point +p of R, 1);
+    half_square(level-1, point 3 of R, point -p of R, 0);
+    half_square(level-1, point 3 of R, point 2+p of R, 1);
+    half_square(level-1, point 1 of R, point 2-p of R, 0);
+  fi
+enddef;
+vardef half_square(expr level, a, b, side) = 
+  save T; path T; T = t[side] zscaled (b-a) shifted a;
+  if level = 0:
+    fill T withalpha 0.9 withcolor Oranges[8][3+side];
+    draw subpath (1, 3) of T withcolor 1/2;
+  else:
+    bounded_rhomb(level-1, point 0 of T, p[point 1/2 of T, point 2 of T]); 
+    bounded_rhomb(level-1, point 2 of T, point sqrt(1/2) of T);  
+    half_square(level-1, point 1 of T, point 2-p of T, side);
+    half_square(level-1, point 2 of T, point 3-p of T, side);
+    half_square(level-1, point 1-q of T, point q of T, 1-side);
   fi
 enddef;

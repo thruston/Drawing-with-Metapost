@@ -8916,18 +8916,18 @@ on the lowest.
 \mpl{currentpicture} at the end.
 
 \newpage
-\subsection{Ammann-Beeker tiling}
+\subsection{Ammann A5 tiling}
 
 \textsc{Of the various sets} of aperiodic tiles discovered by Robert Ammann in 1977,
-the best known and probably most attractive is the set known as A5.  The expansion
-for the tiling is usually given as follows,
+the best known and probably most attractive is the set known as A5.  The recursive
+substitutions for the tiling are usually given as follows,
 
 \smallskip
 \centerline{\includegraphics{tiling-ammann-substitutions-overlapping.pdf}}
 \smallskip\noindent
 with the square shapes overlapping the edges of the parent shapes. This can be 
 implemented with two co-operating recursive macros.$\longrightarrow$
-\vadjust{\moveright384pt\vbox to 0pt{\vskip -136pt
+\vadjust{\moveright384pt\vbox to 0pt{\vskip -138pt
 \smallmpexternal[firstline=10, lastline=48, xleftmargin=0pt, xrightmargin=-30pt]{tiling-ammann-procedures.mp}
 \vss}}
 
@@ -8941,7 +8941,32 @@ transparent colours (although this is not unattractive):
 \centerline{\includegraphics{tiling-ammann.pdf}}
 \vss}
 
+\newpage
+\subsection{Ammann A5 tiling improved}
 
+\textsc{With some extra thought}, you can devise a substitution pattern that avoids
+the overlaps and makes a smaller tiling.  The idea is to split the square in half,
+and make a macro that can do the top half or the bottom half as required.
+
+\smallskip
+\centerline{\includegraphics{tiling-ammann-substitutions-bounded.pdf}}
+\smallskip\noindent
+This requires an extra parameter for the new "half_square" macro to tell it which
+half to do, and two triangular paths for the upper and lower halves.  Note that
+the second of these paths is reversed, which simplifies the macro.
+\vadjust{\moveright384pt\vbox to 0pt{\vskip -172pt
+\smallmpexternal[firstline=10, lastline=14, xleftmargin=0pt, xrightmargin=-30pt]{tiling-ammann-procedures.mp}
+\smallmpexternal[firstline=50, lastline=81, xleftmargin=0pt, xrightmargin=-30pt]{tiling-ammann-procedures.mp}
+\vss}}
+
+Now there is no overlapping of any of the tiles and the tiling does not overflow outside the original
+shape, and the colouring is uniform.  
+$$\includegraphics[width=\textwidth]{tiling-ammann-bounded.pdf}$$
+In general, aperiodic tilings work best if you can find a set of recursive
+substitutions are bounded in each parent shape.  
+
+\noindent\hey{\small Notice also the useful idiom \mpl{zscaled (b-a) shifted a} used
+with a “unit” shape.}
 
 \newpage
 \subsection{Penrose tilings}
