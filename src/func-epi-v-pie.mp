@@ -6,8 +6,7 @@
 beginfig(1);
 
 numeric minx, maxx, s, u, v;
-minx = 13/8; s = 1/16; maxx = 19/4;
-u = 89; v = 3072; 
+minx = 13/8; s = 1/16; maxx = 19/4; u = 89; v = 3072; 
 
 def f(expr x) = 1/256 mlog(x) / x enddef;
 
@@ -22,11 +21,9 @@ yy := yy shifted point 0 of ff shifted 20 left;
 numeric pi, e, fpi, fe;
 pi = 3.141592653589793 u;  fpi = f(3.141592653589793) * v;
 e = 2.718281828459045 u;   fe = f(2.718281828459045) * v;
-
 path ee, pp;
 ee = (e, ypart point 0 of xx) -- (e, fe) -- (xpart point 0 of yy, fe);
 pp = (pi, ypart point 0 of xx) -- (pi, fpi) -- (xpart point 0 of yy, fpi);
-
 draw ee dashed withdots scaled 1/4 withcolor 2/3 red;
 draw pp dashed withdots scaled 1/2 withcolor 2/3 red;
 draw ff withcolor 3/4 blue;
@@ -37,11 +34,11 @@ for x=2 upto 4:
     draw (down--up) scaled 2 shifted (x * u, ypart point 0 of xx);
     label.bot("$" & decimal x & "$", (x * u, ypart point 0 of xx - 2));
 endfor
-for y=31 upto 38: 
-    draw (left--right) scaled 2 shifted (xpart point 0 of yy, y/100*v);
+for y=.31, .32, .33, .34, .35, .36, .37, .38: 
+    draw (left--right) scaled 2 shifted (xpart point 0 of yy, y*v);
 endfor
-for y=32, 35, 38: 
-    label.lft("$" & decimal (y/100) & "$", (xpart point 0 of yy-2, y/100*v));
+for y=.32, .35, .38: 
+    label.lft("$" & decimal y & "$", (xpart point 0 of yy-2, y*v));
 endfor
 
 drawoptions(withcolor 1/2 red);
