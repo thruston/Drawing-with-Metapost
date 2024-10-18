@@ -471,45 +471,23 @@ label the vertices neatly, as shown above, see §\ref{sec:new-dynamic}.
 \newpage
 \subsection{Regular polygons of a given side length}\label{polygons-given-side}
 But you might want a polygon with a fixed side instead of a fixed radius. This needs
-a little trigonometry, using the sine rule:\mpic{-42pt}{closed-fixed-polygon}
-\begin{code}
-vardef polygon_with_side(expr n, s) = 
-  save a, b, r; numeric a, b, r; 
-  a * n = 360; a + 2b = 180; r = s * sind(b) / sind(a);
-  for i = 0 upto n-1: (0, r) rotated (a * i) -- endfor cycle
-enddef;
-\end{code}
-Which you can use like this to produce a nest of polygons $\rightarrow$
-\begin{smallcode}
-for n = 11 downto 3: path p; p = polygon_with_side(n, 72);
-  fill p withcolor (n/32)[white, 3/4 if odd n: red else: blue fi];
-  draw p;
-endfor
-\end{smallcode}
+a little trigonometry, using the sine rule:\mpic{-60pt}{closed-fixed-polygon}
+\smallmpexternal[firstline=7, lastline=11]{closed-fixed-polygon.mp}
+\noindent
+Which you can use like this to produce a nest of polygons \rightarrowfill
+\smallmpexternal[firstline=12, lastline=16]{closed-fixed-polygon.mp}
+
+\vfill
+\noindent
 These polygon paths are centred on $(0, 0)$ but
 sometimes it is more convenient to construct a polygon on a known segment
 rather than working out how to rotate and shift it into place.  
 $$\includegraphics[width=0.9\textwidth]{closed-polygon-chain.pdf}$$
-Here is a way to do that using the “\mpl{of}” syntax in the macro construction
-$\longrightarrow$
+Here is a way to do that using the “\mpl{of}” syntax in the macro construction \rightarrowfill
 \vadjust{\moveright 384pt\vbox to 0pt{\vss
-\begin{smallcode}
-vardef poly expr n of p = save x, y; 
-    z0 = point 0 of p; z1 = point 1 of p;
-    for i=2 upto n-1:
-        z[i] = z[i-2] rotatedabout(z[i-1], 180(2/n-1));
-    endfor
-    for i=0 upto n-1: z[i] -- endfor cycle
-enddef;
-path P[]; P3 = for i=0 upto 2: 6 up rotated 120i -- endfor cycle;
-fill P3 withcolor 3/4 red; draw P3;
-for n = 4 upto 23:
-    numeric m; m = floor(n / 2);
-    P[n] = poly n of subpath (m, m-1) of P[n-1];
-    fill P[n] withcolor (n/32)[3/4 if odd n: red else: blue fi, white];
-    draw P[n]; label(decimal n, median(P[n]));
-endfor
-\end{smallcode}\vskip -12pt}}
+\smallmpexternal[firstline=2,lastline=10]{archimedean-tools.mp}
+\smallmpexternal[firstline=8,lastline=15]{closed-polygon-chain.mp}
+\vskip -42pt}}
 
 \newpage\subsection{Curved polygons}
 
@@ -539,32 +517,10 @@ $$\includegraphics[width=0.9\textwidth]{closed-antireuleaux-set.pdf}$$
 \subsection{A triangle of Schläfli polygons}\label{sec:gcd}
 
 Apart from the curious polygon patterns in the display, the main \MP\ point of interest
-is the recursive "gcd" macro to find the greatest common divisor.\mpic{-108pt}{gons}
+is the recursive "gcd" macro to find the greatest common
+divisor.\mpic{-108pt}{closed-schlafli-polygons}
 
-\begin{code}
-input colorbrewer-rgb
-
-vardef gcd(expr a, b) = 
-    if b = 0: a else: gcd(b, a mod b) fi 
-enddef;
-
-beginfig(1);
-for n=2 upto 24: 
-    for s=1 upto floor n/2:
-        pair p; p = (12n - 24s, -24n);
-        path gon; gon = 
-            for t=0 upto n/gcd(s,n) - 1:
-                10 up rotated (360/n * s * t) -- 
-            endfor cycle;
-        if (n mod s = 0): 
-            fill gon shifted p withcolor Blues 9 2;
-            label("$" & decimal (n/s) & "$", p);
-        fi
-        draw gon shifted p withpen pencircle scaled 1/8;
-    endfor
-endfor
-endfig;
-\end{code}
+\mpexternal[firstline=6,lastline=26]{closed-schlafli-polygons.mp}
 
 \noindent
 The macro also leads directly to an efficient way to find the least common multiple:
@@ -580,25 +536,24 @@ overflow.
 Plain \MP\ has a built-in function to compute the intersection points of two paths, and
 there’s a handy high level function called "buildcycle" that uses this function to
 create an arbitrary closed path.
-\mpic{0pt}{area-under-graph}
+\mpic{-36pt}{closed-area-under-graph}
 The arguments to the function are just a list of paths, and providing the paths all
 intersect sensibly, it
 returns a closed path that can be filled or drawn.  This is often used for colouring an
 area under a function in a graph.
 Here is an example. The red line has been defined
-as path "f" and the two axes as paths "xx", and "yy".  The blue area was defined
+as path "f" and the two axes as paths "xx", and "yy".  The light blue area was defined
 with
-\begin{code}
-buildcycle(yy shifted (1u,0), f, yy shifted (2.71828u,0), xx)
-\end{code}
+\mpexternal[firstline=18,lastline=18]{closed-area-under-graph.mp}
+\noindent
 Note the re-use of the $y$-axis path shifted along by different amounts.
 
-\smallskip\noindent
+\vfill\noindent
 There are similar examples in the \MP\ manual, but "buildcycle" can also
 be useful in more creative graphics.
 Here’s a second example that uses closed paths to give an illusion of depth to a simple
 graphic of the planet Saturn.
-\mpic{0pt}{saturn}
+\mpic{0pt}{closed-saturn}
 \marginpar{\hbox{}\vskip1.3in\raggedright\noindent\textbf{Notes}\begin{itemize}
     \item The first five paths are just circles and ellipses based on \mpl{fullcircle}.
     \item The drawing is done inside an \mpl{image} simply so that the final result can
@@ -609,7 +564,7 @@ graphic of the planet Saturn.
         all run in the same direction.  Note that \mpl{subpath (8,4) of globe} runs
         clockwise (that is backwards) from point 8 to point 4.
 \end{itemize}}
-\mpexternal{saturn-code.mp}
+\mpexternal[firstline=7,lastline=23]{closed-saturn.mp}
 
 \newpage\subsection{The implementation of \texttt{buildcycle}}
 \textsc{The implementation} of \mpl{buildcycle} in plain \MP\ is interesting for a number of
@@ -682,15 +637,9 @@ be contained within the other.  This is explored in the next section.
 
 The implementation of "buildcycle" in plain \MP\ can get confused if you use it with
 just two paths.  Consider the following example: \mpic{0pt}{overlaps-missing-filler}
-\begin{code}
-beginfig(1);
-  path A, B;
-  A = fullcircle scaled 2.5cm;
-  B = fullcircle scaled 1.8cm shifted (1cm,0);
-  fill buildcycle(A,B) withcolor .8[blue,white];
-  drawarrow A; drawarrow B;
-endfig;
-\end{code}
+
+\mpexternal[firstline=7,lastline=14]{overlaps-missing-filler.mp}
+
 When we compile this example, we get no error message from "buildcycle", but there
 is no fill colour visible in the output.  The problem is that the points found by
 "buildcycle" are the same both times that it steps through the middle loop, so
@@ -1034,46 +983,7 @@ draw clock(hour, minute) scaled 0.8;
 For example we can use it to turn the time of day into an appropriate rotation for
 the hands of a clock.%
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-196pt
-\begin{code}
-path hand[];
-hand1 = origin .. (.257,1/50) .. (.377,1/60)
-          & (.377,1/60) {up} .. (.40,3/50)
-         .. (.60, 1/40) .. {right} (.75,0);
-hand1 := (hand1 .. reverse hand1 reflectedabout(left,right)
-          .. cycle) scaled 50;
-hand2 = origin  .. (.60, 1/64) .. {right} (.925,0);
-hand2 := (hand2 .. reverse hand2 reflectedabout(left,right)
-         .. cycle) scaled 50;
-
-% hour of the day to degrees
-vardef htod(expr hours)   = 30*((15-hours)   mod 12) enddef;
-vardef mtod(expr minutes) =  6*((75-minutes) mod 60) enddef;
-
-vardef clock(expr hours, minutes) = image(
-  % face and outer ring
-  fill fullcircle scaled 100 withcolor 1/256(240, 240, 230);
-  draw fullcircle scaled  99 withcolor .8 white;
-  draw fullcircle scaled 100 withpen pencircle scaled 7/8;
-  % numerals
-  for h=1 upto 12:
-    label( decimal h infont "bchr8r", (40,0) rotated htod(h));
-  endfor
-  % hour and minute marks
-  for t=0 step  6 until 359:
-    draw ((48,0)--(49,0)) rotated t;
-  endfor
-  drawoptions(withpen pencircle scaled 7/8);
-  for t=0 step 30 until 359:
-    draw ((47,0)--(49,0)) rotated t;
-  endfor
-  % hands rotated to the given time
-  filldraw hand1 rotated htod(hours+minutes/60);
-  filldraw hand2 rotated mtod(minutes);
-  % draw the center on top
-  fill fullcircle scaled 5;
-  fill fullcircle scaled 3 withcolor .4 white;
-) enddef;
-\end{code}
+\mpexternal[firstline=9,lastline=46,xleftmargin=0pt]{clocks.mp}
 \vss}}
 In the program given on the right, this idea
 is used to define functions that convert from hours and minutes
@@ -1303,33 +1213,7 @@ subtraction are just done with the
 normal operators.
 \vadjust{\moveright 384pt\vbox to 0pt{\vskip -3.74in
 $$\includegraphics{complex-operators}$$
-\begin{code}
-beginfig(1);
-    numeric u; u = 1cm;
-    z1 = 2 dir 15; z2 = 1.2 dir 60;
-    z3 = z1+z2; z4 = z1 zscaled z2; z5 = (x1,-y1);
-    drawoptions(withcolor 2/3 white);
-    draw (1/2 left -- 3 right) scaled u ;
-    draw (1/2 down -- 3 up   ) scaled u ;
-    draw subpath (0,3) of fullcircle scaled 2u rotated -22.5;
-    drawoptions();
-    dotlabel.lrt (btex $\scriptstyle 1$ etex, (u,0));
-    dotlabel.ulft(btex $\scriptstyle i$ etex, (0,u));
-    interim ahangle := 30;
-    forsuffixes @=1,2,3,4,5:
-        x@ := x@ * u; y@ := y@ * u;
-        drawarrow origin -- z@
-                  cutafter fullcircle scaled 5 shifted z@
-                  withcolor 2/3 if @ < 3: blue else: red fi;
-    endfor
-    fill fullcircle scaled dotlabeldiam;
-    dotlabel.rt (btex $A$ etex, z1);
-    dotlabel.urt(btex $B$ etex, z2);
-    dotlabel.top(btex $A+B$ etex, z3);
-    dotlabel.top(btex $A \times B$ etex, z4);
-    dotlabel.rt (btex $\bar{A}$ etex, z5);
-endfig;
-\end{code}
+\mpexternal[firstline=6,lastline=30]{complex-operators.mp}
 \vss}}%
 To get the complex conjugate you
 could use "reflectedabout(left,right)", but it's probably easier just to write
@@ -1357,23 +1241,11 @@ usual operations when they are required\dots
 Since multiplication by $z$ can be thought of as a transformation consisting of
 rotation by the argument of $z$ and scaling by $|z|$, you can define the complex
 inverse and complex square root simply using \mpl{angle} and \mpl{abs}.
-\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -24pt
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -84pt
 \centerline{\includegraphics{complex-inverse-and-sqrt}}
-The interesting part of the left hand figure was drawn as follows:
-\begin{smallcode}
-input colorbrewer-rgb
-for i=1 upto 3:
-  z[i] = (3/2 + 1/4 normaldeviate) * dir (16 i + normaldeviate);
-  path a;
-  a = z[i] scaled 42 -- origin -- zinverse(z[i]) scaled 42;
-  drawarrow a cutafter fullcircle scaled 5 shifted point 2 of a
-    withcolor SetTwo[7][2+i];
-  drawdot point 0 of a withpen pencircle scaled dotlabeldiam;
-  drawdot point 2 of a withpen pencircle scaled dotlabeldiam;
-  drawdot point 2 of a withpen pencircle scaled 2 withcolor white;
-endfor
-\end{smallcode}
-The only difference on the right is that the drawing used "zsqrt()".
+\noindent
+The drawing uses the two functions defined on the left.
+\smallmpexternal[firstline=11,lastline=44,xleftmargin=0pt]{complex-inverse-and-sqrt.mp}
 \vss}}
 
 \smallskip\noindent
@@ -1385,9 +1257,9 @@ z zscaled zinverse(z) = (1,0)
 In other words you need to find a complex number with an argument that is the
 negative of the argument of $z$ and a modulus that will scale $|z|$ to 1.
 You can use the polar notation with "dir" to write this directly:
-\begin{code}
-vardef zinverse(expr z) = 1/abs z * dir - angle z enddef;
-\end{code}
+
+\mpexternal[firstline=6,lastline=6]{complex-inverse-and-sqrt.mp}
+
 The complex division, $z/w$, can now be done as: \mpl{z zscaled zinverse(w)}.
 The only difficulty with this function is how it deals with zero, or rather with
 the point $(0,0)$.  Since `\mpl{abs (0,0)}' gives $0$, the function will give you
@@ -1406,11 +1278,7 @@ def zsqrt(expr z) = sqrt(abs z) * dir 1/2 angle z enddef;
 This function also has a difficulty with the point $(0,0)$, because "angle (0,0)" is
 not well defined, and so \MP\ throws an error.  If you want a function that
 correctly returns $(0,0)$ as its own square root, then try something like this:
-\begin{code}
-def zsqrt(expr z) =
-    if abs z > 0: sqrt(abs z) * dir 1/2 angle fi z
-enddef;
-\end{code}
+\mpexternal[firstline=7,lastline=9]{complex-inverse-and-sqrt.mp}
 
 \newpage
 \subsubsection{Using complex numbers to draw fractals}
@@ -1418,55 +1286,8 @@ enddef;
 As an example of what you can do with complex arithmetic, here is a version of the
 diagram from §4.1 of Knuth's \textsl{Seminumerical Algorithms} showing $S$, the set
 of all points that can be written as $\sum_{k\ge1}a_k(i-1)^{-k}$.
-\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -81pt
-\begin{smallcode}
-vardef fizz(expr X) =
-    pair m, n;
-    m = right;
-    n = origin;
-    numeric a, x;
-    x = X;
-    forever:
-        exitif x = 0;
-        m := m zscaled zinverse((-1, 1));
-        a := x mod 2;
-        n := n + a * m;
-        x := x div 2;
-    endfor
-    n
-enddef;
-input colorbrewer-rgb
-color shade[];
-shade0 = Reds 5 4; shade1 = Oranges 5 4;
-shade2 = Greens 5 4; shade3 = Blues 5 4;
-
-beginfig(1);
-    numeric s, t; s = 256; t = 4;
-    for n=0 upto (s/t*s/t-1):
-        numeric h, v;
-        h = floor 1/8 (n mod 32);
-        v = n mod 4;
-        fill fullcircle scaled t shifted (fizz(n) scaled s)
-            withcolor (1/2 + 1/8 v)[white, shade[h]];
-    endfor;
-
-    path xx, yy;
-    xx = (left--right) scaled (s+8);
-    yy = xx rotated 90;
-    for i=-1 upto 1:
-        draw xx shifted (0, s*i) withpen pencircle scaled 1/8;
-        draw yy shifted (s*i, 0) withpen pencircle scaled 1/8;
-    endfor
-    dotlabel.lrt(btex $-1-i$ etex, (-1, -1) scaled s);
-    dotlabel.lrt(btex $-1$ etex, (-1, 0) scaled s);
-    dotlabel.lrt(btex $-1+i$ etex, (-1, 1) scaled s);
-    dotlabel.lrt(btex $-i$ etex, (0, -1) scaled s);
-    dotlabel.lrt(btex $+i$ etex, (0, 1) scaled s);
-    dotlabel.lrt(btex $+1-i$ etex, (1, -1) scaled s);
-    dotlabel.lrt(btex $+1$ etex, (1, 0) scaled s);
-    dotlabel.lrt(btex $+1+i$ etex, (1, 1) scaled s);
-endfig;
-\end{smallcode}
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -36pt
+\mpexternal[firstline=7,lastline=42,xleftmargin=0pt]{double-dragon.mp}
 \vss}}
 $$\includegraphics[width=\textwidth]{double-dragon.pdf}$$
 \vbox to 0pt{\noindent\small\textbf{Note}: you can adjust the “resolution” with the parameter $t$, but don't
@@ -1499,20 +1320,21 @@ or, slightly more idiomatically:
 As you can see, you can apply implicit multiplication to a \mpl{color}, so after
 the declaration above "2 brg" would be a valid colour, although you have to think
 a bit to know what that means in terms of colour in your drawings.
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-72pt
+\vadjust{\moveright 396pt\vbox to 0pt{\kern-144pt\noindent
 To use RGB hex strings, you'll need to write a function:
 \begin{code}
 vardef hexrgb(expr Spec) =
-    save r, g, b;
-    numeric r, g, b;
-    r = hex(substring (1,3) of Spec);
-    g = hex(substring (3,5) of Spec);
-    b = hex(substring (5,7) of Spec);
-    1/256(r,g,b)
+  save r, g, b;
+  numeric r, g, b;
+  r = hex substring (1,3) of Spec;
+  g = hex substring (3,5) of Spec;
+  b = hex substring (5,7) of Spec;
+  1/256(r,g,b)
 enddef;
 brg = hexrgb("#014225");
 pbr = hexrgb("#df3439");
 \end{code}
+\noindent\hey The \mpl{hex} function is a built-in primitive operation.
 \vss}}%
 
 Plain \MP\ defines five basic colour constants: \mpl{red}, \mpl{green},
@@ -1527,21 +1349,9 @@ easier to read.  Much more usefully, you can use the mediation notation to get a
 colour that is part way between two others.  So \mpl{1/2[red, white]} gives you a
 shade of pink, and \mpl{2/3[blue, white]} a sort of sky blue.  You can also use this
 idea to vary colour with data, as in \mpl{(r)[red, blue]} where \mpl{r} is some
-calculated value.  \vadjust{\moveright 384pt\vbox to 0pt{\kern-36pt
-\begin{code}
-color brg; brg = 1/256 (1, 66, 37);
-color pbr; pbr = 1/256 (223, 52, 57);
-N = 5; n = 0;
-for y=1 upto N:
-  for x=1 upto N:
-    fill fullcircle scaled 16 shifted 20(x,y)
-      withpen pencircle scaled 2
-      withcolor (n/N/N)[pbr, brg];
-    label(decimal incr n infont "phvr8r", 20(x,y))
-      withcolor white;
-  endfor
-endfor
-\end{code}\vss}}
+calculated value.  \vadjust{\moveright 396pt\vbox to 0pt{\kern-64pt
+\mpexternal[firstline=6,lastline=18]{color-blend-toy.mp}
+\vss}}
 Here's a toy example:
 
 \vbox to 0pt{\centerline{\includegraphics[scale=0.8]{color-blend-toy}}\vss}
