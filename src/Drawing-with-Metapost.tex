@@ -1491,46 +1491,9 @@ $$\includegraphics[width=\textwidth]{color-brexit-map.pdf}$$
 \section{Random numbers}
 
 \MP\ provides us with two built-in functions to generate random numbers.
-\vadjust{\moveright 384pt\vbox to 0pt{\kern-24pt
-\begin{code}
-vardef dice(expr pip_count, pip_color) =
-  save d,r,p, ul, ur, lr, ll;
-  r=1/8; path d; picture p;
-  d = for i=0 upto 3:
-        quartercircle scaled 3 shifted (15,15) rotated 90i --
-      endfor cycle;
-  p = image(draw fullcircle scaled 6;
-            fill fullcircle scaled 6 withcolor pip_color);
-  pair ul, ur, ll, lr;
-  ul = 1/5[ulcorner d, lrcorner d];
-  lr = 4/5[ulcorner d, lrcorner d];
-  ur = 1/5[urcorner d, llcorner d];
-  ll = 4/5[urcorner d, llcorner d];
-  image(fill d withcolor background; draw d;
-  if odd(pip_count):
-     draw p shifted center d;
-  fi;
-  if pip_count > 1:
-     draw p shifted ul; draw p shifted lr;
-  fi;
-  if pip_count > 3:
-     draw p shifted ur; draw p shifted ll;
-  fi;
-  if pip_count = 6:
-     draw p shifted 1/2[ul,ur];
-     draw p shifted 1/2[ll,lr];
-  fi)
-enddef;
-
-beginfig(1);
-for i=0 upto 4:
-  draw dice(1+floor uniformdeviate 6, red)
-       rotated (2 normaldeviate)
-       shifted (36i,0);
-endfor
-endfig;
-\end{code}
-        $$\includegraphics{dice}$$
+\vadjust{\moveright 372pt\vbox to 0pt{\kern-24pt
+\mpexternal[firstline=5,lastline=39,xrightmargin=-36pt]{random-dice.mp}
+$$\includegraphics{random-dice}$$
 \vss}}
 \begin{itemize}
     \item `$\kw{uniformdeviate}\,n$' generates a random real number between $0$ and
@@ -1560,7 +1523,7 @@ endfig;
         about 68.3\%; between $-2$ and 2, about 95.4\%.
         \vadjust{\moveright 3.6in\vbox to 0pt{\hsize 1.6in \vskip21pt \noindent
         \small 10000 samples suggest\\\kw{normaldeviate} works.\par\vss}}
-        $$\includegraphics[width=4.6in]{gaussian}$$
+        $$\includegraphics[width=4.6in]{random-gaussian}$$
         To relocate the mean, just add a constant.  To rescale the distribution,
         multiply by the desired standard deviation (the square root of the
         desired variance).
@@ -1575,85 +1538,39 @@ The \kw{normaldeviate} function is provided as a primitive \MP\ operation. The
 implementation is based on the `Ratio method' presented in \textsl{The Art of
 Computer Programming}, section~3.4.1.   It turns out to be very straightforward to
 implement the algorithm for this method as a user-level program $\longrightarrow$
-\vadjust{\moveright5.5in\vbox to 0pt{\kern -64pt
-\begin{smallcode}
-vardef normaldeviate =
-    save u, v, xa;
-    forever:
-        forever:
-            u := uniformdeviate 1;
-            exitif (u>1/64);
-        endfor
-        v := sqrt(8/mexp(256)) * ( -1/2 + uniformdeviate 1 );
-        xa := v/u;
-        exitif ( xa**2 <= -mlog(u)/64 );
-    endfor
-    xa
-enddef;
-
-vardef exponentialdeviate =
-  save u;
-  forever:
-    u := uniformdeviate 1;
-    exitif (u>0);
-  endfor
-  -mlog(u)/256
-enddef;
-
-vardef gammadeviate(expr a,b) =
-  save y, x, v, s, accept; boolean accept;
-  s = sqrt(2a-1);
-  forever:
-    forever:
-      y := tand(uniformdeviate 180);
-      exitif y<64;
-    endfor
-    x := s * y + a - 1;
-    accept := false;
-    if x>0:
-       v := uniformdeviate 1;
-       if (v <= (1+y**2)*mexp((a-1)*mlog(x/(a-1))-(256*s*y))):
-         accept := true;
-       fi
-    fi
-    exitif accept;
-  endfor
-  x/b
- enddef;
-\end{smallcode}
+\vadjust{\moveright5.5in\vbox to 0pt{\kern -112pt
+\smallmpexternal{random-other-distributions.mp}    
 \vss}}%
 
-There are a couple points here.  First, the inner loop around the assignment to $u$ is
-designed to avoid very small values that would cause $v/u$ to be larger than 64, and
-hence make "xa**2" overflow. This is a useful general technique, and justified in
-terms of the algorithm since large values of $v/u$ are rejected anyway.  Secondly,
-the expression "sqrt(8/mexp(256))" is a constant ($ \sqrt{8/e} \simeq 1.71553 $) and could be
-replaced by it's value, but this does not make an appreciable improvement to the
+This version of \mpl{normaldeviate} is of academic interest only, in all real code
+you should use the primitive operation, but there are a couple of programming notes.
+If you put ‘\mpl{u = uniformdeviate 1}’, then you have $0 \le u < 1$, so $v/u$ might
+give you a divides-by-zero error; using ‘\mpl{u = 1 - uniformdeviate 63/64}’ ensures
+that $1/64 < u \le 1$, which not only avoids the possibility of a divide-by-zero
+error, but also ensures that $|(v/u)| < 64$, so that you can square it without
+overflow.  This is a useful general technique, and justified in terms of the
+algorithm since large values of $v/u$ are rejected anyway.  Secondly, the expression
+\mpl{sqrt(8/mexp(256))} is a constant ($ \sqrt{8/e} \simeq 1.71553 $) and could be
+replaced by its value, but this does not make an appreciable improvement to the
 speed of the routine.  On a modern machine, this routine is only very slightly
 slower than using the primitive function.
 
+\medskip\noindent
 It is also fairly straightforward to implement random number generators that follow other statistical
 distributions.  The mathematical details are in the section of \textsl{TOACP}
 referenced above. Two examples, for the exponential distribution and the gamma
 distribution, are shown on the right.  In both cases, note the care required to avoid
-arithmetic overflow (and see section~\ref{trig} for the "tand" function).
+arithmetic overflow with the default scaled number system.
 
 \medskip\label{mexp}\noindent
 You can also see the special nature of \MP's \kw{mexp} and \kw{mlog}
 functions. They are defined so that $\kw{mexp} x = \exp(x/256)$ and $\kw{mlog} x =256\log(x)$.
 This is another artefact of the scaled number system.  \MP\ computes $x^y$ using the
-formula "mexp(y*mlog(x))", and the adjusted log values give more accurate results.
+formula \mpl{mexp(y*mlog(x))}, and the adjusted log values give more accurate results.
 Note that this means that you have $e=\kw{mexp}(256)$.
 
-\medskip\noindent
-At the start of each job, \MP\ automatically sets a new seed for the random number
-generator, so that the sequence of numbers is different each time.  But you can set
-this yourself if you need the same sequence each time.  At the start of your program
-you should put "randomseed:=3.14;" (or whatever value you prefer). According to
-\textsl{The Metafont Book}, the default value is
-$\id{day}+\id{time}\ast\id{epsilon}$, but in \MP\ the exact value used depends on
-the resolution of the timers available on your system; essentially the value
-should be different every time you run \MP.
+It is sometimes useful to define macros for the usual versions of $\exp$ and $\log$
+as shown on the right.   This not only helps you make fewer programming mistakes, and 
 
 
 \newpage\subsection{Random walks}
@@ -1661,30 +1578,7 @@ should be different every time you run \MP.
 You can use the random number generation routines to produce visualizations of
 random walks, with various levels of analysis.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.4in\kern -2\baselineskip
-\begin{code}
-beginfig(1);
-numeric w, h, n; w = 377; h = 80; n = 500;
-pair zenith, nadir; zenith = nadir = origin;
-draw (origin--right) scaled w;
-draw (origin--right) scaled w shifted (0,+h/2) withcolor 3/4;
-draw (origin--right) scaled w shifted (0,-h/2) withcolor 3/4;
-for i=1 upto 8:
-  numeric y; y = 0;
-  path walk; walk = origin for x=w/n step w/n until w: 
-    hide(
-      y := y if uniformdeviate 1 < 1/2: + else: - fi 1;
-      if y > ypart zenith: zenith := (x,y) ; fi
-      if y < ypart nadir:  nadir  := (x,y) ; fi
-    ) 
-    -- (x,y) 
-  endfor;
-  undraw walk withpen pencircle scaled 3/4;
-  draw walk withcolor (1/2+y/h)[red, blue];
-endfor
-drawarrow (12 up   -- 2 up  ) shifted zenith withcolor blue;
-drawarrow (12 down -- 2 down) shifted nadir  withcolor red;
-\end{code}
-
+\mpexternal[firstline=5,lastline=31,xleftmargin=0pt]{random-walks-red-blue.mp}
 \smallskip\noindent
 \hey Note the \mpl{undraw} line using a slightly thicker pen; this makes it 
 easier to follow the lines as they cross each other.
@@ -1718,12 +1612,8 @@ may get more “realistic” patterns.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.2in\kern2\baselineskip\noindent
 The drawing here is much the same as the previous page, except that the definition of
 \id{walk} in the central loop is simplified to this:
-\begin{code}
-path walk; walk = (0, y) for x=w/n step w/n until w: 
-  hide(y := y + 2 normaldeviate)
-  -- (x, y)
-endfor;
-\end{code}}}
+\mpexternal[firstline=15,lastline=18,xleftmargin=0pt]{random-walks-normal.mp}
+}}
 $$\includegraphics[width=\textwidth]{random-walks-normal}$$
 Alternatively you could add an extra constraint that the final value should be zero
 (or some other desired target value); this is the so-called “brownian bridge”.
@@ -1732,42 +1622,15 @@ To do this, you make a random walk path, as above, with \id{n} points, and then 
 it into a new path where the $i$-th point is adjusted by $i/n\times(t-y)$ where $t$
 is the target value, and $y$ is the $y$-value of the last point on the walk path.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.2in\vss
-\begin{code}
-numeric w, h, n; w = 377; h = 80; n = 500;
-draw (origin--right) scaled w;
-draw (origin--right) scaled w shifted (0,+h/2) withcolor 3/4;
-draw (origin--right) scaled w shifted (0,-h/2) withcolor 3/4;
-numeric t, y; t = 0; y = 0;
-path walk; walk = (0, y) for x=w/n step w/n until w: 
-  hide(y := y + 4 normaldeviate)
-  -- (x, y)
-endfor;
-path bridge; bridge = point 0 of walk for i=1 upto n:
-  -- point i of walk + (0, i/n * (t-y)) endfor;
-draw walk withcolor 7/8;  % so you can see how it works
-undraw bridge withpen pencircle scaled 3/4;
-draw bridge withcolor 3/4 blue;
-\end{code}}}
+\mpexternal[firstline=7,lastline=23,xleftmargin=0pt]{random-walks-normal-bridge.mp}
+}}
 
 \newpage\subsection{Brownian motion}
 
 Relaxing all the contraints, can give you even more
 interesting patterns.\vadjust{\moveright5.5in\vbox to 0pt{
-\hsize4.2in
-\begin{code}
-beginfig(2);
-for n=1 upto 4:
-  x:=y:=0;
-  draw (x,y) for i=1 upto 2000:
-    hide(x:=x+4normaldeviate; y:=y+4normaldeviate;)
-    .. (x,y)
-  endfor withcolor ((n+2)/9)[blue,white];
-  fill fullcircle scaled 3 shifted (x,y) withcolor red;
-endfor
-% mark the origin
-fill fullcircle scaled 3 withcolor green;
-endfig;
-\end{code}
+\hsize4.2in\vskip -32pt
+\mpexternal[firstline=6,lastline=20,xleftmargin=0pt]{random-two-dimensional-brownian.mp}
 
 \kern 84pt
 \noindent
@@ -1802,45 +1665,7 @@ examples there are all in French (including all the names of the custom macros),
 perhaps it would be better to say `translated' rather than `stolen';  moreover my
 implementations are easier to use with plain \MP.\vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in\kern -5.5\baselineskip
-\begin{smallcode}
-def freehand_segment(expr p) =
-  point 0 of p {direction 0 of p rotated (4+normaldeviate)} .. 
-  point 1 of p {direction 1 of p rotated (4+normaldeviate)}
-enddef;
-def freehand_path(expr p) = 
-  freehand_segment(subpath(0,1) of p)
-  for i=1 upto length(p)-1:
-    & freehand_segment(subpath(i,i+1) of p)
-  endfor
-  if cycle p: & cycle fi
-enddef;
-defaultfont := "eurm10";
-color sepia; sepia = (0.44, 0.26, 0.08);
-picture marker; marker = image(for s=-1/2, 1/2: 
-  draw (left--right) scaled 2 rotated 60 shifted (s,0);
-endfor);
-def moved_along expr x of p = rotated angle direction x of p
-                              shifted point x of p enddef;
-
-beginfig(1);
-pair A, B, C, D;
-A = (0,-30); B = (180,0);  C = (120,90); 
-D = (1/2 + 1/40 normaldeviate)[A, B]; 
-path triangle, circumcircle, bisector;
-triangle = freehand_path(A--D--B--C--cycle);
-bisector = freehand_segment(C--D);
-circumcircle = freehand_path(A..B..C..cycle);
-draw triangle; 
-draw bisector; 
-draw circumcircle withcolor .67 red;
-draw marker moved_along 1/2 of triangle withcolor .67 red;
-draw marker moved_along 3/2 of triangle withcolor .67 red;
-label.lft("A", A);
-label.rt ("B", B);
-label.top("C", C);
-label.bot("D", D);
-endfig;
-\end{smallcode}
+\smallmpexternal[firstline=5,lastline=42,xleftmargin=0pt]{random-freehand-circumcircle.mp}
 \vss}}
 
 \subsubsection{Making curves and straight lines look hand drawn}
@@ -1868,44 +1693,7 @@ syntax.  The lines are drawn in sepia ink to enhance the hand-drawn look. The an
 labels are positioned on invisible arcs between neighbouring wonky lines.
 \vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in\kern -4.5\baselineskip
-\begin{code}[xleftmargin=0pt]
-vardef freehand_through@#(expr a, b) =
-  save t; pair t; 
-  t = @# * unitvector(b - a) rotated (4 + normaldeviate);
-  a - t .. a {t} .. b {t} .. b + t
-enddef;
-
-vardef mid_arc@#(expr p, a, b) =
-  save c; path c; 
-  c = fullcircle scaled (2*@#) shifted p cutbefore a cutafter b;
-  point arctime 1/2 arclength c of c of c
-enddef;
-
-beginfig(1);
-defaultfont := "eurm10"; color sepia; sepia = (0.44, 0.26, 0.08);
-pair A, B, C; A = (0,-30); B = (180,0);  C = (120,90);
-
-path a, b, c;
-a = freehand_through 7 (A, B);
-b = freehand_through 8 (B, C);
-c = freehand_through 6 (C, A);
-
-drawoptions(withcolor sepia);
-draw a; draw b; draw c;
-
-drawoptions(withcolor .67 blue);
-label.bot ("a", point 3/2 of a);
-label.rt  ("b", point 3/2 of b);
-label.ulft("c", point 3/2 of c);
-
-drawoptions(withcolor .5 red);
-label(char 11, mid_arc 16 (A, a, c));
-label(char 12, mid_arc 14 (B, b, a));
-label(char 13, mid_arc 14 (C, c, b));
-
-drawoptions();
-endfig;
-\end{code}
+\mpexternal[firstline=5,lastline=41,xleftmargin=0pt]{random-freehand-through.mp}
 \vss}}
 
 $$\includegraphics{random-freehand-through}$$
@@ -1926,26 +1714,7 @@ $$\hbox to \textwidth{\includegraphics{random-shapes}\hss}$$
 For these shapes the objective was to make them increasingly random, but to keep
 them all the same length.\vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in
-\begin{code}
-beginfig(1);
-numeric desired_length, n, s;
-desired_length = 180; n = 30; s = 80;
-
-for r=0 upto 8:
-
-  path shape;
-  shape = for i=1 upto n:
-    (s + r * normaldeviate, 0) rotated (360/n*i) ..
-  endfor cycle;
-
-  shape := shape scaled (desired_length/arclength shape);
-
-  draw shape shifted (r*s, 0) withcolor (r/8)[black,red];
-  label(decimal r, (r*s, 0));
-
-endfor
-endfig;
-\end{code}
+\mpexternal[firstline=6,lastline=21,xleftmargin=0pt]{random-shapes.mp}
 \vss}}
 Each time round the outer loop the \id{shape} is redeclared to clear it, and
 then redefined by an inline-loop with $n$ steps like
@@ -1968,101 +1737,45 @@ you need to have defined \id{shape} before you can refer to it.
 \newpage\subsection{Explosions and splashes}
 
 Random numbers are also useful to make eye catching banners for posters,
-presentations, and infographics.  Here are two simple example shapes: $\to$
-\mpic{18pt}{explode}
-
-\begin{smallcode}
-string heavy_font;
-heavy_font = "PlayfairDisplay-Black-osf-t1--base";
-
-randomseed:=2128.5073;
-
-beginfig(1);
-n = 40; r = 10; s = 50;
-path explosion, splash;
-explosion = for i=1 upto n:
-  (s if odd(i): - else: + fi r + uniformdeviate r,0) rotated (i*360/n) --
-endfor cycle;
-
-splash = for i=1 upto n:
-  (s if odd(i): - else: + fi r + uniformdeviate r,0) rotated (i*360/n) ..
-endfor cycle;
-splash := splash shifted (3s,0);
-
-fill explosion withcolor 1/2 green + red;
-draw explosion withpen pencircle scaled 2 withcolor 2/3 red;
-label("BOOM!" infont heavy_font scaled 2, center explosion)
-                                                     withcolor red;
-fill splash withcolor 1/2 green + blue;
-draw splash withpen pencircle scaled 2 withcolor 2/3 blue;
-label("SPLAT!" infont heavy_font scaled 2, center splash)
-                                                     withcolor blue;
-endfig;
-\end{smallcode}
-
+presentations, and infographics.  Here are two simple example shapes \rightarrowfill
+\mwpic{0pt}{random-explosions}
+\mpexternal[firstline=8,lastline=29,xleftmargin=0pt]{random-explosions.mp}
 \noindent
-In this figure "n" is the number of points in the shape, "r" is the amount of
-randomness, and :"s" is the radius used.
-In order to get a clear zig-zag outline, the loop alternately adds or subtracts "r";
-and then adds a random amount on top to make it look random.
-Notice that the only difference between the "explosion" and "splash" is that how
-the connecting lines are constrained to be straight or allowed to make smooth
-curves.\vadjust{\moveright5.5in\vtop to -2pt{\hsize 4in\vss\noindent
-The display font used here is one of the gems hidden away in "psfonts.map".
+In this figure $n$ is the number of points in the shape, $s$ is the radius, and $r$
+is the amount of randomness added to or removed from $s$.  In order to get a clear
+zig-zag outline, the loop alternately adds or subtracts $r$; and then adds a random
+amount on top to make it look random.  Notice that the only difference between the
+"explosion" and "splash" is that how the connecting lines are constrained to be
+straight or allowed to make smooth curves.
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent\small
+The display font used here is Playfair Display Black.  If you have it installed 
+as a system font, you can use "fontspec" and "luamplib" with "lualatex" as described 
+in §\ref{sec:sa-lua-flow}, but if you are still using
+plain "mpost", then you need to hunt for it in your local "psfonts.map".
 If you run \MP\ with the "-recorder" option, it will create a list of all the files
 used, with the current job name and an extension of ".fls".  This file will include
 a line which tells you exactly which version of "psfonts.map" is being used.
-
 The DVIPS documentation explains the format of the file, but for \MP's purposes the
-first word of each non-comment line defines a font name you can try.  However beware
-that just because a name is defined in your map file, does not necessarily mean that
-you actually have the required PostScript font files installed as well.  But if you have a
-full TexLive installation you will find that very many of them are already
-installed.\strut
-}}
+first word of each non-comment line defines a font name you can try. When you find 
+it you can add something like this to the top of the example:
+\begin{smallcode}
+defaultfont = "PlayfairDisplay-Black-osf-t1--base";
+defaultscale = 3;
+\end{smallcode}}}
 
 
 \newpage\subsection{Simulating jagged edges or rough surfaces}
 
 You can use the idea of adding a little bit of noise to simulate a rough surface.
-$$\includegraphics[width=0.95\textwidth]{qed}$$
+\vadjust{\moveright5.25in\vbox to 0pt{\hsize 4in\vskip-12pt
+\smallmpexternal[firstline=6,lastline=37,xleftmargin=0pt]{random-qed.mp}
+\vss}}
+$$\includegraphics[width=0.95\textwidth]{random-qed}$$
 These diagrams are supposed to represent light rays reflecting from a surface: on
 the left the surface is smooth ($r=0$) and on the right it's rough ($r=0.42$).
 The parameter $r$ is used in the \MP\ program as a scaling factor for the random
 noise added to each point along the rough surface; the only difference in the code
 to produce the two figures was the value of $r$.%
-\vadjust{\moveright5.5in\vbox to
-    0pt{\hsize 4in\vss
-\begin{smallcode}
-def perpendicular expr t of p =
-  direction t of p rotated 90 shifted point t of p
-  enddef;
-
-beginfig(1);
-u = 5mm;  r = 0.42; n = 32; s = 8u; theta = -45;
-
-path base;
-base = origin
-       for i=1 upto n-1: -- (i/n*s,r*normaldeviate) endfor
-       -- (s,0) -- (s,-u) -- (0,-u) -- cycle;
-fill base withcolor .8[blue,white];
-draw base withcolor .67 blue;
-
-path ray[];
-for i=2 upto 6:
-  ray[i] = (left--right) scaled 2/3 s rotated theta shifted (i*u,0);
-  b := ypart (ray[i] intersectiontimes base);
-  ray[i] := point 0 of ray[i]
-         -- point b of base
-         -- point 0 of ray[i]
-            reflectedabout(point b of base, perpendicular b of base);
-  drawarrow ray[i];
-endfor
-
-label("r=" & decimal r, center base);
-endfig;
-\end{smallcode}
-\vss}}
 First the base block is created with some noise on the upper side.  Then five rays
 are created.  Applying \mpl{ypart} to the pair of times returned by
 \mpl{intersectiontimes} gives us the point of the base where the incident ray hits
@@ -2082,45 +1795,21 @@ sometimes this can create unexpected loops.
 It's also possible to use a random
 walk approach so that each random step takes account of the previous one to avoid
 any big jumps.  Here's one way to do that.
-$$\includegraphics{torn-edge-straight}$$
-\begin{code}
-path t; numeric x, y; 
-x = 0; y=0; 
-t = (x, -20) -- (x, y) for i=1 upto 288: 
-        -- (incr x, walkr y) 
-    endfor -- (x, -20) -- cycle;
-draw t withcolor .67 blue;
-\end{code}
+$$\includegraphics{random-torn-straight-edge}$$
+\mpexternal[firstline=6,lastline=12]{random-torn-straight-edge.mp}
+
+\noindent
 The "walkr" routine works like the "incr" and "decr" commands; it updates the value of the
 argument.  The idea is that the further away from zero you are, the more likely is
 that the next value will take you back towards zero.
-\begin{code}
-vardef walkr suffix $ =
-  $ := $ if uniformdeviate 1 < (2**-abs($)): + else: - fi
-    signr $; $
-  enddef;
-vardef signr suffix $ =
-  if $<0: - else: + fi uniformdeviate 1
-  enddef;
-\end{code}
+\mpexternal{random-torn-edge.mp}
 You can use this to produce more realistic torn edges.  You can also apply this as a
 form of jitter to a curved path, by adding a suitably rotated vector to enough
-points along the path.
+points along the path, as shown in the example on the right.\rightarrowfill
 
 \moveright5.5in\vbox to 0pt{\kern-4in
-\begin{code}
-path c; c = fullcircle scaled 200;
-draw c withcolor .8 white;
-
-y=0; n = 600;
-path t; t = for i=0 upto n-1:
-  point i/n*length(c) of c
-  + (0, walkr y) rotated angle direction i/n*length(c) of c
-  --
-endfor cycle;
-draw t withcolor .67 red;
-\end{code}
-$$\includegraphics{torn-edge-circle}$$
+\mpexternal[firstline=6,lastline=16]{random-torn-edge-circle.mp}
+$$\includegraphics{random-torn-edge-circle}$$
 \vss}
 
 
@@ -8572,4 +8261,4 @@ proper shapes appear in the final result.
 \newpage
 \tableofcontents
 
-\end{document}ll
+\end{document}

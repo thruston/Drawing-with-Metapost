@@ -17,10 +17,9 @@ beginfig(1);
   endfor;
   path bridge; bridge = point 0 of walk for i=1 upto n:
     -- point i of walk + (0, i/n * -y) endfor;
-  draw walk withcolor 7/8;
+  draw walk withcolor 7/8;  % so you can see how it works
   undraw bridge withpen pencircle scaled 3/4;
   draw bridge withcolor 3/4 blue;
 endfig;
 \end{mplibcode}
 \end{document}
-
