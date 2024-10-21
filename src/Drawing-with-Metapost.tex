@@ -1820,21 +1820,7 @@ $$\includegraphics{random-torn-edge-circle}$$
 Here is the equilateral triangle point macro in action.
 $$\includegraphics{geometry-triangles-on-circle}$$
 \vskip -12pt
-\begin{code}
-beginfig(1);
-path c; c = fullcircle scaled 144;
-pair a,b,p,q;
-for i=0 upto 7:
-  a := point i   of c;
-  b := point i+1 of c;
-  p := equilateral_triangle_point(a,b);
-  q := equilateral_triangle_point(b,a);
-  draw a -- p -- b withcolor .67 green;
-  draw a -- q -- b withcolor .67 red;
-endfor
-draw c withcolor .53 blue;
-endfig;
-\end{code}
+\mpexternal[firstline=8,lastline=21,xleftmargin=0pt]{geometry-triangles-on-circle.mp}
 \vss}}%
 This section deals with drawing geometrical figures that involve lines,
 angles, polygons, and circles.  Plain \MP\ provides very few tools that are
@@ -1872,22 +1858,18 @@ vardef equilateral_triangle_point(expr a, b) =
 enddef;
 \end{code}
 And if you want to get right back to primitives you could even write that as:
-\begin{code}
-vardef equilateral_triangle_point(expr a, b) =
-  b shifted -a rotated 60 shifted a
-enddef;
-\end{code}
+\mpexternal[firstline=5,lastline=7]{geometry-triangles-on-circle.mp}
 
 
 \newpage
 \subsection{Bisecting lines and paths}
 
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
-$$\includegraphics{mediation-pitfall}$$
+$$\includegraphics{geometry-mediation-pitfall}$$
 \vskip 50pt
-$$\includegraphics[width=4in]{mediation-shapes}$$
+$$\includegraphics[width=4in]{geometry-mediation-shapes}$$
 \bigskip
-$$\includegraphics[width=4in]{mediation-sallows}$$
+$$\includegraphics[width=4in]{geometry-mediation-sallows}$$
 \centerline{\textsl{Lee Sallows' theorem of median triangles}}
 \vss}
 \noindent
@@ -1940,9 +1922,9 @@ triangle. The theorem shown here was first published in 2014.
 \newpage
 \subsection{Bisecting angles}\label{sec:bisect}
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
-$$\includegraphics{bisection-euclidean}$$
+$$\includegraphics{geometry-bisection-euclidean}$$
 \smallskip
-$$\includegraphics{bisection-vector}$$
+$$\includegraphics{geometry-bisection-vector}$$
 \vss}
 \noindent
 In an equilateral triangle the medians also bisect the angles at each vertex; this
@@ -1969,7 +1951,7 @@ So if sides $AB$ and $BC$ have lengths $p$ and $q$ then the bisector will
 be ${p\over p+q}={1\over1+q/p}$ from $A$ to $C$, and you can express this
 simply using \MP's mediation syntax:
 \vbox to 0pt{
-$$\includegraphics{bisection-interior}$$
+$$\includegraphics{geometry-bisection-interior}$$
 \vss}
 
 \newpage
@@ -1977,21 +1959,10 @@ $$\includegraphics{bisection-interior}$$
 
 There is no classical method to trisect an arbitrary angle, so you need to resort
 to measuring and arithmetic in \MP.  If the angle is a given this is trivial:
-\mpic{-12pt}{trisection-simple.pdf}
-\begin{smallcode}
-path ray;
-numeric theta;
-ray = origin -- 200 right;
-theta = 42;
-draw ray;
-draw ray rotated 1/3 theta withcolor 2/3 red;
-draw ray rotated 2/3 theta withcolor 2/3 red;
-draw ray rotated theta;
-dotlabel.llft("$0$", origin);
-label("$\theta/3$", 72 right rotated 1/6 theta);
-label("$\theta/3$", 72 right rotated 3/6 theta);
-label("$\theta/3$", 72 right rotated 5/6 theta);
-\end{smallcode}
+\mpic{-12pt}{geometry-trisection-simple}
+\smallmpexternal[firstline=6,lastline=17]{geometry-trisection-simple.mp} 
+
+\noindent
 But if you have only the coordinates of some points then you need to use the
 \mpl{angle} primitive to measure the angle first; \mpl{angle} takes a \<pair>
 argument and returns a numeric representing the angle in degrees measured clockwise
@@ -2012,7 +1983,7 @@ turn through 360${}^\circ$ if you traversed the path.  We use this here to
 negate the measured angle if necessary, so that you always get the interior angle.
 The \mpl{mod 360} on the end ensures that the result is in the range $0 \le \theta <
 360$.  Armed with a measured angle, all you then need is arithmetic.
-\mpic{-160pt}{trisection-classical.pdf}
+\mpic{-160pt}{geometry-trisection-classical}
 It might be possible to use the \id{solve} macro to simulate the Neusis construction
 (that allows you to measure a length) illustrated on the right, but measuring the
 angles is rather easier.
@@ -2022,27 +1993,15 @@ angles is rather easier.
 
 \moveright5.5in\vbox to 0pt{\hsize4in\noindent
 \centerline{A puzzle square featuring some intersections}
-$$\includegraphics[width=3in]{magic-square-14}$$
+$$\includegraphics[width=3in]{geometry-magic-square-14}$$
 The points were defined like this (the order was important).
-\begin{code}
-z1 = (10,10);
-z4 = 144 right rotated 12;
-z5 = z4 shifted (2, 78);
-z7 = z4 reflectedabout(origin, (1,1));
-
-z2 = 1/2 [z5, z7];
-z9 = whatever [z1, z4];
-z2-z9 = whatever * (z7-z1);
-z8 = whatever [z1, z5] = whatever [z2, z4];
-z3 = whatever [z2, z9] = whatever [z4, z7];
-z6 = whatever [z1, z7] = whatever [z3, z5];
-\end{code}
+\mpexternal[firstline=8,lastline=18]{geometry-magic-square-14.mp}
 \vss}
 \noindent
 If you have line segments defined by their endpoints, then the
 canonical way to find their intersection, is to use
 the mediation syntax with \id{whatever} twice:
-$$\includegraphics[width=\textwidth]{whatever.pdf}$$
+$$\includegraphics{geometry-whatever}$$
 The mediation syntax works even if the intersection point does not actually lie on
 either of the two line segments.  The intersection will be the point where the two
 (infinite) lines through the pairs of points meet.  If the two lines are parallel,
@@ -2082,14 +2041,12 @@ found will always be as early as possible on $A$.  Note that after the call abov
 point $t$ of $A$ will be very close to point $u$ of $B$, as they both refer to the
 same intersection point.  If you want the alternative point that is earlier on $B$,
 then use `$B \mathbin{\textrm{intersectiontimes}} A$'
-instead.\mpic{-222pt}{intersection-AB-or-BA}
+instead.\mpic{-222pt}{geometry-intersection-AB-or-BA}
 
 \vfill\noindent
 When we get down to paths of length 1, the algorithm works something like this:
 
-$$
-\includegraphics{intersection-algorithm}
-$$
+$$\includegraphics{geometry-intersection-algorithm}$$
 \vadjust{\moveright 384pt\vbox to 0pt{\hsize 4.2in\vss \noindent
 The two paths are represented as rectangles that enclose the end points and the
 control points for each path.  If these rectangles don't overlap then there is
@@ -2137,10 +2094,10 @@ intersectiontimes B}, but in a loop this causes an inconsistent equation error o
 the second iteration.  If you need to avoid the repeated use of \mpl{xpart} and
 \mpl{ypart}, one alternative is to do this inside the loop:
 \begin{smallcode}
-    ...
-    numeric t, u;
-    (t, u) = A intersectiontimes B;
-    ...
+...
+numeric t, u;
+(t, u) = A intersectiontimes B;
+...
 \end{smallcode}
 Now the numerics are reset each time and the equation is not inconsistent.
 \vadjust{\moveright 384pt\vbox to 0pt{\hsize 4.2in\vss \noindent
@@ -2149,7 +2106,7 @@ both of the paths are close together, so that the unit subpaths are short;
 But it
 is possible to create quite long paths of unit \mpl{length} and these may intersect
 each other more than once, like so:
-$$\includegraphics{intersection-only-two}$$
+$$\includegraphics{geometry-intersection-only-two}$$
 Here the two paths $A$ and $B$ are Bézier splines of with \mpl{length=1}, so the
 normal \MP\ algorithm is only ever going to give you one of the intersections.  In
 the diagram above, the
@@ -2159,18 +2116,10 @@ but what about the one in the middle?
 
 The most reliable approach is to take a copy of one of the paths, and snip it off at
 the intersection and try again until there is nothing left to snip.
-$$\includegraphics{intersection-all-three}$$
+$$\includegraphics{geometry-intersection-all-three}$$
 The three points marked here were captured like this:
-\begin{code}
-pair P[]; numeric n; n=0;
-path R; R := A;  % take a copy of A
-forever:
-  R := R cutbefore B;  % snip where we cross B
-  exitif length cuttings = 0;  % stop if nothing was cut
-  P[incr n] = point 0 of R; % capture the point
-  R := subpath (epsilon, infinity) of R; % nudge along
-endfor
-\end{code}
+\mpexternal[firstline=13,lastline=20]{geometry-intersection-all-three.mp}
+\noindent
 This technique also works on paths with \mpl{length} greater than one,
 so you may prefer it as your general “get all the intersections” approach.
 Note that the \mpl{cutbefore} macro is defined using \mpl{intersectiontimes}.
@@ -2183,7 +2132,7 @@ Note that the \mpl{cutbefore} macro is defined using \mpl{intersectiontimes}.
 
 Given five known points --- $A$, $B$, $C$, $D$, and $E$ --- \MP\ can find the point $F$
 on the line $A \to B$, so that $E \to F$ is parallel to $C \to D$ like this:
-\mpic{0pt}{parallel}
+\mpic{0pt}{geometry-parallel}
 \begin{code}
     F = whatever[A, B]; % F is on the line A..B
     E-F = whatever * (C-D) % E..F || C..D
@@ -2238,7 +2187,7 @@ find the other point by reversing the circle.\par}
 
 The canonical way to draw a circle in plain \MP\ is to use the pre-defined path
 \mpl{fullcircle} with a suitable transformation.
-\mpic{-12pt}{drawing-circles.pdf}
+\mpic{-12pt}{geometry-drawing-circles}
 The path is defined (in "plain.mp") using two \MP\ primitive commands:
 \begin{code}
 path fullcircle; fullcircle = makepath pencircle;
@@ -2264,14 +2213,8 @@ points, but if the line between the two points is a diameter [\blue{II}], then y
 draw fullcircle scaled abs (B-A) shifted 1/2[A,B];
 \end{code}
 Finally three points define a unique circle [\green{III}]:
-\begin{code}
-vardef circle_through(expr A, B, C) =
-    save o; pair o;
-    o = whatever * (A-B) rotated 90 shifted 1/2 [A,B]
-      = whatever * (B-C) rotated 90 shifted 1/2 [B,C];
-    fullcircle scaled 2 abs (A-o) shifted o
-enddef;
-\end{code}
+\mpexternal[firstline=27,lastline=32]{geometry-drawing-circles.mp}
+\noindent
 Plain \MP\ also defines \id{halfcircle} and \id{quartercircle}, as the appropriate
 subpaths of \id{fullcircle}, both starting at point 0 (3 o'clock). Curiously, this
 differs from \MF\ where \id{quartercircle} is defined first, and the other two
@@ -2287,17 +2230,8 @@ The incircle of a triangle is the largest circle contained in the triangle.
 The centre of the incircle lies at the intersection of the internal angle bisectors.
 So we can use ideas from §\ref{sec:bisect} and §\ref{sec:intersect} to define a
 macro that returns the required path given points $A$, $B$, and $C$:
-\mxpic{-1in}{5in}{incircle}
-\begin{code}
-vardef incircle(expr A,B,C) =
-  save a, b, m, t; pair a, b, m, t;
-  a = A + unitvector (C-A) + unitvector (B-A);
-  b = B + unitvector (A-B) + unitvector (C-B);
-  m = whatever[A,a] = whatever [B,b]; t = whatever[A,B];
-  t-m = whatever * (B-A) rotated 90;
-  fullcircle scaled 2 abs (t-m) shifted m
-enddef;
-\end{code}
+\mxpic{-1in}{5in}{geometry-incircle}
+\mpexternal[firstline=11,lastline=18]{geometry-incircle.mp}
 
 \bigskip\noindent
 The excircles of a triangle are the three circles lying outside the triangle and
@@ -2306,8 +2240,9 @@ excircle lie at the intersection of one internal angle bisector and the external
 angle bisector of one of the other corners.
 
 To get the external angle bisector,
-all you have to do is reverse the direction of one of the \mpl{unitvector} calls:
-\mxpic{0pt}{5in}{excircle}
+all you have to do is reverse the direction of one of the \mpl{unitvector} calls 
+(can you see why?)
+\mxpic{0pt}{5in}{geometry-excircle}
 \begin{code}
 vardef excircle(expr A,B,C) =
   save a, b, m, t; pair a, b, m, t;
@@ -2329,15 +2264,9 @@ The circumcircle of a triangle is the circle through the three corners, so if yo
 already have the corners of your triangle as separate \<pair> variables, you can
 use the \mpl{circle_through} macro from §\ref{sec:circles}.  Or you can adapt the
 macro to take a single triangular path:
-\begin{smallcode}[xleftmargin=0pt, xrightmargin=-60pt]
-vardef circumcircle(expr T) =
-  save m; pair m;
-  m = whatever * (point 0 of T - point 1 of T) rotated 90 shifted point 1/2 of T 
-    = whatever * (point 1 of T - point 2 of T) rotated 90 shifted point 3/2 of T; 
-  fullcircle scaled 2 abs (point 0 of T - m) shifted m
-enddef;
-\end{smallcode}
-Note that as the diagram on the right shows,\mxpic{-2in}{4.6in}{circumcircle}
+\smallmpexternal[firstline=11,lastline=16,xleftmargin=0pt, xrightmargin=-60pt]{geometry-circumcircle.mp}
+\noindent
+Note that as the diagram on the right shows,\mxpic{-2in}{4.6in}{geometry-circumcircle}
 the centre of the circumcircle is the intersection of all three of the perpendicular bisectors of
 sides, but for the purposes of drawing in \MP\ you only need to find the
 intersection of two of them.  You could write 
@@ -2353,24 +2282,11 @@ is long and thin.
 \vfill
 \noindent
 \hey The marks that show line segments are equal were created by this macro.
-\begin{code}
-vardef mark_equal(expr a, b, n) = 
-  save m, s; numeric s; 2s = n - 1;
-  picture m; m = image(for t=-s upto s:
-      draw (down--up) scaled 2 rotated -13 shifted (t,0) 
-          withpen pencircle scaled 1/4;
-  endfor);
-  draw m rotated angle (b-a) shifted 1/4[a,b];
-  draw m rotated angle (b-a) shifted 3/4[a,b];
-enddef;
-\end{code}
+\smallmpexternal[firstline=38,lastline=47]{geometry-circumcircle.mp}
 Given the triangular \<path> $T$, the macro was used like this: 
 $\longrightarrow$\vadjust{\moveright5.5in\vbox to 0pt{\vss
-\begin{code}
-mark_equal(point 0 of T, point 1 of T, 1);
-mark_equal(point 1 of T, point 2 of T, 2);
-mark_equal(point 2 of T, point 0 of T, 3);
-\end{code}}}
+\smallmpexternal[firstline=49,lastline=51]{geometry-circumcircle.mp}
+}}
 
 \newpage
 \subsection{The nine-point circle of a triangle}
@@ -2380,55 +2296,10 @@ altitudes, shown as point $D$ below.
 The point $N$, half-way from $D$ to the
 circumcentre $M$ is the centre of the remarkable nine-point circle which passes
 through the bases of the three altitudes and bisects the six line segments $AB$, $AC$, $AD$,
-$BC$, $BD$, and $CD$.\vadjust{\moveright5.2in\vbox to 0pt{\hsize 4in\vskip-80pt\noindent
-\begin{smallcode}
-pair A, B, C, D, N, M, p, q, r;
-A = origin; B = 377 dir 10; C = 233 dir 70;
-% pedal points (not labelled)
-p = whatever[B, C]; A - p = whatever * (B-C) rotated 90;
-q = whatever[C, A]; B - q = whatever * (C-A) rotated 90;
-r = whatever[A, B]; C - r = whatever * (A-B) rotated 90;
-
-D = whatever[A, p] = whatever[B, q];
-N = 1/4(A + B + C + D);  % remarkably...
-M = D rotatedabout(N, 180);  % M is also the circumcentre
-
-path circumcircle, nine_point_circle;
-nine_point_circle = fullcircle scaled 2 abs(N - 1/2[A, B]) shifted N;
-circumcircle = fullcircle scaled 2 abs(M - A) shifted M;
-
-draw nine_point_circle withcolor 3/4 red;
-draw circumcircle withcolor 1/2[3/4 blue, white];
-
-drawoptions(dashed evenly scaled 1/4 withcolor 1/2);
-draw 1/2[A,B] -- M -- 1/2[B, C];
-draw 1/2[C,A] -- M -- D;
-draw A -- p;
-draw B -- q;
-draw C -- r;
-
-% show the nine points with small circle markers
-drawoptions(withpen pencircle scaled 1/4);
-draw fullcircle scaled 2 shifted 1/2[A, B];
-draw fullcircle scaled 2 shifted 1/2[A, C];
-draw fullcircle scaled 2 shifted 1/2[A, D];
-draw fullcircle scaled 2 shifted 1/2[B, C];
-draw fullcircle scaled 2 shifted 1/2[B, D];
-draw fullcircle scaled 2 shifted 1/2[C, D];
-draw fullcircle scaled 2 shifted p;
-draw fullcircle scaled 2 shifted q;
-draw fullcircle scaled 2 shifted r;
-
-drawoptions();
-draw A--B--C--cycle;
-dotlabel.llft("$A$", A);
-dotlabel.rt("$B$", B);
-dotlabel.ulft("$C$", C);
-dotlabel.urt("\ $D$", D);
-dotlabel.llft("$M$", M);
-dotlabel.llft("$N$", N);
-\end{smallcode}\vss}}
-$$\includegraphics[width=\textwidth]{nine-point-circle}$$
+$BC$, $BD$, and $CD$.\vadjust{\moveright5.25in\vbox to 0pt{\hsize 4in\vskip-88pt\noindent
+\smallmpexternal[firstline=6,lastline=52,xleftmargin=0pt]{geometry-nine-point-circle.mp}
+\vss}}
+$$\includegraphics[width=\textwidth]{geometry-nine-point-circle}$$
 
 \newpage
 \subsection{Lines tangent to a point on a path}
