@@ -1,11 +1,11 @@
-documentclass[border=5mm]{standalone}
+\documentclass{standalone}
 \usepackage{luamplib}
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
 beginfig(1);
   pair A, B, C, D, N, M, p, q, r;
-  A = origin; B = 377 dir 10; C = 233 dir 70;
+  A = origin; B = 343 dir 10; C = 212 dir 70;
   % pedal points (not labelled)
   p = whatever[B, C]; A - p = whatever * (B-C) rotated 90;
   q = whatever[C, A]; B - q = whatever * (C-A) rotated 90;

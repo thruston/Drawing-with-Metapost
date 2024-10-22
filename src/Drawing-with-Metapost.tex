@@ -2299,14 +2299,17 @@ through the bases of the three altitudes and bisects the six line segments $AB$,
 $BC$, $BD$, and $CD$.\vadjust{\moveright5.25in\vbox to 0pt{\hsize 4in\vskip-88pt\noindent
 \smallmpexternal[firstline=6,lastline=52,xleftmargin=0pt]{geometry-nine-point-circle.mp}
 \vss}}
-$$\includegraphics[width=\textwidth]{geometry-nine-point-circle}$$
+
+\smallskip
+
+$$\includegraphics{geometry-nine-point-circle}$$
 
 \newpage
 \subsection{Lines tangent to a point on a path}
 
 \MP\ represents paths internally as a sequence of nodes. Each node consists of three
 pairs: the pre-control point, the point itself, and the post-control point. 
-\mpic{0pt}{tangents-on-path}%
+\mpic{0pt}{geometry-tangents-on-path}%
 For a given path $p$ you can extract these points at time $t$ with these operators:
 \begin{code}
 precontrol t of p
@@ -2350,13 +2353,11 @@ outside a circle.  To do this, you need to adapt the standard geometrical
 construction: for a given circle $C$ and a point $p$, find the midpoint of $p$ and
 the center of $C$; draw a semicircle through $p$, centred on this midpoint; the tangent
 point is where the semicircle intersects $C$. %
-\mpic{-110pt}{tangents-point-to-circle.pdf}
+\mpic{-110pt}{geometry-tangents-point-to-circle}
 Given a suitable \mpl{path C} and \mpl{pair p} you can do this:
-\begin{code}
-pair o, m, t, t'; o = center C; m = 1/2[o, p];
-t = C intersectionpoint halfcircle zscaled (p-o) shifted m;
-t' = C intersectionpoint halfcircle zscaled (o-p) shifted m;
-\end{code}
+\mpexternal[firstline=11,lastline=13]{geometry-tangents-point-to-circle.mp}
+
+\noindent
 No parentheses are needed around the second path, because \mpl{intersectionpoint} is
 defined with \mpl{secondarydef}.
 
@@ -2368,82 +2369,62 @@ that $b > a$ in all cases regardless of the relative rotation of $C$ and $p$.  T
 means that \mpl{subpath (a, b) of C} is always the “long way round” C, on the
 opposite side from $p$, and \mpl{subpath (a, b-8) of C} is always the shorter
 segment.
-\begin{code}
-vardef tangent_times(expr C, p) =
-    % return the two times on C that correspond
-    % to the external tangents from p to C
-    save o, a, b, G, H;
-    pair o; numeric a, b; path G, H;
-    o = center C;
-    H = halfcircle zscaled (p-o) shifted 1/2[o, p];
-    G = halfcircle zscaled (o-p) shifted 1/2[o, p];
-    (a, whatever) = C intersectiontimes H;
-    (b, whatever) = C intersectiontimes G;
-    (a, b if b < a: + 8 fi)
-enddef;
-\end{code}
-Note the elegant syntax here; 
-if \mpl{z} is a \<pair> then the operation \mpl{zscaled z} is equivalent
-to \mpl{scaled abs z rotated angle z}.
+
+\mpexternal{geometry-tangent-times.mp}
+
+\noindent
+Note the elegant syntax here; if \mpl{z} is a \<pair> then the operation
+\mpl{zscaled z} is equivalent to \mpl{scaled abs z rotated angle z}.
 
 \vpic{-200pt\noindent Here is the macro in action.
 Having obtained the two times $a$ and $b$ from the macro, the dashed line
 was drawn along a path that was composed with:
 \vrule depth 20pt width 0pt height 2pt
 \mpl{p -- subpath (a,b) of C -- cycle}
-}{tangent-times-on-circle}
+}{geometry-tangent-times-on-circle}
 
 \newpage
 \subsection{Lines tangent to two circles (exterior)}\label{sec:adjust-times}
 
 The same \mpl{tangent_times} macro can be reused to find the tangents that touch two
-circles, using an approach like this: \mwpic{-12pt}{tangents-two-circles-exterior}
-\begin{code}
-path A, B;
-A = fullcircle scaled 144;
-B = fullcircle scaled 60 shifted (200, 140);
+circles, using an approach like this: \mwpic{-36pt}{geometry-tangents-two-circles-exterior}
 
-numeric R, r;
-R = abs (point 0 of A - center A);
-r = abs (point 0 of B - center B);
+\smallmpexternal[firstline=9,lastline=24]{geometry-tangents-two-circles-exterior.mp}
 
-path C; numeric t, u;
-C = fullcircle scaled (2R-2r) shifted center A;
-(t, u) = tangent_times(C, center B);
-
-draw A withpen pencircle scaled 2 withcolor 3/4[blue, white];
-draw B withpen pencircle scaled 2 withcolor 3/4[blue, white];
-
-draw subpath (t, u) of A -- subpath (u-8, t) of B -- cycle;
-\end{code}
 Here $A$ and $B$ are the two circles you want to connect, and $A$ is larger than
 $B$. $R$ is the radius of the larger, $r$ of the smaller. $C$ is an auxiliary circle
 centred at the same point as $A$ and scaled so that its radius is $R-r$.  If we
 then find the tangent points on $C$ from the center of $B$, the points we want are
-the corresponding points on $A$ and $B$.
+the corresponding points on $A$ and $B$. 
 
-\medskip\noindent
-This works well, provided that none of three
-circles $A$, $B$, or $C$ has been rotated (that is that point 0 is at 3 o'clock in
-all of them).  But
-this may not always be the case.   For example, you might have written
+Notice how the times are used with \mpl{subpath}; if $a>b$, then the path returned
+from \mpl{subpath (a, b) of P} is the same as \mpl{reverse subpath (b, a) of P},
+which means that \mpl{subpath (u,t) of B} would give you the wrong side.  The remedy
+is to substract 8 from $u$ (or, more generally, to subtract the length of path $B$).
+Because there are 8 points on a \mpl{fullcircle} path, point $u$ and point $u-8$
+refer to the same place, but since $u-8 < t$, the subpath will run clockwise as
+required.  
+
+\vfill
+\noindent\hey
+This all works provided that all three 
+circles $A$, $B$, or $C$ have the same rotation. 
+But this may not always be the case.   
+For example, you might have defined $B$ as 
 \begin{code}
-B = fullcircle scaled 60 shifted 240 right rotated 36;
+B = fullcircle scaled 60 shifted 240 dir 36;
 \end{code}
 and then point $t$ of $B$ would \textit{not} correspond to point $t$ of the
-auxiliary circle.  So to make the code above more general you have to adjust the
-tangent times to take account of the relative rotation of the circles.
-\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vskip-24pt\noindent
-\begin{code}
-vardef adjust_time(expr tt, AA, BB) =
-    tt + 1/45 angle (point 0 of AA - center AA)
-       - 1/45 angle (point 0 of BB - center BB)
-enddef;
-\end{code}
-\vss}}
-The in the figure $t$ was adjusted to $t'$ for $A$ and $t''$ for $B$, using the
-routine shown on the right.  This routine shows the relationship between \mpl{angle}
-and points around a circle:  $360^\circ = 8\:\hbox{points}$.
+auxiliary circle $C$.  
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+To cope with circles that might not have the same rotation, you need to adjust the
+tangent times to take account of the different relative rotation.
+\mpexternal[firstline=7,lastline=10]{geometry-tangents-two-circles-interior.mp}
+\noindent
+This macro exploits the relationship between \mpl{angle}
+and points around a \mpl{fullcircle} path:  $360^\circ = 8\:\hbox{points}$.
+You can see it in action on the followin page.
+}}
 
 \newpage
 \subsection{Lines tangent to two circles (interior)}
@@ -2451,64 +2432,21 @@ and points around a circle:  $360^\circ = 8\:\hbox{points}$.
 To find the interior tangents, you just need to add the smaller radius rather than
 subtract it, and add 4 to the times on the smaller circles, so that they are on the
 other side:
-$$\includegraphics[width=\textwidth]{tangents-two-circles-interior}$$
+$$\includegraphics[width=\textwidth]{geometry-tangents-two-circles-interior}$$
 
 \bigskip\noindent
 The complete code for this is shown on the right.  It uses the same
 routines given above; \mpl{tangent_times} from section \ref{sec:tangent-times}, and
 \mpl{adjust_time} from section \ref{sec:adjust-times}.
-\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
-\begin{smallcode}
-path A, B;
-A = fullcircle scaled 144 rotated uniformdeviate 360;
-B = fullcircle scaled 60 shifted 240 right rotated 36;
-
-numeric R, r;
-R = abs (point 0 of A - center A);
-r = abs (point 0 of B - center B);
-
-path C;
-C = fullcircle scaled (2R+2r) shifted center A; % NB +ve
-
-numeric t, t', t'', u, u', u'';
-(t, u) = tangent_times(C, center B);
-t' = adjust_time(t, C, A);
-u' = adjust_time(u, C, A);
-t'' = adjust_time(t + 4, C, B);  % Note the plus fours
-u'' = adjust_time(u + 4, C, B);
-
-draw A withpen pencircle scaled 2 withcolor 3/4[blue, white];
-draw B withpen pencircle scaled 2 withcolor 3/4[blue, white];
-draw C withpen pencircle scaled 1 withcolor 3/4[blue, white];
-
-draw subpath (t', u') of A -- subpath (u'', t'') of B -- cycle;
-draw center B -- subpath (t, u) of C -- cycle dashed evenly;
-
-draw center B -- point t'' of B dashed withdots scaled 1/2;
-draw center B -- point u'' of B dashed withdots scaled 1/2;
-draw point t of C -- point t' of A dashed withdots scaled 1/2;
-draw point u of C -- point u' of A dashed withdots scaled 1/2;
-
-dotlabel.ulft(btex $t$   etex, point t   of C);
-dotlabel.lrt (btex $t'$  etex, point t'  of A);
-dotlabel.lrt (btex $t''$ etex, point t'' of B);
-dotlabel.lrt (btex $u$   etex, point u   of C);
-dotlabel.ulft(btex $u'$  etex, point u'  of A);
-dotlabel.ulft(btex $u''$ etex, point u'' of B);
-drawdot center B withpen pencircle scaled dotlabeldiam;
-
-drawoptions(withcolor 1/2[blue, white]);
-    label.urt(btex $A$ etex, point 1/2(t'+u'- 7.6) of A);
-    label.rt (btex $B$ etex, point 1/2(t''+u''- 2) of B);
-    label.urt(btex $C$ etex, point 1/2(t+u-8) of C);
-drawoptions();
-\end{smallcode}\vskip -1in
+\vadjust{\moveright5.25in\vbox to 0pt{\hsize 4in\vss\noindent
+\smallmpexternal[firstline=12,lastline=54]{geometry-tangents-two-circles-interior.mp}
+\vskip -72pt
 }}
 
 \subsection{Axis of similitude}\label{sec:axosim}
 
 \vbox to 0pt{\vskip-\baselineskip\noindent\hbox to
-\textwidth{\includegraphics[scale=0.92]{axis-of-similitude}\hss}\vss}
+\textwidth{\includegraphics[scale=0.92]{geometry-axis-of-similitude}\hss}\vss}
 
 \vfill
 \moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
@@ -2524,16 +2462,12 @@ The drawing is left as an exercise for the reader, except
 to note that if \mpl{r1} and \mpl{r2} are \<numeric> variables representing
 the radius of the circles centred at the \<pair> variables \mpl{C1} and \mpl{C2},
 then:
-% $$
-% E_{12} = \left(\frac{r_1}{r_1 - r_2}\right)[C_1, C_2];\hbox{\quad and\quad}
-% I_{12} = \left(\frac{r_1}{r_1 + r_2}\right)[C_1, C_2];
-% $$
-
 \begin{smallcode}
 E12 = (r1/(r1 - r2)[C1, C2]; I12 = (r1/(r1 + r2)[C1, C2];
 \end{smallcode}
 which is a bit quicker than working out all the tangent points. 
-My version is in the file "src/axis-of-similitude.mp"}
+My version is in the file "geometry-axis-of-similitude.mp"
+}
 
 \newpage
 \subsection{Inversion, pole, and polar}\label{sec:inversion}
