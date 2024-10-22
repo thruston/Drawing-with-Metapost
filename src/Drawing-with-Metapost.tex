@@ -2473,45 +2473,39 @@ My version is in the file "geometry-axis-of-similitude.mp"
 \subsection{Inversion, pole, and polar}\label{sec:inversion}
 
 Inversion in a circle is a generalization of reflection in a line.
-\mpic{-68pt}{pole-and-polar}
-It is useful for certain constructions in geometry, and easy to
-implement as a macro \MP.  For given circle, and a
-given point $P$ lying outside the circle, the inverted point $P'$ lies inside the
-circle at the intersection of the line from $P$ to the centre of the circle, and the
-line between the tangent points [§\ref{sec:tangent-times}] from $P$, shown here as
-$Q$ and $R$.\rlap{\quad$\longrightarrow$}
+\mpic{-48pt}{geometry-pole-and-polar}
+It is useful for certain constructions in geometry, and easy to implement as a macro
+\MP.  For given circle, and a given point $P$ lying outside the circle, the inverted
+point $P'$ lies inside the circle at the intersection of the line from $P$ to the
+centre of the circle, and the line between the tangent points
+[§\ref{sec:tangent-times}] from $P$, shown here as $Q$ and $R$.\rlap{\quad$\longrightarrow$}
 
 But $OPQ$ and $OQP'$ are similar triangles, so $r/OP=OP'/r$ and so $OP' =
 r^2/OP$, and since $P'$ must lie on the line through $O$ and $P$, this is enough to
-define a macro directly to find $P'$ given $P$, $O$, and $r$:
+to find $P'$ directly given $P$, $O$, and $r$:
 \begin{code}
-P' = O + unitvector(P-O) scaled r * r / abs (P-O);
+P' = O + unitvector(P-O) scaled (r * r / abs (P-O));
 \end{code}
-But examining \mpl{plain.mp} shows that \mpl{unitvector} is a macro defined like this:
+But examining "plain.mp" shows that \mpl{unitvector} is a macro defined like this:
 \begin{code}
 vardef unitvector primary z = z/abs z enddef;
 \end{code}
-which suggests this alternative (safer) approach:
+which suggests this alternative formulation:
+\begin{code}
+P' = O + (P - O) scaled (r / abs (P - O) * r / abs (P - O));
+\end{code}
+or as a macro:
 \begin{code}
 vardef invert(expr P, O, r) = 
-    save s; numeric s; s = r / abs (P-O);
-    O + (P-O) * s * s
+  save s; numeric s; s = abs(P - O);
+  O + (P - O) * r / s * r / s
 enddef;
 \end{code}
-This works well provided that $|P| > \frac1{180} r$, which is usually the case, but
-you could also consider checking that $|t|>0$ and that $s$ was not too large.
-
-If it was more convenient to deal with the \<path> of the circle of inversion
-instead of the centre and the radius, you get the macro to work out the centre and
-the radius for you. 
-\begin{code}
-vardef invert(expr P, C) = 
-    save o; pair o; o = 1/2[point 0 of C, point 4 of C];
-    save r; numeric r; r = abs (point 0 of C - o);
-    save s; numeric s; s = r / abs (P - o);
-    o + (P - o) * s * s
-enddef;
-\end{code}
+This works well in most cases, but you could consider checking that $s$ was not too small.
+If it is more convenient to deal with the \<path> of the circle of inversion
+instead of the centre and the radius, you can get the macro to calculate 
+them for you:
+\mpexternal[firstline=6,lastline=11]{geometry-pole-and-polar.mp}
 
 \vfill
 
@@ -2531,8 +2525,9 @@ perpendicular to the line through the point and the center of the circle of
 inversion.
 
 \smallskip
-\noindent\llap{\nb}The small dotted circle through $O$ and $P'$ above is the inversion
-of the whole polar line (infinitely extended).}
+\noindent\llap{\nb}The inversion of points on the polar (shown as blue dots)
+lie on a circle through $O$ and $P'$.  The complete circle would be the inversion
+of the infinitely extended polar.}
 
 \newpage
 \subsection{Radical axis and radical centre}\label{sec:radical}
