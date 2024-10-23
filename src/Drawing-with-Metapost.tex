@@ -2494,14 +2494,14 @@ which suggests this alternative formulation:
 \begin{code}
 P' = O + (P - O) scaled (r / abs (P - O) * r / abs (P - O));
 \end{code}
-or as a macro:
+or as a macro, and dividing first to avoid overflow:
 \begin{code}
 vardef invert(expr P, O, r) = 
   save s; numeric s; s = abs(P - O);
-  O + (P - O) * r / s * r / s
+  O + (P - O) / s * r / s * r
 enddef;
 \end{code}
-This works well in most cases, but you could consider checking that $s$ was not too small.
+This works well in most cases, but you could consider checking that $s$ is not too small.
 If it is more convenient to deal with the \<path> of the circle of inversion
 instead of the centre and the radius, you can get the macro to calculate 
 them for you:
@@ -2538,63 +2538,24 @@ with respect to both circles; that is the points from which the tangents to each
 are of equal length.  A circle centred at any point on the axis, and drawn with radius equal to the
 length of the tangent will cut both circles at right angles.
 
-\medskip\noindent\centerline{\includegraphics{radical-axis}}
+\medskip\noindent\centerline{\includegraphics{geometry-radical-axis}}
 
 \medskip\noindent
-In a system of three circles as shown, the \textit{radical centre} is the
+In a system of three circles as shown, the \textit{radical centre} ("radix") is the
 intersection of the three mutual radical axes.  The tangents from this point to all three circles
-have the same length, so a circle with this radius cuts all three circles at right
-angles.
+have the same length, so a circle with this radius (shown above in \red{red})
+cuts all three circles at right angles.
 
-\moveright5.5in\vbox to 0pt{\vss\hsize 4in\begin{smallcode}
-vardef radical_axis(expr ca, cb) =
-    numeric t, d, ra, rb;
-    ra = abs(center ca - point 0 of ca);
-    rb = abs(center cb - point 0 of cb);
-    d = abs(center cb - center ca);
-    2t = 1 + (ra+rb) / d * (ra-rb) / d;
-    (up -- down) scaled 89
-        rotated angle (center cb - center ca)
-        shifted t[center ca, center cb]
-enddef;
-beginfig(1);
-    path c[], a[];
-    z1 = origin; z2 = 233 right rotated 4; z3 = 209 right rotated -42;
-    c1 = fullcircle scaled 202 shifted z1;
-    c2 = fullcircle scaled 106 shifted z2;
-    c3 = fullcircle scaled  62 shifted z3;
-    a1 = radical_axis(c1, c2);
-    a2 = radical_axis(c2, c3);
-    a3 = radical_axis(c3, c1);
-    z0 = whatever [point 0 of a1, point 1 of a1]
-       = whatever [point 0 of a2, point 1 of a2];
-    numeric t; (t, whatever) = tangent_times(c1, z0);
-    drawoptions(withpen pencircle scaled 1 withcolor 3/4[blue, white]);
-    draw c1; draw c2; draw c3;
-    drawoptions(withcolor 3/4[blue, white]);
-    draw z1 -- point t of c1 dashed evenly;
-    drawoptions(withpen pencircle scaled 1/4);
-    draw z1 -- z2 -- z3 -- cycle;
-    drawoptions();
-    draw a1; draw a2; draw a3;
-    drawoptions(withcolor 2/3 red);
-    draw fullcircle scaled 2 abs (point t of c1 - z0) shifted z0;
-    draw z0 -- point t of c1 dashed evenly;
-    drawdot z0 withpen pencircle scaled dotlabeldiam;
-    drawoptions(withcolor 1/4[blue, white]);
-    drawdot z1 withpen pencircle scaled dotlabeldiam;
-    drawdot z2 withpen pencircle scaled dotlabeldiam;
-    drawdot z3 withpen pencircle scaled dotlabeldiam;
-    label.urt(btex $C_1$ etex, point 1 of c1);
-    label.urt(btex $C_2$ etex, point 1 of c2);
-    label.rt (btex $C_3$ etex, point 0 of c3);
-endfig;
-\end{smallcode}\vskip -1in}
+\moveright5.5in\vbox to 0pt{\vss\hsize 4in
+\smallmpexternal[firstline=6,lastline=51]{geometry-radical-axis.mp}
+\vskip -1in}
 
 \newpage
 \subsection{Circles tangent to other circles}
 
-\vbox to 0pt{\noindent\hbox to \textwidth{\includegraphics[height=\textheight]{apollonius}\hss}\vss}
+\vbox to 0pt{\noindent
+\hbox to \textwidth{\includegraphics[height=\textheight]{geometry-apollonius}\hss}
+\vss}
 
 \vfill
 \moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
@@ -2617,8 +2578,8 @@ technique [§\ref{sec:circles}].
 
 \smallskip\noindent
 {\small
-The drawing is also left as an exercise for the reader, although you can find my
-"apollonius.mp" in the source for this document. You might try to make a more
+The drawing is left as an exercise for the reader, although you can find my
+"geometry-apollonius.mp" in the source for this document. You might try to make a more
 robust version or to find all the other tangent circles.}}
 
 
@@ -2652,13 +2613,10 @@ robust version or to find all the other tangent circles.}}
 \vss}
 
 \newpage
-\moveright5.5in\vbox to 0pt{\hsize4in\noindent This needs an \mpl{invert} macro, such
-as the one from [§\ref{sec:inversion}].
-
-\smallskip\noindent
-\includegraphics[width=288pt]{arbelos}
-
-\vskip 1.414in\noindent
+\moveright5.25in\vbox to 0pt{\hsize4.25in\noindent
+\smallmpexternal[firstline=7,lastline=14,xleftmargin=0pt]{geometry-arbelos.mp}
+\centerline{\includegraphics{geometry-arbelos}}
+\vfill\noindent
 \begingroup
 \raggedleft\fontsize{8}{10}\selectfont\textsf{%
 One must also recognize that any attempt to illustrate geometry\\
@@ -2668,45 +2626,7 @@ of finite length, of positive thickness, and rough edged.\\[2pt]
 — Benoit Mandelbrot, \textsl{The Fractal Geometry of Nature}}
 \par\endgroup
 \vss}
-\begin{smallcode}[xleftmargin=0pt, xrightmargin=-72pt]
-beginfig(1);
-pair A,B,C; A = origin; C = 244 right;  B = 7/8[A, C];
-path c[];
-c1 = fullcircle scaled 2 abs(A-C); % large circle for the inversions
-c2 = fullcircle scaled abs(A-C) shifted 1/2[A,C];
-c3 = fullcircle scaled abs(A-B) shifted 1/2[A,B];
-c4 = fullcircle scaled abs(B-C) shifted 1/2[B,C];
-c5 = invert(c4,c1);
-numeric d; d = abs(point 0 of c5 - point 4 of c5); % diameter of c5
-
-drawoptions(withcolor 3/4 white);
-draw c4; draw c5;
-draw invert(subpath(0, 3/2) of c2, c1);
-draw invert(subpath(0, 3/2) of c3, c1);
-drawoptions();
-draw subpath(-1/4,1) of c1 withcolor 3/4[1/2 red,white];
-label.bot("\textit{circle of inversion}", point -1/4 of c1)
-    withcolor 1/4[1/2 red, white];
-
-for i=1 upto 72:
-    path c, c';
-    c = c5 shifted (0, i*d); c' = invert(c, c1);
-    if i < 5:
-        drawoptions(withcolor 3/4 white);
-        draw c; draw origin -- center c;
-        fill fullcircle scaled dotlabeldiam shifted center c;
-        fill fullcircle scaled dotlabeldiam shifted center c';
-        drawoptions();
-    fi
-    draw c' withpen pencircle scaled 1/4 withcolor 2/3 blue;
-endfor
-forsuffixes $=2,3,4: draw subpath (0,4) of c$
-    withpen pencircle scaled 1/4 withcolor 2/3 blue;
-endfor
-draw A--C;
-dotlabel.lft("$A$", A); dotlabel.llft("$B$", B); dotlabel.rt("$C$", C);
-endfig;
-\end{smallcode}
+\smallmpexternal[firstline=15,lastline=52,xleftmargin=0pt,xrightmargin=-72pt]{geometry-arbelos.mp}
 
 \newpage
 \subsection{Drawing angle marks}
@@ -2825,45 +2745,7 @@ For this you need to know the value of $\pi$, but this is not built into plain \
 If you are using the default number system then it's enough to define it to five
 decimal digits,%
 \vadjust{\moveright 384pt\vbox to 0pt{\kern-144pt
-\begin{code}
-numeric pi;
-% approximate value
-pi := 3.14159;
-% measure round a circular arc...
-pi := 1/4 arclength (quartercircle scaled 16);
-% up to 32 digits of precision
-pi := 3.1415926535897932384626433832795;
-% as many digits as are needed...
-vardef getpi =
-  save lasts, t, s, n, na, d, da;
-  lasts=0; s=t=3; n=1; na=0; d=0; da=24;
-  forever:
-    exitif lasts=s;
-    lasts := s;
-    n := n+na; na := na+8;
-    d := d+da; da := da+32;
-    t := t*n/d;
-    s := s+t;
-  endfor
-  s
-enddef;
-pi := getpi;
-
-% conversions
-def degrees(expr theta) = 180 / pi * theta enddef;
-def radians(expr theta) = pi / 180 * theta enddef;
-% trig functions that expect radians
-def sin(expr theta) = sind(degrees(theta)) enddef;
-def cos(expr theta) = cosd(degrees(theta)) enddef;
-% inverse trig functions
-def acosd(expr a) = angle (a,1+-+a) enddef;
-def asind(expr a) = angle (1+-+a,a) enddef;
-def acos(expr a) = radians(acosd(a)) enddef;
-def asin(expr a) = radians(asind(a)) enddef;
-% tangents
-vardef tand(expr theta) = save x,y; (x,y)=dir theta; y/x enddef;
-def atand(expr a) = angle (1,a) enddef;
-\end{code}
+\mpexternal[firstline=1,lastline=37]{trigonometry-functions.mp}
 \vss}}
 but if you are using one of the new number systems you might want more digits of
 precision.  In fact there's no harm in always defining these extra digits; even when
@@ -2890,11 +2772,10 @@ $\kw{dir}\,30$ gives you the point $(x,y)$ on the unit circle such that $\tan
 30^{\circ} = y/x$.  You can use these ideas to define tangent and arctan functions
 if you really need them, but often "angle" and "dir" are more directly useful
 for drawing.  
-
-You should also be aware that the tangent function shown here does not
-check whether $x=0$; if this is an issue, then add something like this 
+You should also be aware that the "tand" function shown here does not
+check whether $x$ is close to zero; if this is an issue, then add something like this 
 at the appropriate point:
-$$\kw{if}\,x=0\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$$
+$$\kw{if}\,\id{abs}(x)<\id{eps}\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$$
 
 \newpage
 \section{Traditional labels and annotations}\label{sec:trad-labels}
