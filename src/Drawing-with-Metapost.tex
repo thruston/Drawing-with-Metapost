@@ -2791,7 +2791,7 @@ annotations in the newfangled (but better) world of "lualatex" and the
 turn some text into a \<picture>, which can then be treated like any other; 
 saved as a variable, drawn directly, or transformed in some way with a
 scaling, a reflection, or a rotation. The first mechanism is described below,
-the other in §\ref{btex}.
+the second in §\ref{btex}.
 
 \subsection{Simple strings in PostScript fonts with \texttt{infont}}\label{infont}
 
@@ -2858,22 +2858,20 @@ one of these:
 \end{itemize}
 
 \newpage
-\subsubsection{Character sets used by \texttt{infont} to set
-text}\label{sec:charsets}
+\subsubsection{Character sets used by \texttt{infont} to set text}\label{sec:charsets}
 
 Standard \MP\ is configured to accept as input only space and the usual 94 visible
 ASCII characters (that is the characters numbered 32 to 126 in the tables at the
-right), but you can use any 8-bit characters as the payload of a string.
-However, plain \MP\ is set by default to use "cmr10", the familiar Computer Modern typeface
+right), but you can use any 8-bit characters as the payload of a string.  However,
+plain \MP\ is set by default to use "cmr10", the familiar Computer Modern typeface
 developed by Knuth for \TeX, and unfortunately, this is encoded using the \TeX\ text
-font encoding (also known as `OT1', and as shown in the first table in Appendix~F of the {\sl \TeX book}).
-\mpic{-108pt}{trad-font-tables}
-From the point of
-view of using \mpl{infont} to make simple labels, this means that the characters for
-space and seven other characters ("< > \ _ { | }") are in the wrong place.
-You are likely to notice this first if you try to set a label with two words; the
-space will come out as a small diagonal stroke accent that is used in plain \TeX\
-to make the characters Ł and ł, used in Polish and other Slavic languages.
+font encoding (also known as `OT1', and as shown in the first table in Appendix~F of
+the {\sl \TeX book}).  \mpic{-108pt}{trad-font-tables} From the point of view of
+using \mpl{infont} to make simple labels, this means that the characters for space
+and seven other characters ("< > \ _ { | }") are in the wrong place.  You are likely
+to notice this first if you try to set a label with two words; the space will come
+out as a small diagonal stroke accent that is used in plain \TeX\ to make the
+characters Ł and ł, used in Polish and other Slavic languages.
 
 To fix this you should change the default font at the start of your program:
 \begin{code}
@@ -2925,50 +2923,27 @@ which would let you write:
 label.rt(U"café à la möde", (x,y));
 \end{code}
 
-\item \red{However, there's no point in making any of this too elaborate.  If you
+\item \red{However, there's no point in making any of this too elaborate}.  If you
     really want proper Unicode support you should use \MP\ with Lua\TeX. (See 
-    below in §\ref{sec:neo-labels}).}
+    below in §\ref{sec:neo-labels}).
 \vss}}
-\begin{code}[xrightmargin=-10pt]
-vardef decode(expr given) =
-  save a,i,s,out; string s, out; numeric a, i;
-  out = ""; i=0;
-  forever:
-    i := i+1; s := substring (i-1,i) of given; a := ASCII s;
-    if a < 128:
-    elseif a = 194:
-      i := i+1; s := substring (i-1,i) of given;
-    elseif a = 195:
-      i := i+1; s := char (64 + ASCII substring (i-1,i) of given);
-    else:
-      s := "?";
-    fi
-    out := out & s;
-    exitif i >= length given;
-  endfor
-  out
-enddef;
-\end{code}
-Use it with \mpl{infont} like this: \verb|decode("café") infont "ptmr8r"| to produce a
-normal "picture" that can be passed to \mpl{draw} or saved as
-usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt
-\noindent The fragment on the left produces:
-$$\includegraphics{utf8}$$
+\mpexternal[firstline=6,lastline=23,xrightmargin=-10pt]{trad-utf8.mp}
+\noindent
+Use it with \mpl{infont} like this: ‘\mpl{decode("café") infont "ptmr8r"}’
+to produce a normal \<picture> that can be passed to \mpl{draw} or saved as
+usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\noindent 
+The fragment on the left produces:
+$$\includegraphics{trad-utf8}$$
 The \texttt{label} macro automatically calls \texttt{infont} with the current value
-of \texttt{defaultfont}; notice how it also adds some extra space.
+of \texttt{defaultfont}; notice how it also adds \mpl{labeloffset} space.
 \vss}}
-\begin{code}
-draw "café noir £2.50" infont "pncr8r";
-draw decode("café noir £2.50") infont "pncr8r" shifted 12 down;
-defaultfont := "pncr8r";
-label.rt("café noir £2.50", 24 down);
-label.rt(decode("café noir £2.50"), 36 down);
-\end{code}
+\mpexternal[firstline=25,lastline=29]{trad-utf8.mp}
+
+\noindent
 Note that you can't just use \mpl{draw} with a string variable; you have to use
-\mpl{infont} to turn the string into a picture.
-On the other hand, "label" calls \mpl{infont} automatically, but you must explicitly set
-the default font, preferably to one with an encoding that
-is compatible with ISO Latin~1.
+\mpl{infont} to turn the string into a picture.  On the other hand, \mpl{label} calls
+\mpl{infont} automatically, but you must explicitly set the default font, preferably
+to one with an encoding that is compatible with ISO Latin~1.
 
 
 \newpage
@@ -2985,18 +2960,18 @@ because the first character of the string produced by \mpl{decimal -1} is an
 which is the hyphen character.  What we need is the mathematical minus sign instead;
 this is what you get with \mpl{btex $-1$ etex} of course, but that's harder to put in a
 loop with traditional \MP.  Instead you can do this:\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
-$$\includegraphics{minus}$$
+$$\includegraphics{trad-minus}$$
 \vss}}
 \begin{code}
 string minus_sign;
 minus_sign := char 143; % if you are using the texnansi encoding
 minus_sign := char 12;  % if you are using the 8r encoding
 for x = -3 upto 3:
-   label.bot(if x<0: minus_sign & fi decimal abs(x), (x*cm, 0));
+  label.bot(if x<0: minus_sign & fi decimal abs(x), (x*cm, 0));
 endfor
 \end{code}
 Note that this does not work with the default encoding used in "cmr10" because
-there is no minus sign available in that font.  Plain TeX uses "char 0" from
+there is no minus sign available in that font.  Plain TeX uses \mpl{char 0} from
 "cmsy10".
 
 \subsubsection{Bounding boxes and clipping with \texttt{infont}}
@@ -3005,28 +2980,27 @@ Once the encoding is fixed, the other two parts of a PostScript font are the fon
 metrics and the programs that draw the actual glyphs.  The font metrics define the
 width of each character and provide a kerning table to adjust the space between
 particular pairs.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
-$$\includegraphics{infont-example}$$
-}} This means that certain characters will overlap each other or stick out
-beyond the bounding box of the picture produced by \mpl{infont}.  This is not normally a
+$$\includegraphics{trad-infont-example}$$
+}} This means that certain characters will overlap each other or stick out beyond
+the bounding box of the picture produced by \mpl{infont}.  This is not normally a
 problem unless the picture happens to be at the edge of your figure.  In the first
-example observe how the last letter sticks out to the right; in the second a
-wider baseline has been added to prevent this.
-If you want this effect, but you
-don't want to see the baseline, then draw it
-using the colour \mpl{background}.
+example observe how the last letter sticks out to the right; in the second a wider
+baseline has been added to prevent this.  If you want this effect, but you don't
+want to see the baseline, then draw it using the colour \mpl{background}.
 
 \subsubsection{But what about the \texttt{label} command?}
 
-As a convenience, the plain \MP\ format provides a "label" macro that automatically
-turns strings into pictures for you using whatever font name is the current value of
-"defaultfont" and scaled to the current value of "defaultscale".\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
+As a convenience, the plain \MP\ format provides a \mpl{label} macro that
+automatically turns strings into pictures for you using whatever font name is the
+current value of \mpl{defaultfont} and scaled to the current value of
+\mpl{defaultscale}.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
 \noindent
-The "label" macro is defined (essentially) to do this:
+Plain \MP\ defines a \mpl{label} macro (approximately) like this:
 \begin{code}
-    def *label(expr s, z) =
-      draw s if string s: infont defaultfont
-                          scaled defaultscale fi shifted z
-    enddef;
+def label(expr s, z) =
+  draw s if string s: infont defaultfont
+                      scaled defaultscale fi shifted z
+enddef;
 \end{code}
 plus some clever code to align the label for you.
 }}
@@ -3036,25 +3010,24 @@ plus some clever code to align the label for you.
 \label{infontbbox}
 
 To allow you to align a text label on a specific point, \MP\ provides five unary
-operators to measure the bounding box of a picture; they are shown in
-\textcolor{red!67!black}{red} in the diagram, and you can use them to measure the
-width, depth, and height of a textual picture.  You can also work out the location
-of the baseline of the text or the x-height, provided you know how much your picture
-has been shifted.
-The easiest way to do this is to
-measure the picture \textit{before} you shift it.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
-$$\includegraphics[width=4in]{infont-annotated}$$
+operators to measure the bounding box of a picture; they are shown in \red{red} in
+the diagram, and you can use them to measure the width, depth, and height of a
+textual picture.  You can also work out the location of the baseline of the text or
+the x-height, provided you know how much your picture has been shifted.
+The easiest way to do this is to measure the picture \textit{before} 
+you shift it.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
+$$\includegraphics[width=4in]{trad-infont-annotated}$$
 \vss}}
 \begin{code}
-    picture pp; pp = "proof" infont "pplri8r";
+picture pp; pp = "proof" infont "pplri8r";
 \end{code}
 Here the picture \id{pp}
 is created with the origin of the text sitting at coordinates $(0,0)$;
 then you can get the dimensions like this
 \begin{code}
-    wd = xpart urcorner pp;
-    ht = ypart urcorner pp;
-    dp = ypart lrcorner pp;
+wd = xpart urcorner pp;
+ht = ypart urcorner pp;
+dp = ypart lrcorner pp;
 \end{code}
 In this particular case you will find that you have $wd=20.47292$, $ht=7.19798$, and
 $dp=-2.60017$.  The depth is negative because the descenders on the
@@ -3070,7 +3043,7 @@ regardless of any ascenders or descenders.  To draw your label left-aligned with
 origin at position $(x,y)$ you just need to use: \kw{draw} \id{pp} \kw{shifted} $(x,y)$.
 To draw it right-aligned, you subtract
 \id{wd} from the $x$-coordinate: \kw{draw} \id{pp} \kw{shifted} $(x-wd,y)$.  Or to
-centre it, subtract $1/2wd$.  To center it vertically on the lowercase letters,
+centre it, subtract $1/2\id{wd}$.  To center it vertically on the lowercase letters,
 subtract $1/2\id{xheight}$ from the $y$-coordinate.  You might of course like to
 wrap these adjustments up in your own convenient macro to help you maintain
 consistency in a diagram with many labels.
@@ -3079,20 +3052,20 @@ Alternatively you can adjust the bounding box of your textual picture and then u
 it with "label" as normal.  Assuming \id{wd} is set to the width of your picture
 and \id{xheight} is set correctly for the current font, then
 \begin{code}
-    setbounds pp to unitsquare xscaled wd yscaled xheight;
+setbounds pp to unitsquare xscaled wd yscaled xheight;
 \end{code}
 will make the "label" alignment routines ignore any ascenders or descenders.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in \vss \small
 \noindent\llap{\nb}Beware that if the resulting label is right at the edge of your
 drawing then any parts of the text that stick out of the adjusted bounding box will
-be clipped.  See also §\ref{sec:rotated-boxes} for more on what happens if you
-rotate the text.}}
+be clipped.\\
+See also §\ref{sec:rotated-boxes} for more on what happens if you rotate the text.}}
 
 \newpage
 \subsubsection{Setting Greek letters with \texttt{infont}}
 
 \leavevmode\hbox{}
-$$\includegraphics[width=0.5\textwidth]{greek-homer}$$
+$$\includegraphics[width=0.5\textwidth]{trad-greek-homer}$$
 While it's technically possible to set the whole of Homer's \textsl{Iliad} using the Greek
 fonts available to \mpl{infont}, it's probably not a great use of time; on the other hand you
 might want to label parts of a diagram with Greek letters, and for single Greek
@@ -3109,30 +3082,11 @@ the right, or check the table in §\ref{euler} that shows
 Herman Zapf's elegant Euler font, available as "eurm10". This
 makes a refreshing change for some diagrams.\vadjust{\moveright5.5in\vbox to
 0pt{\hsize4in\kern-164pt
-\begin{code}
-beginfig(1);
-string ab, AB;
-ab = ("" for i=11 upto 23: & char i endfor
-   & "o" for i=24 upto 33: & char i endfor);
-AB = ("AB" & char 0 & char 1 & "EZH" & char 2 & "IK"
-          & char 3 & "MNO" & char 4 & char 5 & "P"
-          & char 6 & "T"   & char 7 & char 8 & "X"
-          & char 9 & char 10);
+\mpexternal[firstline=5,lastline=18]{trad-greek-default-encoding.mp}
+\centerline{\includegraphics{trad-greek-default-encoding}}
 
-draw ab infont "cmmi10";
-draw AB infont "cmmi10" shifted 12 down;
-draw ab infont "eurm10" shifted 32 down;
-draw AB infont "eurm10" shifted 44 down;
-endfig;
-\end{code}
-\centerline{\includegraphics{greek-default-encoding}}
-
-\begin{code}
-string ab, AB;
-ab = "abgdezhjiklmnoxprstufqyw";
-AB = "ABGDEZHJIKLMNOXPRSTUFQYW";
-\end{code}
-\centerline{\includegraphics{greek-gfs-encoding}}
+\mpexternal[firstline=6,lastline=8]{trad-greek-gfs-encoding.mp}
+\centerline{\includegraphics{trad-greek-gfs-encoding}}
 \vss}}
 
 \medskip\noindent
@@ -3143,7 +3097,7 @@ so much.  However in recent versions there is no character you
 can use as a word space, so if you want to set Greek text rather than individual
 letters, see §\ref{sec:neo-otf}.
 
-\vbox to 0pt{\centerline{\includegraphics{porson}}\vss}
+\vbox to 0pt{\centerline{\includegraphics{trad-porson}}\vss}
 
 
 
@@ -3200,11 +3154,12 @@ neatly:\quad\mpl{label(btex \\strut a etex, origin);}
 
 \subsubsection{Multi-line text labels}
 
-Another consequence of the "hbox" feature is that there is no automatic text
+Another consequence of the "\hbox" feature is that there is no automatic text
 wrapping done for you, but again you can work round this easily because \TeX\ lets
 you nest a "\vbox" inside an "\hbox".  This gives you proper paragraph-like wrapping
 but you will almost certainly need to adjust the line length, justification, and
-indentation in order to get a satisfactory result \rightarrow \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vskip -42pt\noindent
+indentation in order to get a satisfactory result \rightarrow 
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vskip -64pt\noindent
 \begin{code}
 ...
 label(btex \vbox{\hsize 2in\parindent 0pt\raggedright
@@ -3239,7 +3194,7 @@ Notice how you can still use the macro with single lines, you just get a one-lin
 table as it were.
 Note also that the definition of "\s" as given will centre each line of the text under
 the one above.  If you want them left aligned or right aligned, omit one of the
-"\hfil" commands. \mpic{-160pt}{split-labels}
+"\hfil" commands. \mpic{-212pt}{trad-split-labels}
 The three examples given above are typeset over here $\longrightarrow$\break
 The small red circle show the reference points and the pale blue lines the
 bounding boxes of the pictures that \MP\ gets back from \TeX.
@@ -3260,46 +3215,26 @@ the text into two separate labels and position them independently.
 \textsc{In some awkward corners}, you may find that you just can't get your label in
 the right place with \mpl{dotlabel} even if you adjust \mpl{labeloffset}.  In these
 cases there are two simple techniques you can use.  First, you could separate
-drawing the dot from placing the label; given a point $P$ you can try:\mpic{0pt}{callout}
-\begin{code}
-drawdot P withpen pencircle scaled dotlabeldiam;
-label(btex $P$ etex, P shifted 10 dir 68);
-\end{code}
+drawing the dot from placing the label; given a point $P$ you can try:\mpic{0pt}{trad-callout}
+\mpexternal[firstline=9,lastline=10]{trad-callout.mp}
+\noindent
 Using \mpl{dotlabeldiam} ensures that your dots match any others done with
 \mpl{dotlabel}.
 Secondly, if that's not enough, use a temporary pair to create a call out line:
-\begin{code}
-z0 = P + 20 dir -20; 
-draw z0 -- P 
-    cutafter fullcircle scaled 8 shifted P
-    withpen pencircle scaled 1/4;
-label.rt(btex \textit{pole} etex, z0);
-\end{code}
-If you want to do this sort of thing often, then it might be worth making a macro.
-It is hard to write anything completely general, but see §\ref{sec:extimage} for an
+\mpexternal[firstline=11,lastline=15]{trad-callout.mp}
+\noindent
+If you want to do this sort of thing often, then it might be worth making a macro;
+it is hard to write anything completely general, but see §\ref{sec:extimage} for an
 example.
 
-\medskip\noindent
-\textsc{You might also want} to mark a straight line between two points.  
-\vadjust{\moveright5.3in\vbox to 0pt{\hsize 4.2in
-\begin{smallcode}
-vardef do_brace(expr a,b,m,r) =
-  save d, e, n, bb; numeric d, n; pair e; path bb;
-  n = 1/2 m; d = angle (b-a); 
-  e = up scaled m rotated d shifted r[a,b];
-  bb = ((origin {0,n} .. {right} (abs n,n)) 
-          rotated d shifted a --
-        ((-abs n,-n){right} .. {0,n} origin {0,-n} .. {right}(abs n,-n)) 
-          rotated d shifted e --
-        ((-abs n,n){right} .. {0,-n} origin) 
-          rotated d shifted b
-       ) shifted (up scaled n rotated d);
-   draw bb withpen pencircle yscaled .6 xscaled .1666 rotated d;
-   point 3 of bb
-enddef;
+\enlargethispage{24pt}
 
-label.lrt("Here",do_brace(z1, z2, -12, 3/4)); 
-\end{smallcode}
+\vfill\noindent
+\textsc{You might also want} to mark a straight line between two points.  
+\vadjust{\moveright5.3in\vbox to 0pt{\hsize 4.2in\vspace{-2\baselineskip}
+\smallmpexternal[firstline=6,lastline=19]{trad-braces.mp}
+\smallmpexternal[firstline=28,lastline=28]{trad-braces.mp}
+\noindent
 Note that, as well as drawing the braces, the macro uses the grouping provided by \mpl{vardef} to return the 
 mid point so that you can put a label next to it.
 \vss}}
@@ -3310,7 +3245,7 @@ drawdblarrow (z1--z2) shifted (12 up rotated angle (z2-z1));
 \end{code}
 If you combine this with temporarily setting \mpl{ahangle:=180}, you get the simple
 dimension line shown in blue.
-$$\includegraphics{braces}$$
+$$\includegraphics{trad-braces}$$
 The red braces are a more complex variation on this theme $\longrightarrow$
 
 \newpage
@@ -3356,22 +3291,11 @@ The example on the right shows how to speed things up, by using the same file fo
 all the labels and only writing it once.
 The "write" command is a \MP\ primitive, and "EOF" is defined in "plain.mp".%
 \vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in\noindent
-\begin{code}
-path c; c = fullcircle scaled 100; draw c withcolor .67 red;
-for i=0 upto 7:
-  fill fullcircle scaled 3 shifted point i of c;
-  z[i] = point i of c scaled 1.15;
-  write "label(btex $p_" & decimal i & "$ etex,("
-        & decimal x[i] & "," & decimal y[i]
-        & "));" to ".mplabels";
-endfor
-write EOF to ".mplabels";
-input ".mplabels";
-\end{code}
+\mpexternal[firstline=7,lastline=16]{trad-dynamic-labels.mp}
 $$
-\includegraphics{dynamic-labels}
+\includegraphics{trad-dynamic-labels}
 $$
-Note that you can't use "decimal" on a "pair" variable, but you can save the pair
+Note that you can't use \mpl{decimal} on a \<pair> variable, but you can save the pair
 as a "z"-variable and then use the "x" and "y" syntax.  The scaling trick used here
 only works because "c" is centred on the origin.  If "c" were drawn elsewhere, you
 would have to write:
@@ -3380,6 +3304,7 @@ would have to write:
                  scaled 1.15
                  shifted center c ...
 \end{code}
+\vskip -12pt
 }}
 
 \newpage
@@ -3452,14 +3377,9 @@ about. The issue about setting text verbatim with \TeX\ is that turning off the
 control characters can be tricky, so if you have text for a label with characters
 that are special in \TeX\ like the backslash or the underscore, then the simplest
 thing to do is to avoid \TeX\ completely and use \mpl{infont} instead.
-\mpic{-36pt}{verbatim-with-infont}
-\begin{code}
-string s; s = "\TeX\ sets maths like this $e=mc^2$";
-draw ("1. " & s) infont defaultfont;
-draw ("2. " & s) infont "texnansi-lmr10"  shifted 20 down;
-draw ("3. " & s) infont "cmtt10"          shifted 40 down;
-draw ("4. " & s) infont "texnansi-lmtt10" shifted 60 down;
-\end{code}
+\mpic{-48pt}{trad-verbatim-with-infont}
+\mpexternal[firstline=6,lastline=10]{trad-verbatim-with-infont.mp}
+\noindent
 But as you can see, (1) this is a bit of a disaster with the default font "cmr10"
 because it does not have all the glyphs in the usual ASCII positions (as noted
 above §\ref{sec:charsets}).  The solution is to use the version of the font
@@ -3467,83 +3387,14 @@ with the "texnansi" encoding (2), but you probably want it in the monofont (3) a
 as you can see "cmtt10" has the “visible space” character instead of a regular
 space.  If this is not what you want then use the alternative encoding (4).
 
+\vfill
 If you want more than this, then you really need to use \LaTeX\ to process the
 label, as discussed in §\ref{sec:fonts}, and load the appropriate preamble. \rightarrowfill\break
-\vadjust{\moveright5.5in\vbox to 0pt{\vskip -72pt\begin{smallcode}
-prologues := 3; outputtemplate := "%j.eps";
-verbatimtex
-\documentclass{article}
-\usepackage{listings}
-\newcommand\mpstyle{\lstset{language=Metapost, basicstyle=\ttfamily,
-columns=fullflexible, keepspaces=true, showstringspaces=false}}
-\lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
-\begin{document}
-etex
-beginfig(1);
-picture P;
-P = thelabel(btex \vbox{\begin{code}
-  % special operators
-  vardef incr suffix $ = $:=$+1; $ enddef;
-  vardef decr suffix $ = $:=$-1; $ enddef;
-
-  def reflectedabout(expr w,z) = % reflects about the line w..z
-   transformed begingroup transform T_;
-     w transformed T_ = w;  
-     z transformed T_ = z;
-     xxpart T_ = -yypart T_; 
-     xypart T_ = yxpart T_; % T_ is a reflection
-   T_ endgroup enddef;
-\end{code}} etex, origin);
-fill bbox P withcolor (1,1,31/32); draw P; draw bbox P;
-endfig; end.
-\end{smallcode}\vss}}
-
-\bigskip
-$$\includegraphics[width=0.9\textwidth]{verbatim-listing}$$
-
-
-
-%% \subsubsection{Getting full access to your system fonts}
-%%
-%% If you want full access to all of your system fonts you can
-%% approach the problem the other way round and use one of the various means to include
-%% \MP\ graphics as part of your \LaTeX\ source code.  These include "gmp" for
-%% pdf\LaTeX, "luamplib" for lua\LaTeX, and the whole Context system.  The great
-%% advantage of these systems is that all of your \MP\ labels directly inherit the
-%% environment of the parent document, and give you access to all your system fonts and
-%% full Unicode support -- the only disadvantages are that it's not so fast or simple as plain \MP\
-%% and you have to compile every graphic everytime you compile the document.  It is of course always possible to
-%% use these systems to produce standalone PDF graphics that you can then include in a
-%% more conventional \TeX\ document.  The example on the right shows how;  in this case
-%% the text uses the fonts set in the \LaTeX\ preamble.\vadjust{\moveright5.5in\vbox to
-%% 0pt{\hsize 4in\vss\noindent
-%% Here is a version of the Lua logo, with a Unicode accent for show.
-%% $$\includegraphics[scale=0.7]{lulu.pdf}$$
-%% produced with "luamplib":
-%% \begin{smallcode}
-%% \documentclass[margin=5mm]{standalone}
-%% \usepackage{fontspec}
-%% \setmainfont{TeX Gyre Heros}
-%% \usepackage{luamplib}
-%% \begin{document}
-%% \begin{mplibcode}
-%% beginfig(1);
-%% color lemon, midnight; lemon = (1,1,1/2); midnight = (0,0,1/2);
-%%
-%% fill unitsquare shifted -(1/2,1/2) scaled 4cm withcolor lemon;
-%% fill fullcircle scaled 3cm withcolor midnight;
-%% draw fullcircle scaled 3.7cm dashed evenly scaled 2 withcolor .5 white;
-%%
-%% fill fullcircle scaled 8mm shifted (0.7cm,0.7cm) withcolor white;
-%% fill fullcircle scaled 8mm shifted (1.4cm,1.4cm) withcolor midnight;
-%%
-%% label.bot(btex Luã etex scaled 2.8,origin) withcolor white;
-%% endfig;
-%% \end{mplibcode}
-%% \end{document}
-%% \end{smallcode}
-%% }}
-
+\vadjust{\moveright5.5in\vbox to 0pt{\vskip -10\baselineskip
+\smallmpexternal{trad-verbatim-listing.mp}
+\noindent\hey Compile this with "mpost -tex=latex" and use "epstopdf" to make a PDF.
+\vss}}
+$$\includegraphics[width=0.9\textwidth]{trad-verbatim-listing}$$
 
 \newpage
 \section{Modern labels, annotations, and other goodies}\label{sec:neo-labels}
