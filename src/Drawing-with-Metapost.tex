@@ -3425,27 +3425,7 @@ So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsi
 \begin{mplibcode}
 \end{texcode}
 \vskip-\baselineskip
-\begin{smallcode}
-  beginfig(1);
-    for x = 0 upto 1:
-        draw (80x,16) -- (80x, -68) withcolor 3/4[red, white];
-    endfor
-    for y = 0 upto 3:
-        draw (0, -20y) -- (160, -20y) withcolor 3/4[red, white];
-    endfor
-
-    string s; s = "Hand gloves";
-    draw s infont defaultfont  shifted (0, 0);
-    draw s infont "phvr8r"     shifted (0, -20);
-    draw TEX(s)                shifted (0, -40);
-    draw btex Hand gloves etex shifted (0, -60);
-
-    dotlabel.urt(s,                     (80, 0));
-    dotlabel.urt(s infont "phvr8r",     (80, -20));
-    dotlabel.urt(TEX(s),                (80, -40));
-    dotlabel.urt(btex Hand gloves etex, (80, -60));
-  endfig;
-\end{smallcode}
+\smallmpexternal[firstline=7,lastline=25]{neo-labels.mp}
 \vskip-\baselineskip
 \begin{texcode}
 \end{mplibcode}
@@ -3460,9 +3440,8 @@ and the \mpl{btex ... etex} construction have picked up the font set by the \LaT
 wrapper.  As you can see they produce exactly the same output; "TEX()" is generally
 more useful because you can pass a primary string variable as an argument, which
 makes it easier to construct dynamic labels.  "TEX()" also has the synonym
-"textext()" for compatibility with ConTexT.  You can use either name, as you prefer.
-
-\smallskip\noindent
+"textext()" for compatibility with ConTexT.  You can use either name, as you
+prefer.\\
 But this isn't the clever bit\dots
 
 \clearpage
@@ -3476,7 +3455,7 @@ to the preamble:
 \mplibtextextlabel{enable}
 \end{texcode}
 If you add this line to the example from the previous
-page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-80pt
+page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-78pt
 \begin{texcode}
 \documentclass[border=5mm]{standalone}
 \usepackage{fontspec}
@@ -3487,27 +3466,7 @@ page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-80pt
 \begin{mplibcode}
 \end{texcode}
 \vskip-\baselineskip
-\begin{smallcode}
-  beginfig(1);
-    for x = 0 upto 1:
-        draw (80x,16) -- (80x, -68) withcolor 3/4[red, white];
-    endfor
-    for y = 0 upto 3:
-        draw (0, -20y) -- (160, -20y) withcolor 3/4[red, white];
-    endfor
-
-    string s; s = "Hand gloves";
-    draw s infont defaultfont  shifted (0, 0)0
-    draw s infont "phvr8r"     shifted (0, -20);
-    draw TEX(s)                shifted (0, -40);
-    draw btex Hand gloves etex shifted (0, -60);
-
-    dotlabel.urt(s,                     (80, 0));
-    dotlabel.urt(s infont "phvr8r",     (80, -20));
-    dotlabel.urt(TEX(s),                (80, -40));
-    dotlabel.urt(btex Hand gloves etex, (80, -60));
-  endfig;
-\end{smallcode}
+\smallmpexternal[firstline=8,lastline=26]{neo-labels-tte.mp}
 \vskip-\baselineskip
 \begin{texcode}
 \end{mplibcode}
@@ -3552,23 +3511,15 @@ these new facilities with plain Lua\TeX, but this chapter is about using them wi
 Lua\LaTeX, and in particular it assumes some familiarity with the packages
 "fontspec" and "unicode-math" that provide complete support for Unicode and OTF
 fonts; you need this familiarity in order to use "luamplib" properly.
-\mpic{1cm}{unicode}
+\mpic{1cm}{neo-unicode}
 
 You also need an editor that will handle Unicode.  \MP\ still restricts you to using
 printable ASCII in your source code, except within a string literal or a "btex"
 \dots\ "etex" picture literal.  So it becomes very easy to write this sort of label:
-\begin{smallcode}
-label("café noir £2.50", origin);
-\end{smallcode}
+\smallmpexternal[firstline=8,lastline=8]{neo-unicode.mp}
+\noindent
 or even whole paragraphs that use Unicode:
-\begin{smallcode}
-label(btex \vbox{\hsize 4in
- Nous étions à l'Étude, quand le Proviseur entra, suivi d'un
- \textit{nouveau} habillé en bourgeois et d'un garçon de classe
- qui portait un grand pupitre. Ceux qui dormaient se réveillèrent,
- et chacun se leva comme surpris dans son travail.
-\par} etex, 40 down);
-\end{smallcode}
+\smallmpexternal[firstline=9,lastline=14]{neo-unicode.mp}
 But you also need a font that actually supports the Unicode characters you use.
 The default Latin Modern font used by Lua\LaTeX\ has a good range for English and
 most European languages, but is a bit lacking in (say) polytonic Greek.  So you will
@@ -3588,7 +3539,7 @@ label(btex \vbox{\polytonic\halign{#\hfil\cr
 \end{smallcode}
 will produce the first few lines of the Iliad (just in case you wanted them).
 Essentially if you can produce something in \LaTeX, you can produce exactly the same
-in \MP\ using "luamplib" (but see also §\ref{sec:verbatim}).
+in \MP\ using "luamplib".
 
 
 \newpage
@@ -3597,39 +3548,28 @@ in \MP\ using "luamplib" (but see also §\ref{sec:verbatim}).
 It is a rule of syntax in \MP\ that a string token has to be given all on one line.
 So if you have very long labels, or paragraphs of text, then you have to split them
 up into separate shorter string tokens:
-\begin{code}
-label("\vbox{\hsize 4in It is a truth universally acknowledged,"
-     & " that a single man in possession of a good fortune,"
-     & " must be in want of a wife.\par}", origin);
-\end{code}
+\mpexternal[firstline=7,lastline=9]{neo-multi-line-labels.mp}
+\noindent
 taking care to include the necessary spaces, which can get fiddly.
-\mpic{-15mm}{multi-line-labels}
+\mpic{-15mm}{neo-multi-line-labels}
 
 But this is where the \mpl{btex ... etex} construction comes into play, even with
 "luamplib".  As we saw in the preceding section the construction fits into the \MP\
 syntax scheme as a special pair of quotation marks that produces a \<picture>.
 Unlike regular string token, a \mpl{btex ... etex} picture token can span several
 lines of source code, so you can (more easily) write long \TeX\ labels like this:
-\begin{code}
-label(btex \vbox{\hsize 4in
-     It is a truth universally acknowledged,
-     that a single man in possession of a good fortune,
-     must be in want of a wife.
-     \par} etex, 128 down);
-\end{code}
+\mpexternal[firstline=10,lastline=13]{neo-multi-line-labels.mp}
+\noindent
 Thanks to the backward compatibility of the implementation, this works very well
 even when you have "mplibtextextlabel" enabled.
 
-You also have full access to your \LaTeX\ environment, so you can get tables in the
-same way in \MP\ using environments like "tabular":
-\begin{code}
-label(btex
-    \begin{tabular}{c}
-        A way to get simple\\
-        two line labels
-    \end{tabular} etex, 256 down);
-\end{code}
-But recall that whatever you ask the \mpl{TEX()} macro to typeset like this is going into
+\vfill
+\noindent
+You also have comprehensive access to your \LaTeX\ environment, so with "luamplib"
+you can get tables in in \MP\ using environments like "tabular":
+\mpexternal[firstline=14,lastline=17]{neo-multi-line-labels.mp}
+
+But keep in mind that whatever you ask the \mpl{TEX()} macro to typeset is going into
 a restricted horizontal mode box;  so don't try to use floating environments like
 "table" or "figure".  And if you want automatic paragraph wrapping, you will have
 to wrap your text in a suitable "\vbox", as shown above.
@@ -3640,11 +3580,10 @@ Because the \mpl{TEX()} macro typesets everything in restricted horizontal mode,
 cannot use "$$ .. $$" to create display maths directly.  This is not a \TeX\
 \textit{v} \LaTeX\ issue, it is just that for compatibility with plain \MP\ (and
 common sense), the designers of "luamplib" chose to typeset labels into
-horizontal-mode boxes This is usually what you want.  If you prefer
-large integral
-operators (etc) in your labels,
-then you should either add
-"\displaystyle" at the beginning of your formula $\longrightarrow$\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
+horizontal-mode boxes This is usually what you want.  If you prefer large integral
+operators (etc) in your labels, then you should either add "\displaystyle" at the
+beginning of your formula \rightarrowfill\break
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 \begin{code}
 ...
 label("$\displaystyle \int_0^t 3x^2\, dx$", z0);
@@ -3652,8 +3591,7 @@ label("$\displaystyle \int_0^t 3x^2\, dx$", z0);
 label("\vbox{\hsize 2in $$\int_0^t 3x^2\, dx$$}", z1);
 ...
 \end{code}
-}}
-\\
+\vskip-1.5\baselineskip}}%
 or wrap the formula in a "\vbox" with a suitable "\hsize".  Using "\displaystyle" is
 probably simpler.
 
@@ -3661,13 +3599,9 @@ probably simpler.
 \subsection{Typographical minus signs and other dynamic labels}\label{sec:new-dynamic}
 
 This is really easy with "mplibtextextlabel" enabled, because we can assemble a string
-on the fly using standard \MP\ syntax:\mpic{0pt}{simple-number-line}
-\begin{code}
-draw (left--right) scaled 2in withcolor 2/3 red;
-for i=-4 upto 4:
-  dotlabel.top("$" & decimal i & "$", (32i, 0));
-endfor
-\end{code}
+on the fly using standard \MP\ syntax:\mpic{0pt}{neo-simple-number-line}
+\mpexternal[firstline=8,lastline=11]{neo-simple-number-line.mp}
+\noindent
 The normal operator precedence rules ensure that the string argument to
 \mpl{dotlabel} is assembled before it is passed to the \mpl{TEX()} macro.
 The individual parts of the string you assemble do not have to be
@@ -3675,15 +3609,8 @@ valid bits of \TeX\ in themselves; they only have to make sense once they
 are actually passed to the macro.  With "luamplib" there are no slow
 external files being used, so the complexities used above
 [§\ref{sec:old-and-dynamic}] to label points around a
-circle can be simplified without sacrificing speed:\mpic{-80pt}{simple-circle-labels}
-\begin{code}
-path P; P = for i=0 upto 8: 50 dir 40i -- endfor cycle; 
-draw P withcolor 2/3 red;
-for i=1 upto length P:
-    draw point i of P withpen pencircle scaled dotlabeldiam;
-    label("$p_{" & decimal i & "}$", point i of P scaled 1.2);
-endfor
-\end{code}
+circle can be simplified without sacrificing speed:\mpic{-80pt}{neo-simple-circle-labels}
+\mpexternal[firstline=7,lastline=12]{neo-simple-circle-labels.mp}
 
 \smallskip\noindent\nb Note that you can't do this string concatenation with \mpl{btex ... etex};
 although these operators might appear to be special quotation marks, they produce
@@ -3699,7 +3626,7 @@ into a \<picture> variable. So, in particular, you can’t use
 "\includegraphics" in a \TeX\ label.  But "luamplib" removes this
 limitation, so you can annotate images using the full array of \MP\
 tools, as shown here \rlap{$\longrightarrow$}%
-\vadjust{\moveright5.5in\vbox to 0pt{\vskip-80pt\hsize 4.2in\raggedright\noindent
+\vadjust{\moveright5.25in\vbox to 0pt{\vskip-60pt\hsize 4.5in\raggedright\noindent
 \begin{texcode}
 \documentclass[border=1mm]{standalone}
 \usepackage{luamplib}
@@ -3709,56 +3636,21 @@ tools, as shown here \rlap{$\longrightarrow$}%
 \begin{document}
 \begin{mplibcode}
 \end{texcode}
-\begin{smallcode}
-beginfig(1);
-draw btex \includegraphics[width=5in]{glenshiel.jpg} etex;
-% input reference-grid
-vardef callout@#(expr t, p, o) = 
-    save T; picture T; T = thelabel.@#(t, p+o);
-    draw T; drawarrow p+o -- p cutbefore bbox T;
-enddef;
-ahangle := 20; ahlength := 2; 
-drawoptions(withpen pencircle scaled 1/4 withcolor 1/2 blue);
-callout.top("Sgurr na Ciste Dubhe", (80, 96), (-10, 20));
-callout.top("Sgurr nan Spainteach", (100, 91), (6, 12));
-label.top("\tiny Cuillin Ridge, Isle of Skye", (140, 81));
-label.top("Sgurr na Carnach", (190, 90));
-label.top("Sgurr Fhuaran", (282, 94));
-label.bot("\itshape View looking west ...", 
-    point 5/2 of bbox currentpicture shifted 4 down);
-endfig;
-\end{smallcode}
-\begin{texcode}
-\end{mplibcode}
-\end{document}
-\end{texcode}
+\vskip -\baselineskip
+\smallmpexternal[firstline=8,lastline=24,xleftmargin=0pt,xrightmargin=-10pt]{neo-marked-up-photo.mp}
 \small
-If you uncomment the \mpl{\% input reference-grid} line, so that the 
+If you uncomment the \mpl{\% input neo-reference-grid} line, so that the 
 code on \llap{$\leftarrow$\;}the left is included, you get this automatically-sized grid superimposed:
-$$\includegraphics[width=3in]{marked-up-photo-grid}$$
-The grid makes it easier to find the right coordinates for your annotations.
+$$\includegraphics[width=3in]{neo-marked-up-photo-grid}$$
+The grid makes it easier to find the coordinates for your annotations.
 \vss}}
 
 \medskip\noindent
-\includegraphics[width=\textwidth]{marked-up-photo}
+\includegraphics[width=\textwidth]{neo-marked-up-photo}
 
 \vfill\noindent
-Here is a general purpose "reference-grid.mp" routine:
-\begin{smallcode}[xleftmargin=0pt, xrightmargin=-36pt]
-begingroup;
-  save llx, lly, urx, ury, u; numeric llx, lly, urx, ury, u; u = 10;
-  (llx, lly) = llcorner currentpicture;
-  (urx, ury) = urcorner currentpicture;
-  drawoptions(withpen pencircle scaled 1/4);
-  for x = ceiling (llx / u) upto floor (urx / u):
-    draw (x * u, lly) -- (x * u, ury) withcolor if x mod u = 0: red else: 1/2 fi;
-  endfor
-  for y = ceiling (lly / u) upto floor (ury / u):
-    draw (llx, y * u) -- (urx, y * u) withcolor if y mod u = 0: red else: 1/2 fi;
-  endfor
-  drawoptions();
-endgroup;
-\end{smallcode}
+Here is a general purpose reference grid routine:
+\smallmpexternal[firstline=3,lastline=16,xleftmargin=0pt,xrightmargin=-36pt]{neo-reference-grid.mp}
 
 \newpage
 \subsection{Using PDF transparency}\label{sec:transparent}
@@ -3805,45 +3697,8 @@ well with slightly lighter colours.
 
 \newpage\noindent
 Here is a slightly more ambitious example, using the same \mpl{withalpha}
-macro.\mwpic{100pt}{new-fangled-trilobe}
-\begin{smallcode}[xrightmargin=-80pt]
-numeric u; u = 24;
-color shade[]; string name[];
-shade0 = 1/256(166, 57, 65);  name0 = "R"; % rouge 
-shade1 = 1/256(219, 170, 72); name1 = "J"; % jaune
-shade2 = 1/256(36, 54, 84);   name2 = "B"; % bleu
-path edge[], arc[], ring[];
-for r=1 upto 8:
-  edge[r] = fullcircle rotated 90 scaled (2r * u) 
-    shifted (0, 7u / sqrt 3) rotated 60;
-endfor
-for i=2 upto 8:
-  edge[i] := edge[i] cutbefore edge8 rotated 120 cutafter edge8 rotated -120;
-endfor
-arc0 = point 0 of edge1 for i=2 upto 7: .. point 0 of edge[i] endfor;
-arc1 = point 0 of edge1 for i=2 upto 7: .. point infinity of edge[i] endfor;
-for i=1 upto 7:
-  ring[i] = edge[i] -- subpath (i-1, i) of arc1 -- 
-  reverse edge[i+1] -- subpath (i, i-1) of arc0 -- cycle;
-endfor
-for r=0, 1, 2:
-  for i=1 upto 6:
-
-    fill ring[i] rotated 120r withcolor (i/6)[white, shade[r]] withalpha 0.9;
-
-    label("$\textsf{" & name[r] & "}" if i<6: & "_" & decimal i fi & "$",
-      point i-1/2 of arc0 shifted (-6,8) rotated 120r);
-    label("$\textsf{" & name[r] & "}" if i<6: & "_" & decimal i fi & "$",
-      point i-1/2 of arc1 shifted (-8,2) rotated 120r);
-  endfor
-endfor
-for r=0, 1, 2:
-  for i=1 upto 7:
-    draw edge[i] rotated 120r withpen pencircle scaled 1 withcolor 7/8;
-  endfor
-  draw arc0 rotated 120r; draw arc1 rotated 120r;
-endfor
-\end{smallcode}
+macro.\mpic{-12pt}{new-fangled-trilobe}
+\smallmpexternal[firstline=6,lastline=43,xleftmargin=0pt,xrightmargin=-44pt]{new-fangled-trilobe.mp}
 
 \newpage
 \section{Working with pictures}
