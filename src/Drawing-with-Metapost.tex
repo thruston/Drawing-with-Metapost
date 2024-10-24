@@ -3711,7 +3711,7 @@ of the variable is a pattern of pixels for a font, in \MP\ the contents are vect
 graphics commands.  This section reviews some of the things you can do with a
 \<picture> variable — including putting one in a frame (see §\ref{sec:pictureframe})
 like so\rlap{\ $\longrightarrow$}
-\mpic{-96pt}{youth}
+\mpic{-96pt}{pics-youth}
 
 \bigskip\noindent
 Plain \MP\ provides two built-in \<picture> variables: \mpl{nullpicture}, which is
@@ -3777,8 +3777,8 @@ picture, you could do:
 \end{code}
 and \MP\ will add copies of $P$ with the reference points shifted to $(20,0)$,
 $(40,0)$, and $(60,0)$. A selection of other transformations is shown on the right $\longrightarrow$
-\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-240pt\centerline{\includegraphics[width=4in]{twister}}\par
-\centerline{\textsl{\small The reference point for each compass is the small dot in the middle.}}
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-240pt\centerline{\includegraphics[width=4in]{pics-twister}}\par
+\centerline{\textit{\small The reference point for each compass is the small dot in the middle.}}
 \vss}}
 
 \smallskip\noindent
@@ -3822,30 +3822,11 @@ You can apply \mpl{clip} to any picture, so you might prefer to capture your
 pattern in \<picture> variable with \mpl{image}, apply \mpl{clip} to that, and
 then \mpl{draw}. This works nicely if you want to repeat the clipped image.
 \vadjust{\moveright 5.5in\vbox to 0pt{\hsize 4.2in \vss
-\noindent\includegraphics[width=4in]{shady-circles}
+\noindent
+\centerline{\includegraphics{pics-shady-circles}}
 
 \medskip
-\begin{smallcode}
-path c, C; numeric r; r = 60;
-c = fullcircle scaled 2r shifted (-r, 0);
-C = fullcircle scaled 4r shifted (2r, 0);
-
-numeric t, u;
-(t, whatever) = C intersectiontimes
-                               C shifted (center c - center C);
-(u, whatever) = c intersectiontimes (point t of C -- center c);
-
-path s;
-s = subpath (0, u) of c -- subpath (t, 4) of C -- cycle;
-for i=0 upto r:
-    draw (left--right) scaled 2r rotated -42 shifted (3i, 0)
-        withpen pencircle scaled 1/4 withcolor 2/3 blue;
-endfor
-clip currentpicture to s;
-
-draw c; draw C;
-draw center c -- center C -- point t of C -- cycle;
-\end{smallcode}
+\mpexternal[firstline=6,lastline=27,xleftmargin=0pt]{pics-shady-circles.mp}
 \vskip -126pt}}
 
 You can also use this technique to fill with a gradient: just reduce the gap
@@ -3871,7 +3852,7 @@ also change, but not quite in the way you might think.  It turns out that
 the \mpl{bbox} is always a rectangle aligned to the edges of your page.
 Effectively, the corners are determined \textit{after} any transformation,
 and the \mpl{center} is strictly the intersection of the lines between opposite
-corners.\mpic{-68pt}{corners}
+corners.\mpic{-68pt}{pics-corners}
 
 You will notice this if you use the technique given on p.\thinspace29 of the \MP\ manual to draw a
 label on a coloured (or erased) background;  if you have rotated the label, the
@@ -3911,8 +3892,8 @@ draw P1 shifted 100 up; draw P2 shifted 100 down;
 
 Sometimes it is more convenient to use \mpl{label} to place the pictures, taking
 advantage of the automatic alignment provided.  Note also that, unless you have
-explicitly filled them with \mpl{white} colour, the blank parts of each picture are
-really transparent so you can overlap them when appropriate.
+explicitly or implicitly filled them with the \mpl{background} colour, the blank 
+parts of each picture are really transparent so you can overlap them when appropriate.
 
 \newpage
 \subsection{Adding a caption to the current picture}
@@ -3963,7 +3944,7 @@ centered on the origin and scaled to $2 \id{bboxmargin}$.
 \moveright5.5in\vbox to 0pt{\hsize 4in \vss
 \noindent
 Here is an example.
-$$\includegraphics[width=4in]{double-angle}$$
+$$\includegraphics[width=4in]{pics-double-angle}$$
 The labels at the bottom were added like this:
 \begin{smallcode}
 label.bot("$\triangle ACD \sim \triangle ABC$",
@@ -3984,30 +3965,7 @@ Consider the \<picture> with different colours and pens in the example here
 $\longrightarrow$
 \vadjust{\moveright5.5in\vbox to 0pt{\vskip
 -1.5\baselineskip
-\begin{smallcode}
-numeric s; s = 21;
-path alpha;
-alpha = ((-2s, s) {right}
-    .. halfcircle rotated -90 scaled 2s shifted (2s, 0)
-    .. {left} (-2s, -s)) shifted (s*left);
-
-vardef overdraw(expr a, b, r, P, shade) =
-    linecap := butt;
-    undraw subpath (a+r, b-r) of P withpen pencircle scaled 2;
-    draw subpath (a, b) of P withcolor shade;
-enddef;
-
-picture cb; cb = image(
-    draw alpha withcolor 2/3 red;
-    undraw alpha rotated 180 withpen pencircle scaled 2;
-    draw alpha rotated 180 withcolor 2/3 blue;
-    overdraw(0.21, 0.36, 0.02, alpha, 2/3 red);
-    overdraw(0.67, 0.86, 0.02, alpha, 2/3 red);
-    overdraw(3.4,  4.3,  0.1,  alpha, 2/3 red);
-    overdraw(5.4,  5.6,  0.02, alpha, 2/3 red);
-    overdraw(5.4,  5.6,  0.02, alpha rotated 180, 2/3 blue);
-);
-\end{smallcode}
+\smallmpexternal[firstline=8,lastline=29]{pics-draw-picture.mp}
 
 \vskip 48pt\noindent
 \begin{minipage}{4in}
@@ -4027,7 +3985,7 @@ picture cb; cb = image(
 \vss}}
 With this captured in a \<picture> variable, you can \mpl{draw} it with
 different colours and pens to obtain a variety of effects:
-$$\includegraphics[width=\textwidth]{draw-picture.pdf}$$
+$$\includegraphics[width=\textwidth]{pics-draw-picture}$$
 The picture is supposed to represent a fancy knot (a “Carrick bend”), and to show
 the red and blue strands crossing each other.  The \mpl{overdraw} macro tries to do
 this by undrawing with a thick pen, then redrawing the upper strand on top.
@@ -4039,39 +3997,16 @@ Filling with transparent colour can sometimes be a very effective graphic techni
 but plain \MP\ provides no colour model that directly supports transparency for any
 output format.  If you are using "mpost",  you will have to resort to layering and
 managing the colour blending yourself.  This section presents an example of the
-basic technique, that could be adapted to more general purpose macros as required. 
-But, the technique is quite laborious so you might prefer to switch to "luamplib"
+basic technique, that could be adapted to more general purpose macros as
+required.\\
+\hey \red{But, the technique is quite laborious so you might prefer to switch to "luamplib"
 which provides support for the PDF transparency model, as discussed in
-§\ref{sec:transparent}.
+§\ref{sec:transparent}}.
 \vadjust{\moveright5.5in\vbox to 0pt{\vskip -128pt
-$$\includegraphics[width=3in]{fake-transparency}$$
+$$\includegraphics[width=3in]{pics-fake-transparency}$$
 
 Omitting the simple grid, this drawing was produced like this:
-\begin{smallcode}
-% Large A
-label.urt("A" infont defaultfont scaled 8, origin) withcolor 1/4 green;
-% An arbitrary shape
-path shape; shape = (superellipse(right, up, left, down, 0.81))
-    shifted 1/2 right scaled 30 rotated 30;
-% Parameters
-alpha = 5/8;  % alpha: 0=invisible, 1=opaque
-color filler; filler = .95[red,white];
-picture fg, bg;
-bg = currentpicture; % capture the current drawing
-fg = image(
-  for e within bg: % redraw everything in blended color
-    draw e withcolor alpha[colorpart e, filler];
-  endfor  % and add some decorations
-  draw shape withpen pencircle scaled 2 withcolor 3/4;
-  draw subpath (2.718, 3.1415) of shape
-      shifted - center shape scaled 7/8 shifted + center shape
-      withpen pencircle scaled 2 withcolor white;
-);
-clip fg to shape;  % now clip the fg drawing to the shape
-fill shape withcolor filler;  % fill the shape
-draw fg; % and put the fg drawing on top
-draw shape withcolor 3/4 blue; % make a nice edge
-\end{smallcode}
+\smallmpexternal[firstline=28,lastline=48]{pics-fake-transparency.mp}
 \vss}}%
 
 \smallskip\noindent
@@ -4105,36 +4040,17 @@ The \<picture> capture technique provides a simple way to add a background or do
 other post-processing on your drawing.  The advantage is that you do not have to
 work out the size of your drawing before you start.
 
-\moveright5.5in\vbox to 0pt{\vskip -43pt
-Here is an example that adds graph paper behind
-a drawing.
-$$\includegraphics{graph-paper}$$
-\begin{smallcode}
-input colorbrewer-rgb
-path C; C = fullcircle scaled 120 shifted 12 up rotated 6;
-for t=0,1.2,4: draw center C -- point t of C withcolor Blues 8 8; endfor
-draw C withcolor Reds 8 8; dotlabel.urt("Start", point 0 of C);
+\moveright5.5in\vbox to 0pt{\vskip -96pt\hsize 4.2in
+\noindent\includegraphics{pics-graph-paper-example}
 
-vardef grid(expr ll, ur, grid_unit) =
-  save llx, lly, urx, ury, G; numeric llx, lly, urx, ury;
-  (llx, lly) = ll; (urx, ury) = ur;
-  picture G; G = image(
-  for x = floor(llx / grid_unit) + 1 upto floor(urx / grid_unit):
-    draw (x * grid_unit, lly) -- (x * grid_unit, ury);
-  endfor
-  for y = floor(lly / grid_unit) + 1 upto floor(ury / grid_unit):
-    draw (llx, y * grid_unit) -- (urx, y * grid_unit);
-  endfor
-  fill fullcircle; % <-- show the origin
-  ); G enddef;
+\smallmpexternal[firstline=8,lastline=11, xleftmargin=0pt]{pics-graph-paper-example.mp}
+\noindent
+This is "pics-graph-paper-inch.mp":
+\smallmpexternal[xleftmargin=0pt]{pics-graph-paper-inch.mp}
 
-picture P; P = currentpicture; currentpicture := nullpicture;
-drawoptions(withpen pencircle scaled 1/4);
-draw grid(llcorner P, urcorner P, 1mm) withcolor Blues 8 1;
-draw grid(llcorner P, urcorner P, 10mm) withcolor Blues 8 2;
-drawoptions();
-draw P;
-\end{smallcode}
+\noindent
+And this is "automatic-grid.mp"
+\smallmpexternal[xleftmargin=0pt]{automatic-grid.mp}
 \vss}
 
 \smallskip\noindent
@@ -4181,50 +4097,28 @@ fill bbox P withcolor (1,1,31/32); draw P; endfig;}
 
 \textsc{If you wish} to check the dimensions of your drawing, it can be useful to
 add a temporary ruler that shows you the dimensions of the bounding box like this:
-$$\includegraphics{icosahedron}$$
+$$\includegraphics{pics-icosahedron}$$
 The red rulers were added by putting \mpl{input ruler-cm} at the end of the figure.
-\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\raggedright\noindent
+\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\noindent
 Here is the implementation of "ruler.mp":
-\begin{code}
-% add a ruler along the left hand and lower edges 
-% of the bounding box of the currentpicture
-path B; B = bbox currentpicture;
-for s=0, 1:
-    path p; numeric a; pair o;
-    p = subpath (0, 1) of if s=0: reverse fi B;
-    a = arclength p;
-    o = if s=0: left else: down fi;
-    for i=0 upto 3:
-        exitif not known u[i];
-        for j=0 upto floor(a/u[i]):
-            pair t; t = point arctime j*u[i] of p of p;
-            draw (origin -- (6 - 2i) * o) shifted t;
-            if i=0: label(decimal j, t shifted 12 o); fi
-        endfor
-    endfor
-    draw p;
-endfor
-\end{code}
+\mpexternal{ruler.mp}
+\noindent
 The inner loop draws successively shorter lines at each of the
 minor units, and numbers at the major units.
+
+Note that this macro  designed to be used a temporary input added at the
+bottom of a drawing to see how big it is.  You would not usually leave it in place
+in a final drawing. This is why none of the variable names is protected.
+To make the macros more robust you could enclose them with \mpl{begingroup} and
+\mpl{endgroup}, and \mpl{save} the names, and clear \mpl{drawoptions}.
 \vss}}
 They are drawn round the bounding box, set here with the default
 margin of 2\unit{bp}.
 The "ruler-cm.mp" file looks like this:
-\begin{code}
-numeric u[]; u0 = 1 cm; u1 = 1 mm;
-drawoptions(withcolor 0.54 red);
-input ruler
-drawoptions();
-\end{code}
-and there is a companion "ruler-inch.mp" file that looks like this:
-\begin{code}
-numeric u[]; u0 = 1 in; u1 = 1/4 in; u2 = 1/12 in;
-drawoptions(withcolor 3/4 blue);
-input ruler
-drawoptions();
-\end{code}
-The idea is that you set a subscripted variable \mpl{u[]} to a number of unit sizes
+\mpexternal{ruler-cm.mp}
+\noindent and there is a companion "ruler-inch.mp" file that looks like this:
+\mpexternal{ruler-inch.mp}
+\noindent The idea is that you set a subscripted variable \mpl{u[]} to a number of unit sizes
 where you want markers and then call \mpl{input ruler}.  
 
 
@@ -4235,152 +4129,45 @@ where you want markers and then call \mpl{input ruler}.
 you might want to add emphasis or pick out part of a drawing.  The examples here can
 be applied to \mpl{currentpicture} or any other \<picture>
 variable.\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in\vskip -42pt
-$$\includegraphics{border-rope.pdf}$$
-\begin{smallcode}
-% don't take this one too seriously...
-vardef rope expr c = 
-save hemp, s, w, n, A, a, b; 
-color hemp; hemp = 1/256 (224, 202, 169);      
-numeric s, w, n, A; 
-A = arclength c; s = A/floor(A/2); w = -1; n = -1; 
-path a[]; for t=0 step s until A + 1: a[incr n] = 
-   (0,+w) rotated angle direction arctime t-3/2s of c of c 
-                    shifted point arctime t-3/2s of c of c
-.. (0,+w) rotated angle direction arctime t-1/2s of c of c 
-                    shifted point arctime t-1/2s of c of c
-.. (0,-w) rotated angle direction arctime t+1/2s of c of c 
-                    shifted point arctime t+1/2s of c of c
-.. (0,-w) rotated angle direction arctime t+3/2s of c of c 
-                    shifted point arctime t+3/2s of c of c;
-endfor
-image(for i=1 upto n:
-  path b; b = buildcycle(a[i-1], reverse a[i]);
-  fill b withcolor hemp;
-  draw b withpen pencircle scaled 1/8;
-endfor) enddef;
-interim bboxmargin := 16;
-draw rope rounded_corners bbox currentpicture;
-\end{smallcode}\vss}}
+$$\includegraphics{pics-border-rope}$$
+Don't take this one too seriously\dots
+\smallmpexternal[xleftmargin=0pt]{rope.mp}
+\smallmpexternal[xleftmargin=0pt,firstline=9,lastline=10]{pics-border-rope.mp}
+\vss}}
 
-$$\vbox{\halign{$\vcenter{\hbox{\includegraphics[width=150bp]{#}}}$&\quad$\vcenter{\hbox{#}}$\cr
-border-shadow&
-\begin{smallcode}
-picture P; P = currentpicture;
-fill bbox P shifted (3,-3) withcolor 3/4;
-unfill bbox P; draw bbox P;
-draw P; 
-\end{smallcode}\cr
-border-dashed&
-\begin{smallcode}
-vardef rounded_corners expr p = 
-    for i=1 upto length p:
-        subpath (i-15/16, i-1/16) of p ..
-    endfor cycle
-enddef;
+\bigskip
 
-interim bboxmargin := 16;
-draw rounded_corners bbox currentpicture 
-    dashed evenly scaled 3/4;
-\end{smallcode}\cr
-}}$$
+\noindent\includegraphics[width=.95\textwidth]{pics-border-shadow}
+
+\bigskip
+
+\noindent\includegraphics[width=\textwidth]{pics-border-dashed}
 
 \newpage
 \subsection{Adding a frame}\label{sec:pictureframe}
 
 As promised at the start of this section, here is the code for the picture
 frame drawn round Raphael's young man.
-\begin{code}
-input picture_frame
-beginfig(1);
-  picture F; 
-  F = thelabel(TEX("\includegraphics{youth.jpg}"), origin);
-  draw F; draw frame bbox F; 
-endfig;
-\end{code}
+\smallmpexternal[firstline=6,lastline=11]{pics-youth.mp}
+\noindent
 All the heavy lifting is done by "frame" macro defined in
 "picture_frame.mp" $\longrightarrow$
-\vadjust{\moveright5.2in\vbox to 0pt{\hsize 4in\vskip-184pt
-\begin{smallcode}
-vardef frame expr P = 
-  save base, side, f, t, u, xx; 
-  picture base, side; path f; numeric t, u, xx;
-  % work out some measurements
-  t = arclength subpath (0,1) of P;
-  u = arclength subpath (1,2) of P;
-  xx = max(t, u) + 2 pf_wd;
-  f = unitsquare xscaled xx yscaled pf_wd;
-  % convenience / nonce function
-  vardef paint_strip(expr y, wd, shade) =
-    draw subpath (0, 1) of f 
-         shifted (0, if y < 0: pf_wd + fi y)
-         withpen pencircle scaled wd
-         withcolor shade
-  enddef;
-  base = image(
-    % background colour
-    fill f withcolor gold;
-    % grey strips
-    paint_strip(2,    3,   5/4 grey);
-    paint_strip(3.5,  1/4, grey);
-    paint_strip(5,    1/4, 1/2[gold, dark]);
-    paint_strip(-6.5, 1/4, 1/2[gold, dark]);
-    paint_strip(-6,   1/4, 1/2[gold, dark]);
-    paint_strip(-2,   2,   5/4 grey);
-    % spatter with random spots
-    for i=0 upto 4 * arclength(subpath (0,1) of f):
-      fill fullcircle scaled uniformdeviate 3/4
-        shifted (uniformdeviate xx, uniformdeviate pf_wd)
-        withcolor dark;
-    endfor
-    % decorative balls
-    for x = 2 step 3 until xx:
-      draw ball shifted (x, 2);
-    endfor
-  );
-  % make two trapezium shapes
-  side = base;
-  clip side to (pf_wd, 0) -- (pf_wd + u, 0) 
-            -- (2 pf_wd + u, pf_wd) -- (0, pf_wd) -- cycle;
-  clip base to (pf_wd, 0) -- (pf_wd + t, 0) 
-            -- (2 pf_wd + t, pf_wd) -- (0, pf_wd) -- cycle;
-  % arrange the pieces around path P
-  image(
-    draw base rotated 180 shifted point 1 of P shifted (+pf_wd, 0);
-    draw base rotated   0 shifted point 3 of P shifted (-pf_wd, 0);
-    draw side rotated  90 shifted point 0 of P shifted (0, -pf_wd);
-    draw side rotated 270 shifted point 2 of P shifted (0, +pf_wd);
-  )
-enddef;
-\end{smallcode}
+\vadjust{\moveright5in\vbox to 0pt{\hsize 4.2in\vskip-164pt
+\smallmpexternal[firstline=18,lastline=64,xrightmargin=-40pt]{picture_frame.mp}
 \vss}}
 
 \noindent This macro also needs some colours:
-\begin{smallcode}
-color gold, dark, grey;
-gold = 1/256(243, 197, 127);
-dark = 1/256(144, 87, 50);
-grey = 1/256(156, 147, 138);
-\end{smallcode}
-a picture of a small silvery-gold ball:
-\begin{smallcode}
-picture ball; ball = image(for i=0 upto 16:
-  fill interpath(i/16, 
-      fullcircle scaled 10, 
-      fullcircle scaled 3 shifted (-2, 2)
-  ) withcolor (i/16)[gold, 15/16 white];
-endfor) scaled 1/4;
-\end{smallcode}
-and an internal variable that defines the width of the frame:
-\begin{smallcode}
-newinternal pf_wd; pf_wd := 21;
-\end{smallcode}
-The macro takes a rectangular path $P$ as an argument, and 
-makes a thin rectangle $f$ that is scaled to the desired width and
-the longer of the two sides of the path.  This thin rectangle is then
-decorated with background colour, strips of colour to suggest depth, a random
-spatter-pattern, and a row of little balls.  The macro then makes two trapezium
-shaped copies of the decorated rectangle, pieces them together around $P$, and returns the result as a
-\<picture>.
+\smallmpexternal[firstline=4,lastline=7]{picture_frame.mp}
+\noindent a picture of a small silvery-gold ball:
+\smallmpexternal[firstline=9,lastline=14]{picture_frame.mp}
+\noindent and an internal variable that defines the width of the frame:
+\smallmpexternal[firstline=16,lastline=16]{picture_frame.mp}
+\noindent The macro takes a path or picture $P$ as an argument, and makes a thin rectangle $f$
+that is scaled to the desired width and the longer of the two sides of the bounding
+box.  This thin rectangle is then decorated with background colour, strips of colour
+to suggest depth, a random spatter-pattern, and a row of little balls.  The macro
+then makes two trapezium shaped copies of the decorated rectangle, pieces them
+together around $P$, and returns the result as a \<picture>.
 
 \newpage
 \section{Drawing and decorating lines}

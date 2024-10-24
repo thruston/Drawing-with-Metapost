@@ -1,6 +1,3 @@
-numeric u[];
-u0 = 1 in;
-u1 = 6 bp;
-drawoptions(withcolor 0.54 red);
+numeric u[]; u0 = 72; u1 = 18; u2 = 6;
+drawoptions(withcolor 0.67 blue);
 input ruler
-drawoptions();
