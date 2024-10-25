@@ -4,45 +4,57 @@
 \mplibtextextlabel{enable}
 \begin{mplibcode}
 secondarydef a through b = 
-    begingroup; save d; numeric d; d = abs(a-b); (1+12/d)[b,a] -- (1+12/d)[a,b] endgroup
+  begingroup; save d; d = abs(a-b); (1+12/d)[b,a] -- (1+12/d)[a,b] endgroup
 enddef;
 beginfig(1);
-    path ellipse; ellipse = fullcircle scaled 300 yscaled 5/8 rotated 13 shifted 20 right;
-    numeric a, b, e;
-    2a = abs (point 4 of ellipse - point 0 of ellipse);
-    2b = abs (point 6 of ellipse - point 2 of ellipse);
-    e = 1 +-+ b/a;
+  path ellipse; 
+  ellipse = fullcircle scaled 300 yscaled 5/8 rotated 13;
 
-    z0 = 1/2[point 0 of ellipse, point 4 of ellipse];
-    z1 = e[z0, point 0 of ellipse];
-    z2 = e[z0, point 4 of ellipse];
+  numeric a, b;
+  2a = abs (point 4 of ellipse - point 0 of ellipse);
+  2b = abs (point 6 of ellipse - point 2 of ellipse);
 
-    drawoptions(withcolor 3/4);
-    draw point 0 of ellipse through point 4 of ellipse;
-    draw point 2 of ellipse through point 6 of ellipse;
-    drawoptions(withcolor 1/2);
-    label.top("$a$", 1/2[z0, point 0 of ellipse]);
-    label.bot("$ae$", 1/2[z0, z1]);
-    label.rt("$b$", 1/2[z0, point 2 of ellipse]);
-    drawoptions();
+  numeric e; e = 1 +-+ b/a;  % Pythagorean difference
 
-    numeric t; t = 1.732;
-    draw z1 -- point t of ellipse -- z2; 
-    drawoptions(withcolor 1/2);
-    draw (left--right) scaled 21 
-        rotated angle direction t of ellipse
-        shifted point t of ellipse;
-    draw (1/2 down--up) scaled 21 
-        rotated angle direction t of ellipse
-        shifted point t of ellipse;
-    drawoptions();
+  z0 = 1/2[point 0 of ellipse, point 4 of ellipse];
+  z1 = e[z0, point 0 of ellipse];
+  z2 = e[z0, point 4 of ellipse];
 
-    draw ellipse withcolor 3/4 red;
+  drawoptions(withcolor 3/4[blue, white]);
+  draw point 0 of ellipse through point 4 of ellipse;
+  draw point 2 of ellipse through point 6 of ellipse;
 
-    dotlabel.urt("$T$", point t of ellipse);
-    dotlabel.lrt("$F_1$", z1);
-    dotlabel.lrt("$F_2$", z2);
+  vardef arrowlabel(expr s, a, b, offset) = 
+    save p, t; interim ahangle := 28;
+    path p; p = (a--b) shifted (offset * unitvector(b-a) rotated 90);
+    picture t; t = thelabel(s, point 1/2 of p);
+    drawdblarrow p; unfill bbox t; draw t;
+  enddef;
 
+  label.lrt("$a$", 1/2[z0, point 4 of ellipse]);
+  label.rt("$b$", 1/2[z0, point 6 of ellipse]);
+  arrowlabel("$ae$", z0, z1, -6);
+  drawoptions();
+
+  numeric t; t = 1.732;
+  drawoptions(withcolor 1/2);
+  draw (left--right) scaled 34
+    rotated angle direction t of ellipse
+    shifted point t of ellipse;
+  draw (1/2 down--up) scaled 34 
+    rotated angle direction t of ellipse
+    shifted point t of ellipse;
+  drawoptions();
+
+  draw z1 -- point t of ellipse -- z2; 
+  draw ellipse withcolor 3/4 red;
+
+  labeloffset := 6;
+  dotlabel.urt("$T$", point t of ellipse);
+  dotlabel.top("$F_1$", z1);
+  dotlabel.ulft("$F_2$", z2);
+
+  input show_name
 endfig;
 \end{mplibcode}
 \end{document}

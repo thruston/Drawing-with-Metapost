@@ -5,7 +5,7 @@
 \begin{mplibcode}
 beginfig(1);
   path r, k; 
-  r = for t = 1 upto 360: cosd(2t) * dir t .. endfor cycle;
+  r = for t = 1 upto 360: cosd 2t * dir t .. endfor cycle;
   r := r scaled 150;
   k = for t = 1 upto 360: point 29t of r -- endfor cycle;
 

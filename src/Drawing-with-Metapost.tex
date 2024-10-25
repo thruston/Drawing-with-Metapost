@@ -4990,11 +4990,14 @@ You get prettier curves if the parameter in $k$ is a prime number.
 \newpage
 \section{Drawing plane curves}
 
-{\textsc{“Plane curves offer} a rich \dots\ field of study which may be approached
+\moveright72pt\vbox{\begingroup\hsize4in
+\raggedleft\fontsize{8}{10}\selectfont\textsf{%
+Plane curves offer a rich \dots\ field of study which may be approached
 from a quite elementary level. Anyone who can draw a circle with a given centre and
 a given radius can draw a cardioid or a limaçon.  Anyone who can use a set square
-can draw a parabola or a strophoid” \hfill — \textsl{A Book of Curves}, E.\@ H.\@
-Lockwood\parfillskip0pt\par}
+can draw a parabola or a strophoid \hfill — \textsl{A Book of Curves}, E.\@ H.\@
+Lockwood\parfillskip0pt
+}\par\endgroup}
 
 \subsection{Parabola}
 
@@ -5002,71 +5005,28 @@ Lockwood\parfillskip0pt\par}
 \le 1$ and then transform as required (see next page), but it can be illuminating to follow more
 traditional constructions, such as that shown on the
 right.\mwpic{-180pt}{curves-parabola}
-\vadjust{\moveright7.2in\vbox to 0pt{\hsize 200pt\noindent  
+\vadjust{\moveright7.2in\vbox to 0pt{\vskip48pt\hsize 200pt\noindent  
 The idea here is that you put the right angle of your set square on the vertical
 axis with the short side touching $S$, and then draw the long side.  If you do this 
 in enough places, the edges form a parabola. In the \MP\ code here, the intersection
 of each ray with the one before is captured as variable $t$ and then added one at a
 time to the \<path> \id{parabola}, (using a neat trick at the beginning).
 \vss}}
-\begin{smallcode}[xleftmargin=0pt]
-pair A, S; A = origin; S = 66 right;
-path parabola, last;
-for q = -144 step 8 until 144:
-    pair Q; Q = (0, q); 
-    path ray; 
-    ray = (origin -- unitvector(S - Q)) scaled 300 
-          rotated if q < 0: - fi 90 shifted Q;
-    draw S -- ray withcolor 7/8;
-    if known last:
-        pair t;
-        t = whatever[point 0 of ray, point 1 of ray] 
-          = whatever[point 0 of last, point 1 of last];
-        parabola := if known parabola: parabola .. fi t;
-    fi
-    last := ray;
-endfor
-
-draw parabola withcolor 3/4[red, white];
-for t=0 upto length parabola:
-    draw point t of parabola withpen pencircle scaled 3/2 withcolor red;
-endfor
-draw (up--down) scaled 300;
-
-dotlabel.lft("$A$", A);
-dotlabel.rt("$S$", S);
-\end{smallcode}
+\mpexternal[firstline=6,lastline=26,xleftmargin=0pt,xrightmargin=-36pt]{curves-parabola.mp}
 
 \newpage
-\subsubsection{Parabola from directrix and focus}
+\subsubsection*{Parabola from directrix and focus}
 
 \textsc{The classical definition} of the parabola is the locus of points that are 
 equidistant from a given line (the \textit{directrix}, shown as $A\to B$ on the
 right) to a given focus point (shown as $S$).\mpic{-24pt}{curves-parabola-directrix}
-Each point on the parabola path is related to each point, and you can construct an
+Each point on the parabola path is related to each point on the directrix, and you can construct an
 equilateral parallelogram at each point as shown.  This leads to a macro that
 generates a parabola given two \<pair> variables to define the directrix and another
 to define the focus:
-\begin{code}
-vardef parabola(expr A, B, S) =
-    save m, q, n, parabola;
-    pair n;  % n = nearest point to S on A--B
-    n = whatever[A, B]; n - S = whatever * (A-B) rotated 90;
-    path parabola;
-    for t=0 step 1/64 until 1:
-        pair m, q;
-        m = 1/2[S, t[A, B]];
-        q = whatever[S, n]; 
-        q - m = whatever * (S - m) rotated 90;
-        parabola := if known parabola: parabola -- fi 
-            q reflectedabout(S, m);
-    endfor
-    parabola
-enddef;
+\mpexternal[firstline=17,lastline=31]{curves-parabola-directrix.mp}
 
-\end{code}
-
-\subsubsection{Parabola from $y=x^2$ and $dy/dx=2x$}
+\subsubsection*{Parabola from $y=x^2$ and $dy/dx=2x$}
 
 Alternatively you could define a “unit parabola” like this:
 \begin{code}
@@ -5111,16 +5071,11 @@ $$\includegraphics[width=0.9\textwidth]{curves-hyperbola-function}$$
 path by a different amount in each direction.  By convention, the $y$-axis is the
 minor axis of an ellipse.\mwpic{-24pt}{curves-ellipse}
 The ellipse shown on the right, was defined like this:
-\begin{code}
-path ellipse; 
-ellipse = fullcircle scaled 320 yscaled 5/8 rotated 13;
-\end{code}
+\mpexternal[firstline=10,lastline=11]{curves-ellipse.mp}
+\noindent
 Then the lengths of the semi-major axes, $a$ and $b$, were extracted like this:
-\begin{code}
-numeric a, b;
-2a = abs (point 4 of ellipse - point 0 of ellipse);
-2b = abs (point 6 of ellipse - point 2 of ellipse);
-\end{code}
+\mpexternal[firstline=13,lastline=15]{curves-ellipse.mp}
+\noindent
 If you already had $a$ and $b$, then you could use them directly to scale your
 ellipse;  the following snippet would produce the same elliptical path:
 \begin{code}
@@ -5132,18 +5087,14 @@ to each focus and the semi-major axis, $a$.  By definition, the distance from $F
 to $T$ to $F_2$ is constant as $T$ moves round the ellipse and is equal to $2a$.
 Hence when $T$ lies on the minor axis, you have $TF_1=a$, and so $a^2 = b^2 +
 a^2e^2$, and $e^2=1-b^2/a^2$:
-\begin{code}
-numeric e; e = 1 +-+ b/a; % the Pythagorean difference operator
-\end{code}
+\mpexternal[firstline=17,lastline=17]{curves-ellipse.mp}
+\noindent
 The focus points can then be found like this:
-\begin{code}[xrightmargin=-10pt]
-z0 = 1/2[point 0 of ellipse, point 4 of ellipse];  % ellipse centre
-z1 = e[z0, point 0 of ellipse];
-z2 = e[z0, point 4 of ellipse];
-\end{code}
+\mpexternal[firstline=19,lastline=21]{curves-ellipse.mp}
+\noindent
 Note that in the example above the ellipse is centred at the origin, because 
 the \mpl{fullcircle} path was only scaled and rotated, not shifted.  But the method
-shown will foind the centre of any ellipse no matter where you have placed it.
+shown will find the centre of any ellipse no matter where you have placed it.
 
 \vfill
 
@@ -5154,17 +5105,11 @@ ellipse appropriately scaled, rotated, and shifted.
 
 \moveright 5.5in\vbox to 0pt{\vss\noindent
 The tangent and the normal at $T$ above were added like this:
-\begin{code}
-numeric t; t = 1.732;
-draw (left--right) scaled 21 
-    rotated angle direction t of ellipse
-    shifted point t of ellipse;
-draw (1/2 down--up) scaled 21 
-    rotated angle direction t of ellipse
-    shifted point t of ellipse;
-\end{code}}
+\mpexternal[firstline=39,lastline=46]{curves-ellipse.mp}
+}
+
 \newpage
-\subsubsection{Tangent from external point to ellipse}
+\subsection*{Tangent from external point to ellipse}
 
 $$\includegraphics[width=\textwidth]{curves-ellipse-tangents}$$
 To find the tangent points from an external point $A$ to an ellipse, the classical
@@ -5175,76 +5120,28 @@ required tangents (because $F_2TF_1=2a$ by definition, and $F_2P=2a$ by
 construction), and so the tangent points $T$ and $T'$ are the intersections of
 $F_2P$ and $F_2Q$ with the ellipse. 
 
-\vfill\noindent
 There is no such direct construction for the nearest point on an ellipse to a given
 point, but you can use the macro \id{solve} to find it numerically. The blue arrow
 shows the shortest distance from $A$ to the ellipse.
-\vadjust{\moveright 384pt\vbox to 0pt{\vss
-\begin{smallcode}
-secondarydef a through b = 
-    begingroup; save d; numeric d; d = abs(a-b); 
-    (1+12/d)[b,a]--(1+12/d)[a,b] endgroup
-enddef;
-path ellipse; ellipse = fullcircle scaled 300 yscaled 5/8 rotated 13;
-z0 = 1/2[point 4 of ellipse, point 0 of ellipse];
-numeric a, b, e; 
-2a = abs (point 4 of ellipse - point 0 of ellipse);
-2b = abs (point 6 of ellipse - point 2 of ellipse);
-e = 1 +-+ b/a;
-z1 = e[z0, point 0 of ellipse];
-z2 = e[z0, point 4 of ellipse];
-z3 = 240 dir 25;
-path pp, qq;
-pp = fullcircle scaled 2 abs (z1 - z3) shifted z3;
-qq = fullcircle scaled 4a shifted z2;
-z4 = pp intersectionpoint qq;
-z5 = reverse pp intersectionpoint qq;
-numeric t, u;
-(t, whatever) = ellipse intersectiontimes (z2 -- z4);
-(u, whatever) = ellipse intersectiontimes (z2 -- z5);
-vardef f(expr x) = 
-    angle (z3 - point x of ellipse) + 90 > angle direction x of ellipse
-enddef;
-drawarrow z3 -- point solve f(0, t) of ellipse withcolor 2/3 blue;
-drawoptions(dashed evenly withcolor 7/8);
-draw point 0 of ellipse through point 4 of ellipse;
-draw point 2 of ellipse through point 6 of ellipse;
-drawoptions(withcolor 3/4);
-draw z4 -- z1 -- z5;
-draw z2 -- z4 -- z3 -- z5 -- cycle;
-draw point t of ellipse -- z1 -- point u of ellipse;
-drawoptions();
-draw point t of ellipse -- z3 -- point u of ellipse withcolor 2/3 red;
-dotlabel.llft("$F_1$", z1); dotlabel.llft("$F_2$", z2);
-dotlabel.urt("$A$", z3);
-dotlabel.ulft("$P$", z4); dotlabel.lrt ("$Q$", z5);
-dotlabel.ulft("$T$", point t of ellipse);
-dotlabel.lrt("$T'$", point u of ellipse);
-draw ellipse;
-picture P; P = currentpicture; currentpicture := nullpicture;
-draw pp dashed withdots scaled 1/2;
-draw qq dashed withdots scaled 1/2;
-bboxmargin := 24; clip currentpicture to bbox P; draw P;
-\end{smallcode}
-\vskip -48pt}}
+\vadjust{\moveright 382pt\vbox to 0pt{\vss
+\mpexternal[firstline=7,lastline=44,xleftmargin=0pt,xrightmargin=-36pt]{curves-ellipse-tangents.mp}
+\vskip -36pt}}
 
 \newpage
 \subsection{Cardioid}
 
-\textsc{To draw a cardioid by hand}, you can draw a base circle, mark a fixed point $A$ on it, and
-then draw a circle centred at any point $Q$ on the circle that passes through point
-$A$.  If you then repeat this for many different positions of Q, the cardioid is the
-curve that encloses all the circles.\mpic{-24pt}{curves-cardioid-simple}
+\textsc{To draw a cardioid by hand}, you can draw a base circle, mark a fixed point
+$A$ on it, and then draw a circle centred at any point $Q$ on the circle that passes
+through point $A$.  If you then repeat this for many different positions of Q, the
+cardioid is the curve that encloses all the circles.\mpic{-24pt}{curves-cardioid-simple} 
 But for \MP, you want only a single point $P$ from the circumference of each circle;
-this turns out to be the image of $A$ reflected in the tangent at each point $Q$, like so:
+this turns out to be the image of $A$ reflected in the tangent at each point $Q$,
+like so:
 $$\includegraphics[width=0.7\textwidth]{curves-cardioid-construction}$$
 \vskip -84pt\noindent
-With a small step size $s$ and a base circle \id{base}, this suggests: \begin{smallcode}
-pair A; A = point 0 of base;
-path cardioid; cardioid = for t = 0 step s until length base:
-  A reflectedabout(precontrol t of base, postcontrol t of base) ..
-endfor cycle;
-\end{smallcode}
+With a small step size $s$ and a rotated circle \id{base}, this suggests: 
+\smallmpexternal[firstline=13,lastline=16]{curves-cardioid-construction.mp}
+\noindent
 You can also show that $AP=2a(1+\cos\theta)$, where $a$ is the radius of the
 base circle and $\theta$ is the angle that $AP$ makes with the diameter through
 $A$, so you might use:
@@ -5263,15 +5160,10 @@ Here $A$ has been moved to the left, but each $P$ on the curve is still $A$
 reflected in the tangent at each $Q$. The “hole” gets larger as $A$ moves away from
 the \id{base} circle; when $A$ touches the \id{base} the hole disappears and the
 curve becomes the cardioid, as before.
-
 Following this ruler-and-compasses approach, the red limaçon path in the figure here
 was generated from the \id{base} circle shown in blue.
-\begin{smallcode}
-pair A; A = 2[center base, point 0 of base];
-path limacon; limacon = for t = 0 step s until length base:
-  A reflectedabout(precontrol t of base, postcontrol t of base) ..
-endfor cycle;
-\end{smallcode}
+\smallmpexternal[firstline=12,lastline=15]{curves-limacon-simple.mp}
+\noindent
 Or if you prefer a more trigonometrical approach:
 \begin{smallcode}
 limacon = for t=0 upto 359: 2a*(1+2cosd(t))*dir t .. endfor cycle;
@@ -5281,11 +5173,11 @@ Here $2a$ is the diameter of the blue \id{base} circle.  Note that if you use
 
 \vfill
 \noindent
-An alternative approach (due to Albrecht Dürer) is shown below. In this dia-
+\textsc{An alternative approach} (due to Albrecht Dürer) is shown below. In this
 \par\kern 2pt
-\vbox{\halign{#&\quad\vbox{\hsize=2.4in\noindent #}\cr
+\vbox{\halign{#&\kern 1em\vbox{\hsize=18em\noindent #}\cr
 $$\includegraphics{curves-limacon-durer}$$
-&gram the base circle is divided into 12 parts like a 
+&diagram, the base circle is divided into 12 parts like a 
 clock face.  At 1 o’clock, you draw a line segment of a given 
 length parallel to the radius to 2 o’clock; at 2 you draw the same length
 segment parallel to 4 o’clock, and so on.  The limaçon is the curve through
@@ -5310,23 +5202,18 @@ base circle and the points $A$ and $B$ at the ends of each line that have the $x
 part and $y$ part of each point $T$ round the base circle.
 $$\includegraphics[scale=0.8]{curves-astroid-construction}$$
 Then the point $P$ on $A \to B$ that is closest to $T$ will lie on the astroid, so you
-can make the path with:
-\begin{smallcode}
-path astroid; astroid = for t=0 step 1/16 until 8:
-  hide(pair a, b, p; 
-    a = (xpart point t of base, 0); b = (0, ypart point t of base); 
-    p = whatever[a, b]; p-point t of base = whatever * (a-b) rotated 90;
-  ) p -- endfor cycle;
-\end{smallcode}
+can make the path with: cycle;
+\smallmpexternal[firstline=8,lastline=12,xleftmargin=0pt]{curves-astroid.mp}
+\noindent
 Note that you need to use “\mpl{--}” so that the cusps stay neatly
 pointed.\marginpar{\vskip-38pt\small\noindent
-\llap{\hey\,}The geometry of the subtended angles shows that the length of the arc
+\hey The geometry of the subtended angles shows that the length of the arc
 $T\to S$ equals the length of the arc from $T\to P$ on the quarter-sized circle
 through $T$ and $M$.  So the astroid is also the path of a point on the smaller
 circle rolling around the inside of the base circle.}
 
 \newpage
-\subsubsection{Astroid and cousins}
+\subsubsection*{Astroid and cousins}
 
 The geometry of the astroid also allows us to define a simple parametric equation
 for the point $P$.
@@ -5340,17 +5227,9 @@ $$\centerline{$x=a\cos^3\theta$ \quad and \quad $y=a\sin^3\theta$}$$
 This is used to make this rather psychedelic family of astroid cousins $\longrightarrow$
 
 \moveright384pt\vbox to 36pt{\vss
-$$\includegraphics[scale=0.9]{curves-astroid-family}$$
-\begin{smallcode}
-numeric a; a = 144; input colorbrewer-rgb
-for n=1 upto 7:
-    path p; p = a * right for t=6 step 6 until 90:
-        .. a * (cosd(t) ** n, sind(t) ** n)
-    endfor;
-    p := for i=0 upto 3: p rotated 90i & endfor cycle;
-    fill p withcolor Oranges[9][n]; draw p;
-endfor
-\end{smallcode}}
+$$\includegraphics[scale=0.95]{curves-astroid-family}$$
+\mpexternal[firstline=7,lastline=14]{curves-astroid-family.mp}
+}
 
 
 \newpage
@@ -5362,100 +5241,45 @@ corresponding rolling wheel in blue.  The main idea in this diagram is to make t
 whole drawing depend on just a few parameters;  here there are two: the radius $r$
 and the amount of rotation $\theta$.  If we make $r$ bigger, the drawing will be
 scaled up; if we change $\theta$, the wheel will appear to have rolled along.
-\mpic{-66pt}{cycloids}
+$$\includegraphics[width=0.9\textwidth]{curves-cycloids}$$
 
-
-\marginpar{\par\kern1in
 \begin{itemize}
-    \item Near the beginning we define $\pi=3.14159265$, as there’s no such constant
-        built in, but it makes the source more understandable to write "pi/180"
-        instead of "0.017453".  It would be nice to use the Greek letters themselves
-        in the source, but \MP\ only lets you use plain ASCII characters, to you
-        have to write "pi" instead.  Later on "t" is used instead of $\theta$.
 
-    \item The path of the cycloid $c$ is defined using an inline "for" loop.  There’s a
-        slight awkwardness to doing this as you have to repeat yourself either at
-        the beginning or the end, because you can’t have a dangling "--" or ".." at
-        the end of the path.  With a closed path it’s easier because you can just
-        put "--cycle" after the "endfor".  The strange numbers here are because
-        we are going from a rotation of $-100°$ to $+460°$; $360°$ corresponds to
-        one hop of the cycloid.
+    \item The path of the cycloid is defined using an inline "for" loop, using a
+        neat trick to avoid a leading "--" in the path.  The strange numbers here
+        are because we are going from a rotation of $-80°$ to $+440°$; $360°$
+        corresponds to one hop of the cycloid.
 
     \item The axes are done in the usual way, except that we use "xpart" and the
         "point .. of .." notation to make the $x$-axis neatly line up with the ends
         of the cycloid path.
 
-    \item To label points with dots but no text it’s convenient just to fill a
-        circle scaled to "dotlabeldiam"; this internal parameter is the current size
-        to be used for the dots in "dotlabel".
+    \item To label points with dots but no text it’s convenient just to draw
+        the point with \mpl{pencircle scaled dotlabeldiam};
+        this internal parameter is the current size
+        to be used for the dots in \mpl{dotlabel}.
 
-\end{itemize}}
+\end{itemize}
 
-\mpexternal[xleftmargin=0pt]{cycloids-code.mp}
-
-\noindent
-You can generalize the picture to make cycloids where the point tracing the
-cycloid is not on the circumference doing the rolling; the classic example is the
-wheel of the train with a flange.  Here I have added $R$ to define the radius of an
-outer rim, while the wheel still rolls along a circle of radius $r$.
-\mpic{-40pt}{cycloids-extra}
-You might like to experiment with making $R<r$. Note also that variable names are
-case sensitive in \MP.
-
-\mpexternal[xleftmargin=0pt]{cycloids-extra-code.mp}
-
-\noindent The output\mpic{-122pt}{cycloids-extra} is repeated at the right to save you flicking pages.
+\moveright 384pt\vbox to 0pt{\hsize 320pt\vss
+\smallmpexternal[firstline=5,lastline=46,xleftmargin=-10pt]{curves-cycloids.mp}
+\vskip -64pt}
 
 \newpage
-\subsubsection{The cycloid compared to other curves}
+\subsubsection*{The cycloid compared to other curves}
 
 \noindent\textsc{You can't easily} draw a cycloid through two arbitrary points, but
-if you get the size of the generating circle right, you can make it pass through 
-points at each end of a quarter circle, and then it's easy to draw other curves
-between the two points.  \vadjust{\moveright5.25in\vbox to 0pt{\vskip-48pt\begin{smallcode}
-numeric r; r = 164;
-path Y, L, C, P, S;
-
-Y = origin for t=5 step 5 until 140:
-    -- (0, r) rotated t shifted (t/57.29577951308232*r, -r)
-endfor cutafter (origin -- (4r, 0) rotated -45);
-
-z0 = point 0 of Y;
-z1 = point infinity of Y;
-
-L = z0 -- z1;  
-C = quartercircle rotated 180 scaled 2x1 shifted (x1, y0);
-% The idea here is to use the derivative as the direction at each point.
-% If you treat A as x=-1, and B as x=0 and used x=-1/2 in the middle, 
-% then three points are enough to make the curves look realistic.
-% parabola f = x^2, f' = 2x
-P = z0{1,-2} 
-    ... (xpart 1/2[z1, z0], ypart 1/4[z1, z0]){1,-1} ... z1 {1, 0};
-% sixth degree f = x^6, f' = 6x^5 
-S = z0{1,-6} 
-    ... (xpart 1/2[z1, z0], ypart 1/64[z1, z0]){1, -6/32} ... z1 {1, 0};
-
-draw z0 -- (x0,y1) -- z1 withcolor 3/4;
-
-drawoptions(withcolor 2/3 red);         
-    draw L; dotlabel.urt("Line", point 1/4 of L);
-drawoptions(withcolor 1/2 green);       
-    draw C; dotlabel.urt("Circle", point 1 of C);
-drawoptions(withcolor 1/4[red, green]); 
-    draw P; dotlabel.urt("Parabola", point 1/2 of P);
-drawoptions(withcolor 3/4[red, green]); 
-    draw S; dotlabel.llft("Sixth degree", point 3/4 of S);
-drawoptions(withcolor 1/2 blue);        
-    draw Y; dotlabel.urt("Cycloid", point 22 of Y);
-drawoptions();
-dotlabel.ulft(btex $A$ etex, z0);
-dotlabel.urt(btex $B$ etex, z1);
-\end{smallcode}\vss}}
-Here is an example with an inverted cycloid, the
-so-called \textit{brachistochrone} (the curve joining two points such that a body
-travelling along it under gravity takes a shorter time than is possible along any
-other curve between the points).
-$$\includegraphics{brachisto}$$
+taking the equations for $x$ and $y$ from the previous page, we can use \mpl{solve}
+to find a value $a$ for $\theta>0$ where $\theta-\sin\theta=1-\cos\theta$, and then
+you have two points for $\theta=0$ and $\theta=a$ which are  
+at each end of a quarter circle, and it's easy to draw other curves
+through them.\vadjust{\moveright5.25in\vbox to 0pt{\vskip-48pt
+\smallmpexternal[firstline=6,lastline=42]{curves-brachisto.mp}
+\vss}}
+The cycloid is drawn here inverted, to make the \textit{brachistochrone} (the curve
+joining two points such that a body travelling along it under gravity takes a
+shorter time than is possible along any other curve between the points).
+$$\includegraphics{curves-brachisto}$$
 
 \newpage
 \subsection{Spirals}
@@ -5481,57 +5305,27 @@ which spreads the points out and gives you eight full turns, or perhaps
 S = origin for t=1 upto 90: .. 1/12 t * dir 16t endfor;
 \end{code}
 which would give you four complete turns with a tighter spacing.\marginpar{\small
-The rope was drawn (very slowly) with the \mpl{rope} macro from §\ref{pics-border}.}
+The rope was drawn (quite slowly) with the \mpl{rope} macro from §\ref{pics-border}.}
 
-\bigskip\noindent
-The next simplest is the logarithmic spiral where you have
-$r=a^\theta$.\mwpic{10pt}{curves-spiral-equiangular} This is also very simple to
-program in \MP, provided you are careful about the scaling. The complete program 
-for the spiral shown on the right was:
-\begin{code}
-numeric a; a = 2.6; path S; 
-S = right for t=1 upto 360: .. a ** (t/64) * dir 4t endfor;
-drawarrow S;
-\end{code}
+\vfill\noindent
+\textsc{The next simplest} is the logarithmic spiral where you have
+$r=a^\theta$.\mwpic{-72pt}{curves-spiral-equiangular} This is also very simple to
+program in \MP, provided you are careful about the scaling. 
+For the spiral shown on the right, the complete program was:
+\mpexternal[firstline=7,lastline=9,xleftmargin=0pt]{curves-spiral-equiangular.mp}
+\noindent
 Note that $a$ was carefully chosen to get a curve that would fit the page, and that
 $t$ has been divided by 64 to bring it into a suitable range to work with the
 default number system.  
 
 \newpage
-\subsubsection{Logarithmic spiral and the golden rectangle}
+\subsubsection*{Logarithmic spiral and the golden rectangle}
 
 \textsc{The logarithmic spiral} is connected to growth in nature.  If you start with 
 a small square and keep adding squares scaled to the longer side of the resulting 
 rectangle, you get the golden rectangle and the logarithmic spiral emerges from
 it.\mpic{-48pt}{curves-spiral-gnomon-sq}
-\begin{code}[xleftmargin=0pt, xrightmargin=-20pt]
-drawoptions(withpen pencircle scaled 1/4 withcolor 1/4);
-path s[]; s0 = unitsquare; 
-fill s0 withcolor 1/2[2/3 blue, white]; draw s0;
-numeric a, b, t, n; a = 1; b = 1; n = 11;
-for i = 1 upto n:
-  t := b; b := b + a; a := t;  % Fibonacci sequence
-  s[i] = unitsquare scaled a;
-  s[i] := s[i] shifted (point i of s[i-1] - point i-1 of s[i]);
-  fill s[i] withcolor (1/2 + i/32)[2/3 blue, white];
-  draw s[i];
-endfor
-% cross hairs
-for i = n-1 upto n:
-  draw point i-2 of s[i-2] -- point i of s[i];
-endfor
-drawoptions();
-% Draw the spiral as a red arrow
-drawarrow origin for i=0 upto n: .. point i of s[i] endfor 
-    withcolor 2/3 red;
-% Show the Fibonacci sizes for the bigger boxes
-for i = 5 upto n:
-    label(TEX(decimal arclength subpath (0, 1) of s[i])
-          scaled 0.8 rotated angle point n of s[n], center s[i]);
-endfor
-% Rotate whole picture to show off the spiral
-currentpicture := currentpicture rotated - angle point n of s[n]; 
-\end{code}
+\mpexternal[firstline=6,lastline=33,xleftmargin=0pt]{curves-spiral-gnomon-sq.mp}
 \moveright 396pt \vbox to 0pt{\vss\hsize 4in\small
 \noindent\llap{• }You can't assign to a pair literal in \MP, so you cannot write
         \mpl{(a,b) := (b,a+b)}; use a temporary numeric instead.
@@ -5544,44 +5338,13 @@ as point 0, and so on.
 when the whole picture is rotated at the end to show the spiral better.
 \par}
 
-
 \newpage
-\subsubsection{Logarithmic spiral and similar triangles}
+\subsubsection*{Logarithmic spiral and similar triangles}
 
 \textsc{This drawing} starts with a large triangle and transforms it to make 
 smaller similar copies.  The spiral is drawn through the apex of successive
 transformed triangles.\mpic{0pt}{curves-spiral-gnomon-trig}
-\begin{code}[xleftmargin=0pt, xrightmargin=-80pt]
-path t[], base; pair apex;
-base = (left--right) scaled 100;
-apex = whatever * dir +72 shifted point 0 of base 
-     = whatever * dir -72 shifted point 1 of base;
-t0 = (base -- apex -- cycle);
-
-transform S; 
-r = arclength subpath (0, 1) of t0 / arclength subpath (2, 3) of t0;
-point 0 of t0 transformed S = (r*r)[point 0 of t0, point 2 of t0];
-point 1 of t0 transformed S = point 0 of t0;
-point 2 of t0 transformed S = point 1 of t0;
-
-n = 16;
-for i=1 upto n:
-    t[i] = t[i-1] transformed S;
-    draw subpath (2,3) of t[i] withpen pencircle scaled 1/4;
-endfor
-
-drawoptions(withpen pencircle scaled 1/8 withcolor blue);
-draw point 0 of t0 -- point 3/2 of t0;
-draw point 0 of t1 -- point 3/2 of t1;
-drawoptions();
-draw t0;
-drawarrow point 2 of t[n] for i=n-1 downto 0: 
-    .. point 2 of t[i] endfor withcolor 2/3 red;
-
-z0 = whatever[point 0 of t0, point 3/2 of t0]
-   = whatever[point 0 of t1, point 3/2 of t1];
-currentpicture := currentpicture rotated - angle (point 2 of t0 - z0);
-\end{code}
+\mpexternal[firstline=6,lastline=36,xleftmargin=0pt, xrightmargin=-80pt]{curves-spiral-gnomon-trig.mp}
 \moveright 396pt \vbox to 0pt{\vss\hsize 4in\small
 \noindent The \<transform> $S$ is defined implicitly.  It is sufficient 
 to give equations for three non-collinear points, and \MP\ will work out 
