@@ -55,6 +55,12 @@ endfor currentpicture := currentpicture scaled 1/2; \end{mplibcode}}$\ }
     withpen pencircle xscaled 1.2 yscaled 0.2 rotated 50;
   currentpicture := currentpicture rotated - angle z4;
 \end{mplibcode}}
+\newcommand\continued{\moveright 296pt\vbox to 0pt{\vskip -36pt
+\begin{mplibcode}
+  ahangle := 30;
+  drawarrow origin {right} .. {dir 60} 42 dir 60;
+  label.lft("\small \dots continued", origin);
+\end{mplibcode}\vss}}
 %
 \begin{document}
 \let\folio\thepage
@@ -4276,7 +4282,7 @@ draw a withpen pencircle scaled 1/2 withcolor background;
 \end{code}
 which produces this:
 \begin{mplibcode}
-    path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
+path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
 draw a withpen pencircle scaled 3/2;
 draw a withpen pencircle scaled 1/2 withcolor background;
 \end{mplibcode}\enspace
@@ -4284,7 +4290,7 @@ Notice that the lines have been drawn with the default rounded ends.  If you don
 want this then use \mpl{cutdraw} for the background lines (or set \mpl{linecap :=
 butt}), so that you get ends that look open, like this:
 \begin{mplibcode}
-    path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
+path a; a = origin -- (48, 3) -- (96, -3) -- 144 right;
 cutdraw a withpen pencircle scaled 3/2;
 draw a withpen pencircle scaled 1/2 withcolor background;
 \end{mplibcode}\enspace
@@ -4314,39 +4320,10 @@ shown at the right.  The piano-shaped path $p$ is drawn in black; the outer blue
 was drawn with \mpl{draw beside(p, 2)} and the red one with 
 \mpl{draw beside(p, -2)}.
 
-
 \moveright5.5in\vbox to 0pt{\vss\hsize 4.4in\noindent
-\begin{smallcode}
-vardef extended(expr p) = 
-  -42 unitvector(direction 0 of p) shifted point 0 of p .. p .. 
-  +42 unitvector(direction 1 of p) shifted point 1 of p
-enddef;
-
-vardef chopper expr t of p =
-  (up--down) scaled 42 
-  rotated 1/2(angle direction t-eps of p + angle direction t+eps of p)
-  shifted point t of p
-enddef;
-
-vardef beside(expr p, d) = 
-  save n, a, b, aa, bb; numeric n; n = length p;
-  pair a, b, aa, bb; path _part[];
-  for i = 1 upto n:
-    aa := postcontrol i-1 of p - point i-1 of p; 
-    bb := point i of p - precontrol i of p;    
-    a := unitvector(aa) rotated -90 scaled d;
-    b := unitvector(bb) rotated -90 scaled d;
-    _part[i] = extended(
-      point i-1 of p shifted a {aa} .. point i of p shifted b {bb}
-    ) cutbefore chopper i-1 of p cutafter chopper i of p;
-  endfor
-  _part[1] for i=2 upto n: .. _part[i] endfor if cycle p: .. cycle fi
-enddef;
-\end{smallcode}
-
-$$\includegraphics[width=4in]{pens-besides.pdf}$$
-
-\vskip -1in
+\smallmpexternal[firstline=8,lastline=32,xleftmargin=0pt]{pens-besides.mp}
+\noindent\includegraphics[width=4in]{pens-besides}
+\vskip -60pt
 }
 
 \newpage
@@ -4432,9 +4409,9 @@ $$
 \noindent
 The blue circles on the left were drawn with \mpl{dashed evenly}, and the uneven
 gaps are noticeable at the “three o’clock” positions where the paths begin and end.
-As you can see the default dash spacing looks fine at some sizes but bad on others.  On the right you can see the
-same circular paths coloured red, and drawn with \mpl{dashed exactly(arclength c,
-6)}.
+As you can see the default dash spacing looks fine at some sizes but bad on others.
+On the right you can see the same circular paths coloured red, and drawn with
+\mpl{dashed exactly(arclength c, 6)}.
 
 $$
 \begin{mplibcode}
@@ -4458,7 +4435,7 @@ red squares on the right were done with:
 \begin{code}
 dashed (exactly(arclength s, 8) shifted 6 right)
 \end{code}
-The shift makes the corners look better.
+The right shift made the corners look better.
 \vss}}
 
 The keyword \mpl{dashed} gives you access to the PostScript "setdash" command, whose
@@ -4482,11 +4459,10 @@ try \mpl{dashed withdots scaled 1/2},
 or to get very long dashes you could use
 \mpl{dashed evenly scaled 4}.
 
-But you may also
-notice that the dash patterns (particularly the longer ones) do not always fit your
-paths exactly -- this is especially noticeable with closed paths, where you may end
-up with one unsightly long dash or a very short gap at the point where the path
-begins and ends.
+But you may also notice that the dash patterns (particularly the longer ones) do not
+always fit your paths exactly -- this is especially noticeable with closed paths,
+where you may end up with one unsightly long dash or a very short gap at the point
+where the path begins and ends.
 
 There is a simple solution: adjust the length of the dash pattern
 so that an integer number of dash units exactly fit your path.
@@ -4496,7 +4472,7 @@ vardef exactly(expr a, u) =
     dashpattern(on m off m)
 enddef;
 \end{code}
-Here "a" is supposed to be the \mpl{arclength} of your path, and "u" the desired 
+Here $a$ is supposed to be the \mpl{arclength} of your path, and $u$ the desired 
 unit size, so you can use it like this:
 \begin{code}
 path c; c = fullcircle scaled 200;
@@ -4514,40 +4490,25 @@ along the path.\mpic{-48pt}{pens-strokes}
 
 \smallskip\noindent
 With a curved path $S$, the first “with a dash pattern” was drawn like this:
-\begin{smallcode}
-draw S dashed dashpattern(on 4 off 2 on 1 off 2 on 1 off 2);     
-\end{smallcode}
+\smallmpexternal[firstline=21,lastline=21,xleftmargin=0pt]{pens-strokes.mp}
+\noindent
 Notice that the default rounded pen makes dots and dashes with rounded ends.
 The second line “with a sharp dash pattern” uses \mpl{cutdraw} to change the line
 ends.
-\begin{smallcode}
-cutdraw S dashed dashpattern(on 4 off 1 on 1 off 1 on 1 off 1);     
-\end{smallcode}
+\smallmpexternal[firstline=26,lastline=26,xleftmargin=0pt]{pens-strokes.mp}
+\noindent
 The “railway line” uses a combination of three drawing operations:
-\begin{smallcode}
-cutdraw S withpen pencircle scaled 2;
-undraw S withpen pencircle scaled 5/4;
-cutdraw S dashed evenly scaled 2 withpen pencircle scaled 5/4;
-\end{smallcode}
+\smallmpexternal[firstline=31,lastline=33,xleftmargin=0pt,xrightmargin=-30pt]{pens-strokes.mp}
 
 \smallskip\noindent
 The “plainer railway line” was done like this:
-\begin{smallcode}
-draw S;
-for a = 1 step 6 until arclength S:
-  numeric t; t = arctime a of S;
-  draw (down--up) rotated angle direction t of S shifted point t of S;
-endfor
-\end{smallcode}
+\smallmpexternal[firstline=40,lastline=44,xleftmargin=0pt]{pens-strokes.mp}
+\noindent
 Note that it's essential to use \mpl{arctime} and \mpl{arclength} in order to get
 the markers evenly spaced.  But you don't need to worry about the rotation in order
 to get the “fading away” effect:
-\begin{smallcode}
-numeric A; A = arclength S;
-for a = 0 step 1/8 until A:
-  draw point arctime a of S of S withcolor (a / A);
-endfor
-\end{smallcode}
+\smallmpexternal[firstline=49,lastline=52,xleftmargin=0pt]{pens-strokes.mp}
+\noindent
 The remaining three are just fancy variations on the same theme. You might
 like to try to re-create them as an exercise, or you can look in the source file.
 
@@ -4579,25 +4540,7 @@ to control the sizes of the shapes:
 You might like to try your hand at defining your own. Here is one that does
 a vaguely hellenic meander pattern, adapted to cope with curved
 paths.\mwpic{80pt}{pens-greek-meander}
-\begin{smallcode}[xrightmargin=-42pt]
-vardef meander expr p = 
-  save a, u, v, d, dy; numeric a, u, v, d; pair dy; 
-  d = 2 xpart urcorner makepath currentpen;  % this sets meander size
-  a = arclength p; v = round(a/8d); u = a if v > 1: / v fi;
-  if not cycle p: point 0 of p -- fi for t = 0 step u until a - 4 eps:
-    hide(dy := d * unitvector(direction arctime t+1/2u of p of p rotated 90))
-    subpath(arctime t of p, arctime t + u - 2d of p) of p shifted 3dy
-    -- 
-    subpath(arctime t + u - 2d of p, arctime t + 1/2 u of p) of p shifted -dy
-    --
-    subpath(arctime t + 1/2u of p, arctime t + 2d of p) of p shifted dy
-    --
-    subpath(arctime t + 2d of p, arctime t + u of p) of p shifted -3dy
-    --
-  endfor if cycle p: cycle else: point infinity of p fi
-enddef;
-\end{smallcode}
-
+\smallmpexternal[firstline=6,lastline=21,xrightmargin=-42pt]{pens-greek-meander.mp}
 
 \newpage
 \subsection{Arrow styles}
@@ -4737,9 +4680,6 @@ faults, except that \mpl{linecap := rounded} will give you lines with pointed en
 and that the squared off ends of the lines with the other settings may not be
 exactly orthogonal to the direction of the path at each end.   
 
-% \newpage
-% \subsection{Borders and other decorations}
-
 \newpage
 \section{Plotting functions}\label{func}
 
@@ -4753,40 +4693,19 @@ hours scratching your head wondering how to adjust the axis labels.
 
 \subsection{Making axes}
 
-You can start by drawing a simple set of axes.\mpic{-124pt}{plain-axes}
-\begin{smallcode}
-path xx, yy;
-xx = (left -- right) scaled 130;
-yy = (down -- up) scaled 80;
-drawarrow xx; label.rt("$x$", point 1 of xx);
-drawarrow yy; label.top("$y$", point 1 of yy);
-\end{smallcode}
+You can start by drawing a simple set of axes.\mpic{-124pt}{func-plain-axes}
+\smallmpexternal[firstline=6,lastline=10]{func-plain-axes.mp}
+\noindent
 Here the axes are scaled arbitrarily to 130\,pt and 80\,pt, but you will probably
 find it useful to set consistent units, and express sizes in terms of them.  Purely
 from habit, I use $u$ for the horizontal unit and $v$ for the vertical unit.  This
 makes it more convenient when you want to add a grid and/or a number
-scale.\mpic{-16pt}{numbered-axes}
+scale.\mpic{-16pt}{func-numbered-axes}
 
 \vskip -12pt
 \vbox to 0pt{
-\begin{smallcode} 
-numeric u, v; u = 40; v = 29; 
-path xx, yy;  
-xx = (3/2 left -- 5 right) scaled u;
-yy = (3/2 down -- 4 up) scaled v;
-for x=-1, 1, 2, 3, 4:
-    draw yy shifted (x * u, 0) withcolor 7/8;  % grid
-    draw (down--up) shifted (x * u, 0);        % ticks
-    label("$" & decimal x & "$", (x * u, -8));
-endfor
-for y=-1, 1, 2, 3:
-    draw xx shifted (0, y * v) withcolor 7/8;  % grid
-    draw (left--right) shifted (0, y * v);     % ticks
-    label("$" & decimal y & "$", (-10, y * v));
-endfor
-drawarrow xx; label.rt("$x$", point 1 of xx);
-drawarrow yy; label.top("$y$", point 1 of yy);
-\end{smallcode}\vss}
+\smallmpexternal[firstline=7,lastline=21]{func-numbered-axes.mp}
+\vss}
 
 \newpage
 \subsection{Drawing linear functions}
@@ -4797,118 +4716,24 @@ but it is hard to make something completely general, so for most graphs it is ea
 just to specify two points and use \mpl{draw}; often it is handy to making your line
 longer than you need, then trim it using \mpl{cutbefore} and/or \mpl{cutafter} so
 that it fits neatly.
-\vadjust{\moveright 384pt\vbox to 0pt{\hsize 4in\vskip -100pt\begin{smallcode}
-numeric u, m, m', b, b';
-u = 1.44cm;
-b = 3.6u;  b' = b + 1/2 u;
-m = -1;  m' = 3/4 m; 
-
-path xx, yy;
-xx = (left -- 5 right) scaled u;
-yy = xx rotated 90;
-
-numeric minx, maxx; path ff, gg;
-minx = xpart point 1/16 of xx;
-maxx = xpart point 15/16 of xx;
-ff = (minx, minx * m + b) -- (maxx, maxx * m + b); 
-gg = (minx, minx * m' + b') -- (maxx, maxx * m' + b'); 
-
-z0 = point 0.4 of ff;
-z1 = point 0.54 of ff;
-z1 0 = whatever [point 0 of gg, point 1 of gg]; x1 0 = x0;
-z1 1 = whatever [point 0 of gg, point 1 of gg]; x1 1 = x1;
-
-forsuffixes @=0, 1:
-    draw (x@, 0) -- z@ -- (0, y@) dashed evenly scaled 3/4;
-    draw z@ -- z1 @ -- (0, y1 @) dashed withdots scaled 1/2;
-    label.bot("$x_{" & decimal @ & "}$", (x@, 0));
-    label.lft("$y_{" & decimal @ & "}$", (0, y@));
-    label.lft("$y'_{" & decimal @ & "}$", (0, y1 @));
-endfor
-draw ff withcolor 2/3 red;
-draw gg withcolor 3/4 blue;
-drawarrow xx; drawarrow yy;
-
-label.rt("$x$", point 1 of xx);
-label.top("$y$", point 1 of yy);
-
-dotlabel.urt("$b$", (0, b));
-dotlabel.urt("$b'$", (0, b'));
-
-draw thelabel("slope: $m=" & decimal m & "$", 7 up)
-    rotated angle (1, m) shifted point 2/3 of ff;
-draw thelabel("slope: $m'=" & decimal m' & "$", 7 up)
-    rotated angle (1, m') shifted point 2/3 of gg;
-\end{smallcode}\vss}}
-$$\includegraphics[width=0.84\textwidth]{linear-graph.pdf}$$
+\vadjust{\moveright 384pt\vbox to 0pt{\hsize 4in\vskip -100pt
+\smallmpexternal[firstline=6,lastline=49]{func-linear-graph.mp}
+\vss}}
+$$\includegraphics[width=0.84\textwidth]{func-linear-graph}$$
 But in this example it was easier to calculate them using $y=mx+b$.
 Note also that spaces are allowed in suffixes, which makes the loop a bit simpler.
 
-\newpage
-In this second example of a linear function, the emphasis of the diagram was on
+\newpage\noindent
+In this second example of a drawing with linear functions, the emphasis of the diagram was on
 the angles at the $x$-axis made by the two lines, so the lines were defined using
 \mpl{rotated}, \mpl{shifted}, and \mpl{cutbefore} instead.
-\vadjust{\moveright 384pt\vbox to 0pt{\hsize 4in\vskip -24pt\begin{smallcode}
-path ell, tee, arc;
-ell = (left--right) scaled 10u rotated theta shifted P cutbefore xx;
-tee = (left--right) scaled 10u rotated psi   shifted P cutbefore xx;
-arc = subpath (1.6, 3.2) of halfcircle rotated -180 shifted 1/2 up 
-      scaled 10u shifted P rotatedabout(P, psi);
-% the rest of the points then follow...
-Q = ell intersectionpoint subpath (1.5, 3) of arc;
-H = P + whatever * dir psi;  
-xpart H = xpart Q = xpart M;  ypart M = ypart N = 0;
-xpart N = xpart P;
-L = point 0 of ell;
-T = point 0 of tee;
-% now get on with the drawing
-draw arc dashed withdots scaled 1/4 withcolor 1/2 red;
-draw P--N dashed withdots scaled 1/2;
-draw Q--M dashed withdots scaled 1/2;
-drawarrow xx; label.rt("$x$", point 1 of xx);
-drawarrow yy; label.top("$y$", point 1 of yy);
-drawoptions(withcolor 2/3 blue);
-draw fullcircle scaled 32 shifted T cutafter tee;
-draw fullcircle scaled 28 shifted L cutafter ell;
-label("$\psi$", 24 right rotated 1/2 psi shifted T);
-label("$\theta$", 20 right rotated 1/2 theta shifted L);
-drawoptions();
-% trim the function lines neatly
-path boundary;
-z1 = point .95 of xx;
-z2 = point .95 of yy;
-boundary = z1--(x1,y2)--z2;
-draw ell cutafter boundary;
-draw tee cutafter boundary;
-% and finally label the points.
-label.bot("$T$", T);
-label.bot("$L$", L);
-label.bot("$N$", N);
-label.bot("$M$", M);
-dotlabel.ulft("$P$", P);
-dotlabel.lrt("$Q$", Q);
-dotlabel.lrt("$H$", H);
-\end{smallcode}\vss}}
-$$\includegraphics[width=\textwidth]{angles-lines.pdf}$$
-The lines are both trimmed to a convenient path (\id{boundary}) when they are
-drawn.\vadjust{\moveright296pt\vbox to 0pt{\vskip 80pt\begin{mplibcode}drawarrow
-origin {right} .. {dir 70} 42 dir 60;
-    label.lft("\small \dots continues", origin);
-\end{mplibcode}\vss}}
-
-\begin{smallcode}
-numeric u; u = 1cm;
-
-path xx, yy;
-xx = (2 left -- 10 right) scaled u;
-yy = (down -- 7 up) scaled u;
-
-numeric theta, psi;   psi = 28; theta = 50;
-
-pair P, Q, H, N, M, T, L;
-P = (4u, 3u);
-\end{smallcode}
-
+$$\includegraphics[width=\textwidth]{func-angles-lines}$$
+The lines are both trimmed to a convenient path (\id{boundary}) when they are drawn.
+\smallmpexternal[firstline=6,lastline=12]{func-angles-lines.mp}
+\vskip-12pt\continued
+\moveright 384pt\vbox to 0pt{\hsize 4in\vss
+\smallmpexternal[firstline=14,lastline=51]{func-angles-lines.mp}
+\vskip -12pt}
 
 \newpage
 \subsection{Making curves for functions with a loop}
@@ -4961,22 +4786,12 @@ smaller step size.
 \newpage
 \subsection{Making curves for functions from path pieces}\label{sec:pathpieces}
 
-\textsc{In some situations}, you might find it easier to stich together various 
+\textsc{In some situations}, you might find it easier to stitch together various 
 \<path> pieces to make your curve.  This can be especially elegant if there is a
 symmetry in the path.  For example:\mwpic{-48pt}{func-reflection}
-\begin{code}
-path ff, negative_ff;
+\mpexternal[firstline=15,lastline=23]{func-reflection.mp}
 
-ff = (1,1) for x = 3/2 step 1/2 until 6: ... (x, 1/x) endfor;
-ff := reverse ff reflectedabout(origin, dir 45) & ff;
-ff := ff scaled 24;
-negative_ff = ff reflectedabout(origin, dir -45);
-
-draw ff withcolor 2/3 red;
-draw negative_ff withcolor 2/3 red;
-\end{code}
-
-\smallskip\centerline{\small (Omitting code for the axes, the grid, and the dots at
+\centerline{\small (Omitting code for the axes, the grid, and the dots at
 each \mpl{point} of the paths).}
 
 \smallskip
@@ -4992,12 +4807,13 @@ each \mpl{point} of the paths).}
         the more horizontal part.
 \end{itemize}
 
+\vfill\noindent
 Reflection of a function in the line at 45° gives the inverse of the function, which
 is especially useful for $y=1/x$, but it applies to functions generally.  So if you want to
 plot $y=\sqrt x$ it may be easier to define a path for $y=x^2$ and then reflect it.
 This is particularly useful if you want to plot, say, $y=\sqrt[3]x$, over a domain
 that includes negative numbers, because \MP\ will not calculate reciprocal powers of
-negative numbers.\mwpic{-60pt}{func-cuberoot}
+negative numbers.\mwpic{-90pt}{func-cuberoot}
 The curve in this chart was created by reflecting the line $y=x^3$.
 
 \newpage
@@ -5005,89 +4821,23 @@ The curve in this chart was created by reflecting the line $y=x^3$.
 
 \textsc{A further example} of creating paths by
 transformation.\mpic{-36pt}{func-exponential}
-\begin{smallcode}
-numeric u; u = 42;
-path xx, yy;
-xx = (-3u, 0) -- (5u, 0);
-yy = xx rotated 90;
-path ee, ll, nn;
-numeric minx, maxx, s;
-minx = -3;  maxx = 1/256 mlog(4.5); s = 1/4;
-ee = (for x = minx step s until maxx - s: 
-    (x, mexp(256x)){1, mexp(256x)} ... 
-endfor (maxx, mexp(256 maxx)){1, mexp(256 maxx)}) scaled u;
-ll = ee reflectedabout(origin, dir 45);    
-nn = (for x=1 step s until 4-s: (x, 1/x) ... endfor (4, 1/4)) scaled u;
-nn := reverse nn reflectedabout(origin, dir 45) & nn;
-
-draw unitsquare xscaled mexp(256) scaled u withcolor 7/8;
-draw unitsquare yscaled mexp(256) scaled u withcolor 7/8;
-path T[];
-numeric p; p = directiontime dir 45 of ee; 
-T1 = (precontrol p of ee -- postcontrol p of ee) 
-    shifted - point p of ee scaled 1/2 u shifted point p of ee;
-T2 = (precontrol p of ll -- postcontrol p of ll) 
-    shifted - point p of ll scaled 1/2 u shifted point p of ll;
-drawoptions(withpen pencircle scaled 1/4 withcolor 1/2);
-draw T1; draw T2; draw interpath(1/2, T1, T2) dashed evenly;
-drawoptions();
-
-draw nn; label.urt("$1/x$", point 0 of nn);
-draw ee withcolor 2/3 blue; label.top("$e^x$", point infinity of ee);
-draw ll withcolor 3/4 red; label.top("$\ln(x)$", point infinity of ll);
-drawarrow xx; label.rt("$x$", point 1 of xx);
-drawarrow yy; label.top("$y$", point 1 of yy);
-dotlabel.lft("$e$", (0, mexp(256) * u));
-dotlabel.bot("$e$", (mexp(256) * u, 0));
-dotlabel.ulft("$1$", (0, u));
-dotlabel.lrt("$1$", (u, 0));
-\end{smallcode}
-\moveright6in\vbox to 0pt{\vss\noindent
+\vadjust{\moveright5.5in\vbox to 0pt{\vskip5in\noindent
 If you prefer more ‘normal’ functions, you can define:
 \begin{smallcode}
 vardef exp(expr x) = mexp(256x) enddef;
 vardef log(expr x) = 1/256 mlog(x) enddef;
-\end{smallcode}}
+\end{smallcode}\vss}}
+
+\smallmpexternal[firstline=6,lastline=40,xleftmargin=0pt]{func-exponential.mp}
 
 \newpage
 \subsection{Functions using trigonometric functions}
 
 \textsc{As noted} in §\ref{trig}, \MP’s built-in trigonometric functions work in
 degrees, this example shows how you might use them in a graph.%
-\vadjust{\moveright5in\vbox to 0pt{\vskip-24pt\begin{code}
-    numeric u, pi; u = 50; pi = 3.141592653589793;
-
-    path xx, yy;
-    xx = (3.5 left -- 3.6 right) scaled u;
-    yy = (1.1 down -- 1.2 up) scaled u;
-    
-    path ss;
-    ss = origin for t=1 upto 360: -- (t, sind(t)) endfor;
-    ss := ss shifted 360 left & ss;
-    ss := ss xscaled (pi/180) scaled u;
-    
-    draw ss cutbefore yy shifted point 0 of xx
-            cutafter  yy shifted point 1 of xx
-            withcolor 3/4 blue;
-    draw ss shifted (-1/2 pi * u ,0)  
-            cutbefore yy shifted point 0 of xx
-            cutafter  yy shifted point 1 of xx
-            withcolor 2/3 red;
-
-    drawoptions(dashed withdots scaled 1/4);
-    draw ((1/4 pi, 0) .. (1/4 pi, sind(45))) scaled u;
-    draw ((1/2 pi, 0) .. (1/2 pi, sind(90))) scaled u;
-    draw ((3/4 pi, 0) .. (3/4 pi, sind(135))) scaled u;
-    drawoptions();
-
-    drawarrow xx; label.rt("$t$", point 1 of xx);
-    drawarrow yy; label.top("$u(t)$", point 1 of yy);
-
-    for i=-4, -3, -2, -1, 1, 2, 3, 4:
-        draw (down--up) scaled 2 shifted (pi * i/4 * u, 0);
-        label.bot(pi_quarters(i), (pi * i/4 * u, -2));
-    endfor
-\end{code}\vss}}
+\vadjust{\moveright5.25in\vbox to 0pt{\vskip-30pt
+\mpexternal[firstline=15,lastline=50]{func-sines.mp}
+\vss}}
 $$\includegraphics[width=\textwidth]{func-sines}$$
 
 For this diagram, the sine wave path ("ss", shown in \blue{blue})
@@ -5098,29 +4848,15 @@ itself to a shifted copy.  Thirdly it is $x$-scaled to radians, and then scaled 
 directions to the chosen unit size, and drawn chopped off to the width of
 the $x$-axis.  The cosine path is the same path, shifted $\frac12\pi$ left, 
 drawn in \red{red}, and chopped off to fit the same width.
-
 The fancy fraction labels were produced with this subroutine:
-\begin{smallcode}
-vardef pi_quarters(expr n) = 
-    save s, f, q; string s, f; numeric q; 
-    s = if n < 0: "-" else: "" fi; q = abs(n);
-    if q mod 4 = 0:
-        f = if q > 4: decimal 1/4 q else: "" fi;
-    elseif q mod 2 = 0:
-        f = "\frac{" & decimal 1/2 q & "}{2}";
-    else:
-        f = "\frac{" & decimal q & "}{4}";
-    fi     
-    "$\scriptstyle" & s & f & "\pi$"
-enddef;
-\end{smallcode}
+\smallmpexternal[firstline=6,lastline=13]{func-sines.mp}
 
 \newpage
 \subsection{Manipulating functions}
 
 \textsc{This second example} with trigonometric functions shows one way to add
 two functions, by combining the \MP\ paths themselves.%
-\vadjust{\moveright5in\vbox to 0pt{\vskip-28pt
+\vadjust{\moveright5.25in\vbox to 0pt{\vskip-28pt
 \mpexternal[firstline=22, lastline=56, xrightmargin=-20pt]{func-addition-of-sines.mp}
 \vss}}
 $$\includegraphics[width=\textwidth]{func-addition-of-sines}$$
@@ -5149,7 +4885,7 @@ The axes are separated to show the
 discontinuity in scales, and that the origin is not on the chart.\enlargethispage\baselineskip
 
 \smallmpexternal[xleftmargin=0pt, firstline=8, lastline=42]{func-epi-v-pie.mp}
-
+\vskip-12pt\continued
 \moveright384pt\vbox to 0pt{\vss\hsize 4in\null\bigskip
 \smallmpexternal[firstline=44, lastline=57]{func-epi-v-pie.mp}
 }
@@ -5158,44 +4894,10 @@ discontinuity in scales, and that the origin is not on the chart.\enlargethispag
 \subsection{Approximate function diagrams}
 
 \textsc{Sometimes} you may need to plot a function that does not have a simple
-mathematical definition.  You can use \MP’s normal path definitions to make a likely
-looking approximation.\mwpic{-48pt}{func-stress}
-\begin{smallcode}[xleftmargin=0pt, xrightmargin=-140pt]
-z1 = 377 right;  z2 = 233 up;
-path ff; ff = origin .. (72, 144){1,2} .. (84, 144) .. (96, 144){1,1} 
-            .. (220, 220){right} .. (370, 160){2,-1.3};
-
-for t=2, 4, 4.9:
-    draw point t of ff -- (xpart point t of ff, y2 + 6) 
-        dashed evenly scaled 1/2;
-endfor
-label.top("Strain hardening", 
-        (1/2 (xpart point 2 of ff + xpart point 4 of ff), y2));
-label.top("Necking",          
-        (1/2 (xpart point 4 of ff + xpart point 4.9 of ff), y2));
-
-path rr; 
-rr = point 0.4 of ff -- (xpart point 0.8 of ff, ypart point 0.4 of ff) -- point 0.8 of ff;
-draw rr; label.bot("Run", point 1/2 of rr); label.rt("Rise", point 3/2 of rr);
-
-vardef pin_label@#(expr p, a, b)= 
-    draw a -- b cutbefore fullcircle scaled 8 shifted a withpen pencircle scaled 1/4 withcolor 1/2 white;
-    label@#(p, b);
-enddef;
-pin_label.lrt("Yield strength",     point 1.2 of ff, point 2 of ff + (8, -18));
-pin_label.bot("Ultimate strength",  point 4   of ff, point 4 of ff + (4, -24));
-pin_label.bot("Fracture",           point 5   of ff, point 5 of ff + (-8, -18));
-
-draw ff withpen pencircle scaled 1 withcolor 2/3 blue;
-clip currentpicture to unitsquare scaled 400; % clip thick pen at origin
-
-drawdblarrow z1 -- origin -- z2;
-label.ulft("Strain, $\epsilon$", z1);
-label.urt("Stress, $\sigma$", z2);
-
-label("$\displaystyle\hbox{Young's modulus} = \hbox{Slope} = {\hbox{Rise}\over\hbox{Run}}$",
-    1/2 z1 shifted 36 up) withcolor 2/3 blue;
-\end{smallcode}
+mathematical definition.  You can a \MP \<path> to make a likely looking approximation.
+\mwpic{-48pt}{func-stress}
+\vskip-12pt
+\smallmpexternal[firstline=6,lastline=40,xleftmargin=0pt, xrightmargin=-300pt]{func-stress.mp}
 
 \newpage
 \subsubsection{Taming Bezier paths with controls}
@@ -5233,21 +4935,9 @@ flex(z5,z6,z7) & flex(z7,z8,z9,z1) & cycle;
 \bigskip\noindent
 \textsc{Another approach} is just to define the end-points and some control points,
 and then define a path that is shaped by the control points but does not actually go
-through them.   Consider this program:\mwpic{-20pt}{func-pulse}
-\begin{code}
-vardef pulse(expr w, h, d) = 
-for i=0 upto 4: x[i] = w/4 * i; endfor
-    y0 = y1 = 0;
-    y3 = y4 = d;
-    y2 = h;
-    z0 .. 1/2[z0, z1] .. controls z1 
-       .. 1/2[z1, z2] .. controls z2 
-       .. 1/2[z2, z3] .. controls z3 
-       .. 1/2[z3, z4] .. z4
-enddef;
-draw pulse(300, 100, -40);
-\end{code}
-This produces the smooth blue line shown on the right.  A second copy of the line is
+through them.   Consider this program:\mwpic{-36pt}{func-pulse}
+\mpexternal[firstline=7,lastline=16]{func-pulse.mp}
+\noindent This produces the smooth blue line shown on the right.  A second copy of the line is
 shown below, decorated with the three control points $z_1$, $z_2$, and $z_3$ in red,
 and showing the six points of the path as small black circles.  You can tweak this
 curve by adjusting the controls left or right, or changing the mediation parameters
@@ -5271,35 +4961,17 @@ that can have more than one value for $y$ for a given $x$, if you change $f(x)$ 
 $g(x)$ appropriately.
 The first example\mwpic{-24pt}{func-lemniscate} shows the lemniscate of Bernoulli
 and was drawn like this:
-\begin{smallcode}
-numeric a, c; c = 128; a = sqrt(2) * c;
-vardef f(expr x) = a * cosd(x) / (1 + sind(x) ** 2) enddef;
-vardef g(expr x) = f(x) * sind(x) enddef;
-numeric mint, maxt, s; mint = 0; s = 30; maxt = 360;
-path p; 
-p = for t = mint step s until maxt - s: 
-    (f(t), g(t)) ...
-endfor cycle;
-draw p withcolor 3/4 blue;
-path xx, yy;
-xx = (left -- right) scaled 200;
-yy = (down -- up) scaled 64;
-drawarrow xx; label.rt("$x$", point 1 of xx);
-drawarrow yy; label.top("$y$", point 1 of yy);
-dotlabel.bot("$F_1$", c * left);
-dotlabel.bot("$F_2$", c * right);
-\end{smallcode}
+\smallmpexternal[firstline=6,lastline=21]{func-lemniscate.mp}
+\noindent
 Although sometimes, especially when you know the domain is 0° to 360° and that the
 path is cyclic, it is simpler to write the two expressions directly in the
 loop:\mwpic{-108pt}{func-parametric}
-\begin{smallcode}
-path p; 
-p = for t = 0 upto 360: (144 cosd(3t), 89 sind(2t)) ... endfor cycle;
-draw p withcolor 2/3 red;
-\end{smallcode}
+\smallmpexternal[firstline=12,lastline=14]{func-parametric.mp}
+\noindent
 which produces this Lissajous curve $\longrightarrow$
 \newpage
-\subsubsection{Parametric plots with polar coordinates: Maurer roses}
+
+\subsection*{Parametric plots with polar coordinates: Maurer roses}
 
 \textsc{Instead of} defining separate functions for the $x$ and $y$ coordinates in a
 parametric plot, it is sometimes convenient to use \MP’s polar coordinate notation (discussed in
@@ -5307,32 +4979,13 @@ parametric plot, it is sometimes convenient to use \MP’s polar coordinate nota
 do in this way.  Here is a Maurer rose, based on $r=\cos(2\theta)$ and connecting
 every 29th point on the curve.\mpic{-24pt}{func-maurer-rose}
 
-\begin{code}
-    numeric n; n = 2;
-    path r; r = (for t=0 upto 360: 
-        cosd(n * t) * dir t ...
-    endfor cycle) scaled 150;
+\mpexternal[firstline=6,lastline=23]{func-maurer-rose.mp}
 
-    numeric d; d = 29;
-    path k; k = for t = 0 upto 360:
-        point d * t mod 360 of r -- 
-    endfor cycle;
-    
-    draw k dashed withdots scaled 1/8
-        withpen pencircle scaled 1/4 
-        withcolor 1/2[blue, white];
-
-    draw r withcolor 2/3 red;
-
-    path xx, yy; % you might not need the axes...
-    xx = (left -- right) scaled 160;
-    yy = (down -- up) scaled 160;
-    drawarrow xx; label.rt("$x$", point 1 of xx);
-    drawarrow yy; label.top("$y$", point 1 of yy);
-\end{code}
-Different values of $n$ and $d$ give an endless variety of patterns.  But note that if
-your choice of $d$ exceeds $2^{15}/360 \simeq 91$ you will need to use
-"-numbersystem=double" to avoid arithmetic overflow.
+\noindent
+Different values of the parameters in $r$ and $k$ give an endless variety of patterns.  But note that if
+you put anything higher than \mpl{point 91t of r} in $k$, you will need to use
+"-numbersystem=double" to avoid arithmetic overflow (because  $360\times92 > 32768$).
+You get prettier curves if the parameter in $k$ is a prime number.
 
 \newpage
 \section{Drawing plane curves}
