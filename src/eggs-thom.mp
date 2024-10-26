@@ -13,8 +13,7 @@ cap = subpath (0, 4) of fullcircle scaled 2r shifted (0, a)
       cutbefore ((b, 0) -- (b, 2r))
       cutafter  ((-b, 0) -- (-b, 2r));  
 egg = point 4 of base {up} .. cap .. {down} base & cycle;
-% more naturally
-%   base {up} .. cap .. {down} & cycle
+% more naturally "base {up} .. cap .. {down} & cycle"
 % but then point 0 would not be at 3 o'clock
 
 beginfig(1);

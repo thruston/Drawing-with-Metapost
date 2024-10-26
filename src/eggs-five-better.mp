@@ -3,7 +3,7 @@
 \mplibtextextlabel{enable}
 \begin{document}
 \begin{mplibcode}
-numeric a; a = 56;
+numeric a; a = 56; 
 path r[];  % the rings
 r1 = fullcircle scaled 2a shifted (0, -3/2 a);
 r2 = fullcircle scaled 2a shifted (0, -1/2 a);
@@ -11,7 +11,6 @@ r3 = fullcircle scaled 2a shifted (0, +1/2 a);
 r4 = fullcircle scaled 2a shifted (0, +3/2 a);
 r5 = r2 rotatedabout(point 2 of r2, -60);
 r6 = r2 rotatedabout(point 2 of r2, +60);
-
 pair o[];  % the centres of rotation for each arc
 o1 = point 6 of r5;
 o2 = point 2 of r3;
@@ -21,13 +20,11 @@ o8 = whatever[o1, point 2-4/3 of r2] = whatever[o2, point 2+4/3 of r1];
 o6 = 1/2[point 2-4/3 of r1, point 2+4/3 of r1];
 o5 = whatever[o6, point 2-4/3 of r3] = whatever[o4, point 2+4/3 of r1];
 o7 = whatever[o6, point 2+4/3 of r3] = whatever[o8, point 2-4/3 of r1];
-
 pair u[], t[];  % directions and points for the egg
 u0 = (o8 - o1) rotated 90;  t0 = directionpoint u0 of r6;
 u1 = (o2 - o1) rotated 90;  t1 = directionpoint u1 of r4;
 u2 = (o2 - o3) rotated 90;  t2 = directionpoint u2 of r4;
 u3 = (o4 - o3) rotated 90;  t3 = directionpoint u3 of r5;
-
 u4 = (o5 - o4) rotated 90;
 u5 = (o6 - o5) rotated 90;
 u6 = (o6 - o7) rotated 90;
@@ -37,8 +34,7 @@ t5 = directionpoint u5 of fullcircle scaled 2 abs (t4 - o5) shifted o5;
 t6 = directionpoint u6 of fullcircle scaled 2 abs (t5 - o6) shifted o6;
 t7 = directionpoint u7 of fullcircle scaled 2 abs (t6 - o7) shifted o7;
 
-path egg;
-egg = for i=0 upto 7: t[i] {u[i]} .. endfor cycle;
+path egg; egg = for i=0 upto 7: t[i] {u[i]} .. endfor cycle;
 
 input eggs-common
 

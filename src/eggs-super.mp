@@ -4,7 +4,8 @@
 \begin{document}
 \begin{mplibcode}
 path egg;
-egg = (superellipse(right, 1.6 up, left, 1.2 down, 0.69)) scaled 100;
+egg = (superellipse(right, 1.6 up, left, 1.2 down, 0.69));
+egg := egg scaled 100;
 input eggs-common
 beginfig(1);
     fill egg withpen pencircle scaled 2 withcolor eggshell;
