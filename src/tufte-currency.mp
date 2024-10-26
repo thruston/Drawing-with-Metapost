@@ -304,10 +304,25 @@ euro =
   -- (base(2023, 04, 30), 88.306300)
   -- (base(2023, 05, 31), 87.190600)
   -- (base(2023, 06, 30), 85.824200)
-  -- (base(2023, 07, 25), 85.861600)
+  -- (base(2023, 07, 31), 85.8333)
+  -- (base(2023, 08, 31), 85.9054)
+  -- (base(2023, 09, 30), 86.2139)
+  -- (base(2023, 10, 31), 86.8168)
+  -- (base(2023, 11, 30), 87.0744)
+  -- (base(2023, 12, 31), 86.2330)
+  -- (base(2024, 01, 31), 85.8814)
+  -- (base(2024, 02, 29), 85.4670)
+  -- (base(2024, 03, 31), 85.5549)
+  -- (base(2024, 04, 30), 85.6500)
+  -- (base(2024, 05, 31), 85.6277)
+  -- (base(2024, 06, 30), 84.7218)
+  -- (base(2024, 07, 31), 84.4672)
+  -- (base(2024, 08, 31), 85.1493)
+  -- (base(2024, 09, 30), 84.0409)
+  -- (base(2024, 10, 26), 83.5291)
   ;
 
-years = (base(1999, 01, 01), 1999) for y=2000 upto 2023: -- (base(y, 1, 1), y) endfor;
+years = (base(1999, 01, 01), 1999) for y=2000 upto 2025: -- (base(y, 1, 1), y) endfor;
 
 numeric u, v;  u = 67; v = 5;
 numeric offset;
@@ -315,8 +330,8 @@ offset = base(1999, 1, 1);
 euro  := euro  shifted -(offset, 0) xscaled u yscaled v;
 years := years shifted -(offset, 0) xscaled u;
 
+input tufte-manila-paper
 beginfig(1);
-background := (1, 1, 31/32);
 
 draw euro 
     withpen pencircle scaled 1/4 withcolor 3/4;
@@ -367,7 +382,7 @@ endfor
 
 label.ulft("\small £/€", (left_axis_x, 103v));
 label.urt ("\small €/£", (right_axis_x, 103v));
-label.top("Monthly average exchange rates Sterling v. Euro", (1/2 left_axis_x + 1/2 right_axis_x, 103v));
+label.top("Monthly average exchange rates Euro v.\@ Sterling", (1/2 left_axis_x + 1/2 right_axis_x, 103v));
 
 vardef event_label@#(expr t, z) = 
     fill unitsquare shifted -(1/2,1/2) rotated 45 scaled 2 shifted z;
@@ -383,9 +398,7 @@ event_label.bot("\tl{UK leaves\\EU}",          (base(2020, 1, 31) - offset, 83) 
 event_label.top("\tl{WHO declares\\pandemic}", (base(2020, 3, 11) - offset, 91) xscaled u yscaled v);
 event_label.bot("\tl{Ukraine\\invaded}",       (base(2022, 2, 24) - offset, 82.5) xscaled u yscaled v);
 
-picture p; p = currentpicture; currentpicture := nullpicture;
-bboxmargin := 12; unfill bbox p; draw p;
-label.lrt("\tiny\texttt{Source: tufte-currency.mp}", llcorner currentpicture);
+input show_name
 endfig;
 \end{mplibcode}
 \end{document}

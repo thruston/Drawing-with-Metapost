@@ -57,8 +57,8 @@ path damage; damage = origin ..
 (79, 0)..
 (81, 0);
 
+input tufte-manila-paper
 beginfig(1);
-    background := (1, 1, 31/32);
   numeric u, v; u = 10.8; 5u = 4v; 
   damage := damage xscaled u yscaled v;
 
@@ -106,9 +106,9 @@ beginfig(1);
     O-ring damage index,\cr
     for each launch\cr
   }\vss} etex, (23u, 14.4v));
-  picture p; p = currentpicture; currentpicture := nullpicture; unfill bbox p; draw p;
-% input ruler-inch
-label.lrt("\tiny\texttt{Source: tufte-srm-damage.mp}", llcorner currentpicture);
+
+undraw point 1 of bbox currentpicture shifted 2 down;
+input show_name
 endfig;
 \end{mplibcode}
 \end{document}

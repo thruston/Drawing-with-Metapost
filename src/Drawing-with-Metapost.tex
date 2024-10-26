@@ -5493,36 +5493,25 @@ Tufte's books on graphics.\vadjust{\moveright5.5in\vbox to 0pt{\vskip-42pt\noind
 \end{itemize}\vss}}
 
 \vfill\noindent
-Most of the drawings in this section have a pale manilla background, which was added
+Most of the drawings in this section have a pale manila background, which was added
 using the technique from §\ref{backgrounds}.  At the beginning, the background
 colour is changed like this:
 \begin{code}
-background := (1, 1, 31/32);
+background := (1, 1, 31/32);  % change at start so "unfill" works
 \end{code}
-Then at the end of the figure, you can do this:
+Then at the end of the figure, the background is applied like this:
 \begin{code}
-picture p; p = currentpicture; currentpicture := nullpicture;
+picture p; p = currentpicture; clearit;
 bboxmargin := 12; unfill bbox p; draw p;
 \end{code}
-If you are writing something with lots of figures like these, then you could use the
-begin and end figure “hooks” to do this automatically.  There are two ways to do
-this. (1) Plain \MP\ provides two \<string> variables called \mpl{extra_beginfig}
-and \mpl{extra_endfig} which are automatically read by \mpl{beginfig} and
-\mpl{endfig}, so you could create a file containing these lines:
-\begin{smallcode}[xrightmargin=-80pt]
-extra_beginfig = "background := (1, 1, 31/32);";
-extra_endfig = "picture p; p = currentpicture; currentpicture := nullpicture;"
-             & "bboxmargin := 12; unfill bbox p; draw p;";
-\end{smallcode}
-and then \mpl{input} the file when needed.  (2) 
-Lua\LaTeX\ $+$ \texttt{luamplib} (as described in §\ref{sec:lua-integrated}) 
-provide another level to do this, so that you can add something like this to your
-document preamble:
-\begin{texcode}[xrightmargin=-80pt]
-\everymplib{beginfig(0);background := (1, 1, 31/32);}
-\everyendmplib{picture p; p = currentpicture; currentpicture := nullpicture;
-  bboxmargin := 12; unfill bbox p; draw p;endfig;}
-\end{texcode}
+But there are lots of figures in this section, so this “wrapping” is actually
+applied using the begin- and end-figure “hooks”.  If you examine the source code,
+you will see that each figure inputs a file
+called "tufte-manila-paper" which contains this:
+\mpexternal{tufte-manila-paper.mp}
+\noindent
+The \mpl{beginfig} and \mpl{endfig} macros provided by plain \MP\ automatically apply
+anything that is set in the two "extra" strings.
 
 \newpage
 \subsection{Simple time lines}
@@ -5539,99 +5528,26 @@ the technique discussed in §\ref{textsize}.  And that you have to shift the dat
         path left before applying the $x$-scaling to avoid overflow.
 \end{itemize}
 }
-\begin{texcode}[xleftmargin=0pt]
-\documentclass{standalone}
-\usepackage{luamplib}
-\usepackage{fontspec}
-\setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
-\begin{document}
-\mplibtextextlabel{enable}
-\begin{mplibcode}
-\end{texcode}\vskip -8pt
-\begin{smallcode}[xleftmargin=2pt]
-beginfig(1);
-path data, p;
-data = (1978, 18) -- (1979, 19) -- (1980, 20) -- (1981, 22)
-    -- (1982, 24) -- (1983, 26) -- (1984, 27) -- (1985, 27.5);
-numeric u, v;
-u = xpart urcorner textext("1980\kern 0.75em"); v = 8;
-p = data shifted -(xpart point 0 of data, 0) xscaled u yscaled v;
-draw (xpart point 0 of p, 20) -- p -- (xpart point infinity of p, 20);
-draw (xpart point 0 of p, 0) -- (xpart point infinity of p, 0);
-for t=0 upto length p: 
-    numeric x, y; (x, y) = point t of p;
-    undraw (x, y) withpen pencircle scaled 2 dotlabeldiam;
-    draw (x, y) withpen pencircle scaled dotlabeldiam;
-    label("\strut" & decimal ypart point t of data, (x, y + 8));
-    draw (x, 0) -- (x, 4);
-    label("\strut" & decimal xpart point t of data, (x, 12));
-endfor
-dotlabel.rt(btex \vbox to 6pt{\halign{\small #\hss\cr
-13.7 mpg, average\cr for all cars on\cr road, 1978\cr}\vss} etex, 
-(xpart point 0 of p, 13.7v));
-dotlabel.lft(btex \vbox to 6pt{\halign{\small #\hss\cr
-19.5 mpg, expected\cr average for all cars\cr on road, 1985\cr}\vss} etex, 
-(xpart point infinity of p, 19.5v));
-label.top(btex \vbox{\halign{\hss\textsc{#}\hss\cr
-required fuel economy standards:\cr
-new cars built from 1978 to 1985\cr}} etex,
-point 5/2 of bbox currentpicture shifted 21 up);
-endfig;
-\end{smallcode}\vskip -10pt
-\vbox to 0pt{\begin{texcode}[xleftmargin=0pt]
-\end{mplibcode}
-\end{document}
-\end{texcode}\vss}
+\enlargethispage{36pt}\vskip-12pt
+\smalltexternal[firstline=1,lastline=7,xleftmargin=0pt]{tufte-mpg.mp}
+\vskip-12pt
+\smallmpexternal[firstline=8,lastline=36,xleftmargin=0pt]{tufte-mpg.mp}
+\vskip-12pt
+\smalltexternal[firstline=37,lastline=38,xleftmargin=0pt]{tufte-mpg.mp}
 
 \newpage
 \subsection{Time line with minimal annotation}
 \noindent\mpic{120pt}{tufte-budget}\marginpar{
 \begin{itemize}
-    \item This one has an even sparser frame, and 
-        uses the \mpl{ahangle} trick to make the neat
-        I-beam annotation mark.
+    \item This one has an even sparser frame, and dispenses
+        with the labels on each data point.
     \item It is suggested that you resist the temptation to make very many
         special macros to do charts like this; the ideas here are mainly 
         to show that \MP\ makes a good environment for following Tufte’s advice
-        about charts: to maximize data ink, and minimize chart junk.
+        about charts: to maximize data ink, and minimize chart junk;
+        albeit at the cost of some pains-taking.
 \end{itemize}}
-\begin{smallcode}[xleftmargin=0pt]
-beginfig(1);
-path data, p;
-data = (1967, 311) -- (1968, 332) -- (1969, 372) -- (1970, 385)
-    -- (1971, 385) -- (1972, 393) -- (1973, 387) -- (1974, 381) 
-    -- (1975, 387) -- (1976, 400) -- (1977, 380);
-numeric u, v;
-u = xpart urcorner textext("1980\kern 0.75em"); v = 1.414;
-p = data shifted -(xpart point 0 of data, 300) xscaled u yscaled v;
-draw p;
-for d = 300 step 20 until 400:
-    numeric y; y =  (d - 300) * v;
-    label.lft("\strut\scriptsize\$\,\small" & decimal d, (-12, y));
-    draw (-8, y) -- (-12, y);
-    if d > 370:
-        draw (xpart point 3 of p, y) -- (xpart point infinity of p + 8, y)
-            dashed evenly scaled 1/4 withpen pencircle scaled 1/4;
-    fi
-endfor
-path a; a = (xpart point infinity of p + 21, (380 - 300) * v) 
-         -- (xpart point infinity of p + 21, (400 - 300) * v);
-interim ahangle := 180; 
-interim ahlength := 2;
-drawdblarrow a withpen pencircle scaled 1/4;
-label("\small 5\%", point 1/2 of a shifted 12 right);
-for t=0 upto length p: 
-    numeric x, y; (x, y) = point t of p;
-    undraw (x, y) withpen pencircle scaled 2 dotlabeldiam;
-    draw (x, y) withpen pencircle scaled dotlabeldiam;
-    draw (x, -8) -- (x, -12);
-    label("\strut\small" & decimal xpart point t of data, (x, -20));
-endfor
-label.urt(btex \vbox{\halign{\small #\hfill\cr
-Per capita\cr budget expenditure\cr in constant dollars\cr}} etex, 
-(0, (410 - 300) * v));
-endfig;
-\end{smallcode}
+\smallmpexternal[firstline=10,lastline=44,xleftmargin=0pt,xrightmargin=-30pt]{tufte-budget.mp}
 
 \newpage
 \subsection{Time line with more complex dates}
@@ -5664,53 +5580,16 @@ enddef;
 \subsection{Daily events with annotation}
 
 \textsc{This chart} is adapted from Edward Tufte's \textsl{Visual explanations},
-p.33;\vadjust{\moveright5.5in\vbox to 0pt{\hsize=4in\vskip -18pt
-\begin{smallcode}[xleftmargin=0pt]
-numeric i, deaths[], dmax; i = 0; dmax = 0;
-for n =                    1, 
-         0, 2, 0, 0, 2, 0, 0,
-         1, 0, 1, 2, 3,70,127,
-        76,71,45,37,32,30,24,
-        18,15, 6,13, 6, 8, 6,
-         5, 2, 3, 0, 0, 2, 3,
-         0, 0, 2, 0, 2, 1, 0:
-  deaths[incr i] = n; if n > dmax: dmax := n; fi
-endfor
-numeric ymax; ymax = 20 * ceiling (dmax / 20);
-numeric days, day_number[]; days = 0;
-for n =                   19,
-        20,21,22,23,24,25,26,
-        27,28,29,30,31, 1, 2,
-         3, 4, 5, 6, 7, 8, 9,
-        10,11,12,13,14,15,16,
-        17,18,19,20,21,22,23,
-        24,25,26,27,28,29,30:
-  day_number[incr days] = n;
-endfor
-numeric u, v; days * u = 5in = ymax * 2v;
-path xx; xx = origin -- (days * u, 0);
-path yy; yy = origin -- (0, dmax * v);
-beginfig(1);
-  for x = 1 upto days:
-    cutdraw (x * u, 0) -- (x * u, deaths[x] * v) 
-      withpen pencircle scaled 2 
-      withcolor 5/8[2/3 red, white];
-    draw (origin -- 2 down) shifted (x * u, 0);
-  endfor
-  for y = 10 step 10 until ymax:
-    draw (origin -- 2 left) shifted (0, y * v);
-    undraw xx shifted (0, y * v) withpen pencircle scaled 1/2;
-  endfor
-  draw xx; draw yy;
-endfig;
-\end{smallcode}
-\noindent\hey \textit{The code for the labels was removed from this example to save space.  See the source
-file for details}.
-\vss}}
+p.33;
 it presents the data from John Snow's table of daily deaths in the London
 cholera epidemic of 1854 in a simple bar chart form, with annotation pointing out
 that the epidemic was already declining when the supposedly decisive intervention of
 removing the handle from the water pump at the centre of the outbreak was made.
+\vadjust{\moveright5.5in\vbox to 0pt{\hsize=4in\vskip -76pt
+\smallmpexternal[firstline=11,lastline=48,xleftmargin=0pt]{tufte-snow.mp}
+\noindent\hey 
+\textit{The code for the annotation and the title was omitted to save space.\\
+See the source file for details}.\vss}}
 
 \medskip\noindent\includegraphics[width=\textwidth]{tufte-snow}
 
@@ -5719,7 +5598,7 @@ removing the handle from the water pump at the centre of the outbreak was made.
 The data for the chart was edited directly into the \MP\ source, using a text editor
 to copy the data from the source table, and format them into lists so that you can use
 loops to capture the values in two parallel indexed numeric variables \mpl{deaths[]}
-and \mpl{day_number[]}. It is useful to be able to group the data into weeks to
+and \mpl{day_number[]}. It is useful to be able to group the data visually into weeks to
 reduce the chance of errors, but there is no other significance.
 
 Note that the bars are drawn with a wide pen and \mpl{cutdraw} in order to get nice square ends
@@ -5766,8 +5645,7 @@ for i = 1 upto length damage:
 endfor
 \end{smallcode}
 
-\vfill
-\noindent\hbox to \textwidth{\includegraphics{tufte-srm-damage}\hss}
+\vbox to 0pt{\hbox to \textwidth{\includegraphics{tufte-srm-damage}\hss}\vss}
 
 \newpage
 \section{Commutative diagrams}\label{sec:cd}

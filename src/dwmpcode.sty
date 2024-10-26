@@ -116,10 +116,13 @@ columns=fullflexible,
 keepspaces=true,
 xleftmargin=\parindent,
 showstringspaces=false,
-morekeywords={everymplib, everyendmplib, mplibtextextlabel, mplibnumbersystem, mplibsetformat, mplibshowlog},
+morekeywords={everymplib, everyendmplib, setmainfont,
+mplibtextextlabel, mplibnumbersystem, mplibsetformat, mplibshowlog},
 }}
 \lstnewenvironment{texcode}[1][]{\texstyle\lstset{basicstyle=\small\ttfamily,#1}}{}
 \newcommand\txl[1]{{\texstyle\lstinline!#1!}}
+\newcommand\texternal[2][]{{\texstyle\lstinputlisting[#1]{#2}}}
+\newcommand\smalltexternal[2][]{{\texstyle\lstinputlisting[basicstyle=\small\ttfamily,#1]{#2}}}
 %
 % Labels..
 %

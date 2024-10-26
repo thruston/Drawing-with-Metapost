@@ -1,54 +1,38 @@
 \documentclass{standalone}
 \usepackage{luamplib}
-\usepackage{unicode-math}
-\setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
-\setmathfont{TeX Gyre Pagella Math}
-\begin{document}
 \mplibtextextlabel{enable}
+\usepackage{fontspec}
+\setmainfont[Numbers=OldStyle]{TeX Gyre Pagella}
+\begin{document}
 \begin{mplibcode}
+input tufte-manila-paper
 beginfig(1);
-background := 1/32(32, 32, 31);
-path data, p;
-data = (1978, 18)
-    -- (1979, 19)
-    -- (1980, 20)
-    -- (1981, 22)
-    -- (1982, 24)
-    -- (1983, 26)
-    -- (1984, 27)
-    -- (1985, 27.5);
-numeric u, v;
-u = xpart urcorner textext("1980\kern 0.75em");
-v = 8;
-p = data shifted -(xpart point 0 of data, 0) xscaled u yscaled v;
-draw (xpart point 0 of p, 20) -- p -- (xpart point infinity of p, 20);
-draw (xpart point 0 of p, 0) -- (xpart point infinity of p, 0);
+path data, p; numeric n, u, v;
+data = (1978, 18) -- (1979, 19) -- (1980, 20) -- (1981, 22) --
+       (1982, 24) -- (1983, 26) -- (1984, 27) -- (1985, 27.5);
+u = xpart urcorner textext("1980\quad"); v = 7; 
+p = data shifted -(1978, 0) xscaled u yscaled v; 
 
-for t=0 upto length p: 
-    numeric x, y; (x, y) = point t of p;
-    undraw (x, y) withpen pencircle scaled 2 dotlabeldiam;
-    draw (x, y) withpen pencircle scaled dotlabeldiam;
-    label("\strut" & decimal ypart point t of data, (x, y + 8));
-    draw (x, 0) -- (x, 4);
-    label("\strut" & decimal xpart point t of data, (x, 12));
+draw p;
+for i=0 upto length p: 
+  z[i] = point i of p;  
+  undraw z[i] withpen pencircle scaled 2 dotlabeldiam;
+  dotlabel.top("\strut" & decimal ypart point i of data, z[i]);
+  label("\strut" & decimal xpart point i of data, (x[i], 12));
+  draw (x[i], 0) -- (x[i], 4);
 endfor
+draw (x0, 20) -- z0; draw (x7, 20) -- z7; draw (x0, 0) -- (x7, 0);
 
 dotlabel.rt(btex \vbox to 6pt{\halign{\small #\hss\cr
-13.7 mpg, average\cr for all cars on\cr road, 1978\cr}\vss} etex, 
-(xpart point 0 of p, 13.7v));
+  13.7 mpg, average\cr for all cars on\cr road, 1978\cr
+  }\vss} etex, (x0, 13.7v));
 dotlabel.lft(btex \vbox to 6pt{\halign{\small #\hss\cr
-19.5 mpg, expected\cr average for all cars\cr on road, 1985\cr}\vss} etex, 
-(xpart point infinity of p, 19.5v));
-
+  19.5 mpg, expected\cr average for all cars\cr on road, 1985\cr
+  }\vss} etex, (x7, 19.5v));
 label.top(btex \vbox{\halign{\hss\textsc{#}\hss\cr
-required fuel economy standards:\cr
-new cars built from 1978 to 1985\cr}} etex,
-point 5/2 of bbox currentpicture shifted 21 up);
-
-picture p; p = currentpicture; currentpicture := nullpicture;
-bboxmargin := 12; unfill bbox p; draw p;
-
+  required fuel economy standards:\cr
+  new cars built from 1978 to 1985\cr}} etex,
+  point 5/2 of bbox currentpicture shifted 13 up);
 endfig;
 \end{mplibcode}
 \end{document}
-
