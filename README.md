@@ -1,5 +1,7 @@
 # Drawing-with-Metapost
 
+Toby Thurston -- 28 Oct 2024
+
 This project provides a document that discusses how to draw technical diagrams
 with John Hobby's Metapost language. It includes over 200 illustrations
 created with Metapost, complete with source code as inspiration and examples.
@@ -15,12 +17,17 @@ The `src` directory contains
 - the Metapost source for each illustration used in the main document
 - the corresponding PDF file created from the MP source
 
+The text includes a discussion of the techniques used for drawing the illustrations, 
+and includes complete or partial listings for most of them.  These listings are
+included directly from the source code used, so in all cases the output should exactly
+match what you see on the page.
+
 You might like to read the main document first, but you might also like to
 browse through the PDFs in the src directory, and when you find one that is
 interesting, have a look at the corresponding MP source file.  There is a
 one-to-one match between the PDF names and the MP source names, so
-"apollonius.pdf" is created from "apollonius.mp".  The src directory contains
-a few drawings that are not (yet) included in the main document.
+"geometry-apollonius.pdf" is created from "geometry-apollonius.mp".  The src
+directory contains a few drawings that are not included in the main document.
 
 To update the main PDF document I follow these steps
 
@@ -29,7 +36,8 @@ To update the main PDF document I follow these steps
 - run a Python script to read the .fls and `git add` all the files used
 - git commit and push
 
-Toby Thurston -- 08 May 2024
+If you find any errors, or have any suggestions for improvement, please raise an issue
+or submit a pull request on Github.
 
 Copyright (c) 2024 by Toby Thurston. This material may be distributed only
 subject to the terms and conditions set forth in the Open Publication License,
