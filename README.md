@@ -9,7 +9,7 @@ The intended level is for intermediate to advanced users rather than complete
 beginners.  For introductions, tutorials, and other articles about Metapost,
 see http://www.tug.org/metapost.html
 
-Start with "Drawing-with-Metapost.pdf" in the top directory.
+Start with `Drawing-with-Metapost.pdf` in the top directory.
 
 The `src` directory contains 
 - the TeX source for the main document
@@ -26,7 +26,7 @@ You might like to read the main document first, but you might also like to
 browse through the PDFs in the src directory, and when you find one that is
 interesting, have a look at the corresponding MP source file.  There is a
 one-to-one match between the PDF names and the MP source names, so
-"geometry-apollonius.pdf" is created from "geometry-apollonius.mp".  The src
+`geometry-apollonius.pdf` is created from `geometry-apollonius.mp`.  The src
 directory contains a few drawings that are not included in the main document.
 
 To update the main PDF document I follow these steps
