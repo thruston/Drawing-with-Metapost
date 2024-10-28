@@ -1,1 +1,1 @@
-label.lft("\tiny \texttt{" & jobname & ".mp}", lrcorner bbox currentpicture);
+label.llft("\tiny\texttt{" & jobname & ".mp}", lrcorner bbox currentpicture);

@@ -4,19 +4,18 @@
 \mplibtextextlabel{enable}
 \begin{document}
 \begin{mplibcode}
-vardef acosd(expr a) = angle (a, 1 +-+ a) enddef;
 numeric r, phi, theta;
-phi = 0.61803398875;
-r = phi**phi;
-theta = acosd(1/2(1/r + r - r * r * r));
+phi = 0.61803398875; 
+r = phi ** phi;
+theta = angle (fullcircle scaled 2r intersectionpoint fullcircle scaled (2r*r) shifted right);
 
 vardef dragon(expr a, b) = 
-    if abs(a-b) > 1:
+    if abs(a-b) > 1.618:
         save p; pair p;
         p = r[a, b] rotatedabout(a, theta); 
         dragon(a, p) & reverse dragon(b, p)
     else:
-        a -- b
+        a .. b
     fi
 enddef;
 

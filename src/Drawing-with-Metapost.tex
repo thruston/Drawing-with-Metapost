@@ -2,10 +2,10 @@
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
-% 
-% \loop\iftrue 
-% \errmessage{This manual is copyrighted and should not be compiled as is.}
-% \repeat
+ 
+\loop\iftrue 
+\errmessage{This manual is copyrighted and should not be compiled as is.}
+\repeat
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
@@ -4327,7 +4327,7 @@ was drawn with \mpl{draw beside(p, 2)} and the red one with
 }
 
 \newpage
-\subsubsection{Making tubes}
+\subsubsection*{Making tubes}
 
 Drawing with multiple lines can also produce a three-dimensional effect for 
 knot diagrams (provided that you don't think of toothpaste).  
@@ -5658,57 +5658,16 @@ using it for other illustrations, there is one less thing to learn.
 Here are two examples to illustrate some general techniques. They may be familiar to
 readers of the manuals for the tools referred to above.
 $$
-\includegraphics{tikzcd-example}
+\includegraphics{cd-tikzcd-example}
 \qquad
-\includegraphics{xypic-example}
+\includegraphics{cd-xypic-example}
 $$
 The complete code used to generate the right-hand picture is shown on the
 right.\rlap{\rightarrow}%
 \vadjust{\moveright5.5in\vbox to 0pt{\kern-218pt
-\begin{smallcode}
-picture U, XY, X, Y, Z;
-z1 = -z2 = (-61, 42);
-
-U  = thelabel("$U$", z1);
-XY = thelabel("$X\times_ZY$", origin);
-X  = thelabel("$X$", (x2, 0));
-Y  = thelabel("$Y$", (0, y2));
-Z =  thelabel("$Z$", z2);
-
-forsuffixes @=U, XY, X, Y, Z: draw @; endfor
-
-ahangle := 20;
-vardef curved_connect@#(expr s, a, b, d) = 
-    save line, mark; 
-    
-    path line; 
-    line = center a {d} .. center b;
-    interim bboxmargin := 4;
-    drawarrow line cutbefore bbox a cutafter bbox b;
-
-    picture mark;
-    mark = thelabel@#("$\scriptstyle " & s & "$", point 1/2 of line);
-    interim bboxmargin := 1;
-    unfill bbox mark; draw mark;
-enddef;
-
-vardef connect@#(expr s, a, b) = 
-    curved_connect@#(s, a, b, center b - center a)
-enddef;
-
-connect.bot("p", XY, X);
-connect.rt ("q", XY, Y);
-connect.top("g", Y, Z);
-connect.lft("f", X, Z);
-
-curved_connect.urt("x", U, X, right);
-curved_connect.llft("y", U, Y, dir -80);
-
-drawoptions(dashed withdots scaled 1/2);
-connect("(x,y)", U, XY);
-drawoptions();
-\end{smallcode}
-\noindent\textit{\small This example assumes you are using "mplibtextextlabel" – §\ref{ttlabel}}
+\mpexternal[firstline=6,lastline=42,xleftmargin=0pt,xrightmargin=-20pt]{cd-xypic-example.mp}
+\noindent
+\textit{\small This example assumes you are using "mplibtextextlabel" – §\ref{ttlabel}}
 \vss}}
 The approach taken for both examples is first to define the node labels as pictures
 placed as needed, and then write a special-purpose "connect" macro to make
@@ -5725,14 +5684,7 @@ $b$.
 
 For the $f^*E$ example, "connect" is simpler, because all the arrows are
 straight and there are no labels, but needs to allow for arrows crossing:
-\begin{smallcode}
-vardef connect(expr a, b) = 
-    save line; path line; interim bboxmargin := 4;
-    line = center a .. center b cutbefore bbox a cutafter bbox b;
-    cutdraw line withpen pencircle scaled 4 withcolor background;
-    drawarrow line
-enddef;
-\end{smallcode}
+\mpexternal[firstline=26,lastline=31]{cd-tikzcd-example.mp}
 
 \newpage
 \section{Recursion and iteration}
@@ -5748,9 +5700,8 @@ of drawing such as trees, plane-filling curves, fractals, and some types of tili
 Even so, it is perhaps useful to review some of the basic programming ideas
 involved.  Consider for example the greatest common divisor algorithm presented in
 §\ref{sec:gcd}.
-\begin{smallcode}
-vardef gcd(expr a, b) = if b = 0: a else: gcd(b, a mod b) fi enddef;
-\end{smallcode}
+\smallmpexternal[firstline=1,lastline=1]{rec-gcd-comparison.mp}
+\noindent
 The reason this works is that we know (mathematically) that $0 \le a \bmod b < b$,
 and therefore that the arguments to the recursive call must get smaller each time
 and eventually we must get to $b=0$ when the answer will be $a$.  This is the basic
@@ -5765,14 +5716,8 @@ The examples in this chapter use one of two simple approaches:
 \end{itemize}
 If you find recursion confusing, you can nearly always use an iterative approach
 instead.  For example, you can implement the \mpl{gcd} function like this:
-\begin{smallcode}
-vardef gcd(expr A, B) = save r, a, b; numeric a, b, r; a := A; b := B;
-    forever:
-        r := a mod b; exitif r = 0;
-        a := b; b := r;
-    endfor b
-enddef;
-\end{smallcode}
+\smallmpexternal[firstline=15,lastline=20]{rec-gcd-comparison.mp}
+\noindent
 Notice that you have to use assignment in the loop to update the variables, and
 that you cannot assign to the arguments of a macro. Notice also that this version
 requires both arguments to be positive integers.  You need to use your judgement to
@@ -5789,20 +5734,8 @@ four copies of itself, scaled down $\frac13$  and arranged as shown
 at Level 1 \rightarrowfill\break
 At each level of the construction, the number of points in the path increases
 four-fold and the \mpl{arclength} of the path gets $\frac43$ longer.  
-\begin{code}
-vardef koch(expr level, a, b) = 
-    if level = 0:
-        a -- b
-    else:
-        save p, q, r; pair p, q, r; 
-        p = 1/3[a,b]; r = 2/3[a,b]; q = r rotatedabout(p, 60);
-        koch(level-1, a, p) &
-        koch(level-1, p, q) &
-        koch(level-1, q, r) &
-        koch(level-1, r, b) 
-    fi
-enddef;
-\end{code}
+\mpexternal[firstline=7,lastline=18]{rec-koch-steps.mp}
+\noindent
 The five levels were drawing using this function in a loop like this:
 \begin{code}
 for n=0 upto 4:
@@ -5827,34 +5760,21 @@ century, but unlike the infinite length of von Koch's curve, the area of Sierpin
 to zero.\mwpic{-12pt}{rec-sierpinski-triangle} In the original specification, you
 are supposed to remove the central quarter of each triangle, but this program does
 it the other way round and delays drawing the triangles until they are small enough.
-\begin{code}[xleftmargin=0pt, xrightmargin=-2in]
-vardef gasket(expr t, s, limit) = 
-  if length (point 1 of t - point 0 of t) < limit:
-    fill t;
-  else:
-    save little_t; path little_t; little_t = t scaled s;
-    for i=1 upto length t:
-      gasket(little_t shifted (point i of t - point i of little_t), s, limit);
-    endfor
-  fi
-enddef;
-\end{code}
+\mpexternal[firstline=6,lastline=15,xleftmargin=0pt,xrightmargin=-72pt]{rec-sierpinski-triangle.mp}
+\noindent
 Note the useful idiom \mpl{shifted (point i of t - point i of little_t)} – this
 neatly tucks a copy of the small triangle into the appropriate corner of the big
 triangle.   You can make this even simpler by coding the scaling parameter $s$ and
 \id{limit} as constants in the recursive routine, so that you do not have to pass 
 them down each time.  The triangular gasket was generated using the macro like this:
-\begin{code}[xleftmargin=0pt, xrightmargin=-2in]
-beginfig(1);  
-  path T; T = for i = 1 upto 3: 220 up rotated 120i -- endfor cycle;
-  gasket(T, 1/2, 20);
-endfig;
-\end{code}
-You can generalize it, for example by making
+\mpexternal[firstline=16,lastline=19,xleftmargin=0pt,xrightmargin=-72pt]{rec-sierpinski-triangle.mp}
+\noindent
+You can generalize this idea, for example by making
 the path \id{T} into a pentagon with scaling factor $s=(3-\sqrt5)/2$,
 or a hexagon with $s=1/3$, and so on:
 
-\vbox to 0pt{\vskip-2pt\hsize10in\noindent\includegraphics[width=10in]{rec-sierpinski-pentagon.pdf}\par\vss}
+\vbox to
+0pt{\vskip-2pt\hsize10in\noindent\includegraphics[width=10in]{rec-sierpinski-garlands.pdf}\par\vss}
 
 \newpage
 \subsection{The Heighway dragon}
@@ -5870,32 +5790,15 @@ copies of itself scaled down and arranged as shown.\mwpic{-36pt}{rec-dragon}
 Note that every other segment is flipped left and right.  At each stage, the number of points
 increases two-fold and the path gets $\sqrt2$ times longer.  Here is a recursive
 routine to generate the curve as a single path.
-\begin{smallcode}
-numeric r, theta; r = sqrt 1/2; theta = 45;
-vardef dragon(expr level, a, b) = 
-    if level > 0:
-        save p; pair p;
-        p = r[a, b] rotatedabout(a, theta); 
-        dragon(level - 1, a, p) & reverse dragon(level - 1, b, p)
-    else:
-        a .. b
-    fi
-enddef;
-\end{smallcode}
+\smallmpexternal[firstline=6,lastline=15]{rec-dragon.mp}
+\noindent
 The blue dragon was created with: {\small\mpl{draw dragon(15, origin, 240 right)}}\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}
 
 After the fourth level the corners of the curve start to touch each
 other, but they never cross.  You can see this if you draw the curve with rounded
 corners.
-\begin{smallcode}
-vardef rounded_corners expr p = 
-    save r, n; numeric r, n; r = 1/3; n = length p;
-    subpath (0, 1-r) of p 
-    for t=1 upto n-1:
-        .. subpath (t+r, t+1-r) of p
-    endfor .. subpath (n-r, n) of p
-enddef;
-\end{smallcode}
+\smallmpexternal[firstline=17,lastline=23]{rec-dragon.mp}
+\noindent
 The red dragon was: {\small\mpl{draw rounded_corners dragon(10, origin, 240
 right)}}\rlap{\hbox{\ $\smash{\longrightarrow}$}}
 
@@ -5916,16 +5819,8 @@ whole curve is replaced by two copies of itself arranged as shown:
 
 \smallskip\noindent
 We can do this in two steps in a loop, like this:\mpic{-160pt}{ifs-heigh}
-\begin{smallcode}
-path p; p = origin -- dir 30;
-numeric n;
-for i=1 upto 12:
-    n := length p;
-    p := p rotated 45;
-    p := p & reverse p rotatedabout(point n of p, 90);
-endfor
-draw p scaled (384 / xpart (urcorner p - llcorner p));
-\end{smallcode}
+\smallmpexternal[firstline=6,lastline=13,xleftmargin=0pt]{ifs-heigh.mp}
+\noindent
 In this approach, instead of scaling down each time, the curve is just allowed to
 grow $\sqrt2$-times bigger in each loop, then scaled to the desired width
 (384\unit{pt}) when it is complete. The 12 stages in the loop produce the rotated blue
@@ -5933,23 +5828,16 @@ dragon as shown.\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}
 
 \vfill\noindent
 With a small adaptation, you can also use this to explore variations.
-\begin{smallcode}
-path p; p = origin -- dir 30;
-numeric n, r; r = 3;
-for i=1 upto 12:
-    n := length p;
-    p := p rotated (45 - r);
-    p := p & reverse p rotatedabout(point n of p, 90 + 2r);
-endfor
-\end{smallcode}
+\smallmpexternal[firstline=6,lastline=13,xleftmargin=0pt]{ifs-heigh-open.mp}
+\noindent
 The extra parameter $r$ is used to open up the folds, making it more
 “organic”.\mpic{-200pt}{ifs-heigh-open}
 
 \newpage
 \subsection{The golden dragon}
 
-\textsc{You can also explore variations} with the recursive approach by altering 
-the scaling and rotation. Here $r\simeq 0.74274$ and
+\textsc{You can explore variations} with the recursive approach by altering 
+the scaling and rotation. Here $r=1/\phi^{1/\phi}\simeq 0.74274$ and
 $\theta\simeq 32.893°$ in the initial triangle.
 
 \medskip
@@ -5959,17 +5847,7 @@ $\theta\simeq 32.893°$ in the initial triangle.
 Because the initial triangle shape is shorter on one side, it is better to adapt
 the \mpl{dragon} routine to measure the gap between points instead of using a fixed
 level parameter:
-\begin{smallcode}
-vardef dragon(expr a, b) = 
-    if abs(a-b) > 1:
-        save p; pair p; 
-        p = r[a, b] rotatedaround(a, theta); 
-        dragon(a, p) & reverse dragon(b, p)
-    else:
-        a .. b
-    fi
-enddef;
-\end{smallcode}
+\smallmpexternal[firstline=12,lastline=20]{rec-dragon-golden.mp}
 \vss}
 
 \newpage
@@ -5977,7 +5855,7 @@ enddef;
 
 \textsc{The Peano-Gosper curve} is a space-filling curve.  It is 
 constructed in the same way as the dragons, but generating shape has seven sections 
-instead of two, and they are cunningly arranged to fill the space.\mpic{-48pt}{rec-flowsnake-construction}
+instead of two, and they are cunningly arranged to fill the space.\mpic{-72pt}{rec-flowsnake-construction}
 The arrows indicate the reversals so that the scaled-down copies fill the larger
 part of the hexagons that contain them.\rlap{\hbox{\ $\smash{\rightarrow}$}}
 $$\includegraphics[width=\textwidth]{rec-flowsnake}$$
@@ -5985,25 +5863,9 @@ This fourth-level curve is the boundary between the filled and unfilled branches
 \vadjust{\moveright 384pt \vbox to 0pt{\vss\hsize 4in
 \noindent Given the \id{snake} path scaled to unit length as shown above in
 \red{red}, the
-flow-snake path can be created with:
-\begin{smallcode}
-vardef rattle(expr level, a, b) = 
-  if level > 0:
-    save s; path s; s = snake zscaled (b-a) shifted a;
-    reverse rattle(level - 1, point 1 of s, a) &
-            rattle(level - 1, point 1 of s, point 2 of s) &
-            rattle(level - 1, point 2 of s, point 3 of s) &
-            rattle(level - 1, point 3 of s, point 4 of s) & 
-    reverse rattle(level - 1, point 5 of s, point 4 of s) & 
-    reverse rattle(level - 1, point 6 of s, point 5 of s) &
-            rattle(level - 1, point 6 of s, b)
-  else:
-    a -- b
-  fi
-enddef;
-path S; S = rattle(4, origin, 360 right);
-\end{smallcode}
-}}
+flow-snake on the left was created with
+\smallmpexternal[firstline=18,lastline=38]{rec-flowsnake.mp}
+\vskip -48pt}}
 
 \newpage
 \subsection{Fractal trees}
@@ -6020,65 +5882,24 @@ slightly different technique.  There is no simple way to represent the tree as a
 \<path> because a path cannot have branches, so
 you need to draw each segment separately instead of trying to join them up. Compare
 this to the \mpl{rattle} routine on the page before.
-\begin{code}
-vardef make_tree(expr level, bar) = 
-  draw bar;
-  if level > 0:
-    for t=-theta, theta:
-      make_tree(level - 1, bar shifted - point 0 of bar 
-        scaled r rotated t shifted point 1 of bar);
-    endfor
-  fi
-enddef;
-\end{code}
+\mpexternal[firstline=7,lastline=16]{rec-simple-tree.mp}
+\noindent
 To combine several such trees in a drawing either move the initial \id{bar} path, or
 capture the tree as a \<picture> using \mpl{image(make_tree(...))}, like so:
-\begin{code}
-picture T[]; numeric r, theta;
-r = 0.58; theta = 60; T1 = image(
-  make_tree(3, origin -- 100 up); 
-);
-% update r and theta...
-r := 0.75; theta := 14; T2 = image(
-  make_tree(10, origin -- 100 up);
-);
-draw T1 shifted 32 up; 
-draw T2 shifted 128 right;
-\end{code}
+\mpexternal[firstline=18,lastline=26]{rec-simple-tree.mp}
+\noindent
 Notice that $r$ and $\theta$ are treated as global constants.  You could pass them
 to the \mpl{make_tree} routine instead.  Notice also that the smaller tree only has
-three levels, but the larger one has 10.  And that the labels were omitted.
+three levels, but the larger one has 10.
 
 \newpage
-\subsubsection{More fractal vegetation}
+\subsubsection*{More fractal vegetation}
 
 \textsc{If you are more interested} in the visual aspect of your tree than the
 mathematical, you can tweak the \mpl{make_tree} routine a
 bit.\mpic{-12pt}{rec-general-tree}
-\begin{smallcode}[xleftmargin=0pt]
-vardef make_tree(expr bar) = 
-  save a; numeric a; a = abs(point 1 of bar - point 0 of bar);
-  cutdraw bar withpen pencircle scaled 1.2(1/8 a) withcolor background;
-  cutdraw bar withpen pencircle scaled (1/8 a) withcolor 1/256(57, 35, 32);
-  if a > leaf:
-    save s; pair s; 
-    s = 1/32 a * r * unitvector(direction 1 of bar) rotated 90;
-    make_tree(bar shifted - point 0 of bar 
-      shifted s scaled r rotated theta
-      shifted point 1 of bar);
-    make_tree(bar shifted - point 0 of bar 
-      shifted -s scaled r rotated -theta
-      shifted point 1 of bar);
-  else:
-    draw point 1 of bar withpen pencircle scaled 1 withcolor 2/3 green;
-  fi
-enddef;
-beginfig(1);
-  numeric leaf, r, theta;
-  r = 0.75; theta = 14; leaf = 3; 
-  make_tree(origin -- 100 up);
-endfig;
-\end{smallcode}
+\smallmpexternal[firstline=6,lastline=31,xleftmargin=0pt]{rec-general-tree.mp}
+\noindent
 \begin{itemize}
     \item The recursion is controlled by measuring the length of the branches instead
         of using a \id{level} parameter.
@@ -6090,7 +5911,7 @@ endfig;
 \end{itemize}
 
 \newpage
-\subsubsection{Randomized recursive plants}
+\subsubsection*{Randomized recursive plants}
 
 \vskip-\baselineskip
 \noindent\hbox to \linewidth{\includegraphics{rec-general-tree-deviate}\hss}
@@ -6100,26 +5921,13 @@ endfig;
 Strictly these are not fractal because they are not
 self-similar. The only change from the previous \mpl{make_tree} was to replace
 \mpl{scaled r rotated theta} with 
-\begin{smallcode}
-scaled (r + 1/16 normaldeviate) rotated (theta + 8 normaldeviate) 
-\end{smallcode}
+\smallmpexternal[firstline=17,lastline=17,xleftmargin=0pt]{rec-general-tree-deviate.mp}
 
-\smallskip\noindent
+\vfill\noindent
 \textsc{The bush} is similar, except that it splits into four branches at each step instead of
 two and only the lengths are randomized.\mwpic{-96pt}{rec-bush}
 The colouring was a happy accident.
-\begin{smallcode}[xleftmargin=0pt, xrightmargin=-100pt]
-input colorbrewer-rgb
-vardef bush(expr start, aim, level, limit) = 
-  save s, target; numeric s; pair target; s = level / limit;
-  for a = -32, -8, 8, 16:
-    target = aim scaled ((64 + 32 normaldeviate) * s) rotated a shifted start;
-    draw start -- target withpen pencircle scaled s withcolor BrBG[limit][limit-level];
-    if level > 1: bush(target, aim rotated a, level - 1, limit); fi
-  endfor
-enddef;
-beginfig(1); bush(origin, dir 80, 6, 8); endfig;
-\end{smallcode}
+\mpexternal[firstline=8,lastline=17,xleftmargin=0pt,xrightmargin=-150pt]{rec-bush.mp}
 
 \newpage
 \section{Periodic tilings}
@@ -6135,30 +5943,12 @@ This section loosely follows that idea, and presents some ideas and general
 techniques for creating tilings and other patterns or textures. ——
 You can make an effective grid by drawing repeated lines and then clipping to the
 size you want:\mpic{-42pt}{tiling-simple}
-\begin{code}
-for i = -10 upto 10:
-    draw (left--right) scaled 200 shifted (0, 20i);
-    draw (down--up) scaled 200 shifted (20i, 0);
-endfor
-clip currentpicture to fullcircle scaled 200;
-\end{code}
+\mpexternal[firstline=8,lastline=12,xleftmargin=0pt,xrightmargin=-12pt]{tiling-simple.mp}
+\noindent
 but this is a bit limited.  If you want to produce more interesting periodic 
 tilings, you need to define a unit shape or picture, and a pair of vectors to repeat it.
-\begin{code}
-path unit; pair u, v; color a, b; 
-unit = unitsquare scaled 24;
-u = point 1 of unit - point 0 of unit;
-v = point 3 of unit - point 0 of unit;
-a = 3/4[red, white]; b = 3/4[blue, white];
-for i=-5 upto 5:
-  for j=-5 upto 5:
-    fill unit shifted (i*u + j*v) 
-      withcolor if odd (i+j): a else: b fi;
-    draw unit shifted (i*u + j*v);
-  endfor
-endfor
-clip currentpicture to fullcircle scaled 200;
-\end{code}
+\mpexternal[firstline=16,lastline=28,xleftmargin=0pt,xrightmargin=-12pt]{tiling-simple.mp}
+\noindent
 In tilings with more complex shapes you may find that using \mpl{fill} and
 \mpl{draw} in the same loop causes uneven lines because the fill overlaps part of
 the line.  In these cases it is a good idea to duplicate the loops; use the first
@@ -6174,23 +5964,14 @@ previous page except
 that the vectors $u$ and $v$ are now at 60° to each other (as shown in blue and
 red in the examples to the right). All of these examples where drawn with the same 
 basic loop as before:
-\begin{code}
-for i = -n upto n:
-  for j = -n upto n:
-    draw P shifted (i * u + j * v);
-  endfor
-endfor;
-\end{code}
+\mpexternal[firstline=11,lastline=15,xleftmargin=0pt]{tiling-hex-trig.mp}
+\noindent
 In the first row, $P$ was set to a simple polygon path:
-\begin{code}
-triangle = for i=0 upto 2: (0, 16) rotated 120i -- endfor cycle;
-hexagon  = for i=0 upto 5: (0, 16) rotated  60i -- endfor cycle;
-\end{code}
+\mpexternal[firstline=28,lastline=29,xleftmargin=0pt]{tiling-hex-trig.mp}
+\noindent
 The vectors $u$ (in red) and $v$ (in blue) were defined as (for both tilings):
-\begin{code}
-u = point 0 of triangle - point 1 of triangle;
-v = u rotated -60;
-\end{code}
+\mpexternal[firstline=31,lastline=32,xleftmargin=0pt]{tiling-hex-trig.mp}
+\noindent
 To make the coloured versions, $P$ was defined as an appropriate \<picture>. 
 For the triangular tiling, it looked like this: $\vcenter{
 \begin{mplibcode}
@@ -6233,98 +6014,33 @@ tiling is the dual of the other.
 
 \textsc{Repeating a unit image} can sometimes cause unwanted overlaps, so as noted
 above, the solution is to make a filler unit and a drawing unit and do the filling
-first and the drawing second.  In this example\mwpic{-32pt}{arch-4-8-8} the drawing
+first and the drawing second.  In this example\mwpic{-32pt}{tiling-arch-4-8-8} the drawing
 unit (the octagon) is simple so you can just draw that path instead of making another
 \<picture> for it.
-\begin{smallcode}
-input colorbrewer-rgb
-path o, r[];  % o is the octagon, r[] are the "corners"
-o = (for i=0 upto 7: 21 dir 45i -- endfor cycle) rotated -90/4;
-pair t; t = whatever[point 0 of o, point 1 of o]
-          = whatever[point 2 of o, point 3 of o];
-r1 = subpath (1,2) of o -- t -- cycle;
-r2 = r1 rotated 90;
-r3 = r2 rotated 90;
-r4 = r3 rotated 90;
-picture filler; filler = image(
-    filldraw r1 withcolor Reds 8 3;
-    filldraw r3 withcolor Reds 8 3;
-    filldraw r2 withcolor Blues 8 3;
-    filldraw r4 withcolor Blues 8 3;
-    filldraw o withcolor Purples 8 2;
-);
-pair u, v;
-u = point 0 of o - point 5 of o; v = u rotated 90;
-beginfig(1);
-numeric n;  n = 5;
-for i=-n upto n:
-    for j=-n upto n:
-        draw filler rotated ((i+j) mod 2 * 90) shifted (i*u + j * v);
-    endfor
-endfor
-for i=-n upto n:
-    for j=-n upto n:
-        draw o shifted (i*u + j * v);
-    endfor
-endfor
-\end{smallcode}
+\mpexternal[firstline=5,lastline=31]{tiling-arch-4-8-8.mp}
+\noindent
 Rotating every other \mpl{filler} allows you to get the alternate colours in the squares.
-\mpic{-60pt}{arch-4-8-8-parts}%
+\mpic{-60pt}{tiling-arch-4-8-8-parts}%
 Using \mpl{filldraw} ensures that there are no gaps between adjacent segments.
 
 \newpage
 \subsection{Tilings with more complex patterns}
 
-\textsc{The next example} also uses the square lattice,\mwpic{0pt}{arch-3-4-3-4}
+\textsc{The next example} also uses the square lattice,\mwpic{0pt}{tiling-arch-3-4-3-4}
 but the unit is more complicated, so the drawing needs two \<picture>
 variables, one for the colour fill and a second for the grid.  
-\begin{smallcode}
-input colorbrewer-rgb
-path s[], t[];
-s1 = unitsquare scaled 21 rotated 15; 
-s2 = s1 rotated 150;
-t1 = subpath (4, 3) of s1 -- point 1 of s2 -- cycle;
-t2 = t1 reflectedabout(point 1 of t1, point 2 of t1);
-t3 = t1 rotated 150;
-t4 = t1 rotated 210;
-picture color_unit, grid_unit;
-color_unit = image(
-    fill s1 withcolor Oranges 8 1;
-    fill s2 withcolor Oranges 8 2;
-    fill t1 withcolor Blues 8 1;
-    fill t2 withcolor Blues 8 2;
-    fill t3 withcolor Blues 8 3;
-    fill t4 withcolor Blues 8 4;
-);
-grid_unit = image(
-    draw s1; draw s2; 
-    draw t2; draw t3; draw t4;
-);
-pair u, v;
-u = point 1 of s1 - point 1 of s2;
-v = u rotated 90;
-numeric n; n = 4;
-forsuffixes $=color_unit, grid_unit:
-    for i=-n upto n:
-        for j=-n upto n:
-            draw $ shifted (i * u + j * v);
-        endfor
-    endfor
-endfor
-\end{smallcode}
-
-
+\mpexternal[firstline=7,lastline=36,xleftmargin=0pt]{tiling-arch-3-4-3-4.mp}
 
 \newpage
 \subsection{Showing the dual tiling}
 
 \textsc{These tilings can be classified} by the configuration of the polygons that meet
 at each vertex.  This one is $(3^4, 6)$ because each vertex has four triangles and one
-hexagon. It exists in two enantiomorph forms.\mxpic{-80pt}{3.6in}{arch-snub-hexagon}
+hexagon. It exists in two enantiomorph forms.\mxpic{-80pt}{3.6in}{tiling-arch-snub-hexagon}
 The unit pictures look like this:
 \par\bigskip
 \vbox{\halign{#&\qquad\qquad\vbox to 48pt{\hsize=2.7in\noindent #\par\vss}\cr
-\includegraphics[scale=0.75]{arch-snub-hexagon-unit}
+\includegraphics[scale=0.75]{tiling-arch-snub-hexagon-unit}
 &\hey\itshape To reveal the dual of the tiling, you can draw a line from 
 the median (or centroid if you prefer) of each polygon to the centre of each
 edge.\cr}}
@@ -6333,23 +6049,8 @@ edge.\cr}}
 \noindent They are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
 triangles surrounding it, and $t_7$ \& $t_8$ are the two “connecting” triangles,
 which swap sides to make the enantiomorphs.
-\begin{code}
-unit[k] = image(
-  for i=1 upto 6:
-    fill t[i] withcolor Blues 8 if odd i: 2 else: 3 fi;
-  endfor
-  for i=7 upto 8:
-    fill t[i] withcolor Oranges 8 if odd i: 3 else: 2 fi;
-  endfor
-  fill h withcolor Oranges 8 2;
-  forsuffixes S=h, t1, t2, t3, t4, t5, t6, t7, t8:
-    draw S withpen pencircle scaled 1/4 withcolor 3/4;
-    pair m; m = median(S);
-    for i=1 upto length S:
-      draw m -- point i - 1/2 of S withcolor 3/4;
-    endfor
-  endfor);
-\end{code}
+\mpexternal[firstline=15,lastline=30,xleftmargin=0pt]{tiling-arch-snub-hex-parts.mp}
+\noindent
 The $\id{median}()$ routine is from §\ref{polygons-given-side} and the colours are from 
 §\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
 from §\ref{sec:regtiling}.
@@ -6359,36 +6060,9 @@ from §\ref{sec:regtiling}.
 
 \textsc{In order to reveal} patterns in a tiling, you might want to vary the colours
 or line styles used in each repeated drawing unit.  In this case, you can write a
-macro that takes a parameter and returns a picture to draw.\mwpic{-36pt}{arch-3-4-6-4}
-
-\begin{smallcode}
-def withalpha expr a =  % <-- this requires luamplib
-    withprescript "tr_alternative=2"
-    withprescript "tr_transparency=" & decimal a
-enddef;
-input colorbrewer-rgb
-numeric r; r = 5;
-path d; d = for i=1 upto 12:
-    (0, r) shifted (r * (sqrt(3)+2), 0) rotated 30i -- 
-endfor cycle;
-color shade[]; 
-shade0 = Oranges 8 3;  shade2 = Greens 8 3;
-shade1 = Blues 8 3;    shade3 = Reds 8 3;
-vardef unit(expr n) = image(
-    fill d withalpha 0.9 withcolor shade[n mod 4];
-    draw d; 
-) enddef;
-pair u, v;
-u = point 0 of d - point 3 of d;
-v = u rotated 60;
-numeric n; n = 6;
-for i=-n upto n:
-    for j=-n upto n:
-        draw unit(i*j) shifted ((i - floor(j / 2)) * u + j * v);
-    endfor
-endfor
-clip currentpicture to unitsquare shifted -(1/2, 1/2) scaled (n * 9 r);
-\end{smallcode}
+macro that takes a parameter and returns a picture to draw.\mwpic{-48pt}{tiling-arch-3-4-6-4}
+\smallmpexternal[firstline=6,lastline=30]{tiling-arch-3-4-6-4.mp}
+\noindent
 Instead of defining six triangles, six squares, and a hexagon, you can just define
 the dodecagon and overlap each one.  Using a macro to create the unit, allows you to
 choose a different colour for each filler. Using the transparency support from
@@ -6402,28 +6076,8 @@ so good, so you need to clip the whole picture to a neat square.
 Shephard, chapter 8, and is shown here coloured with three colours so that no two
 squares with the same colour touch each other.\mpic{-12pt}{tiling-pp48a}
 
-\begin{code}
-input colorbrewer-rgb
-beginfig(1);
-numeric r, s; s = 9; r = 2s * (sind(75)-sind(45));
-path a; a = unitsquare rotated -45 scaled s shifted (r, 0);
-picture unit; unit = image(
-    for t=0 upto 5:
-        fill a rotated 60t withcolor Spectral[6][t mod 3 + 3];
-        draw a rotated 60t;
-    endfor
-);
-pair u, v;
-u = (2s * sind(75), 0); u := u + u rotated 60; u := u rotated 60;
-v = u rotated 60;
-numeric n; n = 5;
-for i = -n upto n:
-    for j = -n upto n:
-        draw unit shifted (i*u + j*v - floor(j/2)*u);
-    endfor
-endfor
-endfig
-\end{code}
+\mpexternal[firstline=7,lastline=26,xleftmargin=0pt]{tiling-pp48a.mp}
+\noindent
 The points of interest here are
 \begin{itemize}
     \item The use of the \mpl{sind} function to position the square in the unit so

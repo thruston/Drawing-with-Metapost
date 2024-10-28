@@ -9,8 +9,7 @@ P1 = image(
     draw (left--right) scaled 200 shifted (0, 20i);
     draw (down--up) scaled 200 shifted (20i, 0);
   endfor
-  clip currentpicture to fullcircle scaled 180;
-  draw fullcircle scaled 180;
+  path c; c = fullcircle scaled 180; clip currentpicture to c; draw c;
 );
 
 P2 = image(
@@ -23,15 +22,10 @@ P2 = image(
     for j=-5 upto 5:
       fill unit shifted (i*u + j*v) 
         withcolor if odd (i+j): a else: b fi;
+      draw subpath (-1,1) of unit shifted (i*u + j*v);
     endfor
   endfor
-  for i=-5 upto 5:
-    for j=-5 upto 5:
-      draw subpath (0,2) of unit shifted (i*u + j*v);
-    endfor
-  endfor
-  clip currentpicture to fullcircle scaled 180;
-  draw fullcircle scaled 180;
+  path c; c = fullcircle scaled 180; clip currentpicture to c; draw c;
 );
 undraw (left--right) scaled 2in;
 draw P1; draw P2 shifted 200 down;

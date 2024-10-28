@@ -15,37 +15,6 @@ snake := snake shifted - point 0 of h3;
 snake := snake rotated - angle (point 0 of h5 - point 0 of h3);
 snake := snake scaled (1 / length (point 0 of h5 - point 0 of h3));
 
-vardef hexon(expr a, b) = 
-    pair c, m; 
-    c = b rotatedaround(a, 60);
-    m = 2/3[c, 1/2[a, b]];
-    a -- a rotatedaround(m, 60) --
-    b -- b rotatedaround(m, 60) --
-    c -- c rotatedaround(m, 60) -- cycle
-enddef;
-
-path w; 
-w = origin -- right;
-w := w -- point 0 of w rotatedabout(point 1 of w, 120);
-w := w -- point 1 of w rotatedabout(point 2 of w, -120);
-w := w rotated - angle (point 3 of w - point 0 of w);
-w := w scaled (1/abs (point 3 of w - point 0 of w));  
-
-pair a, b; 
-a = 144 down rotated -60; 
-b = 144 down rotated +60;
-numeric n; n = 4;
-
-path boundary; 
-boundary = hexon(a, b);
-for i = 1 upto n:
-    boundary := for t = 1 upto length boundary:
-        subpath (0, 2) of w 
-        zscaled (point t of boundary - point t-1 of boundary)
-        shifted point t-1 of boundary -- endfor cycle;
-endfor
-
-
 vardef rattle(expr level, a, b) = 
   if level > 0:
     save s; path s; s = snake zscaled (b-a) shifted a;
@@ -61,9 +30,11 @@ vardef rattle(expr level, a, b) =
   fi
 enddef;
 beginfig(1);
-    path s; s = rattle(n, a, b);
-    fill a + (-40, 0) -- s -- b + (40, 0) --
-         b + (40, 224) -- a + (-40, 224) -- cycle withcolor 3/4[1/4 blue, white];
+  pair a, b; path s;
+  a = 124 left; b = 124 right; s = rattle(4, a, b);
+  fill s -- b + (40, 0) -- b + (40, 224) 
+         -- a - (40, -224) -- a - (40,0) -- cycle
+         withcolor 3/4[1/4 blue, white];
 endfig;
 \end{mplibcode}
 \end{document}
