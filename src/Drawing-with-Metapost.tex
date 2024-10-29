@@ -3,9 +3,9 @@
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
  
-\loop\iftrue 
-\errmessage{This manual is copyrighted and should not be compiled as is.}
-\repeat
+% \loop\iftrue 
+% \errmessage{This manual is copyrighted and should not be compiled as is.}
+% \repeat
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
@@ -465,9 +465,9 @@ $$\includegraphics[width=0.66\textwidth]{closed-polygon-tops.pdf}$$
 \hey Note also that some extra care is required to find the centres of these shapes. The
 \mpl{center} macro defined in "plain.mp" gives you the centre of the bounding box,
 but this is not the same as the centre of the polygon when the number of sides is
-odd.  What you need instead is the geometric median:
+odd.  What you need instead is the geometric center or \textit{centroid}:
 \begin{code}
-vardef median primary p = 
+vardef centroid primary p = 
   origin for i=1 upto length p: + point i of p / length p endfor
 enddef;
 \end{code}
@@ -491,8 +491,7 @@ rather than working out how to rotate and shift it into place.
 $$\includegraphics[width=0.9\textwidth]{closed-polygon-chain.pdf}$$
 Here is a way to do that using the “\mpl{of}” syntax in the macro construction \rightarrowfill
 \vadjust{\moveright 384pt\vbox to 0pt{\vss
-\smallmpexternal[firstline=2,lastline=10]{archimedean-tools.mp}
-\smallmpexternal[firstline=8,lastline=15]{closed-polygon-chain.mp}
+\smallmpexternal[firstline=6,lastline=22]{closed-polygon-chain.mp}
 \vskip -42pt}}
 
 \newpage\subsection{Curved polygons}
@@ -1879,19 +1878,18 @@ $$\includegraphics[width=4in]{geometry-mediation-sallows}$$
 \centerline{\textsl{Lee Sallows' theorem of median triangles}}
 \vss}
 \noindent
-The best way to bisect a line depends on how you have defined it.
-If you have two pairs $a$ and $b$, then the simplest way to find
-the pair that bisects them is to write "1/2[a,b]".  This mediation
-mechanism is entirely general, so you can write \mpl{1/3[a,b]}, "1/4[a,b]", and
+\textsc{The best way to bisect} a line depends on how you have defined it.
+If you have two \<pair>s $a$ and $b$, then the simplest way to find
+the \<pair> that bisects them is to write "1/2[a,b]".  This mediation
+mechanism is entirely general, so you can write "1/3[a,b]", "1/4[a,b]", and
 so on to define other pairs that are part of the way from $a$ to $b$.
-The expression "0[a,b]" is equal to $a$, and "1[a,b]" is equal to $b$;
-but the number before the left bracket does not have to
+But the number before the left bracket does not have to
 be confined to the range $(0,1)$.  If you write "3/2[a,b]" you will get a pair on
 the extension of the line from $a$ to $b$ beyond $b$.  To get a pair going the
 other way you can either reverse $a$ and $b$, or use a negative number; but don't
 get caught out by the \MP\ precedence rules:  "-1/2[a,b]" is interpreted as
 "-(1/2[a,b])" and not as "(-1/2)[a,b]", so either put in the parentheses or swap
-the order of the pairs: "(3/2)[b,a]". See $\longrightarrow$.
+the order of the pairs: "(3/2)[b,a]". See \rightarrowfill
 
 If you want to work with a \<path> variable, rather than separate \<pair>
 variables, you can
@@ -1904,25 +1902,24 @@ but for more complicated, curved paths you have to use this rather cumbersome no
 \begin{code}
     point arctime 1/2 arclength p of p of p
 \end{code}
-If your path is closed, and makes a triangle or a regular polygon,
-then you can bisect it with the line
+If your path makes a regular polygon, then you can bisect the shape with the line
 \begin{code}
     point t of p -- point t + 1/2 length p of p
 \end{code}
-\textbf{NB}: if the polygon has an odd number of sides, then $2t$ must be a whole
-number.
+\noindent
+\hey If the polygon has an odd number of sides, then $2t$ must be a whole number.
 
-\smallskip\noindent
-In a triangle these bisecting lines are called medians.  The three medians intersect
+\vfill\noindent
+\textsc{In a triangle} these bisecting lines are called medians.  The three medians intersect
 at the centroid of the triangle.  The centroid is a good place to put a label on a
-triangle.  You could find it \mpl{intersectionpoint} or with
+triangle.  You could find it using the macro from \ref{polygons}, or with
 a construction using \mpl{whatever} on any two medians, but since we know that the centroid
 divides each median in the ratio $2:1$ we can find the centroid of a triangle path
 $p$ most simply with:
 \begin{code}
     z0 = 2/3[point 0 of p, point 3/2 of p];
 \end{code}
-The median is the basis for several beautiful theorems about the geometry of the
+The median lines are the basis for several beautiful theorems about the geometry of the
 triangle. The theorem shown here was first published in 2014.
 
 \newpage
@@ -6042,16 +6039,16 @@ The unit pictures look like this:
 \vbox{\halign{#&\qquad\qquad\vbox to 48pt{\hsize=2.7in\noindent #\par\vss}\cr
 \includegraphics[scale=0.75]{tiling-arch-snub-hexagon-unit}
 &\hey\itshape To reveal the dual of the tiling, you can draw a line from 
-the median (or centroid if you prefer) of each polygon to the centre of each
+the centroid of each polygon to the centre of each
 edge.\cr}}
 
 \bigskip
 \noindent They are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
 triangles surrounding it, and $t_7$ \& $t_8$ are the two “connecting” triangles,
 which swap sides to make the enantiomorphs.
-\mpexternal[firstline=15,lastline=30,xleftmargin=0pt]{tiling-arch-snub-hex-parts.mp}
+\mpexternal[firstline=23,lastline=37,xleftmargin=0pt]{tiling-arch-snub-hex-parts.mp}
 \noindent
-The $\id{median}()$ routine is from §\ref{polygons-given-side} and the colours are from 
+The $\id{centroid}()$ routine is from §\ref{polygons} and the colours are from 
 §\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
 from §\ref{sec:regtiling}.
 
