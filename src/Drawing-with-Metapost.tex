@@ -3,9 +3,9 @@
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
  
-% \loop\iftrue 
-% \errmessage{This manual is copyrighted and should not be compiled as is.}
-% \repeat
+\loop\iftrue 
+\errmessage{This manual is copyrighted and should not be compiled as is.}
+\repeat
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
@@ -36,9 +36,8 @@
 \def\cycle{\textrm{cycle}}
 \def\vpic#1#2{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}
 \def\mpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics{#2}}\vss}}}
-\def\mnote#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\noindent #2\par\vss}}}
 \def\mwpic#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=4in]{#2}}\vss}}}
-\def\mxpic#1#2#3{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\centerline{\includegraphics[width=#2]{#3}}\vss}}}
+\def\mnote#1#2{\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip#1\noindent #2\par\vss}}}
 \def\nb{$\vcenter{\begin{mplibcode}
 for t=0 upto 3: fill unitsquare scaled 4 shifted right shifted up rotated 45 rotated 90t;
 endfor currentpicture := currentpicture scaled 1/2; \end{mplibcode}}$\ }
@@ -73,7 +72,7 @@ endfor currentpicture := currentpicture scaled 1/2; \end{mplibcode}}$\ }
 0pt{\vskip23pt\noindent\sffamily{\Large\bfseries\@title}\par\bigskip
     \noindent\@author\ --- \@date\par
     \bigskip\noindent
-    \includegraphics{archimedes.pdf}
+    \includegraphics{tiling-archimedes}
 \vss}
 \makeatother
 \thispagestyle{empty}
@@ -125,7 +124,7 @@ or later (the latest version is presently available at
         current scope”; the assignment "a:=3;" means “update the value of "a" to the value "3"
         immediately”.  The difference becomes apparent when you try to update a
         variable in the same scope.
-        \mwpic{0pt}{tiling}
+        \mwpic{-64pt}{tiling-arch-hexagon}
 
         This difference also lets you write linear equations
         like "a=-b;".  After this, as soon as you give  a value to "a", \MP\ immediately works
@@ -225,7 +224,7 @@ where "!" means “this is an external command” and the "%" picks up the curre
 name.  Usually I need several attempts to get a diagram right, so I open Skim to preview the
 output. 
 \vadjust{\moveright5.4in\vbox to 0pt{\vss\hsize 4in\noindent
-$$\includegraphics[width=4in]{workflow-plain.pdf}$$
+$$\includegraphics[width=4in]{workflow-plain}$$
 Until recent (2024) versions of Mac~OS, it was possible to get Skim to view the
 PostScript output directly, with automatic updates on recompile,
 but the conversion from PostScript no longer works properly, so 
@@ -294,7 +293,7 @@ modern machine this is not really an issue any more.
 \label{plain-shapes}
 
 In \MP\ there are two sorts of paths: open and closed.
-\mpic{-12pt}{closed-triangles}
+\mpic{-12pt}{paths-triangles}
 A closed path is called a cycle, and is created with the \mpl{cycle} primitive like this:
 \begin{code}
 path t; t = origin -- (55,0) -- (55,34) -- cycle;
@@ -306,7 +305,7 @@ path u; u = origin {right} .. (55,0) .. (55,34) .. {-2,-1} origin;
 \end{code}
 then $u$ would be an open path even though the last point is the same as the
 first.  Any path that does not have \mpl{cycle} at the end is an open
-path.\mpic{-12pt}{open-triangle}
+path.\mpic{-12pt}{paths-open-triangle}
 
 You can use \mpl{draw} with either sort of path, but you can only use \mpl{fill} with a
 cycle.  This concept is common to most drawing languages but it’s often hidden:  an
@@ -347,7 +346,7 @@ point.
 \subsection{Predefined closed paths}
 
 There are several closed paths defined for you in plain \MP.
-\mpic{-36pt}{closed-standards}
+\mpic{-36pt}{paths-standards}
 \begin{itemize}
     \item "unitsquare" is defined as the path
         \mpl{(0,0)--(1,0)--(1,1)--(0,1)--cycle}.  It runs counter-clockwise from the
@@ -371,7 +370,7 @@ path s;
 s = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down, 13/16);
 \end{code}
         to create a ‘unit’ shape that matches \mpl{fullcircle} as shown above.
-        The fifth parameter is the ‘superness’: the value \mpic{-132pt}{closed-superellipses}
+        The fifth parameter is the ‘superness’: the value \mpic{-132pt}{paths-superellipses}
         1 makes it look almost square; $\frac12$ gives you a diamond; a value somewhere
         between $\frac34$ and $\frac78$ looks about right.\quad$\longrightarrow$\\
         Values outside the range $(0.5,1)$ give you rather weird propeller
@@ -389,7 +388,7 @@ s = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down, 13/16);
 
 \newpage\subsection{Points on the standard closed paths}
 
-\noindent\mpic{-10pt}{closed-points}%
+\noindent\mpic{-10pt}{paths-points}%
 \textsc{Here are the three shapes} centred on the origin and labelled to show the points
 along them.  \textbf{Note} that the \textit{unitsquare} shape has been shifted so that it is
 centred on the origin in all of these examples.  The small red circle marks the
@@ -437,9 +436,9 @@ drawarrow subpath(1/2, length p + 1/2) of p;
 \newpage
 \subsection{Regular polygons of a given radius}\label{polygons}
 
-\noindent\mpic{-10pt}{closed-polygons}%
+\noindent\mpic{-10pt}{paths-polygons}%
 \textsc{Regular polygons} with a given radius can be defined or drawn directly with a simple inline loop:
-\vadjust{\moveright -60pt \vbox to 0pt{\vskip-3pt\includegraphics{little-hexagon.pdf}\vss}}
+\vadjust{\moveright -60pt \vbox to 0pt{\vskip-3pt\includegraphics{paths-little-hexagon}\vss}}
 \begin{code}
 draw for i=0 upto 5: 20 dir 60i -- endfor cycle;
 \end{code}
@@ -461,7 +460,7 @@ vardef polygon(expr n, r) =
     for i=0 upto n-1: (0, r) rotated (360/n * i) -- endfor cycle 
 enddef;
 \end{code}
-$$\includegraphics[width=0.66\textwidth]{closed-polygon-tops.pdf}$$
+$$\includegraphics[width=0.66\textwidth]{paths-polygon-tops}$$
 \hey Note also that some extra care is required to find the centres of these shapes. The
 \mpl{center} macro defined in "plain.mp" gives you the centre of the bounding box,
 but this is not the same as the centre of the polygon when the number of sides is
@@ -477,21 +476,21 @@ label the vertices neatly, as shown above, see §\ref{sec:new-dynamic}.
 \newpage
 \subsection{Regular polygons of a given side length}\label{polygons-given-side}
 But you might want a polygon with a fixed side instead of a fixed radius. This needs
-a little trigonometry, using the sine rule:\mpic{-60pt}{closed-fixed-polygon}
-\smallmpexternal[firstline=7, lastline=11]{closed-fixed-polygon.mp}
+a little trigonometry, using the sine rule:\mpic{-60pt}{paths-fixed-polygon}
+\smallmpexternal[firstline=7, lastline=11]{paths-fixed-polygon.mp}
 \noindent
 Which you can use like this to produce a nest of polygons \rightarrowfill
-\smallmpexternal[firstline=12, lastline=16]{closed-fixed-polygon.mp}
+\smallmpexternal[firstline=12, lastline=16]{paths-fixed-polygon.mp}
 
 \vfill
 \noindent
 These polygon paths are centred on $(0, 0)$ but
 sometimes it is more convenient to construct a polygon on a known segment
 rather than working out how to rotate and shift it into place.  
-$$\includegraphics[width=0.9\textwidth]{closed-polygon-chain.pdf}$$
+$$\includegraphics[width=0.9\textwidth]{paths-polygon-chain}$$
 Here is a way to do that using the “\mpl{of}” syntax in the macro construction \rightarrowfill
 \vadjust{\moveright 384pt\vbox to 0pt{\vss
-\smallmpexternal[firstline=6,lastline=22]{closed-polygon-chain.mp}
+\smallmpexternal[firstline=6,lastline=22]{paths-polygon-chain.mp}
 \vskip -42pt}}
 
 \newpage\subsection{Curved polygons}
@@ -504,8 +503,8 @@ also adjust the directions at the corners to make a variety of closed polygon sh
 with closed edges.  
 
 One of the most pleasing is the Reuleaux polygon, with circular arcs for edges.
-$$\includegraphics[width=0.9\textwidth]{closed-reuleaux-set.pdf}$$
-The figure on the right attempts to explain the geometry.\mwpic{-160pt}{closed-reuleaux-geometry}
+$$\includegraphics[width=0.9\textwidth]{paths-reuleaux-set}$$
+The figure on the right attempts to explain the geometry.\mwpic{-160pt}{paths-reuleaux-geometry}
 \begin{code}
 vardef reuleaux(expr n, r) =
   save a; numeric a; a = 90/n;
@@ -516,16 +515,16 @@ enddef;
 \end{code}
 If you swap the directions at each point you get shapes that are not quite like
 hypocycloids; play about a bit more to get flower shapes or windmills.
-$$\includegraphics[width=0.9\textwidth]{closed-antireuleaux-set.pdf}$$
+$$\includegraphics[width=0.9\textwidth]{paths-antireuleaux-set}$$
 
 \newpage
 \subsection{A triangle of Schläfli polygons}\label{sec:gcd}
 
 Apart from the curious polygon patterns in the display, the main \MP\ point of interest
 is the recursive "gcd" macro to find the greatest common
-divisor.\mpic{-108pt}{closed-schlafli-polygons}
+divisor.\mpic{-108pt}{paths-schlafli-polygons}
 
-\mpexternal[firstline=6,lastline=26]{closed-schlafli-polygons.mp}
+\mpexternal[firstline=6,lastline=26]{paths-schlafli-polygons.mp}
 
 \noindent
 The macro also leads directly to an efficient way to find the least common multiple:
@@ -541,7 +540,7 @@ overflow.
 Plain \MP\ has a built-in function to compute the intersection points of two paths, and
 there’s a handy high level function called "buildcycle" that uses this function to
 create an arbitrary closed path.
-\mpic{-36pt}{closed-area-under-graph}
+\mpic{-36pt}{paths-area-under-graph}
 The arguments to the function are just a list of paths, and providing the paths all
 intersect sensibly, it
 returns a closed path that can be filled or drawn.  This is often used for colouring an
@@ -549,7 +548,7 @@ area under a function in a graph.
 Here is an example. The red line has been defined
 as path "f" and the two axes as paths "xx", and "yy".  The light blue area was defined
 with
-\mpexternal[firstline=18,lastline=18]{closed-area-under-graph.mp}
+\mpexternal[firstline=18,lastline=18]{paths-area-under-graph.mp}
 \noindent
 Note the re-use of the $y$-axis path shifted along by different amounts.
 
@@ -558,7 +557,7 @@ There are similar examples in the \MP\ manual, but "buildcycle" can also
 be useful in more creative graphics.
 Here’s a second example that uses closed paths to give an illusion of depth to a simple
 graphic of the planet Saturn.
-\mpic{0pt}{closed-saturn}
+\mpic{0pt}{paths-saturn}
 \marginpar{\hbox{}\vskip1.3in\raggedright\noindent\textbf{Notes}\begin{itemize}
     \item The first five paths are just circles and ellipses based on \mpl{fullcircle}.
     \item The drawing is done inside an \mpl{image} simply so that the final result can
@@ -569,7 +568,7 @@ graphic of the planet Saturn.
         all run in the same direction.  Note that \mpl{subpath (8,4) of globe} runs
         clockwise (that is backwards) from point 8 to point 4.
 \end{itemize}}
-\mpexternal[firstline=7,lastline=23]{closed-saturn.mp}
+\mpexternal[firstline=7,lastline=23]{paths-saturn.mp}
 
 \newpage\subsection{The implementation of \texttt{buildcycle}}
 \textsc{The implementation} of \mpl{buildcycle} in plain \MP\ is interesting for a number of
@@ -641,9 +640,9 @@ be contained within the other.  This is explored in the next section.
 \subsection{Strange behaviour of \texttt{buildcycle} with two closed paths}
 
 The implementation of "buildcycle" in plain \MP\ can get confused if you use it with
-just two paths.  Consider the following example: \mpic{0pt}{overlaps-missing-filler}
+just two paths.  Consider the following example: \mpic{0pt}{paths-overlaps-missing-filler}
 
-\mpexternal[firstline=7,lastline=14]{overlaps-missing-filler.mp}
+\mpexternal[firstline=7,lastline=14]{paths-overlaps-missing-filler.mp}
 
 When we compile this example, we get no error message from "buildcycle", but there
 is no fill colour visible in the output.  The problem is that the points found by
@@ -652,7 +651,7 @@ the closed path it returns consists of two identical (or very close) points and 
 so the fill has zero area.
 
 Now observe what happens when we rotate and reverse each of the paths in
-turn.\mpic{-24pt}{overlaps-default-fillers}
+turn.\mpic{-24pt}{paths-overlaps-default-fillers}
 Number 1 corresponds to the example shown above; point~0 of~$A$ is inside the closed
 path $B$.  In~2 we have rotated path $A$ by 180° so that the start of path~$A$ is no
 longer inside $B$, and now "buildcycle" works ‘properly’ --- but this is the only
@@ -722,7 +721,7 @@ vardef overlap(expr a, b) =
 enddef;
 \end{smallcode}
 Using this "overlap" macro in place of "buildcycle" produces less surprising
-results.\mpic{-2in}{overlaps}
+results.\mpic{-2in}{paths-overlaps}
 
 \newpage
 \section{Numbers}
@@ -1076,7 +1075,7 @@ primarydef x ** y = 1 for n=1 upto y: * x endfor enddef;
 \newpage
 \section{Pairs, triples, and other tuples}
 
-\vpic{7pt}{random-selection}
+\vpic{7pt}{pairs-random-selection}
 
 \noindent
 \MP\ inherits a generalized concept of number from \MF\ that includes ordered pairs.
@@ -1141,7 +1140,7 @@ vardef z@#=(x@#,y@#) enddef;
 which you can use to find orthogonal points.
 
 \bigskip\noindent
-\includegraphics{random-function}
+\includegraphics{pairs-random-function}
 \vss}}%
 The deceptively simple definition of $\id{z}$ as a subscripted macro allows you to
 write "z1 = (10,20);" and have it automatically expanded into the equivalent of
@@ -1217,8 +1216,8 @@ However \MP\ does let you add (and subtract) two pairs, so complex addition and
 subtraction are just done with the
 normal operators.
 \vadjust{\moveright 384pt\vbox to 0pt{\vskip -3.74in
-$$\includegraphics{complex-operators}$$
-\mpexternal[firstline=6,lastline=30]{complex-operators.mp}
+$$\includegraphics{pairs-complex-operators}$$
+\mpexternal[firstline=6,lastline=30]{pairs-complex-operators.mp}
 \vss}}%
 To get the complex conjugate you
 could use "reflectedabout(left,right)", but it's probably easier just to write
@@ -1247,10 +1246,10 @@ Since multiplication by $z$ can be thought of as a transformation consisting of
 rotation by the argument of $z$ and scaling by $|z|$, you can define the complex
 inverse and complex square root simply using \mpl{angle} and \mpl{abs}.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -84pt
-\centerline{\includegraphics{complex-inverse-and-sqrt}}
+\centerline{\includegraphics{pairs-complex-inverse-and-sqrt}}
 \noindent
 The drawing uses the two functions defined on the left.
-\smallmpexternal[firstline=11,lastline=44,xleftmargin=0pt]{complex-inverse-and-sqrt.mp}
+\smallmpexternal[firstline=11,lastline=44,xleftmargin=0pt]{pairs-complex-inverse-and-sqrt.mp}
 \vss}}
 
 \smallskip\noindent
@@ -1263,7 +1262,7 @@ In other words you need to find a complex number with an argument that is the
 negative of the argument of $z$ and a modulus that will scale $|z|$ to 1.
 You can use the polar notation with "dir" to write this directly:
 
-\mpexternal[firstline=6,lastline=6]{complex-inverse-and-sqrt.mp}
+\mpexternal[firstline=6,lastline=6]{pairs-complex-inverse-and-sqrt.mp}
 
 The complex division, $z/w$, can now be done as: \mpl{z zscaled zinverse(w)}.
 The only difficulty with this function is how it deals with zero, or rather with
@@ -1283,7 +1282,7 @@ def zsqrt(expr z) = sqrt(abs z) * dir 1/2 angle z enddef;
 This function also has a difficulty with the point $(0,0)$, because "angle (0,0)" is
 not well defined, and so \MP\ throws an error.  If you want a function that
 correctly returns $(0,0)$ as its own square root, then try something like this:
-\mpexternal[firstline=7,lastline=9]{complex-inverse-and-sqrt.mp}
+\mpexternal[firstline=7,lastline=9]{pairs-complex-inverse-and-sqrt.mp}
 
 \newpage
 \subsubsection{Using complex numbers to draw fractals}
@@ -1292,9 +1291,9 @@ As an example of what you can do with complex arithmetic, here is a version of t
 diagram from §4.1 of Knuth's \textsl{Seminumerical Algorithms} showing $S$, the set
 of all points that can be written as $\sum_{k\ge1}a_k(i-1)^{-k}$.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -36pt
-\mpexternal[firstline=7,lastline=42,xleftmargin=0pt]{double-dragon.mp}
+\mpexternal[firstline=7,lastline=42,xleftmargin=0pt]{pairs-double-dragon.mp}
 \vss}}
-$$\includegraphics[width=\textwidth]{double-dragon.pdf}$$
+$$\includegraphics[width=\textwidth]{pairs-double-dragon}$$
 \vbox to 0pt{\noindent\small\textbf{Note}: you can adjust the “resolution” with the parameter $t$, but don't
 make it smaller than 1 if you are using the default number system; the diagram looks
 a bit strange unless $t$ is an integer power of 2.\vss}
@@ -1376,14 +1375,14 @@ cmykcolor black, white, red, green, blue;
 black = (0,0,0,1); white = (0,0,0,0);
 red = (0,1,1,0); green = (1,0,1,0); blue = (1,1,0,0);
 \end{smallcode}
-$$\includegraphics[width=0.7\textwidth]{blended-color-circles}$$
+$$\includegraphics[width=0.7\textwidth]{color-blended-circles}$$
 \hey The apparent blending of colours here is done by calculating the overlaps
 and filling them in order.  With plain "mpost", there is no support for transparency in any of the
 colour models; but "luamplib" gives you access to PDF transparency, see
 §\ref{sec:transparent}.
 
 \moveright 384pt\vbox to 0pt{\vss
-\mpexternal[firstline=9,lastline=41]{blended-color-circles.mp}
+\mpexternal[firstline=9,lastline=41]{color-blended-circles.mp}
 }
 \newpage
 \subsection{HSV colours}
@@ -1707,7 +1706,7 @@ $$\includegraphics{random-freehand-through}$$
 \noindent\llap{\nb\ }The AMS Euler font available to \MP\ as "eurm10" is encoded as a subset of the \TeX\
 math italic layout --- essentially it has all the Greek letters but none of the
 arrows, nor the musical notation.
-$$\includegraphics{euler-sampler}$$
+$$\includegraphics{trad-euler-sampler}$$
 If you can't get the upper case $\Gamma$ at \mpl{char 0}, then you might be running 
 an old out-of-date version of "luamplib".
 
@@ -2227,37 +2226,26 @@ complete circle of which they would be part; so if you did “\kw{draw}
 $(34.5,21)$ to $(34,21.5)$.
 
 \newpage
-\subsection{Incircle and excircle of a triangle}
+\subsection{Incircle and excircles of a triangle}
 
-The incircle of a triangle is the largest circle contained in the triangle.
+\textsc{The incircle of a triangle} is the largest circle contained in the triangle.
 The centre of the incircle lies at the intersection of the internal angle bisectors.
 So we can use ideas from §\ref{sec:bisect} and §\ref{sec:intersect} to define a
 macro that returns the required path given points $A$, $B$, and $C$:
-\mxpic{-1in}{5in}{geometry-incircle}
+\mpic{-1in}{geometry-incircle}
 \mpexternal[firstline=11,lastline=18]{geometry-incircle.mp}
 
-\bigskip\noindent
-The excircles of a triangle are the three circles lying outside the triangle and
+\vfill\noindent
+\textsc{The excircles of a triangle} are the three circles lying outside the triangle and
 tangent to one edge and the extensions of the other two.  The centres of each
 excircle lie at the intersection of one internal angle bisector and the external
 angle bisector of one of the other corners.
-
 To get the external angle bisector,
 all you have to do is reverse the direction of one of the \mpl{unitvector} calls 
 (can you see why?)
-\mxpic{0pt}{5in}{geometry-excircle}
-\begin{code}
-vardef excircle(expr A,B,C) =
-  save a, b, m, t; pair a, b, m, t;
-  a = A + unitvector (C-A) - unitvector (B-A);
-  b = B + unitvector (A-B) + unitvector (C-B);
-  m = whatever[A,a] = whatever [B,b]; t = whatever[A,B];
-  t-m = whatever * (B-A) rotated 90;
-  fullcircle scaled 2 abs (t-m) shifted m
-enddef;
-\end{code}
-
-\smallskip\noindent
+\mpic{-.5in}{geometry-excircle}
+\mpexternal[firstline=11,lastline=18]{geometry-excircle.mp}
+\noindent\hey
 To get the other excircles, call the macro with the points in a different order.
 
 \newpage
@@ -2269,7 +2257,7 @@ use the \mpl{circle_through} macro from §\ref{sec:circles}.  Or you can adapt t
 macro to take a single triangular path:
 \smallmpexternal[firstline=11,lastline=16,xleftmargin=0pt, xrightmargin=-60pt]{geometry-circumcircle.mp}
 \noindent
-Note that as the diagram on the right shows,\mxpic{-2in}{4.6in}{geometry-circumcircle}
+Note that as the diagram on the right shows,\mpic{-2in}{geometry-circumcircle}
 the centre of the circumcircle is the intersection of all three of the perpendicular bisectors of
 sides, but for the purposes of drawing in \MP\ you only need to find the
 intersection of two of them.  You could write 
@@ -2379,12 +2367,12 @@ segment.
 Note the elegant syntax here; if \mpl{z} is a \<pair> then the operation
 \mpl{zscaled z} is equivalent to \mpl{scaled abs z rotated angle z}.
 
-\vpic{-200pt\noindent Here is the macro in action.
+\moveright5.5in\vbox to 0pt{\hsize4in\vskip-200pt
+\noindent Here is the macro in action.
 Having obtained the two times $a$ and $b$ from the macro, the dashed line
-was drawn along a path that was composed with:
-\vrule depth 20pt width 0pt height 2pt
-\mpl{p -- subpath (a,b) of C -- cycle}
-}{geometry-tangent-times-on-circle}
+was drawn along a path that was composed with: \mpl{p -- subpath (a,b) of C -- cycle}
+$$\includegraphics{geometry-tangent-times-on-circle}$$
+\vss}
 
 \newpage
 \subsection{Lines tangent to two circles (exterior)}\label{sec:adjust-times}
@@ -3213,7 +3201,7 @@ labels are done with \mpl{infont}, but you just want one extra that has two line
 the text into two separate labels and position them independently.
 
 \newpage
-\subsection{Pins and braces}\label{sec:braces}
+\subsubsection{Pins and braces}\label{sec:braces}
 
 \textsc{In some awkward corners}, you may find that you just can't get your label in
 the right place with \mpl{dotlabel} even if you adjust \mpl{labeloffset}.  In these
@@ -3311,7 +3299,7 @@ would have to write:
 }}
 
 \newpage
-\subsection{Matching fonts}\label{sec:fonts}
+\subsubsection{Matching fonts}\label{sec:fonts}
 
 Despite the apparent restriction of using plain \TeX\ it is almost always possible
 to match the font and format of an enclosing \LaTeX\ document.
@@ -3372,7 +3360,7 @@ are limited to whatever font packages you have that work with the traditional
 \ref{sec:neo-labels}.
 
 \newpage
-\subsection{Setting verbatim listings}\label{sec:verbatim}
+\subsubsection{Setting verbatim listings}\label{sec:verbatim}
 
 \textsc{There is a good chance} that you will never need to set a verbatim 
 listing in a \MP\ drawing, but if you do there are a couple of things to think
@@ -4595,7 +4583,7 @@ The PostScript language defines parameters that affect how the ends of each line
 drawn and how lines are joined together.  Plain \MP\ provides access to these
 parameters through internal variables called \mpl{linecap} and \mpl{linejoin}; it
 sets both of them to the value \mpl{rounded} at the start of each job.
-\mwpic{-20pt}{line-caps-and-joins}
+\mwpic{-20pt}{pens-line-caps-and-joins}
 
 The figure on the right shows the effect of the different settings, using an
 exaggerated line width of 2 points (instead of the usual 0.5 points).  Some
@@ -4640,7 +4628,7 @@ more or less the same as the beveled mode.
 \subsection{Line caps and line joins with square pens}
 
 \textsc{The parameters explained} in the previous section were designed (or at least
-named) for use with the default pen \mpl{pencircle}.\mwpic{-60pt}{pen-oddity}
+named) for use with the default pen \mpl{pencircle}.\mwpic{-60pt}{pens-pen-oddity}
 You will get some rather odd shapes if you use them with any other pen, such as
 \mpl{pensquare}, especially if you use a large pen.  In the drawings on the right,
 the thin red lines are drawn with each pen  scaled to $0.5\unit{bp}$ (the default
@@ -5559,15 +5547,8 @@ dotlabel.bot("Brexit vote", (base(2016, 6, 24) * u, 78 v));
 \end{code}
 for suitable values of $u$ and $v$.
 \vadjust{\moveright5.5in\vbox to 0pt{\vss
-\begin{code}
-vardef base(expr Y, M, d) = 
-  save m, y; numeric m, y;
-  if M < 3: m = M + 9; y = Y - 1; 
-  else: m = M - 3; y = Y; fi
-  365/1024 y + (floor(y/4) - floor(y/100) + floor(y/400) 
-    + floor((2+3m)/5) + 30m + d - 307) / 1024
-enddef;
-\end{code}}}
+\mpexternal[xleftmargin=0pt]{basedate.mp}
+}}
 
 \bigskip
 \noindent\hbox to \textwidth{\includegraphics{tufte-currency}\hss}
@@ -6033,7 +6014,7 @@ variables, one for the colour fill and a second for the grid.
 
 \textsc{These tilings can be classified} by the configuration of the polygons that meet
 at each vertex.  This one is $(3^4, 6)$ because each vertex has four triangles and one
-hexagon. It exists in two enantiomorph forms.\mxpic{-80pt}{3.6in}{tiling-arch-snub-hexagon}
+hexagon. It exists in two enantiomorph forms.\mpic{-80pt}{tiling-arch-snub-hexagon}
 The unit pictures look like this:
 \par\bigskip
 \vbox{\halign{#&\qquad\qquad\vbox to 48pt{\hsize=2.7in\noindent #\par\vss}\cr
@@ -6115,7 +6096,7 @@ tiling was drawn with \mpl{tall(6, 173 dir 210, 173 dir 330, 173 dir 90)}.
 \textsc{The second aperiodic tiling example} is the so-called pinwheel tiling, devised in 1994
 by Charles Radin, based on
 this dissection by John Conway.\mpic{-22pt}{tiling-subs-pinwheel.pdf}
-$$\includegraphics[scale=0.8]{conway.pdf}$$
+$$\includegraphics[scale=0.8]{tiling-conway}$$
 Starting with a triangle of this shape, the tiling recursively divides into
 five smaller copies of itself.  The colouring is passed down each level but only used
 on the lowest.

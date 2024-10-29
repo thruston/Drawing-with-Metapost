@@ -14,14 +14,3 @@ vardef grid(expr p, grid_unit) =
     fi
   )
 enddef;
-
-  picture P; P = currentpicture; currentpicture := nullpicture;
-  drawoptions(withpen pencircle scaled 1/4);
-    draw grid(P, 1mm) withcolor Blues 8 3;
-    draw grid(P, 1cm) withcolor Blues 8 5;
-  drawoptions();
-  draw P;
-endfig;
-\end{mplibcode}
-\end{document}
-

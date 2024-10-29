@@ -1,4 +1,4 @@
-\documentclass[border=5mm]{standalone}
+\documentclass{standalone}
 \usepackage{luamplib}
 \begin{document}
 \mplibtextextlabel{enable}
@@ -49,6 +49,9 @@ beginfig(1);
   mark_equal(point 0 of T, point 1 of T, 1);
   mark_equal(point 1 of T, point 2 of T, 2);
   mark_equal(point 2 of T, point 0 of T, 3);
+
+  numeric wd; wd = xpart (urcorner currentpicture - llcorner currentpicture);
+  currentpicture := currentpicture scaled (303/wd); 
 
 endfig;
 \end{mplibcode}

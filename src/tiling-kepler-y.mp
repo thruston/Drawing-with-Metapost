@@ -18,39 +18,33 @@ input colorbrewer-rgb
 
 picture unit;
 unit = image(
-    for i=0 upto 7:
-        fill o rotated 45i withcolor Oranges 8 3;
-        draw o rotated 45i;
-        fill s rotated 45i withcolor Blues 8 2;
-        draw s rotated 45i;
-    endfor
-    for i = 0, 1, 2, 3, 5, 7:
-        fill t rotated 45i withcolor Blues 8 4;
-        draw t rotated 45i;
-    endfor
-    for i = 1, 3, 5, 7:
-        fill x rotated 45i withcolor Blues 8 4;
-        draw x rotated 45i;
-    endfor
+  for i=0 upto 7:
+    fill o rotated 45i withcolor Oranges 8 3;
+    draw o rotated 45i;
+    fill s rotated 45i withcolor Blues 8 2;
+    draw s rotated 45i;
+  endfor
+  for i = 0, 1, 2, 3, 5, 7:
+    fill t rotated 45i withcolor Blues 8 4;
+    draw t rotated 45i;
+  endfor
+  for i = 1, 3, 5, 7:
+    fill x rotated 45i withcolor Blues 8 4;
+    draw x rotated 45i;
+  endfor
 );
 
-
-
 beginfig(1);
-
-    pair u, v; u = 2 center t; v = u rotated 90;
-
-    n = 1;
-
-    for i=0 upto n:
-        for j = 0 upto n:
-            draw unit shifted (i * u + j * v);
-        endfor
+  pair u, v; u = 2 center t; v = u rotated 90;
+  n = 4;
+  for i=-n upto n:
+    for j = -n upto n:
+      draw unit shifted (i * u + j * v);
     endfor
+  endfor
 
-    % clip currentpicture to unitsquare shifted -(1/2, 1/2) yscaled sqrt(2) scaled 105mm;
+  clip currentpicture to unitsquare shifted -(1/2, 1/2) yscaled sqrt(2) scaled 105mm;
 
 endfig;
 \end{mplibcode}
 \end{document}
-

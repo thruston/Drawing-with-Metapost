@@ -1,11 +1,11 @@
-\documentclass[border=5mm]{standalone}
+\documentclass{standalone}
 \usepackage{luamplib}
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
 vardef through(expr a, b, o) = 
-    save t; numeric t; t = 1+o/abs(a-b);
-    t[b,a] -- t[a,b]
+  save t; numeric t; t = 1+o/abs(a-b);
+  t[b,a] -- t[a,b]
 enddef;
 
 vardef incircle(expr A, B, C) = 
@@ -27,10 +27,10 @@ beginfig(1);
   t-m = whatever * (B-A) rotated 90;
 
   drawoptions(dashed evenly scaled 1/4 withcolor 1/2 white);
-    draw t -- m;
-    draw unitsquare scaled 5 rotated angle (B-A) shifted t;
-    draw through(A, m, 10);
-    draw through(B, m, 10);
+  draw t -- m;
+  draw unitsquare scaled 5 rotated angle (B-A) shifted t;
+  draw through(A, m, 10);
+  draw through(B, m, 10);
   drawoptions();
   draw incircle(A, B, C) withcolor 2/3 red;
   draw A--B--C--cycle;
@@ -41,6 +41,9 @@ beginfig(1);
   dotlabel.top(btex $C$ etex, C);
   dotlabel.top(btex $a$ etex, a);
   dotlabel.top(btex $b$ etex, b);
+
+  numeric wd; wd = xpart (urcorner currentpicture - llcorner currentpicture);
+  currentpicture := currentpicture scaled (333/wd);  
 endfig;
 \end{mplibcode}
 \end{document}
