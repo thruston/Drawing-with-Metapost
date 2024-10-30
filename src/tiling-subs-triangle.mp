@@ -9,7 +9,7 @@ vardef tall(expr level, a, b, c) =
     fill a--b--c--cycle  withcolor 3/4[blue, white];
     draw a--c--b;
   else:
-    save m; pair m; m = 1/3 (a + b + c);  % the median
+    save m; pair m; m = 1/3 (a + b + c);  % the centroid
     wide(level - 1, a, b, m);
     wide(level - 1, b, c, m);
     wide(level - 1, c, a, m);

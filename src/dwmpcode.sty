@@ -104,7 +104,7 @@ morestring=[s]{btex}{etex}%
 \lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
 \newcommand\mpexternal[2][]{{\mpstyle\lstinputlisting[#1]{#2}}}
 \newcommand\smallmpexternal[2][]{{\mpstyle\lstinputlisting[basicstyle=\small\ttfamily,#1]{#2}}}
-\newcommand\mpl[1]{{\mpstyle\lstinline!#1!}}
+\newcommand\mpl[1]{{\normalfont\mpstyle\lstinline!#1!}}
 %
 \newcommand\texstyle{\lstset{
 language=[LaTeX]Tex,

@@ -1,9 +1,9 @@
-% Copyright (c) 2024 by Toby Thurston. This material may be distributed only}
+% Copyright (c) 2024 by Toby Thurston. This material may be distributed only
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
- 
-\loop\iftrue 
+
+\loop\iftrue
 \errmessage{This manual is copyrighted and should not be compiled as is.}
 \repeat
 \documentclass[a4paper,landscape]{article}
@@ -47,10 +47,10 @@ endfor currentpicture := currentpicture scaled 1/2; \end{mplibcode}}$\ }
 \usepackage{pifont}
 \def\hey{\llap{{\ding{43}}\ }}
 \newcommand\fleuron{\begin{mplibcode}
-  -z1 = z4 = 7 dir 8; 
+  -z1 = z4 = 7 dir 8;
   y2 - y1 = y4 - y3 = 3(y4 - y1);
   z2 - z1 = z4 - z3 = whatever * dir 50;
-  draw z1 .. controls z2 and z3 .. z4 
+  draw z1 .. controls z2 and z3 .. z4
     withpen pencircle xscaled 1.2 yscaled 0.2 rotated 50;
   currentpicture := currentpicture rotated - angle z4;
 \end{mplibcode}}
@@ -82,7 +82,7 @@ This document contains a collection of ideas and techniques for producing attrac
 technical drawings with John Hobby’s \MP\ language.  I’m assuming that you already
 know the basics of the language, that you have it installed as part of your up to
 date \TeX\ ecosystem, and that you have established a reasonable workflow that
-let’s you write a Metapost program, compile it, and include the results in your
+let’s you write a \MP\ program, compile it, and include the results in your
 \TeX\ document.  If not, you might like to start at the \MP\ page on CTAN, and read
 some of the excellent tutorials, including "mpintro.pdf".  If you have already done
 this, please read on.
@@ -222,19 +222,19 @@ typesetting labels described in section \ref{sec:trad-labels}.  I compile the so
 with "mpost". I usually do this from within MacVim using the command line ":!mpost %"
 where "!" means “this is an external command” and the "%" picks up the current file
 name.  Usually I need several attempts to get a diagram right, so I open Skim to preview the
-output. 
+output.
 \vadjust{\moveright5.4in\vbox to 0pt{\vss\hsize 4in\noindent
 $$\includegraphics[width=4in]{workflow-plain}$$
 Until recent (2024) versions of Mac~OS, it was possible to get Skim to view the
 PostScript output directly, with automatic updates on recompile,
-but the conversion from PostScript no longer works properly, so 
-I now prefer to convert the EPS to PDF using "epstopdf". This 
+but the conversion from PostScript no longer works properly, so
+I now prefer to convert the EPS to PDF using "epstopdf". This
 slightly complicates the edit, compile, and preview loop.  On the other hand
-the PDFs are generally more useful files to create, so it is worth the extra effort.  
+the PDFs are generally more useful files to create, so it is worth the extra effort.
 
 I use a small Python script to automate the process: run
 "mpost" with the "-recorder" option; scan the list of files to see what got
-produced; check which ones are PostScript; call "esptopdf" to make each one into a
+produced; check which ones are PostScript; call "epstopdf" to make each one into a
 PDF file; remove each EPS file if successful.  Your mileage may vary.\par
 }}
 
@@ -273,7 +273,7 @@ separate file for each picture, but the good news is that you get a much simpler
 more effective integration with \LaTeX, in particular with the font environment, but
 as this only works with "lualatex" you have to use the "fontspec" package, as
 explained in section \ref{sec:neo-labels}.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4in\noindent
-\hey\small If you like the fancier \MP\ format provided with Con\TeX t, you can use it directly with this
+\hey\small If you like the fancier \MP\ format provided with ConTexT, you can use it directly with this
 "luamplib" approach.  Just add this option to your preamble:
 \begin{texcode}
 \mplibsetformat{metafun}
@@ -299,7 +299,7 @@ A closed path is called a cycle, and is created with the \mpl{cycle} primitive l
 path t; t = origin -- (55,0) -- (55,34) -- cycle;
 \end{code}
 You can think of \mpl{cycle} as meaning ‘connect back to the start and close the path’.
-Note that you have explicitly put \mpl{cycle} to make a closed path.  If you wrote 
+Note that you have explicitly put \mpl{cycle} to make a closed path.  If you wrote
 \begin{code}[xrightmargin=-32pt]
 path u; u = origin {right} .. (55,0) .. (55,34) .. {-2,-1} origin;
 \end{code}
@@ -312,7 +312,7 @@ cycle.  This concept is common to most drawing languages but it’s often hidden
 open path might be automatically closed for you when you try to fill it.  \MP\ takes
 a more cautious approach; if you pass an open path to \mpl{fill} you will get an error
 that says ‘Not a cycle’, even if the first and last points are the same like path
-$u$ above.  
+$u$ above.
 
 If you want to write a macro that deals differently with the two types
 of path, then you can use \mpl{cycle} in a boolean context to test
@@ -335,7 +335,7 @@ quite sure what the five joiners do, $\longrightarrow$\marginpar{%
 --&straight line\cr
 ---&tense line\cr
 \&&splice.\cr}\vss}} or you would like to bone up on exactly what \mpl{curl} and
-\mpl{tension} are for, then you are recommended to review Chapter 14 of \mfbook.  
+\mpl{tension} are for, then you are recommended to review Chapter 14 of \mfbook.
 
 \vfill\noindent
 Most of the examples in this document use only the two simple joiners \mpl{--} and
@@ -353,20 +353,20 @@ There are several closed paths defined for you in plain \MP.
         origin, and you can use it to draw any rectangle with appropriate
         use of \mpl{xscaled} and \mpl{yscaled}, or a parallelogram with \mpl{slanted},
         or a diamond with \mpl{rotated} --- but note that the definition means
-        that is it centred on point \mpl{(1/2, 1/2)} so you might want to 
+        that is it centred on point \mpl{(1/2, 1/2)} so you might want to
         shift it by \mpl{-(1/2,1/2)} before you transform it.
 
     \item "fullcircle" which you can use to draw any circle or ellipse with
         appropriate use of \mpl{xscaled} and \mpl{yscaled}.  Unlike the square, it is defined so that it is centred
         at the origin.  But beware that it has unit \textit{diameter}, so its radius
         is $0.5\unit{bp}$ long.  The path runs counter-clockwise and starts at 3
-        o’clock; which means \mpl{point 0 of fullcircle = 1/2 right} is true. 
+        o’clock; which means \mpl{point 0 of fullcircle = 1/2 right} is true.
 
     \item "superellipse()" which creates the shape beloved of the Danish designer Piet Hein.  Unlike the
         other two, this one is defined as a function rather than a \<path> constant, so you need to call it
         like this:
 \begin{code}
-path s; 
+path s;
 s = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down, 13/16);
 \end{code}
         to create a ‘unit’ shape that matches \mpl{fullcircle} as shown above.
@@ -376,8 +376,7 @@ s = superellipse(1/2 right, 1/2 up, 1/2 left, 1/2 down, 13/16);
         Values outside the range $(0.5,1)$ give you rather weird propeller
         shapes.
 
-\noindent
-\hey Note that, unaccountably, $\id{superellipse}()$ is defined in
+        \nb Note that, unaccountably, $\id{superellipse}()$ is defined in
         \texttt{plain.mp} with a \kw{def} rather than a \kw{vardef}.  This means you
         need to enclose it in a group before you can transform it in any way. One
         way to do this is to use parentheses; or you can assign it to a \<path>
@@ -445,8 +444,8 @@ draw for i=0 upto 5: 20 dir 60i -- endfor cycle;
 which works because \mpl{dir d} expands to \mpl{right rotated d}.  But
 you might prefer to make a macro:
 \begin{code}
-vardef polygon(expr n, r) = 
-    for i=0 upto n-1: (r, 0) rotated (360/n * i) -- endfor cycle 
+vardef polygon(expr n, r) =
+    for i=0 upto n-1: (r, 0) rotated (360/n * i) -- endfor cycle
 enddef;
 \end{code}
 This produces a closed path to represent an $n$-sided polygon that fits in a circle
@@ -456,8 +455,8 @@ previous segment chart.\rlap{\ $\rightarrow$}\\
 If you need polygon paths that start at the top, you can just swap the
 coordinates:
 \begin{code}
-vardef polygon(expr n, r) = 
-    for i=0 upto n-1: (0, r) rotated (360/n * i) -- endfor cycle 
+vardef polygon(expr n, r) =
+    for i=0 upto n-1: (0, r) rotated (360/n * i) -- endfor cycle
 enddef;
 \end{code}
 $$\includegraphics[width=0.66\textwidth]{paths-polygon-tops}$$
@@ -466,11 +465,11 @@ $$\includegraphics[width=0.66\textwidth]{paths-polygon-tops}$$
 but this is not the same as the centre of the polygon when the number of sides is
 odd.  What you need instead is the geometric center or \textit{centroid}:
 \begin{code}
-vardef centroid primary p = 
+vardef centroid primary p =
   origin for i=1 upto length p: + point i of p / length p endfor
 enddef;
 \end{code}
-This should work for any closed path, not just regular polygons.  For ways to 
+This should work for any closed path, not just regular polygons.  For ways to
 label the vertices neatly, as shown above, see §\ref{sec:new-dynamic}.
 
 \newpage
@@ -486,7 +485,7 @@ Which you can use like this to produce a nest of polygons \rightarrowfill
 \noindent
 These polygon paths are centred on $(0, 0)$ but
 sometimes it is more convenient to construct a polygon on a known segment
-rather than working out how to rotate and shift it into place.  
+rather than working out how to rotate and shift it into place.
 $$\includegraphics[width=0.9\textwidth]{paths-polygon-chain}$$
 Here is a way to do that using the “\mpl{of}” syntax in the macro construction \rightarrowfill
 \vadjust{\moveright 384pt\vbox to 0pt{\vss
@@ -500,7 +499,7 @@ Here is a way to do that using the “\mpl{of}” syntax in the macro constructi
 \mpl{..} you would get a circle, and contrariwise, if you try
 \mpl{tensepath(fullcircle scaled 20)} you will get a regular octagon.  But we can
 also adjust the directions at the corners to make a variety of closed polygon shapes
-with closed edges.  
+with closed edges.
 
 One of the most pleasing is the Reuleaux polygon, with circular arcs for edges.
 $$\includegraphics[width=0.9\textwidth]{paths-reuleaux-set}$$
@@ -656,7 +655,7 @@ Number 1 corresponds to the example shown above; point~0 of~$A$ is inside the cl
 path $B$.  In~2 we have rotated path $A$ by 180° so that the start of path~$A$ is no
 longer inside $B$, and now "buildcycle" works ‘properly’ --- but this is the only
 time it does so.  In~3, we've rotated $B$ by 180° as well, so that $B$ starts inside
-$A$ and as expected "buildcycle" fails.  In 4 we've rotated $A$ back to it's
+$A$ and as expected "buildcycle" fails.  In 4 we've rotated $A$ back to its
 original position, so that both paths start inside each other; and we get the
 union of the two shapes.  In 5--8, we've repeated the exercise with path $A$
 reversed, and "buildcycle" fails in yet more interesting ways.
@@ -726,7 +725,7 @@ results.\mpic{-2in}{paths-overlaps}
 \newpage
 \section{Numbers}
 
-This section discusses plain \MP's scalar numeric variables
+This section discusses plain \MP\ scalar numeric variables
 and what you can do with them.
 \MP\ inherits its unusual native system of scaled numbers from \MF;  like many of
 Knuth's creations it is slightly quirky, but works very well once you get the hang
@@ -821,7 +820,7 @@ and \id{eps}:
 \begin{itemize}
     \item $\id{eps}$ is defined to be a
 small amount that is noticeable to \MF’s rounding algorithms, namely
-${32\over65536}={1\over2048}\simeq 0.00049$.  As a distance on the page or screen it's invisible at
+${32\over65536}={1\over2048}\simeq 0.00049$.  As a distance on the page or screen, it's invisible at
 any resolution less than 150,000 dots per square inch.  If you were designing fonts
         in \MF, $\id{eps}$ could help you avoid bad choices of pixels at low resolutions, but in
 \MP\ it's only really useful in comparisons that might suffer from rounding errors.
@@ -979,7 +978,7 @@ Note that $\kw{mod}$ preserves any fractional part, so $355/113 \mathrel{\kw{mod
 \smallskip
 \parshape=1 0pt 3.4in
 This behaviour is usually what you want.
-\vadjust{\moveright 266pt \vbox to 0pt{\noindent  
+\vadjust{\moveright 266pt \vbox to 0pt{\noindent
 \begin{mplibcode}
 input clocks
 draw clock(hour, minute) scaled 0.8;
@@ -1045,19 +1044,19 @@ can be found in the way that the \mpl{**} operator is defined in "plain.mp".
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-36pt]
 primarydef x ** y = if y = 2: x * x else: takepower y of x fi enddef;
 def takepower expr y of x =
-  if x > 0: 
+  if x > 0:
     mexp(y * mlog x)
-  elseif (x = 0) and (y > 0): 
+  elseif (x = 0) and (y > 0):
     0
-  else: 
+  else:
     if y = floor y:
       if y >= 0: 1 for n=1 upto y: * x endfor
       else:      1 for n=-1 downto y: / x endfor
       fi
-    else: 
+    else:
       hide(errmessage "Undefined power: " & decimal x & "**" & decimal y)
-    fi 
-  fi 
+    fi
+  fi
 enddef;
 \end{smallcode}
 This is inherited directly from plain \MF, and as it says in the \mfbook, it is
@@ -1343,7 +1342,7 @@ pbr = hexrgb("#df3439");
 
 Plain \MP\ defines five basic colour constants: \mpl{red}, \mpl{green},
 \mpl{blue}, \mpl{white}, \mpl{black}.  These are quite useful with leading
-fractions: \mpl{2/3 red} gives a nice dark red, that's good for drawing lines you
+fractions: \mpl{2/3 red} gives a nice dark red, that is good for drawing lines you
 want to emphasize; \mpl{1/2 white} gives you a shade of grey; and so on.  But since
 \mpl{black} is defined as \mpl{(0,0,0)}, \mpl{1/2 black} just gives you \mpl{black}.
 
@@ -1468,7 +1467,7 @@ clipped at the end to a neat rectangle again.
 This map shows the "RdYlBu[9]" palette in action on a map of the Brexit vote in
 London.  The outlines are the 33 London boroughs, and the colours show how we voted.
 The size of the labels shows the turnout.  The data and the outlines are from
-public domain sources.  They were prepared for \MP\ using various scripts, 
+public domain sources.  They were prepared for \MP\ using various scripts,
 and they are available in the source for this document.
 
 \vskip 48pt
@@ -1543,7 +1542,7 @@ implementation is based on the `Ratio method' presented in \textsl{The Art of
 Computer Programming}, section~3.4.1.   It turns out to be very straightforward to
 implement the algorithm for this method as a user-level program $\longrightarrow$
 \vadjust{\moveright5.5in\vbox to 0pt{\kern -112pt
-\smallmpexternal{random-other-distributions.mp}    
+\smallmpexternal{random-other-distributions.mp}
 \vss}}%
 
 This version of \mpl{normaldeviate} is of academic interest only, in all real code
@@ -1574,7 +1573,7 @@ formula \mpl{mexp(y*mlog(x))}, and the adjusted log values give more accurate re
 Note that this means that you have $e=\kw{mexp}(256)$.
 
 It is sometimes useful to define macros for the usual versions of $\exp$ and $\log$
-as shown on the right.   This not only helps you make fewer programming mistakes, and 
+as shown on the right.   This not only helps you make fewer programming mistakes, and
 
 
 \newpage\subsection{Random walks}
@@ -1584,7 +1583,7 @@ random walks, with various levels of analysis.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.4in\kern -2\baselineskip
 \mpexternal[firstline=5,lastline=31,xleftmargin=0pt]{random-walks-red-blue.mp}
 \smallskip\noindent
-\hey Note the \mpl{undraw} line using a slightly thicker pen; this makes it 
+\hey Note the \mpl{undraw} line using a slightly thicker pen; this makes it
 easier to follow the lines as they cross each other.
 \vss}}
 $$\includegraphics[width=\textwidth]{random-walks-red-blue}$$
@@ -1603,7 +1602,7 @@ set this delta value, for example by using a different type of random variate, o
 the value, or changing the odds in favour of one direction or the other.  For
 example:
 \begin{code}
-y := y if uniformdeviate 1 < p: + 2 else: - 1 fi; 
+y := y if uniformdeviate 1 < p: + 2 else: - 1 fi;
 \end{code}
 will set the delta to $+2$ with probability $p$ and and to $-1$ with probability $1-p$.
 
@@ -1620,7 +1619,7 @@ The drawing here is much the same as the previous page, except that the definiti
 }}
 $$\includegraphics[width=\textwidth]{random-walks-normal}$$
 Alternatively you could add an extra constraint that the final value should be zero
-(or some other desired target value); this is the so-called “brownian bridge”.
+(or some other desired target value); this is the so-called “Brownian bridge”.
 $$\includegraphics[width=\textwidth]{random-walks-normal-bridge}$$
 To do this, you make a random walk path, as above, with \id{n} points, and then copy
 it into a new path where the $i$-th point is adjusted by $i/n\times(t-y)$ where $t$
@@ -1631,7 +1630,7 @@ is the target value, and $y$ is the $y$-value of the last point on the walk path
 
 \newpage\subsection{Brownian motion}
 
-Relaxing all the contraints, can give you even more
+Relaxing all the constraints, can give you even more
 interesting patterns.\vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4.2in\vskip -32pt
 \mpexternal[firstline=6,lastline=20,xleftmargin=0pt]{random-two-dimensional-brownian.mp}
@@ -1693,7 +1692,7 @@ you might find that a little of this type of decoration goes a long way.
 
 This second freehand figure uses a macro to draw a wonky line through two points
 with a bit of overlap at each end.  The overlap size is given using the suffix
-syntax.  The lines are drawn in sepia ink to enhance the hand-drawn look. The angle 
+syntax.  The lines are drawn in sepia ink to enhance the hand-drawn look. The angle
 labels are positioned on invisible arcs between neighbouring wonky lines.
 \vadjust{\moveright5.5in\vbox to 0pt{
 \hsize4in\kern -4.5\baselineskip
@@ -1707,7 +1706,7 @@ $$\includegraphics{random-freehand-through}$$
 math italic layout --- essentially it has all the Greek letters but none of the
 arrows, nor the musical notation.
 $$\includegraphics{trad-euler-sampler}$$
-If you can't get the upper case $\Gamma$ at \mpl{char 0}, then you might be running 
+If you can't get the upper case $\Gamma$ at \mpl{char 0}, then you might be running
 an old out-of-date version of "luamplib".
 
 \newpage\subsection{Increasingly random shapes of the same size}
@@ -1752,15 +1751,15 @@ amount on top to make it look random.  Notice that the only difference between t
 "explosion" and "splash" is that how the connecting lines are constrained to be
 straight or allowed to make smooth curves.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent\small
-The display font used here is Playfair Display Black.  If you have it installed 
-as a system font, you can use "fontspec" and "luamplib" with "lualatex" as described 
+The display font used here is Playfair Display Black.  If you have it installed
+as a system font, you can use "fontspec" and "luamplib" with "lualatex" as described
 in §\ref{sec:sa-lua-flow}, but if you are still using
 plain "mpost", then you need to hunt for it in your local "psfonts.map".
 If you run \MP\ with the "-recorder" option, it will create a list of all the files
 used, with the current job name and an extension of ".fls".  This file will include
 a line which tells you exactly which version of "psfonts.map" is being used.
 The DVIPS documentation explains the format of the file, but for \MP's purposes the
-first word of each non-comment line defines a font name you can try. When you find 
+first word of each non-comment line defines a font name you can try. When you find
 it you can add something like this to the top of the example:
 \begin{smallcode}
 defaultfont = "PlayfairDisplay-Black-osf-t1--base";
@@ -1962,7 +1961,7 @@ $$\includegraphics{geometry-bisection-interior}$$
 There is no classical method to trisect an arbitrary angle, so you need to resort
 to measuring and arithmetic in \MP.  If the angle is a given this is trivial:
 \mpic{-12pt}{geometry-trisection-simple}
-\smallmpexternal[firstline=6,lastline=17]{geometry-trisection-simple.mp} 
+\smallmpexternal[firstline=6,lastline=17]{geometry-trisection-simple.mp}
 
 \noindent
 But if you have only the coordinates of some points then you need to use the
@@ -1979,8 +1978,8 @@ vardef measured_angle(expr P, Q, R) =
   (angle (P-Q) - angle (R-Q)) * turningnumber (P--Q--R--cycle) mod 360
 enddef;
 \end{smallcode}
-The primitive \mpl{turningnumber} is explained on p.\thinspace 111 of \textsl{The
-METAFONTbook}.  It takes a closed path and returns number of times that you would
+The primitive \mpl{turningnumber} is explained on p.\thinspace 111 of \mfbook.
+It takes a closed path and returns number of times that you would
 turn through 360${}^\circ$ if you traversed the path.  We use this here to
 negate the measured angle if necessary, so that you always get the interior angle.
 The \mpl{mod 360} on the end ensures that the result is in the range $0 \le \theta <
@@ -2026,7 +2025,7 @@ than straight lines, you need to use the \mpl{intersectiontimes} primitive or th
 \subsubsection{The intersection algorithm}
 
 \MP\ inherits a fast algorithm for finding the intersection between two paths from
-\MF.  It is explained rather more gnomically than usual at the end of Chapter 14 of
+\MF.  It is explained rather more succinctly than usual at the end of Chapter 14 of
 \mfbook, with more detail given in the web source for \MF.  The core algorithm works
 on paths of length 1. If you have longer paths, \MP\ works its way along the paths
 applying the core algorithm to successive pairs of unit subpaths.  It does this is
@@ -2241,7 +2240,7 @@ tangent to one edge and the extensions of the other two.  The centres of each
 excircle lie at the intersection of one internal angle bisector and the external
 angle bisector of one of the other corners.
 To get the external angle bisector,
-all you have to do is reverse the direction of one of the \mpl{unitvector} calls 
+all you have to do is reverse the direction of one of the \mpl{unitvector} calls
 (can you see why?)
 \mpic{-.5in}{geometry-excircle}
 \mpexternal[firstline=11,lastline=18]{geometry-excircle.mp}
@@ -2260,21 +2259,21 @@ macro to take a single triangular path:
 Note that as the diagram on the right shows,\mpic{-2in}{geometry-circumcircle}
 the centre of the circumcircle is the intersection of all three of the perpendicular bisectors of
 sides, but for the purposes of drawing in \MP\ you only need to find the
-intersection of two of them.  You could write 
+intersection of two of them.  You could write
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-60pt]
-  m = whatever * (point 0 of T - point 1 of T) rotated 90 shifted point 1/2 of T 
-    = whatever * (point 1 of T - point 2 of T) rotated 90 shifted point 3/2 of T 
-    = whatever * (point 2 of T - point 3 of T) rotated 90 shifted point 5/2 of T; 
+  m = whatever * (point 0 of T - point 1 of T) rotated 90 shifted point 1/2 of T
+    = whatever * (point 1 of T - point 2 of T) rotated 90 shifted point 3/2 of T
+    = whatever * (point 2 of T - point 3 of T) rotated 90 shifted point 5/2 of T;
 \end{smallcode}
 but this does not add any more information to the equation for $m$, and
-\MP\ will sometimes give you an “inconsistent equation” error if your triangle 
+\MP\ will sometimes give you an “inconsistent equation” error if your triangle
 is long and thin.
 
 \vfill
 \noindent
 \hey The marks that show line segments are equal were created by this macro.
 \smallmpexternal[firstline=38,lastline=47]{geometry-circumcircle.mp}
-Given the triangular \<path> $T$, the macro was used like this: 
+Given the triangular \<path> $T$, the macro was used like this:
 $\longrightarrow$\vadjust{\moveright5.5in\vbox to 0pt{\vss
 \smallmpexternal[firstline=49,lastline=51]{geometry-circumcircle.mp}
 }}
@@ -2299,7 +2298,7 @@ $$\includegraphics{geometry-nine-point-circle}$$
 \subsection{Lines tangent to a point on a path}
 
 \MP\ represents paths internally as a sequence of nodes. Each node consists of three
-pairs: the pre-control point, the point itself, and the post-control point. 
+pairs: the pre-control point, the point itself, and the post-control point.
 \mpic{0pt}{geometry-tangents-on-path}%
 For a given path $p$ you can extract these points at time $t$ with these operators:
 \begin{code}
@@ -2308,7 +2307,7 @@ point t of p
 postcontrol t of p
 \end{code}
 Unless you explicitly set them differently, \MP’s curve fitting will make these
-three points co-linear, so you can draw a tangent at point $t$ with 
+three points co-linear, so you can draw a tangent at point $t$ with
 \begin{code}
 draw precontrol t of p -- postcontrol t of p;
 \end{code}
@@ -2316,7 +2315,7 @@ The length of the tangent line drawn
 like this depends on the size and shape of the curve, but it is somewhat arbitrary.
 So you may prefer to extract a \<pair> representing the tangent at point $t$ with
 \begin{code}
-pair d; d = postcontrol t of p - precontrol t of p;  
+pair d; d = postcontrol t of p - precontrol t of p;
 \end{code}
 In fact, this is so useful that
 "plain.mp" provides \mpl{direction} as a shorthand:
@@ -2325,7 +2324,7 @@ vardef direction expr t of p = postcontrol t of p - precontrol t of p enddef;
 \end{smallcode}
 which can save you some typing.  But the clever bit is that $t$ does not have to be a whole
 number.  If you set $t=\frac14$ (say), \MP\ works out the corresponding fractional
-control points, so that you can use \mpl{direction t of p} to get a tangent at any point.  
+control points, so that you can use \mpl{direction t of p} to get a tangent at any point.
 
 The vector pairs returned have the right direction, but still have rather arbitrary magnitudes, so
 the usual idiom is something like this:
@@ -2386,27 +2385,27 @@ Here $A$ and $B$ are the two circles you want to connect, and $A$ is larger than
 $B$. $R$ is the radius of the larger, $r$ of the smaller. $C$ is an auxiliary circle
 centred at the same point as $A$ and scaled so that its radius is $R-r$.  If we
 then find the tangent points on $C$ from the center of $B$, the points we want are
-the corresponding points on $A$ and $B$. 
+the corresponding points on $A$ and $B$.
 
 Notice how the times are used with \mpl{subpath}; if $a>b$, then the path returned
 from \mpl{subpath (a, b) of P} is the same as \mpl{reverse subpath (b, a) of P},
 which means that \mpl{subpath (u,t) of B} would give you the wrong side.  The remedy
-is to substract 8 from $u$ (or, more generally, to subtract the length of path $B$).
+is to subtract 8 from $u$ (or, more generally, to subtract the length of path $B$).
 Because there are 8 points on a \mpl{fullcircle} path, point $u$ and point $u-8$
 refer to the same place, but since $u-8 < t$, the subpath will run clockwise as
-required.  
+required.
 
 \vfill
 \noindent\hey
-This all works provided that all three 
-circles $A$, $B$, or $C$ have the same rotation. 
-But this may not always be the case.   
-For example, you might have defined $B$ as 
+This all works provided that all three
+circles $A$, $B$, or $C$ have the same rotation.
+But this may not always be the case.
+For example, you might have defined $B$ as
 \begin{code}
 B = fullcircle scaled 60 shifted 240 dir 36;
 \end{code}
 and then point $t$ of $B$ would \textit{not} correspond to point $t$ of the
-auxiliary circle $C$.  
+auxiliary circle $C$.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vss\noindent
 To cope with circles that might not have the same rotation, you need to adjust the
 tangent times to take account of the different relative rotation.
@@ -2414,7 +2413,7 @@ tangent times to take account of the different relative rotation.
 \noindent
 This macro exploits the relationship between \mpl{angle}
 and points around a \mpl{fullcircle} path:  $360^\circ = 8\:\hbox{points}$.
-You can see it in action on the followin page.
+You can see it in action on the following page.
 }}
 
 \newpage
@@ -2456,7 +2455,7 @@ then:
 \begin{smallcode}
 E12 = (r1/(r1 - r2)[C1, C2]; I12 = (r1/(r1 + r2)[C1, C2];
 \end{smallcode}
-which is a bit quicker than working out all the tangent points. 
+which is a bit quicker than working out all the tangent points.
 My version is in the file "geometry-axis-of-similitude.mp"
 }
 
@@ -2487,14 +2486,14 @@ P' = O + (P - O) scaled (r / abs (P - O) * r / abs (P - O));
 \end{code}
 or as a macro, and dividing first to avoid overflow:
 \begin{code}
-vardef invert(expr P, O, r) = 
+vardef invert(expr P, O, r) =
   save s; numeric s; s = abs(P - O);
   O + (P - O) / s * r / s * r
 enddef;
 \end{code}
 This works well in most cases, but you could consider checking that $s$ is not too small.
 If it is more convenient to deal with the \<path> of the circle of inversion
-instead of the centre and the radius, you can get the macro to calculate 
+instead of the centre and the radius, you can get the macro to calculate
 them for you:
 \mpexternal[firstline=6,lastline=11]{geometry-pole-and-polar.mp}
 
@@ -2625,7 +2624,7 @@ of finite length, of positive thickness, and rough edged.\\[2pt]
 \textsc{Observant readers} will have noticed that the occasional angle marks in the
 preceding examples are generally drawn using plain \MP\ commands rather than a
 macro.  This is partly in order to make the examples self-contained and partly to
-show what can be done with the default plain \MP\ format. 
+show what can be done with the default plain \MP\ format.
 
 \smallskip\noindent
 To mark a right angle at point $a$ on the line $a\to b$ you can do something like
@@ -2638,18 +2637,18 @@ this, but it hardly seems worth the effort.%
 \vadjust{\moveright 5.5in\vbox to 0pt{\hsize 4.2in\vskip -108pt\noindent
 For example, this is one way to annotate a right-angle triangle:
 \begin{code}
-pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
+pair a, b, c; a = 10 dir 10; b = 160 dir 20;
 c - a = whatever * (b - a rotated 90); ypart c = ypart b;
-draw unitsquare scaled 5 rotated angle (b-a) shifted a 
+draw unitsquare scaled 5 rotated angle (b-a) shifted a
     withcolor 3/4;
 draw a--b--c--cycle;
 \end{code}
 which produces this:
 $$\begin{mplibcode}
-pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
+pair a, b, c; a = 10 dir 10; b = 160 dir 20;
 c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
 draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
-draw a--b--c--cycle; 
+draw a--b--c--cycle;
 dotlabel.llft("$a$", a);
 dotlabel.rt  ("$b$", b);
 dotlabel.ulft("$c$", c);
@@ -2662,10 +2661,10 @@ Equipped with the macro shown on the left, you could add this:
 \end{code}
 to get this:
 $$\begin{mplibcode}
-pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
+pair a, b, c; a = 10 dir 10; b = 160 dir 20;
 c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
-vardef angle_mark(expr P, O, Q, r) = 
-  fullcircle scaled 2r rotated angle (P - O) 
+vardef angle_mark(expr P, O, Q, r) =
+  fullcircle scaled 2r rotated angle (P - O)
     shifted O cutafter (O -- Q)
 enddef;
 draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
@@ -2677,7 +2676,7 @@ draw a--b--c--cycle;
 \end{mplibcode}$$
 Or, using the fancier macro:
 $$\begin{mplibcode}
-pair a, b, c; a = 10 dir 10; b = 160 dir 20; 
+pair a, b, c; a = 10 dir 10; b = 160 dir 20;
 c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
 vardef angle_label(expr P, O, Q, r) = image(
   save a; path a; a = fullcircle scaled 2r rotated angle (P - O) shifted O cutafter (O -- Q);
@@ -2701,7 +2700,7 @@ required path, so you can use it with \mpl{draw} or \mpl{fill} as required.  The
 idea here is that $P$, $O$, and $Q$ are \<pair> variables and $r$ is a \<numeric>
 representing the desired radius.
 \begin{code}
-vardef angle_mark(expr P, O, Q, r) = 
+vardef angle_mark(expr P, O, Q, r) =
   fullcircle scaled 2r rotated angle (P - O)
     shifted O cutafter (O -- Q)
 enddef;
@@ -2718,7 +2717,7 @@ vardef fancier_angle_label(expr P, O, Q, r) = image(
   label(t, O + r * (unitvector(P-O) + unitvector(Q-O)));
 ) enddef;
 \end{smallcode}
-Note that the angle label is calculated automatically.  But 
+Note that the angle label is calculated automatically.  But
 it is tediously time-consuming to make this sort of macro completely
 general and fool-proof, so this example might not work for all angles.
 
@@ -2747,7 +2746,7 @@ multiple of $1\over65536$ (which turns out to be $3.14159$). The same applies to
 an error if you supply more digits that the default precision.  So in general
 it's best to use no more than 32 digits.  It's also possible, but not really worth
 the trouble, to define a routine to calculate $\pi$ to the current
-precision.\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}} 
+precision.\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}
 
 However you define it, once you are armed with a value for $\pi$ you can
 then define functions to convert between degrees and radians, and some more `normal'
@@ -2762,9 +2761,9 @@ operator.
 $\kw{dir}\,30$ gives you the point $(x,y)$ on the unit circle such that $\tan
 30^{\circ} = y/x$.  You can use these ideas to define tangent and arctan functions
 if you really need them, but often "angle" and "dir" are more directly useful
-for drawing.  
+for drawing.
 You should also be aware that the "tand" function shown here does not
-check whether $x$ is close to zero; if this is an issue, then add something like this 
+check whether $x$ is close to zero; if this is an issue, then add something like this
 at the appropriate point:
 $$\kw{if}\,\id{abs}(x)<\id{eps}\!:\id{infinity}\: \kw{else}\!: y/x \kw{fi}$$
 
@@ -2779,7 +2778,7 @@ annotations in the newfangled (but better) world of "lualatex" and the
 
 \noindent
 \MP\ does not draw text directly; but it provides two different mechanisms to
-turn some text into a \<picture>, which can then be treated like any other; 
+turn some text into a \<picture>, which can then be treated like any other;
 saved as a variable, drawn directly, or transformed in some way with a
 scaling, a reflection, or a rotation. The first mechanism is described below,
 the second in §\ref{btex}.
@@ -2831,7 +2830,7 @@ one of these:
           the numeric expression is rounded to the nearest integer modulo
           256.
 
-    \item Use \mpl{decimal} to get a string representing 
+    \item Use \mpl{decimal} to get a string representing
         the value of a numeric expression.
 
     \item Apply \mpl{str} to any suffix (and hence to any variable).  You get back a
@@ -2911,18 +2910,18 @@ def U primary s = if string s: decode(s) fi enddef;
 \end{code}
 which would let you write:
 \begin{code}
-label.rt(U"café à la möde", (x,y));
+label.rt(U"café à la crème", (x,y));
 \end{code}
 
 \item \red{However, there's no point in making any of this too elaborate}.  If you
-    really want proper Unicode support you should use \MP\ with Lua\TeX. (See 
+    really want proper Unicode support you should use \MP\ with Lua\TeX. (See
     below in §\ref{sec:neo-labels}).
 \vss}}
 \mpexternal[firstline=6,lastline=23,xrightmargin=-10pt]{trad-utf8.mp}
 \noindent
 Use it with \mpl{infont} like this: ‘\mpl{decode("café") infont "ptmr8r"}’
 to produce a normal \<picture> that can be passed to \mpl{draw} or saved as
-usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\noindent 
+usual.\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip -9.5pt\noindent
 The fragment on the left produces:
 $$\includegraphics{trad-utf8}$$
 The \texttt{label} macro automatically calls \texttt{infont} with the current value
@@ -3005,7 +3004,7 @@ operators to measure the bounding box of a picture; they are shown in \red{red} 
 the diagram, and you can use them to measure the width, depth, and height of a
 textual picture.  You can also work out the location of the baseline of the text or
 the x-height, provided you know how much your picture has been shifted.
-The easiest way to do this is to measure the picture \textit{before} 
+The easiest way to do this is to measure the picture \textit{before}
 you shift it.\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in
 $$\includegraphics[width=4in]{trad-infont-annotated}$$
 \vss}}
@@ -3149,7 +3148,7 @@ Another consequence of the "\hbox" feature is that there is no automatic text
 wrapping done for you, but again you can work round this easily because \TeX\ lets
 you nest a "\vbox" inside an "\hbox".  This gives you proper paragraph-like wrapping
 but you will almost certainly need to adjust the line length, justification, and
-indentation in order to get a satisfactory result \rightarrow 
+indentation in order to get a satisfactory result \rightarrow
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize 4in\vskip -64pt\noindent
 \begin{code}
 ...
@@ -3221,12 +3220,12 @@ example.
 \enlargethispage{24pt}
 
 \vfill\noindent
-\textsc{You might also want} to mark a straight line between two points.  
+\textsc{You might also want} to mark a straight line between two points.
 \vadjust{\moveright5.3in\vbox to 0pt{\hsize 4.2in\vspace{-2\baselineskip}
 \smallmpexternal[firstline=6,lastline=19]{trad-braces.mp}
 \smallmpexternal[firstline=28,lastline=28]{trad-braces.mp}
 \noindent
-Note that, as well as drawing the braces, the macro uses the grouping provided by \mpl{vardef} to return the 
+Note that, as well as drawing the braces, the macro uses the grouping provided by \mpl{vardef} to return the
 mid point so that you can put a label next to it.
 \vss}}
 The simplest way to do this is just to use \mpl{drawdblarrow} on a copy of your straight
@@ -3362,7 +3361,7 @@ are limited to whatever font packages you have that work with the traditional
 \newpage
 \subsubsection{Setting verbatim listings}\label{sec:verbatim}
 
-\textsc{There is a good chance} that you will never need to set a verbatim 
+\textsc{There is a good chance} that you will never need to set a verbatim
 listing in a \MP\ drawing, but if you do there are a couple of things to think
 about. The issue about setting text verbatim with \TeX\ is that turning off the
 control characters can be tricky, so if you have text for a label with characters
@@ -3505,8 +3504,8 @@ fonts; you need this familiarity in order to use "luamplib" properly.
 \mpic{1cm}{neo-unicode}
 
 You also need an editor that will handle Unicode.  \MP\ still restricts you to using
-printable ASCII in your source code, except within a string literal or a "btex"
-\dots\ "etex" picture literal.  So it becomes very easy to write this sort of label:
+printable ASCII in your source code, but you can put whatever you want inside a string literal or a "btex"
+\dots\ "etex" picture literal.  So it becomes very easy to produce this sort of label:
 \smallmpexternal[firstline=8,lastline=8]{neo-unicode.mp}
 \noindent
 or even whole paragraphs that use Unicode:
@@ -3611,7 +3610,7 @@ although these operators might appear to be special quotation marks, they produc
 \newpage
 \subsection{Drawing on an external image}\label{sec:extimage}
 
-A limitation of plain "mpost"'s use of \TeX\ is that 
+A limitation of plain "mpost"'s use of \TeX\ is that
 "\special" commands are removed from the ".dvi" file that is made
 into a \<picture> variable. So, in particular, you can’t use
 "\includegraphics" in a \TeX\ label.  But "luamplib" removes this
@@ -3630,7 +3629,7 @@ tools, as shown here \rlap{$\longrightarrow$}%
 \vskip -\baselineskip
 \smallmpexternal[firstline=8,lastline=24,xleftmargin=0pt,xrightmargin=-10pt]{neo-marked-up-photo.mp}
 \small
-If you uncomment the \mpl{\% input neo-reference-grid} line, so that the 
+If you uncomment the \mpl{\% input neo-reference-grid} line, so that the
 code on \llap{$\leftarrow$\;}the left is included, you get this automatically-sized grid superimposed:
 $$\includegraphics[width=3in]{neo-marked-up-photo-grid}$$
 The grid makes it easier to find the coordinates for your annotations.
@@ -3652,7 +3651,7 @@ support any transparent colours.  However, if you use the "luamplib" package wit
 is little documentation for this support and no ‘official’ macro for it, but you can
 add your own like this:
 \begin{code}
-def withalpha expr a = 
+def withalpha expr a =
     withprescript "tr_alternative=2"
     withprescript "tr_transparency=" & decimal a
 enddef;
@@ -3660,7 +3659,7 @@ enddef;
 and then use it like this, adding \mpl{withalpha} after the
 colour specification:\mpic{-144pt}{new-fangled-transparency}
 \begin{code}
-path r, g, b; 
+path r, g, b;
 r = fullcircle scaled 40 shifted 10 up;
 g = r rotated 120; b = g rotated 120;
 
@@ -3883,7 +3882,7 @@ draw P1 shifted 100 up; draw P2 shifted 100 down;
 
 Sometimes it is more convenient to use \mpl{label} to place the pictures, taking
 advantage of the automatic alignment provided.  Note also that, unless you have
-explicitly or implicitly filled them with the \mpl{background} colour, the blank 
+explicitly or implicitly filled them with the \mpl{background} colour, the blank
 parts of each picture are really transparent so you can overlap them when appropriate.
 
 \newpage
@@ -3979,7 +3978,7 @@ different colours and pens to obtain a variety of effects:
 $$\includegraphics[width=\textwidth]{pics-draw-picture}$$
 The picture is supposed to represent a fancy knot (a “Carrick bend”), and to show
 the red and blue strands crossing each other.  The \mpl{overdraw} macro tries to do
-this by undrawing with a thick pen, then redrawing the upper strand on top.
+this by using \mpl{undraw} with a thick pen, then drawing the upper strand on top.
 
 \newpage
 \subsection{Simulating transparency with pictures}\label{sec:simulated_alpha}
@@ -4053,7 +4052,7 @@ Or you can be more ambitious, as shown in the example on the right
 \rightarrowfill\break
 In general, you draw any background you want, like this:
 \begin{smallcode}
-picture P; P = currentpicture; currentpicture := nullpicture;
+picture P; P = currentpicture; clearit;
 % do complex background drawing...
 clip currentpicture to bbox P; draw P;
 \end{smallcode}
@@ -4070,7 +4069,7 @@ if wd > 360: currentpicture := currentpicture scaled (360/wd); fi
 If you wanted to apply one of these changes to all the figures in your "mpost" input file then
 you can use the hook provided by plain \MP:
 \begin{smallcode}
-extra_endfig := "picture P; P = currentpicture;" &
+extra_endfig := "picture P; P = currentpicture; clearit;" &
                 "fill bbox P withcolor (1,1,31/32); draw P;";
 \end{smallcode}
 The definition of \mpl{endfig}, includes the line \mpl{scantokens extra_endfig;} so
@@ -4110,7 +4109,7 @@ The "ruler-cm.mp" file looks like this:
 \noindent and there is a companion "ruler-inch.mp" file that looks like this:
 \mpexternal{ruler-inch.mp}
 \noindent The idea is that you set a subscripted variable \mpl{u[]} to a number of unit sizes
-where you want markers and then call \mpl{input ruler}.  
+where you want markers and then call \mpl{input ruler}.
 
 
 \newpage
@@ -4163,7 +4162,7 @@ together around $P$, and returns the result as a \<picture>.
 \newpage
 \section{Drawing and decorating lines}
 
-\textsc{This section} is all about making marks along a \<path> using 
+\textsc{This section} is all about making marks along a \<path> using
 \mpl{draw} and a number of other more sophisticated techniques.
 
 \subsection{Choosing a pen}
@@ -4186,28 +4185,28 @@ this pen is scaled to $0.5\unit{bp}$ and saved as \mpl{currentpen} and
 draw origin -- 20 right;  % uses "currentpen"
 draw (0,10) -- (20,10) withpen pencircle scaled 2; % thick pen
 \end{code}
-If you get tired of typing \mpl{withpen}, 
+If you get tired of typing \mpl{withpen},
 you can change pens with the \mpl{pickup} macro;  essentially this just updates the value of
 \mpl{currentpen}.\vadjust{\moveright 4in\vbox to 0pt{\bigskip
 \begin{mplibcode}
 draw origin -- 42 right;  % uses "currentpen"
 pickup pencircle scaled 2; % use a thick pen
-draw (0,-24) -- (42,-24); 
-draw (0,-36) -- (42,-36); 
+draw (0,-24) -- (42,-24);
+draw (0,-36) -- (42,-36);
 pickup defaultpen;  % change back to default
 \end{mplibcode}\vss}}
 \begin{code}
 draw origin -- 42 right;  % uses "currentpen"
 pickup pencircle scaled 2; % use a thick pen
-draw (0,-24) -- (42,-24); 
-draw (0,-36) -- (42,-36); 
+draw (0,-24) -- (42,-24);
+draw (0,-36) -- (42,-36);
 pickup defaultpen;  % change back to default
 \end{code}
-If you are using a fat pen and you don't like the big rounded ends, then 
-you can use \mpl{cutdraw} or set \mpl{linecap := squared;} — see
+If you are using a fat pen and you don't like the big rounded ends, then
+you can use \mpl{cutdraw} or set \mpl{linecap := butt;} — see
 §\ref{sec:linecaps} for more.
 \vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize 4.4in\noindent
-Here is an example that makes use of a circular pen transformed to a thin ellipse. 
+Here is an example that makes use of a circular pen transformed to a thin ellipse.
 \begin{texcode}
 \documentclass[border=5mm]{standalone}
 \usepackage{luamplib}
@@ -4216,10 +4215,10 @@ Here is an example that makes use of a circular pen transformed to a thin ellips
 \vskip-\baselineskip
 \begin{smallcode}
 beginfig(1);
-  -z1 = z4 = 7 dir 8; 
+  -z1 = z4 = 7 dir 8;
   y2 - y1 = y4 - y3 = 3(y4 - y1);
   z2 - z1 = z4 - z3 = whatever * dir 50;
-  draw z1 .. controls z2 and z3 .. z4 
+  draw z1 .. controls z2 and z3 .. z4
     withpen pencircle xscaled 1.2 yscaled 0.2 rotated 50;
   currentpicture := currentpicture rotated - angle z4;
 endfig;
@@ -4231,22 +4230,22 @@ endfig;
 Here is a \fleuron\ mark.
 \end{document}
 \end{texcode}
-This example shows how to use an elliptical pen to draw a little twiddle mark 
+This example shows how to use an elliptical pen to draw a little twiddle mark
 — and incidentally how to define a La\TeX\ command that draws a \MP\
 figure — that comes out looking like this: \fleuron.  The idea is that you could use
-it as a decoration.  
+it as a decoration.
 
 \medskip
 \centerline{\fleuron\quad \textit{A typographical ornament} \quad\fleuron}
 \medskip
 
-\noindent 
+\noindent
 With a little work, you could also use it as a fancy rule between
 sections.
 $$\includegraphics{pens-fleuron}$$
 The important parts are that \mpl{pencircle} is scaled to be wider than it is tall,
 and then rotated so that it is at the correct angle at the start and at the end of
-the path. Think of it as a calligraphic nib. For another example, look at 
+the path. Think of it as a calligraphic nib. For another example, look at
 §\ref{sec:braces}, which uses a similar pen to draw the braces for the dimension
 label.}}
 
@@ -4288,21 +4287,21 @@ erase anything, it just draws over the path with an opaque line that happens to 
 the same colour as the background, so you will not see
 anything that happens to lie under the line even if you want to.
 
-If you want to draw real separate parallel lines, then the simplest approach is just to shift 
+If you want to draw real separate parallel lines, then the simplest approach is just to shift
 the path sideways using something like this:
 \begin{smallcode}
-path p; p = origin -- 100 dir 30; draw p; 
+path p; p = origin -- 100 dir 30; draw p;
 draw p shifted 4 unitvector(direction 1/2 of p rotated 90);
 \end{smallcode}
 If your path is a regular cycle, like a circle or a polygon, then another approach
-is to draw a scaled copy.  
+is to draw a scaled copy.
 \begin{smallcode}[xrightmargin=-20pt]
 path p; p = fullcircle scaled 100 shifted 42(normaldeviate, normaldeviate);
 draw p; draw p shifted -center p scaled 0.98 shifted center p;
 \end{smallcode}
 but if your path is more complex, then you need something like the macro
 shown at the right.  The piano-shaped path $p$ is drawn in black; the outer blue path
-was drawn with \mpl{draw beside(p, 2)} and the red one with 
+was drawn with \mpl{draw beside(p, 2)} and the red one with
 \mpl{draw beside(p, -2)}.
 
 \moveright5.5in\vbox to 0pt{\vss\hsize 4.4in\noindent
@@ -4314,8 +4313,8 @@ was drawn with \mpl{draw beside(p, 2)} and the red one with
 \newpage
 \subsubsection*{Making tubes}
 
-Drawing with multiple lines can also produce a three-dimensional effect for 
-knot diagrams (provided that you don't think of toothpaste).  
+Drawing with multiple lines can also produce a three-dimensional effect for
+knot diagrams (provided that you don't think of toothpaste).
 $$
 \begin{mplibcode}
 path a; a = origin .. (72, 10) .. (144, -10) .. (216, 0);
@@ -4331,11 +4330,11 @@ for i=4 step -1/8 until 1/2:
   draw a withpen pencircle scaled i withcolor (i*i/16)[white, 1/2 blue];
 endfor
 \end{smallcode}
-The idea is to 
+The idea is to
 draw a path repeatedly with lines that get thinner and use a lighter shade
 Notice the colour fades from white to dark blue using the mediation syntax.
 You might like to experiment with linear or quadratic transitions until you get a
-gradient that you like.  In the loop above as $i$ varies from 4 down to $\frac12$, 
+gradient that you like.  In the loop above as $i$ varies from 4 down to $\frac12$,
 the mediation fraction varies from 1 down to $\frac1{64}$, like this:
 $$\vbox{\halign{\hss #:\quad&&\hss #\hss\cr
 $i$      & 4.00 & 3.75 & 3.50 & 3.25 & 3.00 & 2.75 & 2.50 & 2.25 & 2.00 & 1.75 & 1.50 & 1.25 & 1.00 & 0.75 & 0.50 \cr
@@ -4349,7 +4348,7 @@ If you don't want the rounded ends, then you should use \mpl{cutdraw} instead of
 
 In general it is a good idea to avoid line crossings completely, but
 occasionally you may end up with a diagram where at least one line
-has to cross another.  The simple way to deal with this is to use the technique 
+has to cross another.  The simple way to deal with this is to use the technique
 shown in §\ref{sec:cd}; capture the line to be drawn in a \<path>
 variable, and then do
 \begin{smallcode}
@@ -4364,18 +4363,18 @@ these two \rlap{$\longrightarrow$}\mpic{-6in}{pens-crossings}
 \newpage
 \subsection{Using dash patterns with extra precision}
 
-\textsc{As you may know}, plain \MP\ provides two 
+\textsc{As you may know}, plain \MP\ provides two
 built-in dash patterns, so that you can draw a path \mpl{dashed withdots} or
 \mpl{dashed evenly}.
 \vadjust{%
 \moveright384pt\vbox to 0pt{\vskip-46pt\hsize 4.2in\small
 $$
 \begin{mplibcode}
-vardef exactly(expr a) = 
+vardef exactly(expr a) =
     save m; numeric m; 2m = (a-6) / round(a/6);
     dashpattern(on m off m)
 enddef;
-vardef gooddots(expr a) = 
+vardef gooddots(expr a) =
     save m; numeric m; 2m = (a-5) / round(a/5);
     dashpattern(off m on 0 off m)
 enddef;
@@ -4400,7 +4399,7 @@ On the right you can see the same circular paths coloured red, and drawn with
 
 $$
 \begin{mplibcode}
-vardef exactly(expr a, u) = 
+vardef exactly(expr a, u) =
     save m; numeric m; 2m = a / round(a/u);
     dashpattern(on m off m)
 enddef;
@@ -4435,12 +4434,12 @@ The detailed syntax is explained in §9.4 of the \MP\ manual, but essentially
 \mpl{withdots} creates a unit 5 points long with a dot in the middle, and
 \mpl{evenly} creates a unit 6 points long with the dashes 3pt long (plus the round
 bit at the end of each dash, unless you have changed \mpl{linecap}) and gaps 3pt
-long (minus any round bits).  
+long (minus any round bits).
 
 You might be tempted to get creative with this and make complex dot-dot-dash patterns,
 but they rarely look very good and they may puzzle your readers.  Scaling the two
-default patterns is probably all you ever need; so if you want a denser dotted line 
-try \mpl{dashed withdots scaled 1/2}, 
+default patterns is probably all you ever need; so if you want a denser dotted line
+try \mpl{dashed withdots scaled 1/2},
 or to get very long dashes you could use
 \mpl{dashed evenly scaled 4}.
 
@@ -4452,12 +4451,12 @@ where the path begins and ends.
 There is a simple solution: adjust the length of the dash pattern
 so that an integer number of dash units exactly fit your path.
 \begin{code}
-vardef exactly(expr a, u) = 
+vardef exactly(expr a, u) =
     save m; numeric m; 2m = (a-u) / round(a/u);
     dashpattern(on m off m)
 enddef;
 \end{code}
-Here $a$ is supposed to be the \mpl{arclength} of your path, and $u$ the desired 
+Here $a$ is supposed to be the \mpl{arclength} of your path, and $u$ the desired
 unit size, so you can use it like this:
 \begin{code}
 path c; c = fullcircle scaled 200;
@@ -4470,8 +4469,8 @@ to get a close approximation to \mpl{dashed evenly} that exactly fits the path.
 
 \textsc{A little decoration} generally goes a long way, so you may want to restrain
 your creativity before you apply too many of the ideas from this page.  There are
-two basic techniques shown here: creative use of dash patterns and drawing shapes
-along the path.\mpic{-48pt}{pens-strokes} 
+two basic techniques shown here: creative use of dash patterns; and drawing shapes
+along the path.\mpic{-48pt}{pens-strokes}
 
 \smallskip\noindent
 With a curved path $S$, the first “with a dash pattern” was drawn like this:
@@ -4502,7 +4501,7 @@ like to try to re-create them as an exercise, or you can look in the source file
 
 A more flexible, but more complicated, decoration technique is to use a macro
 to morph your path before you actually draw it.  This is how the venerable "feynmp"
-package marks photons and gluons etc in Feynmann diagrams.  Since "feynmp" is a
+package marks photons and gluons etc in Feynman diagrams.  Since "feynmp" is a
 standard part of the base \MP\ distribution you can use these macros in normal
 drawings; so to draw a zigzag line you can do:
 \begin{code}
@@ -4533,7 +4532,7 @@ paths.\mwpic{80pt}{pens-greek-meander}
 Plain \MP\ provides just two commands for drawing arrows: \mpl{drawarrow} and
 \mpl{drawdblarrow}.  The default arrows are shown at
 \sep{"1"}\mwpic{-48pt}{pens-arrow-styles} in the drawing on the
-right.\rlap{$\rightarrow$} 
+right.\rlap{$\rightarrow$}
 
 There are two parameters that you can set to control the shape.  The length of the
 arrow head is defined by \mpl{ahlength} which is set to 4pt, and the angle is
@@ -4544,14 +4543,14 @@ more elegant if they are a bit longer and slightly sharper.  The arrows shown at
 
 \bigskip
 
-If your diagrams needs a wider range of arrow head styles, perhaps because you are
-drawing UML digrams, then you can use the "mparrows" package from CTAN.   Assuming
-that you have a complete \TeX\ distribution installed, you can just put \mpl{input
+If your diagram needs a wider range of arrow head styles, perhaps because you are
+drawing UML, then you can use the "mparrows" package from CTAN.   If 
+you have a complete \TeX\ distribution installed, you can just put \mpl{input
 mparrows} near the top of your program, and then use the "setarrows" macro
-to change the arrow style.  
+to change the arrow style.
 In the drawing on the right
 \begin{itemize}
-    \item \sep{"mp1"} shows the result of \mpl{setarrows(open)}, 
+    \item \sep{"mp1"} shows the result of \mpl{setarrows(open)},
     \item \sep{"mp2"} shows \mpl{setarrows(defaultunfilled)}, and
     \item \sep{"mp3"} shows \mpl{setarrows(barbed)}.
 \end{itemize}
@@ -4564,10 +4563,10 @@ barbed arrows. For full details try: "texdoc mparrows"
 \bigskip
 
 If you would rather have arrows in your drawings that match the various arrows
-provided by the Computer Modern font, then you can use the "cmarrows" pacakge from CTAN.  You can
+provided by the Computer Modern font, then you can use the "cmarrows" package from CTAN.  You can
 include this package by adding \mpl{input cmarrows} near the top of your program.
 It is slightly more complicated to control, but the details are explained in the
-manual.  At \sep{"cm1"} you can see the result of 
+manual.  At \sep{"cm1"} you can see the result of
 \begin{smallcode}[xrightmargin=-40pt]
 setup_cmarrows(macro_name="drawarrow"; arrow_name="texarrow"; ... );
 setup_cmarrows(macro_name="drawdblarrow"; arrow_name="twowayarrow"; ...);
@@ -4613,7 +4612,7 @@ to note:
         This drawing was done with \mpl{pencircle scaled 2}, so that the dots
         would be easy to see. This does make the arrows drawn with the
         default line modes (rounded caps and rounded joins) looks a bit fat;
-        they look better with the usual \mpl{pencircle scaled .5}, Like this: 
+        they look better with the usual \mpl{pencircle scaled .5}, Like this:
         \begin{mplibcode}drawdblarrow (left--right) scaled 20;\end{mplibcode}
 
 \end{itemize}
@@ -4632,16 +4631,16 @@ named) for use with the default pen \mpl{pencircle}.\mwpic{-60pt}{pens-pen-oddit
 You will get some rather odd shapes if you use them with any other pen, such as
 \mpl{pensquare}, especially if you use a large pen.  In the drawings on the right,
 the thin red lines are drawn with each pen  scaled to $0.5\unit{bp}$ (the default
-size), and 
+size), and
 the large grey and blue areas show what would be draw with the same pens scaled to
-16\unit{bp}, so that you can see the artefacts more clearly.  
+16\unit{bp}, so that you can see the artefacts more clearly.
 From these drawings you can see:
 \begin{itemize}
     \item The default setting \mpl{linecap := rounded} actually seems to mean “draw
         a dot with the current pen at each end of the path”, so with
         \mpl{pensquare} you get a square dot on the end and it's not rounded at all.
 
-    \item With \mpl{linecap := butt}, \MP\ appears to draw the terminal dots using 
+    \item With \mpl{linecap := butt}, \MP\ appears to draw the terminal dots using
         half of the current pen.  With the square pen, this has the unfortunate
         effect of cutting the pen at 45°, so that the end of the lines appear
         bevelled rather than squared off.   Notice also that the cut is correctly
@@ -4649,8 +4648,8 @@ From these drawings you can see:
 
     \item You get a similar effect with \mpl{linecap := squared}.   \MP\ uses the
         same cut “across” the pen, but pushes it out so that it just touches the
-        far egde of the pen-sized dot that would be drawn with \mpl{linecap := rounded}.
-    
+        far edge of the pen-sized dot that would be drawn with \mpl{linecap := rounded}.
+
 \end{itemize}
 
 You can also see from the drawings that the effect of the \mpl{linejoin} setting, which is
@@ -4663,7 +4662,7 @@ If you need to use a large square pen, then you can mitigate some of the artefac
 if you rotate the pen by 45°.  Using \mpl{pensquare rotated 45} corrects most of the
 faults, except that \mpl{linecap := rounded} will give you lines with pointed ends,
 and that the squared off ends of the lines with the other settings may not be
-exactly orthogonal to the direction of the path at each end.   
+exactly orthogonal to the direction of the path at each end.
 
 \newpage
 \section{Plotting functions}\label{func}
@@ -4695,7 +4694,7 @@ scale.\mpic{-16pt}{func-numbered-axes}
 \newpage
 \subsection{Drawing linear functions}
 
-\textsc{For simple} linear graphs, you just need to define two points and draw a 
+\textsc{For simple} linear graphs, you just need to define two points and draw a
 line between them; it is tempting to try to make some generalized macro to do this,
 but it is hard to make something completely general, so for most graphs it is easier
 just to specify two points and use \mpl{draw}; often it is handy to making your line
@@ -4729,15 +4728,15 @@ loop like this:
 \begin{code}
 vardef f(expr x) = x ** 2 enddef;
 path ff;
-ff = (for x = minx step s until maxx - s: 
-        (x, f(x)) .. 
-    endfor (maxx, f(maxx))) xscaled u yscaled v; 
+ff = (for x = minx step s until maxx - s:
+        (x, f(x)) ..
+    endfor (maxx, f(maxx))) xscaled u yscaled v;
 \end{code}
 provided you have first defined variables \id{minx} and \id{maxx} to represent the
 domain of $x$, and worked out appropriate values for horizontal and vertical
-units, $u$, and $v$ so that the range of $f(x)$ fits neatly on your graph.  
+units, $u$, and $v$ so that the range of $f(x)$ fits neatly on your graph.
 
-The loop 
+The loop
 above also uses a variable $s$ to control the number of points used to define the
 path.\mwpic{-180pt}{func-powers}
 The figures on the right show that over the domain $-3$ to $3$ a step of $\frac12$
@@ -4758,9 +4757,9 @@ step using the $\{\<pair>\}$ syntax:
 vardef f(expr x) = x ** 2 enddef;
 vardef fp(expr x) = 2x enddef; % NB "fp" because "f'" is illegal
 path ff;
-ff = (for x = minx step s until maxx - s: 
-        (x, f(x)){1, fp(x)} .. 
-    endfor (maxx, f(maxx))) xscaled u yscaled v; 
+ff = (for x = minx step s until maxx - s:
+        (x, f(x)){1, fp(x)} ..
+    endfor (maxx, f(maxx))) xscaled u yscaled v;
 \end{code}
 
 \vfill
@@ -4771,7 +4770,7 @@ smaller step size.
 \newpage
 \subsection{Making curves for functions from path pieces}\label{sec:pathpieces}
 
-\textsc{In some situations}, you might find it easier to stitch together various 
+\textsc{In some situations}, you might find it easier to stitch together various
 \<path> pieces to make your curve.  This can be especially elegant if there is a
 symmetry in the path.  For example:\mwpic{-48pt}{func-reflection}
 \mpexternal[firstline=15,lastline=23]{func-reflection.mp}
@@ -4784,7 +4783,7 @@ each \mpl{point} of the paths).}
 \begin{itemize}
     \item Notice that you can update the path using the assignment operator
         “\mpl{:=}”.
-    \item You need to \mpl{reverse} the reflected portion so that the two ends coincide.  
+    \item You need to \mpl{reverse} the reflected portion so that the two ends coincide.
     \item The two path segments are spliced together with \mpl{&}.  You could use
         a path join like \mpl{..} instead, but then the joined path would have an extra
         \mpl{point} at \mpl{(1,1)}.
@@ -4831,7 +4830,7 @@ section from the origin to $2\pi$ is created in a loop; with 360 steps, you can 
 \mpl{--} and still get a smooth path.  Secondly the cycle is duplicated by splicing
 itself to a shifted copy.  Thirdly it is $x$-scaled to radians, and then scaled in both
 directions to the chosen unit size, and drawn chopped off to the width of
-the $x$-axis.  The cosine path is the same path, shifted $\frac12\pi$ left, 
+the $x$-axis.  The cosine path is the same path, shifted $\frac12\pi$ left,
 drawn in \red{red}, and chopped off to fit the same width.
 The fancy fraction labels were produced with this subroutine:
 \smallmpexternal[firstline=6,lastline=13]{func-sines.mp}
@@ -4846,27 +4845,27 @@ two functions, by combining the \MP\ paths themselves.%
 \vss}}
 $$\includegraphics[width=\textwidth]{func-addition-of-sines}$$
 Notice how the same extension, scaling, and trimming operations
-can be applied to all three paths using a \mpl{forsuffixes} loop.  
-Note that you can use any regular variable name for the loop index; 
-you don't have to use \mpl{$}, but like \mpl{@} it is a 
+can be applied to all three paths using a \mpl{forsuffixes} loop.
+Note that you can use any regular variable name for the loop index;
+you don't have to use \mpl{$}, but like \mpl{@} it is a
 valid variable name in \MP, and it looks a bit like a placeholder marker in other
 languages.
 
 Note that you need to start with the first point of the path outside the loop
-so that you don't end up with a dangling \mpl{--} path connector.  Using 
+so that you don't end up with a dangling \mpl{--} path connector.  Using
 \mpl{origin} is just a short cut for writing \mpl{(0, sind(0))}.  If you were
 plotting a different function this would not work.  For example, \mpl{(0, cosd(0))}
 is \mpl{(0,1)}.
 
 \vfill\noindent
-\hey The missing \mpl{pi_sixths} macro is left as an exercise for the reader.  
+\hey The missing \mpl{pi_sixths} macro is left as an exercise for the reader.
 Hint: you can adapt the \mpl{pi_quarters} on the previous page, allowing for halves,
 thirds, and sixths instead of halves and quarters.
 \newpage
 \subsection{Focus on a specific region of a function}
 
 \textsc{This visual proof} required a large $y$-axis scale.\mwpic{-36pt}{func-epi-v-pie}
-The axes are separated to show the 
+The axes are separated to show the
 discontinuity in scales, and that the origin is not on the chart.\enlargethispage\baselineskip
 
 \smallmpexternal[xleftmargin=0pt, firstline=8, lastline=42]{func-epi-v-pie.mp}
@@ -4887,10 +4886,10 @@ mathematical definition.  You can a \MP \<path> to make a likely looking approxi
 \newpage
 \subsubsection{Taming Bezier paths with controls}
 
-\textsc{It takes some} practice to translate a sketch of a curve into a smooth 
+\textsc{It takes some} practice to translate a sketch of a curve into a smooth
 path.  Plain \MP\ inherits from \MF\ a useful \id{flex} macro, that takes a list of \<pair>s
 (any number of them) and produces a pleasing path through them. As Knuth says in the
-\mfbook: 
+\mfbook:
 “The idea is to specify two endpoints, $z_1$ and $z_n$, together with
 one or more intermediate points where the path is traveling in the
 same direction as the straight line from $z_1$ to~$z_n$; these
@@ -4931,17 +4930,17 @@ so that the points on the path are closer to one control point than the other.
 \newpage
 \subsection{Parametric plots}
 
-\textsc{If you want to plot} one function against another, then you can make each 
+\textsc{If you want to plot} one function against another, then you can make each
 coordinate a function of an independent variable. All functions can be converted,
 trivially, to this form:
 \begin{code}
 vardef f(expr x) = x enddef;
 vardef g(expr x) = sind(x) enddef; % or whatever function ...
-path ff; ff = for t = mint step s until maxt - s: 
-    (f(t), g(t)) .. 
+path ff; ff = for t = mint step s until maxt - s:
+    (f(t), g(t)) ..
 endfor (f(maxt), g(maxt));
 \end{code}
-But you can make more complicated curves, for example curves 
+But you can make more complicated curves, for example curves
 that can have more than one value for $y$ for a given $x$, if you change $f(x)$ and
 $g(x)$ appropriately.
 The first example\mwpic{-24pt}{func-lemniscate} shows the lemniscate of Bernoulli
@@ -4990,9 +4989,9 @@ Lockwood\parfillskip0pt
 \le 1$ and then transform as required (see next page), but it can be illuminating to follow more
 traditional constructions, such as that shown on the
 right.\mwpic{-180pt}{curves-parabola}
-\vadjust{\moveright7.2in\vbox to 0pt{\vskip48pt\hsize 200pt\noindent  
+\vadjust{\moveright7.2in\vbox to 0pt{\vskip48pt\hsize 200pt\noindent
 The idea here is that you put the right angle of your set square on the vertical
-axis with the short side touching $S$, and then draw the long side.  If you do this 
+axis with the short side touching $S$, and then draw the long side.  If you do this
 in enough places, the edges form a parabola. In the \MP\ code here, the intersection
 of each ray with the one before is captured as variable $t$ and then added one at a
 time to the \<path> \id{parabola}, (using a neat trick at the beginning).
@@ -5002,7 +5001,7 @@ time to the \<path> \id{parabola}, (using a neat trick at the beginning).
 \newpage
 \subsubsection*{Parabola from directrix and focus}
 
-\textsc{The classical definition} of the parabola is the locus of points that are 
+\textsc{The classical definition} of the parabola is the locus of points that are
 equidistant from a given line (the \textit{directrix}, shown as $A\to B$ on the
 right) to a given focus point (shown as $S$).\mpic{-24pt}{curves-parabola-directrix}
 Each point on the parabola path is related to each point on the directrix, and you can construct an
@@ -5035,8 +5034,8 @@ the lines from the centre of the circle $O$ through the tangent points from the 
 $S$.  When the ratio of $OS/OA = \sqrt2$, the asymptotes are at right angles.
 
 You can also draw the hyperbola as the function $y=1/x$ (as shown in
-§\ref{sec:pathpieces}), which can be transformed to any desired shape. 
-The untransformed function is shown on the bottom left, with the focus $S$ 
+§\ref{sec:pathpieces}), which can be transformed to any desired shape.
+The untransformed function is shown on the bottom left, with the focus $S$
 at the point $(\sqrt2, \sqrt2)$.  If the desired angle between the asymptotes is
 $2\alpha$, the transformation can be created like this:
 \begin{code}
@@ -5064,8 +5063,8 @@ Then the lengths of the semi-major axes, $a$ and $b$, were extracted like this:
 If you already had $a$ and $b$, then you could use them directly to scale your
 ellipse;  the following snippet would produce the same elliptical path:
 \begin{code}
-numeric a, b; a = 160; b = 100; path ellipse;   
-ellipse = fullcircle xscaled 2a yscaled 2b rotated 13; 
+numeric a, b; a = 160; b = 100; path ellipse;
+ellipse = fullcircle xscaled 2a yscaled 2b rotated 13;
 \end{code}
 The “eccentricity”, $e$, of the ellipse is the ratio between the distance from the centre
 to each focus and the semi-major axis, $a$.  By definition, the distance from $F_1$
@@ -5077,7 +5076,7 @@ a^2e^2$, and $e^2=1-b^2/a^2$:
 The focus points can then be found like this:
 \mpexternal[firstline=19,lastline=21]{curves-ellipse.mp}
 \noindent
-Note that in the example above the ellipse is centred at the origin, because 
+Note that in the example above the ellipse is centred at the origin, because
 the \mpl{fullcircle} path was only scaled and rotated, not shifted.  But the method
 shown will find the centre of any ellipse no matter where you have placed it.
 
@@ -5103,7 +5102,7 @@ second arc centred at the other focus with radius $2a$.  The intersection points
 $P$ and $Q$, of these two arcs are the images of the first focus point in the
 required tangents (because $F_2TF_1=2a$ by definition, and $F_2P=2a$ by
 construction), and so the tangent points $T$ and $T'$ are the intersections of
-$F_2P$ and $F_2Q$ with the ellipse. 
+$F_2P$ and $F_2Q$ with the ellipse.
 
 There is no such direct construction for the nearest point on an ellipse to a given
 point, but you can use the macro \id{solve} to find it numerically. The blue arrow
@@ -5118,13 +5117,13 @@ shows the shortest distance from $A$ to the ellipse.
 \textsc{To draw a cardioid by hand}, you can draw a base circle, mark a fixed point
 $A$ on it, and then draw a circle centred at any point $Q$ on the circle that passes
 through point $A$.  If you then repeat this for many different positions of Q, the
-cardioid is the curve that encloses all the circles.\mpic{-24pt}{curves-cardioid-simple} 
+cardioid is the curve that encloses all the circles.\mpic{-24pt}{curves-cardioid-simple}
 But for \MP, you want only a single point $P$ from the circumference of each circle;
 this turns out to be the image of $A$ reflected in the tangent at each point $Q$,
 like so:
 $$\includegraphics[width=0.7\textwidth]{curves-cardioid-construction}$$
 \vskip -84pt\noindent
-With a small step size $s$ and a rotated circle \id{base}, this suggests: 
+With a small step size $s$ and a rotated circle \id{base}, this suggests:
 \smallmpexternal[firstline=13,lastline=16]{curves-cardioid-construction.mp}
 \noindent
 You can also show that $AP=2a(1+\cos\theta)$, where $a$ is the radius of the
@@ -5137,7 +5136,7 @@ cardioid = for t=0 upto 360: 2a * (1+cosd(t)) * dir t .. endfor cycle;
 \newpage
 \subsection{Limaçon}
 
-\textsc{The limaçon can be seen} as a generalization of the cardioid, obtained by 
+\textsc{The limaçon can be seen} as a generalization of the cardioid, obtained by
 moving point $A$ off the base circle.
 \vadjust{\moveright356pt\vbox to 0pt{\vskip -20pt\noindent
 \rlap{\includegraphics[scale=0.833]{curves-limacon-simple}}\vss}}
@@ -5162,8 +5161,8 @@ Here $2a$ is the diameter of the blue \id{base} circle.  Note that if you use
 \par\kern 2pt
 \vbox{\halign{#&\kern 1em\vbox{\hsize=18em\noindent #}\cr
 $$\includegraphics{curves-limacon-durer}$$
-&diagram, the base circle is divided into 12 parts like a 
-clock face.  At 1 o’clock, you draw a line segment of a given 
+&diagram, the base circle is divided into 12 parts like a
+clock face.  At 1 o’clock, you draw a line segment of a given
 length parallel to the radius to 2 o’clock; at 2 you draw the same length
 segment parallel to 4 o’clock, and so on.  The limaçon is the curve through
 the far ends of each segment (plus any intermediate points required).
@@ -5187,7 +5186,7 @@ base circle and the points $A$ and $B$ at the ends of each line that have the $x
 part and $y$ part of each point $T$ round the base circle.
 $$\includegraphics[scale=0.8]{curves-astroid-construction}$$
 Then the point $P$ on $A \to B$ that is closest to $T$ will lie on the astroid, so you
-can make the path with: cycle;
+can make the path with:
 \smallmpexternal[firstline=8,lastline=12,xleftmargin=0pt]{curves-astroid.mp}
 \noindent
 Note that you need to use “\mpl{--}” so that the cusps stay neatly
@@ -5204,9 +5203,9 @@ The geometry of the astroid also allows us to define a simple parametric equatio
 for the point $P$.
 $$\includegraphics[scale=0.8]{curves-astroid-construction}$$
 If the distance $OT = a$, then $OA = BT = a\cos\theta$.
-But then $BP = BT\,\cos\theta = a\cos^2\theta$, and the 
+But then $BP = BT\,\cos\theta = a\cos^2\theta$, and the
 $x$-coordinate of $P = BP\,\cos\theta=a\cos^3\theta$. By a similar
-argument the $y$-coordinate is $a\sin^3\theta$, so the parametric 
+argument the $y$-coordinate is $a\sin^3\theta$, so the parametric
 equations for $P = (x, y)$:
 $$\centerline{$x=a\cos^3\theta$ \quad and \quad $y=a\sin^3\theta$}$$
 This is used to make this rather psychedelic family of astroid cousins $\longrightarrow$
@@ -5256,7 +5255,7 @@ $$\includegraphics[width=0.9\textwidth]{curves-cycloids}$$
 \noindent\textsc{You can't easily} draw a cycloid through two arbitrary points, but
 taking the equations for $x$ and $y$ from the previous page, we can use \mpl{solve}
 to find a value $a$ for $\theta>0$ where $\theta-\sin\theta=1-\cos\theta$, and then
-you have two points for $\theta=0$ and $\theta=a$ which are  
+you have two points for $\theta=0$ and $\theta=a$ which are
 at each end of a quarter circle, and it's easy to draw other curves
 through them.\vadjust{\moveright5.25in\vbox to 0pt{\vskip-48pt
 \smallmpexternal[firstline=6,lastline=42]{curves-brachisto.mp}
@@ -5277,7 +5276,7 @@ mathematical terms the radius of the spiral is proportional to the angle turned,
 $r=a\theta$.\mpic{-36pt}{curves-spiral-archimedes}
 This is very simple to program in \MP.
 \begin{code}
-numeric a; a = 1/8; path S; 
+numeric a; a = 1/8; path S;
 S = origin for t=1 upto 360: .. a * t * dir t endfor;
 \end{code}
 except that you are unlikely to need one point for every degree of turn in your spiral, so you are
@@ -5295,19 +5294,19 @@ The rope was drawn (quite slowly) with the \mpl{rope} macro from §\ref{pics-bor
 \vfill\noindent
 \textsc{The next simplest} is the logarithmic spiral where you have
 $r=a^\theta$.\mwpic{-72pt}{curves-spiral-equiangular} This is also very simple to
-program in \MP, provided you are careful about the scaling. 
+program in \MP, provided you are careful about the scaling.
 For the spiral shown on the right, the complete program was:
 \mpexternal[firstline=7,lastline=9,xleftmargin=0pt]{curves-spiral-equiangular.mp}
 \noindent
 Note that $a$ was carefully chosen to get a curve that would fit the page, and that
 $t$ has been divided by 64 to bring it into a suitable range to work with the
-default number system.  
+default number system.
 
 \newpage
 \subsubsection*{Logarithmic spiral and the golden rectangle}
 
-\textsc{The logarithmic spiral} is connected to growth in nature.  If you start with 
-a small square and keep adding squares scaled to the longer side of the resulting 
+\textsc{The logarithmic spiral} is connected to growth in nature.  If you start with
+a small square and keep adding squares scaled to the longer side of the resulting
 rectangle, you get the golden rectangle and the logarithmic spiral emerges from
 it.\mpic{-48pt}{curves-spiral-gnomon-sq}
 \mpexternal[firstline=6,lastline=33,xleftmargin=0pt]{curves-spiral-gnomon-sq.mp}
@@ -5316,25 +5315,25 @@ it.\mpic{-48pt}{curves-spiral-gnomon-sq}
         \mpl{(a,b) := (b,a+b)}; use a temporary numeric instead.
 
 \noindent\llap{• }The uses of \mpl{point} with the square paths \mpl{s[]}
-exploit the fact the the \mpl{unitsquare} path is cyclic, so point 4 is the same 
+exploit the fact the the \mpl{unitsquare} path is cyclic, so point 4 is the same
 as point 0, and so on.
 
-\noindent\llap{• }Note also the rotation of the labels, so that they are horizontal 
+\noindent\llap{• }Note also the rotation of the labels, so that they are horizontal
 when the whole picture is rotated at the end to show the spiral better.
 \par}
 
 \newpage
 \subsubsection*{Logarithmic spiral and similar triangles}
 
-\textsc{This drawing} starts with a large triangle and transforms it to make 
+\textsc{This drawing} starts with a large triangle and transforms it to make
 smaller similar copies.  The spiral is drawn through the apex of successive
 transformed triangles.\mpic{0pt}{curves-spiral-gnomon-trig}
 \mpexternal[firstline=6,lastline=36,xleftmargin=0pt, xrightmargin=-80pt]{curves-spiral-gnomon-trig.mp}
 \moveright 396pt \vbox to 0pt{\vss\hsize 4in\small
-\noindent The \<transform> $S$ is defined implicitly.  It is sufficient 
-to give equations for three non-collinear points, and \MP\ will work out 
-the rest.  In order to do this, you need to know the ratio of $x/a$, but by 
-definition $a/b=b/x$, so $x=b^2/a$, hence $x/a=(b/a)^2$.  The code shown 
+\noindent The \<transform> $S$ is defined implicitly.  It is sufficient
+to give equations for three non-collinear points, and \MP\ will work out
+the rest.  In order to do this, you need to know the ratio of $x/a$, but by
+definition $a/b=b/x$, so $x=b^2/a$, hence $x/a=(b/a)^2$.  The code shown
 sets $r=b/a$, and then uses $r^2$ as the required fraction along $a$.
 
 \smallskip\noindent\hey
@@ -5347,7 +5346,7 @@ an isosceles with base angles of $72^\circ$ as shown.
 \newpage
 \section{Eggs}\label{eggs}
 
-\textsc{Drawing bird's eggs} excites a curious fascination in some people.  This
+\textsc{Drawing hens' eggs} excites a curious fascination in some people.  This
 section shows some possible ways to make eggs with \MP. The first few
 compass-and-ruler constructions are taken from Robert Dixon's
 \textsl{Mathographics}.  They all follow the same basic idea of constructing the
@@ -5356,15 +5355,15 @@ each egg path has 8 points starting with point 0 at “3 o’clock” like \mpl{
 
 \subsection{Euclidean egg}
 
-The first is made of four circular arcs, defined here as parts of 
+The first is made of four circular arcs, defined here as parts of
 circles $a$, $b$, $c$, \& $d$.\mwpic{0pt}{eggs-moss}\marginpar{\par\kern 3in
 \begin{itemize}
     \item "eggs-common.mp" defines the colours, and the \mpl{numbered_points}
         routine that is used to show the points of the "egg" path.
     \item Note that it is not necessary that the parts of the arcs touch;
-        in fact it is better to join them with the \mpl{..} connector in case the 
+        in fact it is better to join them with the \mpl{..} connector in case the
         ends are not close enough for you to use \mpl{&}.
-    \item The rigmarole with saving the current picture, is to show a copy 
+    \item The rigmarole with saving the current picture, is to show a copy
         of the egg path with and without the construction lines.
 \end{itemize}
 }
@@ -5378,7 +5377,7 @@ origin.\mwpic{0pt}{eggs-thom}
 \mpexternal[firstline=8,lastline=17]{eggs-thom.mp}
 \noindent
 Note that you can use $\to$ to create reasonably large circular arcs.
-The parts of the drawing for filling the egg, 
+The parts of the drawing for filling the egg,
 and showing the construction are similar to the first example.
 
 \subsection{A taller Pythagorean egg}
@@ -5396,17 +5395,17 @@ Another alternative construction, for Callicrates.\mwpic{-10pt}{eggs-gold}
 \subsection{Four point egg}
 
 So far all the eggs have been drawn with semi-circular big end, but this
-can be improved.  
+can be improved.
 To get a smoother curve, you can use four different sized arcs with four different
-centres of rotation to make up 
+centres of rotation to make up
 each side of the egg.\mwpic{-36pt}{eggs-four-point}
 \mpexternal[firstline=9,lastline=17,xleftmargin=0pt]{eggs-four-point.mp}
 
 \newpage
 \subsection{Five point egg}
 
-The next level of sophistication is to use five different arcs, 
-but this is more complex and you lose the 
+The next level of sophistication is to use five different arcs,
+but this is more complex and you lose the
 points at exactly E, N, W, and S.\mwpic{0pt}{eggs-five-better}\marginpar{\par\vskip 3in
 \noindent\hey Instead of defining and joining circular arcs, this construction defines
 the points for the egg and the desired directions at each point;
@@ -5415,11 +5414,11 @@ connector.  The six symmetrically-arranged rings $r_1$ to $r_6$ are used to defi
 rotation $o_1$ to $o_8$ which are either points on the rings or intersections of
 lines between them.  Then eight directions $u_1$ to $u_8$ are defined at right
 angles to lines between pairs of centre points.  Finally the handy
-\mpl{directionpoint} macro is used to find the points where the relevant circle is 
-moving in that direction.  To make the egg, these points are joined up with $\to$ 
+\mpl{directionpoint} macro is used to find the points where the relevant circle is
+moving in that direction.  To make the egg, these points are joined up with $\to$
 constrained by the matching direction to make circular arcs.\\
 \llap{$\longleftarrow$\ }{\small Like so.}
-} 
+}
 \smallmpexternal[firstline=6,lastline=37,xleftmargin=0pt]{eggs-five-better.mp}
 
 \newpage
@@ -5430,8 +5429,8 @@ a simple quick egg path, then the \mpl{superellipse} macro gives you a \MP-speci
 option.  All you need is this:\mwpic{-36pt}{eggs-super}
 \mpexternal[firstline=6,lastline=8]{eggs-super.mp}
 
-\vfill 
-\centerline{\tiny [This space intentionally left blank]} 
+\vfill
+\centerline{\tiny [This space intentionally left blank]}
 \vfill
 
 \subsection{The perfect egg}
@@ -5508,7 +5507,7 @@ use of "fontspec" to get the Palatino-like font, used in E.\@ Tufte's books.
     \item The data is stored as \<pair> values in a \<path> variable. This only
         works if both data values are numeric.  If the values are larger than 4096
         you either need to scale them or use the "double" number system.
-    \item Notice how the horizontal unit $u$ is set by measuring the width of a label using 
+    \item Notice how the horizontal unit $u$ is set by measuring the width of a label using
 the technique discussed in §\ref{textsize}.  And that you have to shift the data
         path left before applying the $x$-scaling to avoid overflow.
 \end{itemize}
@@ -5527,9 +5526,9 @@ the technique discussed in §\ref{textsize}.  And that you have to shift the dat
     \item This one has an even sparser frame, and dispenses
         with the labels on each data point.
     \item It is suggested that you resist the temptation to make very many
-        special macros to do charts like this; the ideas here are mainly 
+        special macros to do charts like this; the ideas here are mainly
         to show that \MP\ makes a good environment for following Tufte’s advice
-        about charts: to maximize data ink, and minimize chart junk;
+        about charts: to maximize data ink and minimize chart junk;
         albeit at the cost of some pains-taking.
 \end{itemize}}
 \smallmpexternal[firstline=10,lastline=44,xleftmargin=0pt,xrightmargin=-30pt]{tufte-budget.mp}
@@ -5537,10 +5536,10 @@ the technique discussed in §\ref{textsize}.  And that you have to shift the dat
 \newpage
 \subsection{Time line with more complex dates}
 
-If the dates in your time line are more granular, then you need a 
+If the dates in your time line are more granular, then you need a
 better way to deal with them.  This chart below shows the £/€ exchange rate by month.
 The dates on the horizontal axis were transformed from calendar dates to a
-serial number using the routine shown on the right, 
+serial number using the routine shown on the right,
 which allows you to do this:
 \begin{code}
 dotlabel.bot("Brexit vote", (base(2016, 6, 24) * u, 78 v));
@@ -5565,7 +5564,7 @@ that the epidemic was already declining when the supposedly decisive interventio
 removing the handle from the water pump at the centre of the outbreak was made.
 \vadjust{\moveright5.5in\vbox to 0pt{\hsize=4in\vskip -76pt
 \smallmpexternal[firstline=11,lastline=48,xleftmargin=0pt]{tufte-snow.mp}
-\noindent\hey 
+\noindent\hey
 \textit{The code for the annotation and the title was omitted to save space.\\
 See the source file for details}.\vss}}
 
@@ -5587,20 +5586,20 @@ on the bars; then \mpl{undraw} is used to make implicit grid lines.
 
 \textsc{This chart} is from Tufte’s analysis of the Challenger space shuttle
 disaster.  His objective here was to show all the available
-data relating launch temperature and damage to the booster rockets, and to point 
+data relating launch temperature and damage to the booster rockets, and to point
 out that the forecast for 28 January 1986 was very much colder than any other
 launch.\vadjust{\moveright5.5in\vbox to 0pt{\hsize 4.2in\vskip -48pt
 \begin{smallcode}[xleftmargin=0pt]
 numeric r; r = 1/5;  % adjustment of the marks where required...
-path damage; damage = origin .. (53, 11) .. (57, 4) .. (58, 4) .. 
-  (63, 2).. 
+path damage; damage = origin .. (53, 11) .. (57, 4) .. (58, 4) ..
+  (63, 2)..
   (66, 0)..
   (67, 0 + 2r) ..  % because the data set is quite small
   (67, 0) ..       % the simplest way to show multiple points
   (67, 0 - 2r) ..  % at the same (x, y) location is to add
   (68, 0)..        % this little vertical shift by hand
   (69, 0)..
-  (70, 4 + r)..    % the data is captured in a path, but only the 
+  (70, 4 + r)..    % the data is captured in a path, but only the
   (70, 4 - r)..    % points are drawn, not the lines between them
   (70, 0 + r)..
   (70, 0 - r)..
@@ -5610,10 +5609,10 @@ path damage; damage = origin .. (53, 11) .. (57, 4) .. (58, 4) ..
 \vss}}
 
 The data was again edited directly into the \MP\ source, but this time captured
-as a \<path> variable.  One advantage of this is that it allows you to process 
+as a \<path> variable.  One advantage of this is that it allows you to process
 all the values in parallel using \mpl{scaled} or \mpl{shifted} on the whole path.
 \begin{smallcode}[xleftmargin=0pt]
-numeric u, v; u = 10.8; 5u = 4v; 
+numeric u, v; u = 10.8; 5u = 4v;
 damage := damage xscaled u yscaled v;
 \end{smallcode}
 The individual points are accessed using the \mpl{point n of p} syntax:
@@ -5650,7 +5649,7 @@ right.\rlap{\rightarrow}%
 The approach taken for both examples is first to define the node labels as pictures
 placed as needed, and then write a special-purpose "connect" macro to make
 consistent arrows between the nodes, using \mpl{center}, \mpl{bbox},
-\mpl{cutbefore}, and \mpl{cutafter} as appropriate.  
+\mpl{cutbefore}, and \mpl{cutafter} as appropriate.
 
 The $X\times_ZY$ example needs two variations.  The "curved_connect" macro
 takes a string for the label, the two nodes to be connected, and the initial
@@ -5684,10 +5683,10 @@ The reason this works is that we know (mathematically) that $0 \le a \bmod b < b
 and therefore that the arguments to the recursive call must get smaller each time
 and eventually we must get to $b=0$ when the answer will be $a$.  This is the basic
 recursive approach: ensure at least one argument gets smaller each time and stop
-when you get to a given limit.  
+when you get to a given limit.
 The examples in this chapter use one of two simple approaches:
 \begin{itemize}
-    \item Explicitly pass a \mpl{level} argument that is decremented on each 
+    \item Explicitly pass a \mpl{level} argument that is decremented on each
         recursive call, and stop the recursion when the level gets to zero
     \item Pass a \<path> or two \<pair> arguments, and stop the recursion when the
         path is too short or the pairs are too close together.
@@ -5707,11 +5706,11 @@ decide which is the better approach for a given problem.
 \textsc{The Swedish mathematician} Helge von Koch\mpic{-30pt}{rec-koch-steps} originally devised the
 Koch curve as an example of a non-differentiable curve that could be constructed with
 elementary geometry.  It makes a good introduction to recursive paths with \MP. The
-construction is recursive: each straight line segment in the path is replaced with 
+construction is recursive: each straight line segment in the path is replaced with
 four copies of itself, scaled down $\frac13$  and arranged as shown
 at Level 1 \rightarrowfill\break
 At each level of the construction, the number of points in the path increases
-four-fold and the \mpl{arclength} of the path gets $\frac43$ longer.  
+four-fold and the \mpl{arclength} of the path gets $\frac43$ longer.
 \mpexternal[firstline=7,lastline=18]{rec-koch-steps.mp}
 \noindent
 The five levels were drawing using this function in a loop like this:
@@ -5743,7 +5742,7 @@ it the other way round and delays drawing the triangles until they are small eno
 Note the useful idiom \mpl{shifted (point i of t - point i of little_t)} – this
 neatly tucks a copy of the small triangle into the appropriate corner of the big
 triangle.   You can make this even simpler by coding the scaling parameter $s$ and
-\id{limit} as constants in the recursive routine, so that you do not have to pass 
+\id{limit} as constants in the recursive routine, so that you do not have to pass
 them down each time.  The triangular gasket was generated using the macro like this:
 \mpexternal[firstline=16,lastline=19,xleftmargin=0pt,xrightmargin=-72pt]{rec-sierpinski-triangle.mp}
 \noindent
@@ -5788,7 +5787,7 @@ number system when $n > 11$.}
 \newpage
 \subsection{Iterative dragons}
 
-\textsc{The dragon curve} can also be created with iteration instead of recursion. 
+\textsc{The dragon curve} can also be created with iteration instead of recursion.
 Another way of viewing the stages of developing the curve is that at each stage the
 whole curve is replaced by two copies of itself arranged as shown:
 
@@ -5814,7 +5813,7 @@ The extra parameter $r$ is used to open up the folds, making it more
 \newpage
 \subsection{The golden dragon}
 
-\textsc{You can explore variations} with the recursive approach by altering 
+\textsc{You can explore variations} with the recursive approach by altering
 the scaling and rotation. Here $r=1/\phi^{1/\phi}\simeq 0.74274$ and
 $\theta\simeq 32.893°$ in the initial triangle.
 
@@ -5831,8 +5830,8 @@ level parameter:
 \newpage
 \subsection{The Peano-Gosper curve, or flow-snake}
 
-\textsc{The Peano-Gosper curve} is a space-filling curve.  It is 
-constructed in the same way as the dragons, but generating shape has seven sections 
+\textsc{The Peano-Gosper curve} is a space-filling curve.  It is
+constructed in the same way as the dragons, but the generating shape has seven sections
 instead of two, and they are cunningly arranged to fill the space.\mpic{-72pt}{rec-flowsnake-construction}
 The arrows indicate the reversals so that the scaled-down copies fill the larger
 part of the hexagons that contain them.\rlap{\hbox{\ $\smash{\rightarrow}$}}
@@ -5853,7 +5852,7 @@ flow-snake on the left was created with
 then make the first branch by scaling the trunk by $r$, rotating it $+\theta$, and
 moving it to the top of the trunk; make the second in the same way but rotate it by
 $-\theta$.  Then repeat using each branch as a new trunk.\mpic{-114pt}{rec-simple-tree}
-And stop after enough levels.  
+And stop after enough levels.
 
 This can be implemented easily in \MP, but requires a
 slightly different technique.  There is no simple way to represent the tree as a single
@@ -5898,7 +5897,7 @@ bit.\mpic{-12pt}{rec-general-tree}
 \textsc{To get plants that look more natural} you can introduce some random factors.
 Strictly these are not fractal because they are not
 self-similar. The only change from the previous \mpl{make_tree} was to replace
-\mpl{scaled r rotated theta} with 
+\mpl{scaled r rotated theta} with
 \smallmpexternal[firstline=17,lastline=17,xleftmargin=0pt]{rec-general-tree-deviate.mp}
 
 \vfill\noindent
@@ -5910,7 +5909,7 @@ The colouring was a happy accident.
 \newpage
 \section{Periodic tilings}
 
-\textsc{In mathematical terms}, a “tiling” is a countable set of tiles 
+\textsc{In mathematical terms}, a “tiling” is a countable set of tiles
 that cover the plane without gaps or overlaps.\footnote{Adapted from \textsl{Tilings
 and Patterns}, Branko Grünbaum \& G.\@ C.\@ Shephard, Freeman, 1987}
 A \textit{periodic} tiling is one that consists of a unit shape or pattern that is
@@ -5923,24 +5922,24 @@ You can make an effective grid by drawing repeated lines and then clipping to th
 size you want:\mpic{-42pt}{tiling-simple}
 \mpexternal[firstline=8,lastline=12,xleftmargin=0pt,xrightmargin=-12pt]{tiling-simple.mp}
 \noindent
-but this is a bit limited.  If you want to produce more interesting periodic 
+but this is a bit limited.  If you want to produce more interesting periodic
 tilings, you need to define a unit shape or picture, and a pair of vectors to repeat it.
 \mpexternal[firstline=16,lastline=28,xleftmargin=0pt,xrightmargin=-12pt]{tiling-simple.mp}
 \noindent
 In tilings with more complex shapes you may find that using \mpl{fill} and
 \mpl{draw} in the same loop causes uneven lines because the fill overlaps part of
 the line.  In these cases it is a good idea to duplicate the loops; use the first
-set for filling, the second for drawing.  
+set for filling, the second for drawing.
 
 \newpage
 \subsection{Tiling with regular polygons}\label{sec:regtiling}
 
-\textsc{After tiling with squares}, the two simplest tilings are with triangles and
+\textsc{After tiling with squares}, the next two simplest tilings use triangles and
 hexagons\mwpic{-24pt}{tiling-hex-trig}
-(using the regular polygons from §\ref{polygons}). The basic loop is the same as the
+(made using the routines from §\ref{polygons}). The basic loop is the same as the
 previous page except
 that the vectors $u$ and $v$ are now at 60° to each other (as shown in blue and
-red in the examples to the right). All of these examples where drawn with the same 
+red in the examples to the right). All of these examples were drawn with the same
 basic loop as before:
 \mpexternal[firstline=11,lastline=15,xleftmargin=0pt]{tiling-hex-trig.mp}
 \noindent
@@ -5950,14 +5949,14 @@ In the first row, $P$ was set to a simple polygon path:
 The vectors $u$ (in red) and $v$ (in blue) were defined as (for both tilings):
 \mpexternal[firstline=31,lastline=32,xleftmargin=0pt]{tiling-hex-trig.mp}
 \noindent
-To make the coloured versions, $P$ was defined as an appropriate \<picture>. 
+To make the coloured versions, $P$ was defined as an appropriate \<picture>.
 For the triangular tiling, it looked like this: $\vcenter{
 \begin{mplibcode}
 input colorbrewer-rgb
-path t, tt; 
+path t, tt;
 t = for i=0 upto 2: (0,8) rotated 120i --endfor cycle;
 tt = t reflectedabout(point 2 of t, point 0 of t);
-fill t withcolor Reds 8 2; fill tt withcolor Blues 8 2; draw t; draw tt; 
+fill t withcolor Reds 8 2; fill tt withcolor Blues 8 2; draw t; draw tt;
 \end{mplibcode}}$ so that the tiling actually filled the plane. In the hexagonal
 tiling there are no gaps to fill, but in order to get a non-adjacent colouring, the
 unit picture was defined as three shifted copies of the hexagon each filled with a
@@ -5972,20 +5971,20 @@ path p[]; input colorbrewer-rgb
 p3 = for i=0 upto 2: (0, 14) rotated 120i -- endfor cycle;
 p6 = for i=0 upto 5: (0, 14) rotated  60i -- endfor cycle;
 picture P[];
-for i=3,6: 
+for i=3,6:
     P[i] = image(
         for j=1 upto length p[i]:
-            draw origin -- point j+1/2 of p[i] withcolor Reds 7 6; 
-        endfor 
-        draw p[i]); 
+            draw origin -- point j+1/2 of p[i] withcolor Reds 7 6;
+        endfor
+        draw p[i]);
 endfor
     draw P3; draw P3 reflectedabout(point 0 of p3, point 2 of p3);
-    draw P6 shifted (60, 3); 
+    draw P6 shifted (60, 3);
 \end{mplibcode}
 $$
 This has the effect of
 connecting the centres of adjacent shapes in the tiling, which reveals that each
-tiling is the dual of the other. 
+tiling is the dual of the other.
 
 \newpage
 \subsection{Separating filling and drawing}
@@ -6006,7 +6005,7 @@ Using \mpl{filldraw} ensures that there are no gaps between adjacent segments.
 
 \textsc{The next example} also uses the square lattice,\mwpic{0pt}{tiling-arch-3-4-3-4}
 but the unit is more complicated, so the drawing needs two \<picture>
-variables, one for the colour fill and a second for the grid.  
+variables, one for the colour fill and a second for the grid.
 \mpexternal[firstline=7,lastline=36,xleftmargin=0pt]{tiling-arch-3-4-3-4.mp}
 
 \newpage
@@ -6019,9 +6018,8 @@ The unit pictures look like this:
 \par\bigskip
 \vbox{\halign{#&\qquad\qquad\vbox to 48pt{\hsize=2.7in\noindent #\par\vss}\cr
 \includegraphics[scale=0.75]{tiling-arch-snub-hexagon-unit}
-&\hey\itshape To reveal the dual of the tiling, you can draw a line from 
-the centroid of each polygon to the centre of each
-edge.\cr}}
+&\hey\itshape To reveal the dual of the tiling, you can draw a line from
+the centroid of each polygon to the midpoint of each edge.\cr}}
 
 \bigskip
 \noindent They are drawn like this, where $h$ is the hexagon, $t_1 \dots\ t_6$ are the blue
@@ -6029,7 +6027,7 @@ triangles surrounding it, and $t_7$ \& $t_8$ are the two “connecting” triang
 which swap sides to make the enantiomorphs.
 \mpexternal[firstline=23,lastline=37,xleftmargin=0pt]{tiling-arch-snub-hex-parts.mp}
 \noindent
-The $\id{centroid}()$ routine is from §\ref{polygons} and the colours are from 
+The $\id{centroid}()$ routine is from §\ref{polygons} and the colours are from
 §\ref{colorbrewer}.  This tiling is generated using the loop-with-triangular-grid-vectors
 from §\ref{sec:regtiling}.
 
@@ -6081,12 +6079,12 @@ The idea is to define a recursive macro for each shape in the tiling, with
 parameters for the recursion level and points that define the shape. If
 $\id{level}=0$, draw or decorate that particular shape, otherwise work out
 the points for the dissection and call the appropriate macros for each shape with
-$level-1$. Here is an example:\mpic{-123pt}{tiling-subs-triangle.pdf}  
+$level-1$. Here is an example:\mpic{-123pt}{tiling-subs-triangle.pdf}
 
 \mpexternal[firstline=7,lastline=28]{tiling-subs-triangle.mp}
 
 \vbox to 0pt{\noindent
-These procedures are illustrated on the right. The completed 
+These procedures are illustrated on the right. The completed
 tiling was drawn with \mpl{tall(6, 173 dir 210, 173 dir 330, 173 dir 90)}.
 \par\vss}
 
@@ -6095,17 +6093,23 @@ tiling was drawn with \mpl{tall(6, 173 dir 210, 173 dir 330, 173 dir 90)}.
 
 \textsc{The second aperiodic tiling example} is the so-called pinwheel tiling, devised in 1994
 by Charles Radin, based on
-this dissection by John Conway.\mpic{-22pt}{tiling-subs-pinwheel.pdf}
+this dissection by John Conway.\mpic{-22pt}{tiling-subs-pinwheel}
 $$\includegraphics[scale=0.8]{tiling-conway}$$
 Starting with a triangle of this shape, the tiling recursively divides into
 five smaller copies of itself.  The colouring is passed down each level but only used
 on the lowest.
 
-\smallmpexternal[firstline=6,lastline=26]{tiling-subs-pinwheel.mp}
+\smallmpexternal[firstline=1,lastline=15]{tiling-pinwheel-macro.mp}
+
+\vskip -\baselineskip
+
+\smallmpexternal[firstline=7,lastline=14]{tiling-subs-pinwheel.mp}
+
+\enlargethispage{24pt}
 
 \noindent
-\hey To make the dissection work, it is important to pass the three 
-\<pair> arguments in the right order.  Note also the manipulation of 
+\hey To make the dissection work, it is important to pass the three
+\<pair> arguments in the right order.  Note also the manipulation of
 \mpl{currentpicture} at the end.
 
 \newpage
@@ -6118,9 +6122,10 @@ substitutions for the tiling are usually given as follows,
 \smallskip
 \centerline{\includegraphics{tiling-ammann-substitutions-overlapping.pdf}}
 \smallskip\noindent
-with the square shapes overlapping the edges of the parent shapes. This can be 
-implemented with two co-operating recursive macros.$\longrightarrow$
+with the square shapes overlapping the edges of the parent shapes. This can be
+implemented with two co-operating recursive macros \rightarrowfill
 \vadjust{\moveright384pt\vbox to 0pt{\vskip -138pt
+\centerline{\small\textit{This needs the \mpl{withalpha} macro given in §\ref{sec:transparent}}.}
 \smallmpexternal[firstline=10, lastline=48, xleftmargin=0pt, xrightmargin=-30pt]{tiling-ammann-procedures.mp}
 \vss}}
 
@@ -6153,10 +6158,10 @@ the second of these paths is reversed, which simplifies the macro.
 \vss}}
 
 Now there is no overlapping of any of the tiles and the tiling does not overflow outside the original
-shape, and the colouring is uniform.  
+shape, and the colouring is uniform.
 $$\includegraphics[width=\textwidth]{tiling-ammann-bounded.pdf}$$
 In general, aperiodic tilings work best if you can find a set of recursive
-substitutions are bounded in each parent shape.  
+substitutions that are bounded within each parent shape.
 
 \noindent\hey{\small Notice also the useful idiom \mpl{zscaled (b-a) shifted a} used
 with a “unit” shape.}
@@ -6165,8 +6170,8 @@ with a “unit” shape.}
 \subsection{Penrose P2 tiling}
 
 \textsc{The same techniques are useful} for generating the well-known aperiodic
-tilings discovered in the 1970s by the British polymath Sir Roger Penrose.  
-This P2 tiling is also known as the “kite and dart” tiling.  
+tilings discovered in the 1970s by the British polymath Sir Roger Penrose.
+This P2 tiling is also known as the “kite and dart” tiling.
 \vadjust{\moveright384pt\vbox to 0pt{\vskip
 -36pt\smallmpexternal[firstline=7, lastline=46, xleftmargin=0pt]{tiling-penrose-tatham-p2-kite-dart.mp}\vss}}
 The expansion rules used here are those documented by Simon Tatham.
@@ -6192,7 +6197,7 @@ interest that the code for P3 is so similar to P2 on the previous page.
 $$\includegraphics[scale=0.9]{tiling-penrose-tatham-p3-rhombs-construction.pdf}$$
 Each of the shapes is again split into two opposite triangles and the expansion rules
 applied separately, and only part of the edge of each triangle is drawn, so that the
-proper shapes appear in the final result.  
+proper shapes appear in the final result.
 
 \bigskip
 \vbox to 2.4in{\noindent

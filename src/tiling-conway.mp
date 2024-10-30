@@ -3,20 +3,21 @@
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
+input colorbrewer-rgb
+input tiling-pinwheel-macro
 beginfig(1);
 pair a, b, c, d, e, f, g; 
-a = origin; b = 180 right; c = 90 up;
-d = 2/5[b, c]; e = 4/5[b,c]; f = 1/2[e, a]; g = 1/2[a, b];
+a = origin; b = 180 right; c = 1/2 b rotated 90;
+d = 1/2[a,b]; e = 1/5[c,b]; f = 1/2[a,e]; g = 1/2[b,e];
+pinwheel(1,a,b,c,"");
 
-fill a--b--c--cycle withcolor 15/16[blue, white];
-draw a--b--c--a--e--g--f; draw g--d;
 dotlabel.llft("$a$", a);
 dotlabel.lrt ("$b$", b);
 dotlabel.ulft("$c$", c);
-dotlabel.urt ("$d$", d);
+dotlabel.bot ("$d$", d);
 dotlabel.urt ("$e$", e);
 dotlabel.ulft("$f$", f);
-dotlabel.bot ("$g$", g);
+dotlabel.urt ("$g$", g);
 endfig;
 \end{mplibcode}
 \end{document}
