@@ -34,4 +34,5 @@ issue or submit a pull request on Github.
 
 Copyright (c) 2024 by Toby Thurston. This material may be distributed only
 subject to the terms and conditions set forth in the Open Publication License,
-v1.0 or later (the latest version is presently available at https://opencontent.org/openpub/).
+v1.0 or later.  The latest version is presently available at
+https://opencontent.org/openpub/
