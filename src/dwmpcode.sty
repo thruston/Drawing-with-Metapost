@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{dwmpcode}[2021/12/30 v0.01 Code setting in DwMP]
+\ProvidesPackage{dwmpcode}[2024/11/05 v0.02 Code setting in DwMP]
 \RequirePackage{listings}
 \RequirePackage{xcolor}
 \RequirePackage{luamplib}
@@ -51,7 +51,8 @@ keywords=[2]{abs, and, angle, arclength, arctime, ASCII, bbox,%
   turningnumber, ulcorner, uniformdeviate, unitvector, unknown,%
   urcorner, whatever, xpart, xscaled, xxpart, xypart, yellowpart,%
   ypart, yscaled, yxpart, yypart, zscaled,
-  top, bot, lft, rt, ulft, urt, llft, lrt},%
+  top, bot, lft, rt, ulft, urt, llft, lrt,
+  },
 % keywords[3] = Commands
 keywords=[3]{addto, also, batchmode, clearit, clearpen, clearxy,%
   clear_pen_memory, clip, closefrom, contour, cutdraw, dotlabel,%
@@ -117,7 +118,7 @@ columns=fullflexible,
 keepspaces=true,
 xleftmargin=\parindent,
 showstringspaces=false,
-morekeywords={everymplib, everyendmplib, setmainfont,
+morekeywords={everymplib, everyendmplib, setmainfont, setsansfont, setmonofont,
 mplibtextextlabel, mplibnumbersystem, mplibsetformat, mplibshowlog},
 }}
 \lstnewenvironment{texcode}[1][]{\texstyle\lstset{basicstyle=\small\ttfamily,#1}}{}

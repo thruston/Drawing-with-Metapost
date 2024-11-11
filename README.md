@@ -29,17 +29,9 @@ one-to-one match between the PDF names and the MP source names, so
 `geometry-apollonius.pdf` is created from `geometry-apollonius.mp`.  The `src`
 directory contains a few drawings that are not included in the main document.
 
-To update the main PDF document I follow these steps
-
-- build any new or updated Metapost source files with `lualatex` to create PDFs in the src directory
-- build the main tex file with `lualatex -recorder Drawing-with-Metapost`
-- run a Python script to read the `.fls` and `git add` all the files used
-- git commit and push
-
 If you find any errors, or have any suggestions for improvement, please raise an
 issue or submit a pull request on Github.
 
 Copyright (c) 2024 by Toby Thurston. This material may be distributed only
 subject to the terms and conditions set forth in the Open Publication License,
-v1.0 or later (the latest version is presently available at
-http://www.opencontent.org/openpub/).
+v1.0 or later (the latest version is presently available at https://opencontent.org/openpub/).

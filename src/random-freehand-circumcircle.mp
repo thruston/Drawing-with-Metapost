@@ -13,7 +13,7 @@ def freehand_path(expr p) =
   endfor
   if cycle p: & cycle fi
 enddef;
-defaultfont := "eurm10";
+defaultfont := "eurm10"; % don't use \mplibtextextlabel{enable}
 color sepia; sepia = (0.44, 0.26, 0.08);
 picture marker; marker = image(for s=-1/2, 1/2: 
   draw (left--right) scaled 2 rotated 60 shifted (s,0);

@@ -15,9 +15,9 @@ vardef mid_arc@#(expr p, a, b) =
 enddef;
 
 beginfig(1);
-  defaultfont := "eurm10"; color sepia; sepia = (0.44, 0.26, 0.08);
-  pair A, B, C;
-  A = (0,-30); B = (180,0);  C = (120,90);
+  defaultfont := "eurm10"; % don't use \mplibtextextlabel{enable}
+  color sepia; sepia = (0.44, 0.26, 0.08);
+  pair A, B, C; A = (0,-30); B = (180,0);  C = (120,90);
 
   path a, b, c;
   a = freehand_through 7 (A, B);
