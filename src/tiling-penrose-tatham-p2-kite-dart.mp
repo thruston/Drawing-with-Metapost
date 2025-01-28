@@ -20,7 +20,7 @@ vardef half_dart(expr level, a, b, side) =
     fill T withcolor Purples[9][3+side];
     draw subpath (0, 2) of T;
   else:
-    half_dart(level - 1, point 1 of T, point   2 of T, side);
+    half_dart(level - 1, point 1 of T, point 2   of T, side);
     half_kite(level - 1, point 2 of T, point phi of T, 1-side);
   fi
 enddef;

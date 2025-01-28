@@ -1,8 +1,9 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
 \ProvidesPackage{dwmpcode}[2024/11/05 v0.02 Code setting in DwMP]
-\RequirePackage{listings}
+%
+% Some consistent colours
+%
 \RequirePackage{xcolor}
-\RequirePackage{luamplib}
 \definecolor{textblue}{rgb}{.2,.2,.7}
 \definecolor{textred}{rgb}{0.54,0,0}
 \definecolor{textgreen}{rgb}{0,0.43,0}
@@ -12,8 +13,29 @@
 \def\red#1{\textcolor{textred}{#1}}
 \def\blue#1{\textcolor{textblue}{#1}}
 \def\green#1{\textcolor{textgreen}{#1}}
-\newcommand\mpstyle{\lstset{
-language=Metapost,
+%
+% Improved listings for MP and TeX
+%
+% add support for some UTF8 in lstinputlistings
+\RequirePackage{listings}
+\makeatletter\lst@InputCatcodes
+\def\lst@DefEC{% 
+ \lst@CCECUse \lst@ProcessLetter
+  ^^80^^81^^82^^83^^84^^85^^86^^87^^88^^89^^8a^^8b^^8c^^8d^^8e^^8f%
+  ^^90^^91^^92^^93^^94^^95^^96^^97^^98^^99^^9a^^9b^^9c^^9d^^9e^^9f%
+  ^^a0^^a1^^a2^^a3^^a4^^a5^^a6^^a7^^a8^^a9^^aa^^ab^^ac^^ad^^ae^^af%
+  ^^b0^^b1^^b2^^b3^^b4^^b5^^b6^^b7^^b8^^b9^^ba^^bb^^bc^^bd^^be^^bf%
+  ^^c0^^c1^^c2^^c3^^c4^^c5^^c6^^c7^^c8^^c9^^ca^^cb^^cc^^cd^^ce^^cf%
+  ^^d0^^d1^^d2^^d3^^d4^^d5^^d6^^d7^^d8^^d9^^da^^db^^dc^^dd^^de^^df%
+  ^^e0^^e1^^e2^^e3^^e4^^e5^^e6^^e7^^e8^^e9^^ea^^eb^^ec^^ed^^ee^^ef%
+  ^^f0^^f1^^f2^^f3^^f4^^f5^^f6^^f7^^f8^^f9^^fa^^fb^^fc^^fd^^fe^^ff%
+  ^^^^20ac^^^^0153^^^^0152% euro, OE, and oe
+  ^^^^2013^^^^2014% typo-dashes
+  ^^^^2018^^^^2019^^^^201c^^^^201d% typo quotes
+  ^^00}  
+\lst@RestoreCatcodes\makeatother
+% complete support for MP 
+\newcommand\mpstyle{\lstset{language=Metapost,
 basicstyle=\ttfamily,
 keywordstyle=\color{textblue},
 keywordstyle=[5]\color{squash},
@@ -21,10 +43,9 @@ keywordstyle=[6]\color{carrot},
 keywordstyle=[7]\color{purple},
 commentstyle=\color{textred},
 stringstyle=\color{textgreen},
-frame=none,
 columns=fullflexible,
 keepspaces=true,
-xleftmargin=\parindent,
+extendedchars=true,
 showstringspaces=false,
 % keywords[1] = Syntax primitive + plain sugar
 keywords=[1]{beginfig, begingroup, bye, controls, curl, verbatimtex,%
@@ -50,9 +71,8 @@ keywords=[2]{abs, and, angle, arclength, arctime, ASCII, bbox,%
   substring, textpart, textual, transformed, true,%
   turningnumber, ulcorner, uniformdeviate, unitvector, unknown,%
   urcorner, whatever, xpart, xscaled, xxpart, xypart, yellowpart,%
-  ypart, yscaled, yxpart, yypart, zscaled,
-  top, bot, lft, rt, ulft, urt, llft, lrt,
-  },
+  ypart, yscaled, yxpart, yypart, zscaled,%
+  top, bot, lft, rt, ulft, urt, llft, lrt,},
 % keywords[3] = Commands
 keywords=[3]{addto, also, batchmode, clearit, clearpen, clearxy,%
   clear_pen_memory, clip, closefrom, contour, cutdraw, dotlabel,%
@@ -126,8 +146,9 @@ mplibtextextlabel, mplibnumbersystem, mplibsetformat, mplibshowlog},
 \newcommand\texternal[2][]{{\texstyle\lstinputlisting[#1]{#2}}}
 \newcommand\smalltexternal[2][]{{\texstyle\lstinputlisting[basicstyle=\small\ttfamily,#1]{#2}}}
 %
-% Labels..
+% Special labels..
 %
+\RequirePackage{luamplib}
 \newcommand\sep[1]{$\vcenter{\begin{mplibcode}
 picture T; T = thelabel(TEX("\ttfamily " & #1), origin); interim bboxmargin := 3; path p; p = bbox T;
 path S; S = superellipse(point 3/2 of p, point 5/2 of p, point 7/2 of p, point 1/2 of p, 0.78);
@@ -135,4 +156,9 @@ string x; x = substring (0, 1) of #1;
 fill S withcolor if x = "m": 7/8[red, white] elseif x = "c": 7/8[blue, white] else: white fi;
 draw S; draw T;\end{mplibcode}}$}
 %
+% other useful things for writing about MP
+%
+\RequirePackage{mflogo}
+\def\<#1>{\ensuremath{\langle\hbox{#1}\rangle}}
+
 \endinput

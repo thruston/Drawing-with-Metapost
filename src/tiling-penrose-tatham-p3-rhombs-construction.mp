@@ -43,7 +43,7 @@ pair a, b; a = -b = 13 down;
 thin = image(
   half_thin(0, a, b, 0);
   half_thin(0, a, b, 1);
-  label.bot("Thin", 42 down); undraw 28 up;
+  label.bot("Tall", 42 down); undraw 28 up;
 );
 
 for s=0, 1:
@@ -68,7 +68,7 @@ pair a, b; a = -b = 28 down;
 thick = image(
   half_thick(0, a, b, 0);
   half_thick(0, a, b, 1);
-  label.bot("Thick", 42 down);
+  label.bot("Wide", 42 down);
 );
 
 for s=0, 1:

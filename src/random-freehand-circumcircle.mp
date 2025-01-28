@@ -1,5 +1,7 @@
 \documentclass{standalone}
 \usepackage{luamplib}
+\mplibtextextlabel{enable}
+\usepackage{euler-math}
 \begin{document}
 \begin{mplibcode}
 def freehand_segment(expr p) =
@@ -13,7 +15,6 @@ def freehand_path(expr p) =
   endfor
   if cycle p: & cycle fi
 enddef;
-defaultfont := "eurm10"; % don't use \mplibtextextlabel{enable}
 color sepia; sepia = (0.44, 0.26, 0.08);
 picture marker; marker = image(for s=-1/2, 1/2: 
   draw (left--right) scaled 2 rotated 60 shifted (s,0);
@@ -35,10 +36,10 @@ beginfig(1);
   draw circumcircle withcolor .67 red;
   draw marker moved_along 1/2 of triangle withcolor .67 red;
   draw marker moved_along 3/2 of triangle withcolor .67 red;
-  label.lft("A", A);
-  label.rt ("B", B);
-  label.top("C", C);
-  label.bot("D", D);
+  label.lft("$A$", A);  % preamble loads "euler-math" package
+  label.rt ("$B$", B);
+  label.top("$C$", C);
+  label.bot("$D$", D);
 endfig;
 \end{mplibcode}
 \end{document}
