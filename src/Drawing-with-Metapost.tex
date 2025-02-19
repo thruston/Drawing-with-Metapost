@@ -994,14 +994,14 @@ to degrees of rotation on the clock.
 \MP\ provides two internal variables
 \id{hour} and \id{minute} that tell you the time of day when the
 current job started.  The clock face shown here was generated using
-$$\kw{beginfig}(1);{}\mathbin{\kw{draw}}\id{clock}(\id{hour},\id{minute}); \kw{endfig};$$
+$$\kw{beginfig}(1);{}\mathbin{\kw{draw}}\hbox{clock}(\id{hour},\id{minute}); \kw{endfig};$$
 to give a sort of graphical time stamp.
 
 \vfill
 
-There is also a "round" function that rounds a number to the nearest integer.  It is
+There is also a \mpl{round} function that rounds a number to the nearest integer.  It is
 essentially defined as $\kw{floor}(x+0.5)$ except that it is enhanced to
-deal with \<pair> variables as well.  If you round a pair the $x$-part and
+deal with \<pair> variables as well.  If you round a \<pair> the $x$-part and
 the $y$-part are rounded separately, so that $\kw{round}(3.14159, 2.71828)
 = (3,3)$.
 
@@ -1021,26 +1021,29 @@ an approximate answer from \mpl{x ** y} even when $x$ and $y$ are both integers.
 \vadjust{\moveright 384pt\vbox to 0pt{\kern -2pt
 $$\begin{mplibcode}
 %primarydef x ** y = 1 for n=1 upto y: * x endfor enddef;
-for x=1 upto 19:
-    for y = 1 upto 7:
-        if x = 1:
-            label("$x" if y>1: & "^{" & decimal y & "}" fi & "$", (52y, -20x));
-        elseif y * mlog(x) < mlog(infinity):
-            numeric r; r = x ** y;
-            label(decimal r, (52y, -20x)) withcolor 3/4 if r = round(r): blue
-            else: red fi;
-        fi
-    endfor
+for x=1 upto 20:
+  for y = 1 upto 9:
+    pair w; w = (42y, -20x);
+    if x = 1:
+      label("$x" if y>1: & "^{" & decimal y & "}" fi & "$", w);
+    elseif y * mlog(x) < mlog(infinity):
+      numeric r; r = x ** y;
+      if r = round(r):
+        label(decimal r, w) withcolor 3/4 blue;
+      else:
+        label(TEX(decimal r) scaled 3/4, w) withcolor 3/4 red;
+      fi
+    fi
+  endfor
 endfor
 label.lft("Results of \mpl{x**y} for small values, using", lrcorner currentpicture shifted 36 up);
 label.lft("the default \mpl{scaled} number system", lrcorner currentpicture shifted 24 up);
 currentpicture := currentpicture scaled 0.8;
 \end{mplibcode}$$\vss}}
-Note that the squares are all integers, and the powers of two appear to be ok
-(although if the page was wider you would see that \mpl{2**9} is $512.00002$), but
-that with a couple of exceptions cubes and higher powers are all slightly off.  Changing
+Note that the squares are all integers, and the powers of two are OK until you get 
+to \mpl{2**9}, but that, with a couple of exceptions cubes, and higher powers are all slightly off.  Changing
 to one of the new number systems makes it worse; even $x^1$ is not always an integer.  The reason
-can be found in the way that the \mpl{**} operator is defined in "plain.mp".
+can be found in the way that the \mpl{**} operator is defined in "plain.mp":
 \begin{smallcode}[xleftmargin=0pt, xrightmargin=-36pt]
 primarydef x ** y = if y = 2: x * x else: takepower y of x fi enddef;
 def takepower expr y of x =
@@ -2640,13 +2643,13 @@ with a suitable pen and a suitable colour.  You \textit{could} write a macro to 
 this, but it hardly seems worth the effort.%
 \vadjust{\moveright 5.5in\vbox to 0pt{\hsize 4.2in\vskip -108pt\noindent
 For example, this is one way to annotate a right-angle triangle:
-\begin{code}
+\begin{smallcode}
 pair a, b, c; a = 10 dir 10; b = 160 dir 20;
 c - a = whatever * (b - a rotated 90); ypart c = ypart b;
 draw unitsquare scaled 5 rotated angle (b-a) shifted a
     withcolor 3/4;
 draw a--b--c--cycle;
-\end{code}
+\end{smallcode}
 which produces this:
 $$\begin{mplibcode}
 pair a, b, c; a = 10 dir 10; b = 160 dir 20;
@@ -2658,12 +2661,11 @@ dotlabel.rt  ("$b$", b);
 dotlabel.ulft("$c$", c);
 \end{mplibcode}$$
 
-\bigskip\noindent
-Equipped with the macro shown on the left, you could add this:
-\begin{code}
-    draw angle_mark(a, c, b, 16) withcolor 2/3 red;
-\end{code}
-to get this:
+\medskip\noindent
+Equipped with the simple macro shown on the left, you could do:
+\begin{smallcode}
+draw angle_mark(a, c, b, 16) withcolor 2/3 red;
+\end{smallcode}
 $$\begin{mplibcode}
 pair a, b, c; a = 10 dir 10; b = 160 dir 20;
 c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
@@ -2678,52 +2680,43 @@ draw a--b--c--cycle;
     dotlabel.rt  ("$b$", b);
     dotlabel.ulft("$c$", c);
 \end{mplibcode}$$
-Or, using the fancier macro:
+Or, using the more generic macro, you could do:
+\begin{smallcode}
+draw angle_mark(a, c, b, 16) withcolor 2/3 red;
+draw angle_mark2(c, b, a, 24) withcolor 1/2 blue;
+\end{smallcode}
 $$\begin{mplibcode}
 pair a, b, c; a = 10 dir 10; b = 160 dir 20;
 c - a = whatever * (b - a) rotated 90; ypart c = ypart b;
-vardef angle_label(expr P, O, Q, r) = image(
-  save a; path a; a = fullcircle scaled 2r rotated angle (P - O) shifted O cutafter (O -- Q);
-  fill O -- a -- cycle withcolor 7/8[red, white]; draw a withcolor 2/3 red;
-    save t; string t; t = decimal (round(angle (Q-O) - angle (P-O)) mod 360) & "°";
-    label(t, O + r * (unitvector(P-O) + unitvector(Q-O)));
-) enddef;
+input geometry-angle-mark
 draw unitsquare scaled 5 rotated angle (b-a) shifted a withcolor 3/4;
-draw angle_label(a, c, b, 16);
+draw angle_mark(a, c, b, 16) withcolor 2/3 red;
+draw angle_mark2(c, b, a, 24) withcolor 1/2 blue;
 draw a--b--c--cycle;
-    dotlabel.llft("$a$", a);
-    dotlabel.rt  ("$b$", b);
-    dotlabel.ulft("$c$", c);
+dotlabel.llft("$a$", a);
+dotlabel.rt  ("$b$", b);
+dotlabel.ulft("$c$", c);
 \end{mplibcode}$$
 \vss}}
 
 \smallskip\noindent
-On the other hand, you might want to make a macro for a curved angle mark since, it
+On the other hand, you might want to make a macro for a curved angle mark, since it
 is a bit more cumbersome.  It is probably simplest make the macro create only the
 required path, so you can use it with \mpl{draw} or \mpl{fill} as required.  The
-idea here is that $P$, $O$, and $Q$ are \<pair> variables and $r$ is a \<numeric>
+idea here is that $a$, $b$, and $c$ are \<pair> variables and $r$ is a \<numeric>
 representing the desired radius.
 \begin{code}
-vardef angle_mark(expr P, O, Q, r) =
-  fullcircle scaled 2r rotated angle (P - O)
-    shifted O cutafter (O -- Q)
+vardef angle_mark(expr a, b, c, r) =
+    fullcircle scaled 2r rotated angle (a-b)  % (a-b) is a <pair>
+    shifted b cutafter (b--c)                 % (b--c) is a <path> 
 enddef;
 \end{code}
-Note that \mpl{(P-O)} returns a \<pair>, but \mpl{(O--Q)} make a \<path>.  Less is
-usually more in coordinate geometry diagrams, but you could go on to make it much
-fancier if you wanted:
-\begin{smallcode}[xrightmargin=-40pt]
-vardef fancier_angle_label(expr P, O, Q, r) = image(
-  save a, t; path a; string t;
-  a = fullcircle scaled 2r rotated angle (P - O) shifted O cutafter (O -- Q);
-  fill O -- a -- cycle withcolor 7/8[red, white]; draw a withcolor 2/3 red;
-  t = decimal (round(angle (Q-O) - angle (P-O)) mod 360) & "°";
-  label(t, O + r * (unitvector(P-O) + unitvector(Q-O)));
-) enddef;
-\end{smallcode}
-Note that the angle label is calculated automatically.  But
-it is tediously time-consuming to make this sort of macro completely
-general and fool-proof, so this example might not work for all angles.
+
+\smallskip\noindent
+Less is
+usually more in coordinate geometry diagrams, but if you like multiple line marks, 
+you can make the macro more generic with a \<suffix> parameter:
+\mpexternal{geometry-angle-mark.mp}
 
 \newpage
 \section{The missing trigonometry functions}\label{trig}
@@ -4122,9 +4115,9 @@ where you want markers and then call \mpl{input ruler}.
 \textsc{In most documents} the drawings look just fine without any decoration, but sometimes
 you might want to add emphasis or pick out part of a drawing.  The examples here can
 be applied to \mpl{currentpicture} or any other \<picture>
-variable.\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in\vskip -42pt
-$$\includegraphics{pics-border-rope}$$
+variable.\vadjust{\moveright 396pt\vbox to 0pt{\hsize 4in\vskip -42pt\noindent
 Don't take this one too seriously\dots
+$$\includegraphics{pics-border-rope}$$
 \smallmpexternal[xleftmargin=0pt]{rope.mp}
 \smallmpexternal[xleftmargin=0pt,linerange=9-10]{pics-border-rope.mp}
 \vss}}
@@ -4543,7 +4536,7 @@ arrow head is defined by \mpl{ahlength} which is set to 4pt, and the angle is
 defined by \mpl{ahangle} which starts at 45°.  In some diagrams your arrows may look
 more elegant if they are a bit longer and slightly sharper.  The arrows shown at
 \sep{"2"} were created by setting \mpl{ahangle := 20;} and \mpl{ahlength := 6;}
-(note that you need to use the assignment operator to update them).
+(note that you need to use the assignment operator \mpl{:=} in order to update them).
 
 \bigskip
 
