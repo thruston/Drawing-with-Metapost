@@ -1,11 +1,11 @@
-% Copyright (c) 2024 by Toby Thurston. This material may be distributed only
+% Copyright (c) 2025 by Toby Thurston. This material may be distributed only
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
 
-% \loop\iftrue
-% \errmessage{This manual is copyrighted and should not be compiled as is.}
-% \repeat
+\loop\iftrue
+\errmessage{This manual is copyrighted and should not be compiled as is.}
+\repeat
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
@@ -25,7 +25,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – October 2024}
+\date{March 2017 – March 2025}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -95,9 +95,9 @@ while most answers there focus on writing \LaTeX\ documents, there are a great
 many questions about drawing, and some of the answers are very illuminating.
 
 My approach here will be to explore plain \MP, with examples grouped
-into themes.  One approach to using this document would be to read it end to end.
-Another would be to flick through until you see something that looks like it might
-be useful and then see how it’s done.
+into themes.  One approach to using this document would be to read it end to end;
+or you can flick through until you see something that looks like it might
+be useful and then see how it’s done.  A table of contents is at the end.
 
 And when I say \textit{plain} \MP\ I mean \MP\ with the default format (as defined
 in the file "plain.mp") loaded and only a few simple external packages (like
@@ -111,7 +111,7 @@ possible in my examples.
 \vskip 1in
 \noindent
 \begingroup\footnotesize\blue{
-Copyright \copyright\ 2024 by Toby Thurston. This material may be distributed only
+Copyright \copyright\ 2025 by Toby Thurston. This material may be distributed only
 subject to the terms and conditions set forth in the Open Publication License,~v1.0
 or later (the latest version is presently available at
 "http://www.opencontent.org/openpub/").}\endgroup\par\vss}
@@ -120,14 +120,14 @@ or later (the latest version is presently available at
 \section{Some features of the syntax}
 
 \begin{itemize}
-    \item Assignment or equation:  the equation "a=3;" means “"a" is the same as "3" throughout the
-        current scope”; the assignment "a:=3;" means “update the value of "a" to the value "3"
-        immediately”.  The difference becomes apparent when you try to update a
-        variable in the same scope.
-        \mwpic{-64pt}{tiling-arch-hexagon}
+    \item \textbf{Assignment or equation}:  the \textit{equation} \mpl{a=3;} means
+        “"a" is the same as "3" throughout the current scope”; the
+        \textit{assignment} \mpl{a:=3;} means “update the value of "a" to the value
+        "3" immediately”.  The difference becomes apparent when you try to update a
+        variable in the same scope.  \mwpic{-64pt}{tiling-arch-hexagon}
 
         This difference also lets you write linear equations
-        like "a=-b;".  After this, as soon as you give  a value to "a", \MP\ immediately works
+        like \mpl{a=-b;}.  After this, as soon as you give  a value to "a", \MP\ immediately works
         out the value of "b".
         This is clever but has its limitations.  As the following snippet reveals:
 \begin{code}
@@ -139,7 +139,7 @@ or later (the latest version is presently available at
         As soon as you assign to variable with ":=" \MP\ breaks any previously
         established equations.
 
-    \item Variable types:
+    \item \textbf{Variable types}:
 
         —
         \<numeric> "a",
@@ -153,14 +153,14 @@ or later (the latest version is presently available at
         —
         \<string>,
         \<path>,
-        \<picture>
+        \<picture>, \<boolean>
 
 
         If you don’t declare a variable, it’s assumed that it’s a \<numeric>.
         When you do declare a variable --- \<numeric> or otherwise — any value that it
        already had in the current scope is removed.
 
-    \item Implicit multiplication: \MP\ inherits a rich set of rules about numerical
+    \item \textbf{Implicit multiplication}: \MP\ inherits a rich set of rules about numerical
         expressions from \MF, and of special interest is the scalar multiplication
         operator.  Any simple number, like "42", "3.1415", or ".6931", or any simple
         fraction like "1/2" or "355/113" standing on it’s own (technically at the
@@ -499,7 +499,7 @@ Here is a way to do that using the “\mpl{of}” syntax in the macro constructi
 \mpl{..} you would get a circle, and contrariwise, if you try
 \mpl{tensepath(fullcircle scaled 20)} you will get a regular octagon.  But we can
 also adjust the directions at the corners to make a variety of closed polygon shapes
-with closed edges.
+with curved edges.
 
 One of the most pleasing is the Reuleaux polygon, with circular arcs for edges.
 $$\includegraphics[width=0.9\textwidth]{paths-reuleaux-set}$$
@@ -873,7 +873,7 @@ number systems:
 \vss}}
 
 The messy set of results shown on the right arises because "plain.mp" defines these constants
-like this (in version 1.005, which is current at the time of writing):
+like this:
 \begin{code}
 eps := .00049;    % this is a pretty small positive number
 epsilon := 1/256/256;   % but this is the smallest
@@ -1443,24 +1443,22 @@ Finally the picture is clipped to a neat rectangle.
 \newpage
 \subsection*{Drawing algorithmic shadows}
 \moveright5.25in\vbox to 0pt{\vskip6pt
-\mpexternal[linerange=5-32]{color-grey-shadows.mp}
+\mpexternal[linerange=5-28]{color-grey-shadows.mp}
 \vss}
 \noindent
 Here is a more complex pattern, showing one way to create an
 illusion of shadows with multiple fine lines.
-$$\includegraphics{color-grey-shadows}$$
+$$\includegraphics[width=5in]{color-grey-shadows}$$
 The first part defines two wedge-shaped closed paths, $\id{w}$ being
 the mirror image of $\id{b}$.  Like the standard \id{unitsquare} path, the
 path $\id{b}$ is defined so that point 0 is the bottom left corner.
 
 The two \<picture> variables are produced by drawing lines across the shapes from
-bottom to top.  If you set the loop step small enough, these multiple lines blend smoothly to
-give an even colour.  And by using higher powers of the index variable, an effective
-shadow can be drawn ‘bunched up’ into the top of each shape.  Note that \MP\ likes
-integer powers of two.
-
-By repeating them alternately in a grid, we get an effective texture, which is
-clipped at the end to a neat rectangle again.
+bottom to top.  If you set the loop step small enough, these multiple lines blend
+smoothly to give an even colour.  And by using higher powers of the index variable,
+an effective shadow can be drawn ‘bunched up’ into the top of each shape.  By
+repeating the \<picture> variables alternately in a grid, you get an effective
+texture.
 
 
 \newpage
@@ -1498,7 +1496,7 @@ $$\includegraphics[width=\textwidth]{color-brexit-map.pdf}$$
 
 \MP\ provides us with two built-in functions to generate random numbers.
 \vadjust{\moveright 372pt\vbox to 0pt{\kern-24pt
-\mpexternal[linerange=5-39,xrightmargin=-36pt]{random-dice.mp}
+\mpexternal[linerange=5-38,xrightmargin=-36pt]{random-dice.mp}
 $$\includegraphics{random-dice}$$
 \vss}}
 \begin{itemize}
@@ -1714,7 +1712,8 @@ is still available as "eurm10", and it is encoded as a subset of the \TeX\
 math italic layout --- essentially it has all the Greek letters but none of the
 arrows, nor the musical notation:
 $$\includegraphics{trad-euler-sampler}$$
-To make the example on the right work with "mpost" 
+To make the example on the right work with "mpost" change \verb|"$\alpha$"| in the
+label to \mpl{char 11 infont eurm10}, and so on. 
 
 \newpage\subsection{Increasingly random shapes of the same size}
 
@@ -2601,6 +2600,13 @@ robust version or to find all the other tangent circles.}}
 \vpic{0.25in}{geometry-examples-napoleon}
 \vbox to 0pt{
     \mpexternal[xleftmargin=0pt,linerange=6-37]{geometry-examples-napoleon.mp}
+\vss}
+\newpage
+\null
+\kern-3\baselineskip
+\vpic{1in}{geometry-examples-wallace-simson}
+\vbox to 0pt{
+    \mpexternal[xleftmargin=0pt,linerange=7-45]{geometry-examples-wallace-simson.mp}
 \vss}
 \newpage
 \kern-3\baselineskip
@@ -4662,6 +4668,22 @@ and that the squared off ends of the lines with the other settings may not be
 exactly orthogonal to the direction of the path at each end.
 
 \newpage
+\section{Number lines and sequence digrams}\label{timelines}
+
+\textsc{Number lines} have a variety of uses in teaching or just for presenting a
+sequence of events in a process.  The key to drawing them effectively in \MP\ is to
+use a consistent unit size.  Here is a simple line showing numbers upto 10.
+$$
+\begin{mplibcode}
+numeric u; u = 24; path axis; axis = origin -- 11u * right;
+    drawarrow axis; for i = 0 upto 10: draw (2 up -- 2 down) shifted (i*u,0);
+    label.top(decimal i, (i*u, 2));
+    endfor
+
+\end{mplibcode}
+$$
+
+\newpage
 \section{Plotting functions}\label{func}
 
 \textsc{A selection} of graphs of mathematical functions is presented in this
@@ -5525,7 +5547,7 @@ The \mpl{beginfig} and \mpl{endfig} macros provided by plain \MP\ automatically 
 anything that is set in the two "extra" strings.
 
 \newpage
-\subsection{Simple time lines}
+\subsection{Simple time series}
 
 \noindent\mpic{144pt}{tufte-mpg}\marginpar{
 \begin{itemize}
@@ -5547,7 +5569,7 @@ the technique discussed in §\ref{textsize}.  And that you have to shift the dat
 \smalltexternal[linerange=37-38,xleftmargin=0pt]{tufte-mpg.mp}
 
 \newpage
-\subsection{Time line with minimal annotation}
+\subsection{Time series with minimal annotation}
 \noindent\mpic{120pt}{tufte-budget}\marginpar{
 \begin{itemize}
     \item This one has an even sparser frame, and dispenses
@@ -5561,9 +5583,9 @@ the technique discussed in §\ref{textsize}.  And that you have to shift the dat
 \smallmpexternal[linerange=10-44,xleftmargin=0pt,xrightmargin=-30pt]{tufte-budget.mp}
 
 \newpage
-\subsection{Time line with more complex dates}
+\subsection{Time series with more complex dates}
 
-If the dates in your time line are more granular, then you need a
+If the dates in your time series are more granular, then you need a
 better way to deal with them.  This chart below shows the £/€ exchange rate by month.
 The dates on the horizontal axis were transformed from calendar dates to a
 serial number using the routine shown on the right,
@@ -5571,7 +5593,8 @@ which allows you to do this:
 \begin{code}
 dotlabel.bot("Brexit vote", (base(2016, 6, 24) * u, 78 v));
 \end{code}
-for suitable values of $u$ and $v$.
+for suitable values of $u$ and $v$. \hfill\ding{43}\ \textit{See the source file for
+details}\\
 \vadjust{\moveright5.5in\vbox to 0pt{\vss
 \mpexternal[xleftmargin=0pt]{basedate.mp}
 }}
@@ -5650,6 +5673,7 @@ endfor
 \end{smallcode}
 
 \vbox to 0pt{\hbox to \textwidth{\includegraphics{tufte-srm-damage}\hss}\vss}
+
 
 \newpage
 \section{Commutative diagrams}\label{sec:cd}

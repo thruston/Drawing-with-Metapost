@@ -313,7 +313,7 @@ euro =
   -- (base(2024, 01, 31), 85.8814)
   -- (base(2024, 02, 29), 85.4670)
   -- (base(2024, 03, 31), 85.5549)
-  -- (base(2024, 04, 30), 85.65)
+  -- (base(2024, 04, 30), 85.6500)
   -- (base(2024, 05, 31), 85.6277)
   -- (base(2024, 06, 30), 84.7218)
   -- (base(2024, 07, 31), 84.4672)
@@ -322,7 +322,11 @@ euro =
   -- (base(2024, 10, 31), 83.5304)
   -- (base(2024, 11, 30), 83.3758)
   -- (base(2024, 12, 31), 82.8895)
-  -- (base(2025,  1,  8), 83.0188)
+  -- (base(2025, 01, 31), 83.8102)
+  -- (base(2025, 02, 28), 83.1094)
+  -- (base(2025, 03, 31), 83.7763)
+  -- (base(2025, 04, 30), 85.5083)
+  -- (base(2025, 05, 31), 84.3906)
   ;
 
 usd = 
@@ -692,8 +696,8 @@ fill ((0,1)--(1,4)--(-1,4)--cycle) scaled 2 shifted (maxx, maxy) withcolor 1/2 g
 fill ((0,-1)--(1,-4)--(-1,-4)--cycle) scaled 2 shifted (minx, miny) withcolor 3/4 red;
 
 numeric left_axis_x, right_axis_x; 
-left_axis_x = xpart point 0 of euro - 24; 
-right_axis_x = xpart point infinity of euro + 24;  
+left_axis_x = xpart point 0 of euro - 12; 
+right_axis_x = xpart point infinity of euro + 12;  
 
 draw (left_axis_x, miny) -- (left_axis_x, maxy);
 for y = 60 step 10 until 100:
@@ -717,7 +721,7 @@ vardef event_label@#(expr t, z) =
     label@#(t, z);
 enddef;
 
-event_label.top("\small Creation",             (base(1999, 1,  1) - offset, 71) xscaled u yscaled v);
+event_label.urt("\small Creation",             (base(1999, 1,  1) - offset, 71) xscaled u yscaled v);
 event_label.top("\small 9/11",                 (base(2001, 9, 11) - offset, 64) xscaled u yscaled v);
 event_label.lrt("\tl{US / UK\\invade Iraq}",   (base(2003, 3, 20) - offset, 64) xscaled u yscaled v);
 event_label.lrt("\tl{Lehmans\\collapse}",      (base(2008, 9, 15) - offset, 77) xscaled u yscaled v);
