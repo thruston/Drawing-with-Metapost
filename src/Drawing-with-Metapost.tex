@@ -3,9 +3,9 @@
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
 
-\loop\iftrue
-\errmessage{This manual is copyrighted and should not be compiled as is.}
-\repeat
+% \loop\iftrue
+% \errmessage{This manual is copyrighted and should not be compiled as is.}
+% \repeat
 \documentclass[a4paper,landscape]{article}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
@@ -101,11 +101,11 @@ be useful and then see how it’s done.  A table of contents is at the end.
 
 And when I say \textit{plain} \MP\ I mean \MP\ with the default format (as defined
 in the file "plain.mp") loaded and only a few simple external packages (like
-"colorbrewer") occasionally.  Nearly all of the examples here are supposed to be self
-contained, and any macros are defined locally so you can get to grips with what’s
-going on.  \MP\ is a very subtle language, and it’s possible to do some very clever
-and completely inscrutable things with it;  but here I have tried to be as clear as
-possible in my examples.
+"colorbrewer") occasionally.  Nearly all of the examples here are supposed to be
+self-contained, and any macros are defined locally so you can get to grips with
+what’s going on.  \MP\ is a very subtle language, and it’s possible to do some very
+clever and completely inscrutable things with it;  but here I have tried to be as
+clear as possible in my examples.
 
 \vbox to 0pt{
 \vskip 1in
@@ -292,20 +292,75 @@ modern machine this is not really an issue any more.
 \section{Making and using paths}
 \label{plain-shapes}
 
+As noted above, a \<path> is a regular variable type in \MP.  So, while it is
+perfectly valid syntax to write:
+\begin{code}
+    draw 5 up .. 30 dir 40 .. 60 dir -10 .. 90 right;    
+\end{code}
+to get this:
+\[\begin{mplibcode}
+draw 5 up .. 30 dir 40 .. 60 dir -10 .. 90 right;    
+\end{mplibcode}\]
+It is more useful, and perhaps more idiomatic, to produce the same result with:
+\begin{code}
+    path t; t = 5 up .. 30 dir 40 .. 60 dir -10 .. 90 right; 
+    draw t;
+\end{code}
+In particular you can 
+use the \<path> variable to make other paths, and 
+you can apply transformations like \mpl{shifted} and \mpl{rotated} to draw copies or
+make repeats.  For example, you could replace “\mpl{draw t;}” in the example above,
+with:
+\begin{code}
+    for i = 1 upto 24: draw t rotated 15i; endfor
+\end{code}
+to get the pattern shown on the right.
+\mnote{-200pt}{\centerline{\begin{mplibcode}
+path t; t = 5 up .. 30 dir 40 .. 60 dir -10 .. 90 right; 
+for i = 1 upto 24: draw t scaled 1.2 rotated 15i; endfor
+\end{mplibcode}}}
+
+
+
+\vfill\noindent
+\MP\ inherits the rich path-making syntax directly from \MF, so if you want a
+general refresher, or you are not
+quite sure what the five joiners do, $\longrightarrow$\marginpar{%
+    \vbox to 0pt{\vss\halign{\kern .5in\mpl{#}\hfil\quad&#\hfil\cr
+..&free curve\cr
+...&bounded curve\cr
+--&straight line\cr
+---&tense line\cr
+\&&splice.\cr}\vss}} or you would like to bone up on exactly what \mpl{curl} and
+\mpl{tension} are for, then you are recommended to review Chapter 14 of \mfbook.
+
+\vfill\noindent
+Most of the examples in this document use only the two simple joiners \mpl{--} and
+\mpl{..} with the occasional use of a direction-specifying pair before or after a
+point.
+
+\newpage
+\subsection{Open paths and closed paths}
+
 In \MP\ there are two sorts of paths: open and closed.
 \mpic{-12pt}{paths-triangles}
-A closed path is called a cycle, and is created with the \mpl{cycle} primitive like this:
+A closed path is also called a cycle, and is created with the \mpl{cycle} primitive like this:
 \begin{code}
 path t; t = origin -- (55,0) -- (55,34) -- cycle;
 \end{code}
 You can think of \mpl{cycle} as meaning ‘connect back to the start and close the path’.
-Note that you have explicitly put \mpl{cycle} to make a closed path.  If you wrote
+
+\smallskip
+\noindent
+\hey Note that you have explicitly put \mpl{cycle} to make a closed path.  If you wrote
 \begin{code}[xrightmargin=-32pt]
 path u; u = origin {right} .. (55,0) .. (55,34) .. {-2,-1} origin;
 \end{code}
 then $u$ would be an open path even though the last point is the same as the
 first.  Any path that does not have \mpl{cycle} at the end is an open
 path.\mpic{-12pt}{paths-open-triangle}
+
+\medskip
 
 You can use \mpl{draw} with either sort of path, but you can only use \mpl{fill} with a
 cycle.  This concept is common to most drawing languages but it’s often hidden:  an
@@ -325,22 +380,6 @@ whether a given path $p$ is closed:
     fi
 \end{code}
 
-\smallskip\noindent
-\MP\ inherits the rich path-making syntax directly from \MF, so if you want a
-general refresher, or you are not
-quite sure what the five joiners do, $\longrightarrow$\marginpar{%
-    \vbox to 0pt{\vss\halign{\kern .5in\mpl{#}\hfil\quad&#\hfil\cr
-..&free curve\cr
-...&bounded curve\cr
---&straight line\cr
----&tense line\cr
-\&&splice.\cr}\vss}} or you would like to bone up on exactly what \mpl{curl} and
-\mpl{tension} are for, then you are recommended to review Chapter 14 of \mfbook.
-
-\vfill\noindent
-Most of the examples in this document use only the two simple joiners \mpl{--} and
-\mpl{..} with the occasional use of a direction-specifying pair before or after a
-point.
 
 \clearpage
 \subsection{Predefined closed paths}
@@ -5928,7 +5967,7 @@ mathematical, you can tweak the \mpl{make_tree} routine a
 bit.\mpic{-12pt}{rec-general-tree}
 \smallmpexternal[linerange=6-31,xleftmargin=0pt]{rec-general-tree.mp}
 \noindent
-\begin{itemize}
+\vbox to 0 pt{\begin{itemize}
     \item The recursion is controlled by measuring the length of the branches instead
         of using a \id{level} parameter.
     \item Each branch is drawn with a pen scaled to $\frac18$ of its length using
@@ -5936,7 +5975,7 @@ bit.\mpic{-12pt}{rec-general-tree}
     \item Each branch is moved slightly left or right with $s$ to make the joins
         neater.
     \item Tiny green leaves are added on the ends of each branch.
-\end{itemize}
+\end{itemize}\vss}
 
 \newpage
 \subsubsection*{Randomized recursive plants}

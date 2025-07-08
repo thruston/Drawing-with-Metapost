@@ -1,6 +1,6 @@
 # Drawing-with-Metapost -- notes for contributing
 
-Toby Thurston -- 31 Oct 2024
+Toby Thurston -- 23 Jun 2025
 
 The `src` directory contains 
 - the TeX source for the main document
