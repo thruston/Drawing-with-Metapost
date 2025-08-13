@@ -4,7 +4,7 @@
 \mplibtextextlabel{enable}
 \begin{mplibcode}
 vardef radical_axis(expr ca, cb) = 
-  numeric t, d, ra, rb;
+  save t, d, ra, rb; numeric t, d, ra, rb;
   ra = abs(center ca - point 0 of ca);
   rb = abs(center cb - point 0 of cb);
   d = abs(center cb - center ca);
