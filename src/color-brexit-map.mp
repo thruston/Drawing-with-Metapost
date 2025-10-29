@@ -95,10 +95,9 @@ label(TEX("Waltham Forest")        scaled 0.666 rotated 50,             median(W
 label(TEX("Wandsworth")            scaled 0.719,             median(Wandsworth) shifted 8 left);
 label(TEX("Westminster")           scaled 0.648,             median(Westminster));
 
-label.ulft(legend, point 1 of bbox currentpicture);
-label.lrt("\large Brexit vote in London 2016", point 3 of bbox currentpicture shifted (4,-4));
- 
-
+label.urt(legend, llcorner currentpicture);
+label.lrt("\large Brexit vote in London 2016", ulcorner currentpicture);
+input show_name
 endfig;
 \end{mplibcode}
 \end{document}

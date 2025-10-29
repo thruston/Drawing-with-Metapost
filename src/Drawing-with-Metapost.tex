@@ -1499,6 +1499,61 @@ an effective shadow can be drawn ‘bunched up’ into the top of each shape.  B
 repeating the \<picture> variables alternately in a grid, you get an effective
 texture.
 
+\newpage
+\subsection{Extended ranges of colour names}
+
+If you want to use a wider range of colour names you can load the "mpcolornames" 
+package, which defines the three usual sets of names used for DVIPS, SVG, and X11. The
+figure\mpic{-36pt}{color-svgnames} at the right shows the charmingly
+idiosyncratic X11 
+names. Notice that they all start with a capital letter, and each one needs a
+suffix.  You can read the package documentation for full details.
+
+\bigskip
+\parshape 4 0pt 5in 0pt 4.8in 0pt 4.6in 0pt 4.5in
+\noindent
+If you are creating your \MP\ drawings with Lua\LaTeX\ and an up to date version
+"luamplib", as recommended in §\ref{sec:sa-lua-flow}, then you can use colours
+that are defined at the \LaTeX\ level.   This is particularly useful if you are 
+creating a document with integrated \MP\ drawings (described in §\ref{sec:lua-integrated}).
+Not only do you get access to the standard names, such as those shown here\rlap{\
+$\rightarrow$}
+but you also have access to names that you have defined
+for the document.
+
+\parshape 4 0pt 4.4in 0pt 4.4in 0pt 4.4in 0pt 4.4in
+For example, the style file used with this current document defines two extra colours for 
+syntax highlighting called \mpl{carrot} and \mpl{squash}, which could be used like
+this:
+\begin{code}
+  fill fullcircle scaled 20 withcolor mplibtexcolor "squash";
+  fill fullcircle scaled 12 withcolor mplibtexcolor "carrot";
+\end{code}
+to produce a roundel like this: $\vcenter{
+\begin{mplibcode}
+  fill fullcircle scaled 20 withcolor mplibtexcolor "squash";
+  fill fullcircle scaled 12 withcolor mplibtexcolor "carrot";
+\end{mplibcode}}$
+
+\bigskip
+Moreover, you can use any notation provided by the package you are\\
+using  at the \LaTeX\ level; for example the "xcolor" blending notation, so\\
+that you can write
+\begin{code}
+  fill fullcircle scaled 20 withcolor mplibtexcolor "green!70";
+  fill fullcircle scaled 12 withcolor mplibtexcolor "blue!42!red";
+\end{code}
+to produce a different roundel: $\vcenter{
+\begin{mplibcode}
+  fill fullcircle scaled 20 withcolor mplibtexcolor "green!70";
+  fill fullcircle scaled 12 withcolor mplibtexcolor "blue!42!red";
+\end{mplibcode}}$
+
+\medskip
+\noindent
+Note that at the \MP\ level, the name is just a \<string>; the \mpl{mplibtexcolor}
+operator turns it into a \<color> or a \<cmykcolor> as appropriate.
+
 
 \newpage
 \subsection{Colorbrewer palettes}\label{colorbrewer}
@@ -1517,7 +1572,7 @@ Here is the code for the palette used as the legend:
 \vss}
 
 \noindent
-The well-known Colorbrewer website ("http://colorbrewer2.org") provides a useful set
+The well-known Colorbrewer\mpic{-10pt}{color-brewer-mini-sample} website ("http://colorbrewer2.org") provides a useful set
 of colour palettes that are suitable for a wide range of applications.  They were
 originally written for maps, but they are useful for many other types of drawing.
 If you are using an up-to-date, and complete, \TeX\ distribution, you should find
@@ -2617,64 +2672,11 @@ The drawing is left as an exercise for the reader, although you can find my
 "geometry-apollonius.mp" in the source for this document. You might try to make a more
 robust version or to find all the other tangent circles.}}
 
-
-\newpage
-\subsection{Coordinate geometry examples}
-
-\kern-\baselineskip
-\vpic{-24pt}{geometry-examples-desargues}
-
-\mpexternal[xleftmargin=0pt,linerange=6-37]{geometry-examples-desargues.mp}
-\moveright 340pt \vbox to 0pt{\vss
-\mpexternal[xleftmargin=0pt,xrightmargin=-80pt,linerange=38-53]{geometry-examples-desargues.mp}
-\vskip -42pt}
-
-\newpage
-\vpic{-36pt}{geometry-examples-trisections}
-\vbox to 0pt{
-    \mpexternal[xleftmargin=0pt,xrightmargin=-80pt,linerange=6-40]{geometry-examples-trisections.mp}
-\vss}
-\newpage
-\kern-3\baselineskip
-\vpic{0.25in}{geometry-examples-napoleon}
-\vbox to 0pt{
-    \mpexternal[xleftmargin=0pt,linerange=6-37]{geometry-examples-napoleon.mp}
-\vss}
-\newpage
-\null
-\kern-3\baselineskip
-\vpic{1in}{geometry-examples-wallace-simson}
-\vbox to 0pt{
-    \mpexternal[xleftmargin=0pt,linerange=7-45]{geometry-examples-wallace-simson.mp}
-\vss}
-\newpage
-\kern-3\baselineskip
-\vpic{1in}{geometry-examples-projections}
-\vbox to 0pt{
-    \mpexternal[xleftmargin=0pt,linerange=6-41]{geometry-examples-projections.mp}
-\vss}
-
-\newpage
-\moveright5.25in\vbox to 0pt{\hsize4.25in\noindent
-\smallmpexternal[linerange=7-14,xleftmargin=0pt]{geometry-arbelos.mp}
-\centerline{\includegraphics{geometry-arbelos}}
-\vfill\noindent
-\begingroup
-\raggedleft\fontsize{8}{10}\selectfont\textsf{%
-One must also recognize that any attempt to illustrate geometry\\
-involves a basic fallacy.  For example, a straight line is unbounded\\
-and infinitely thin and smooth, while any illustration is unavoidably\\
-of finite length, of positive thickness, and rough edged.\\[2pt]
-— Benoit Mandelbrot, \textsl{The Fractal Geometry of Nature}}
-\par\endgroup
-\vss}
-\smallmpexternal[linerange=15-52,xleftmargin=0pt,xrightmargin=-72pt]{geometry-arbelos.mp}
-
 \newpage
 \subsection{Drawing angle marks}
 
-\textsc{Observant readers} will have noticed that the occasional angle marks in the
-preceding examples are generally drawn using plain \MP\ commands rather than a
+\textsc{Observant readers} will notice that the occasional angle marks in the
+following examples are generally drawn using plain \MP\ commands rather than a
 macro.  This is partly in order to make the examples self-contained and partly to
 show what can be done with the default plain \MP\ format.
 
@@ -2762,6 +2764,59 @@ Less is
 usually more in coordinate geometry diagrams, but if you like multiple line marks, 
 you can make the macro more generic with a \<suffix> parameter:
 \mpexternal{geometry-angle-mark.mp}
+
+\newpage
+\subsection{Coordinate geometry examples}
+
+\kern-\baselineskip
+\vpic{-24pt}{geometry-examples-desargues}
+
+\mpexternal[xleftmargin=0pt,linerange=6-37]{geometry-examples-desargues.mp}
+\moveright 340pt \vbox to 0pt{\vss
+\mpexternal[xleftmargin=0pt,xrightmargin=-80pt,linerange=38-53]{geometry-examples-desargues.mp}
+\vskip -42pt}
+
+\newpage
+\vpic{-36pt}{geometry-examples-trisections}
+\vbox to 0pt{
+    \mpexternal[xleftmargin=0pt,xrightmargin=-80pt,linerange=6-40]{geometry-examples-trisections.mp}
+\vss}
+\newpage
+\kern-3\baselineskip
+\vpic{0.25in}{geometry-examples-napoleon}
+\vbox to 0pt{
+    \mpexternal[xleftmargin=0pt,linerange=6-37]{geometry-examples-napoleon.mp}
+\vss}
+\newpage
+\null
+\kern-3\baselineskip
+\vpic{1in}{geometry-examples-wallace-simson}
+\vbox to 0pt{
+    \mpexternal[xleftmargin=0pt,linerange=7-45]{geometry-examples-wallace-simson.mp}
+\vss}
+\newpage
+\kern-3\baselineskip
+\vpic{1in}{geometry-examples-projections}
+\vbox to 0pt{
+    \mpexternal[xleftmargin=0pt,linerange=6-41]{geometry-examples-projections.mp}
+\vss}
+
+\newpage
+\moveright5.25in\vbox to 0pt{\hsize4.25in\noindent
+\smallmpexternal[linerange=7-14,xleftmargin=0pt]{geometry-arbelos.mp}
+\centerline{\includegraphics{geometry-arbelos}}
+\vfill\noindent
+\begingroup
+\raggedleft\fontsize{8}{10}\selectfont\textsf{%
+One must also recognize that any attempt to illustrate geometry\\
+involves a basic fallacy.  For example, a straight line is unbounded\\
+and infinitely thin and smooth, while any illustration is unavoidably\\
+of finite length, of positive thickness, and rough edged.\\[2pt]
+— Benoit Mandelbrot, \textsl{The Fractal Geometry of Nature}}
+\par\endgroup
+\vss}
+\smallmpexternal[linerange=15-52,xleftmargin=0pt,xrightmargin=-72pt]{geometry-arbelos.mp}
+
 
 \newpage
 \section{The missing trigonometry functions}\label{trig}
@@ -2855,15 +2910,15 @@ The actual font map file in use will be one of these.  You can then browse it to
 find a definitive list of the font names you can use with your local \MP.
 \vss}}
 
-To make a suitable string you can enclose your text
-in double quotes to make a string token, or to refer to a \<string> variable, or do
-one of these:
+To make a suitable string you can: enclose your text
+in double quotes to make a string token; refer to a \<string> variable; or do
+one of these things.
 \begin{itemize}
-    \item Concatenate two other strings with \mpl{&}.
+    \item Concatenate two other strings with the splice operator: \mpl{&}.
 
-    \item Use \mpl{substring (a,b) of s} to get a substring of string \mpl{s}.
+    \item Use \mpl{substring (a,b) of s} to get a substring of \<string> \mpl{s}.
 
-    \item Use \mpl{min(a,b,...)} or \mpl{max(a,b,..)} to find the lexicographically smallest
+    \item Use \mpl{min(a,b,...)} or \mpl{max(a,b,...)} to find the lexicographically smallest
         (or largest) string in the list \mpl{a,b,...}.  The list must have at least two
         entries, and they must all be strings.
 
@@ -2969,7 +3024,7 @@ $$\includegraphics{trad-utf8}$$
 The \texttt{label} macro automatically calls \texttt{infont} with the current value
 of \texttt{defaultfont}; notice how it also adds \mpl{labeloffset} space.
 \vss}}
-\mpexternal[linerange=25-29]{trad-utf8.mp}
+\mpexternal[linerange=26-30]{trad-utf8.mp}
 
 \noindent
 Note that you can't just use \mpl{draw} with a string variable; you have to use
@@ -3284,49 +3339,49 @@ The red braces are a more complex variation on this theme $\longrightarrow$
 \subsubsection{Dynamic labels}\label{sec:old-and-dynamic}
 
 If you are a maven of programming language syntax you may have noticed that
-\mpl{btex ... etex} fits into the type system that \MP\ inherits from \MF\ as a "picture" and
-not as a "string".  Effectively, "btex" and "etex" act as a special pair of quotation
-marks that create a picture; however the contents are used verbatim, so that the
-whole construction is a syntactical atom.  This means that you \textbf{cannot} write
-this sort of thing:
+\mpl{btex ... etex} fits into the type system that \MP\ inherits from \MF\ as a
+\<picture> and not as a \<string>.  Effectively, \mpl{btex ... etex} act as a
+special pair of quotation marks that create a \<picture>; however the contained text
+is used
+verbatim, so that the whole construction is a syntactical atom.  This means that you
+\textbf{cannot} write this sort of thing:
 \begin{code}
-for i=0 upto 4: % this won't work
+for i=0 upto 2: % this won't work
   label(btex "$p_" & decimal i & "$" etex, (10i,0));
 endfor
 \end{code}
-Given this input \MP\ would attempt to get \TeX\
-to typeset
-\begin{texcode}
-\hbox{"$p_" & decimal i & "$"}
-\end{texcode}
-which would probably result in a
-`Misplaced alignment tab character' error.
 To get round this problem, \MP\ provides a general mechanism to write out a
 string to a file, and then read the file back in.  This is the mechanism used by the
 "TEX()" macro that is provided alongside "plain.mp".  This allows you to write:
 \begin{code}
 input TEX
 ...
-for i=0 upto 4:
+for i=0 upto 2:
   label(TEX("$p_" & decimal i & "$"), (10i,0));
 endfor
 \end{code}
-This works because the TEX macro is expecting a "string" so the normal string
-concatenation rules are applied.  The macro wraps the result with "btex" and "etex",
-writes them out to a file, and then reads the file in again so that \MP\ gets the
-correct contents to pass to \TeX.
+This works because the \mpl{TEX} macro is expecting a \<string> argument so the normal string
+concatenation rules are applied before the macro is called.  The macro then does
+this (where \mpl{s} is the argument name):
+\begin{code}
+write "btex "&s&" etex" to "mptextmp.mp";
+write EOF to "mptextmp.mp";
+scantokens "input mptextmp"
+\end{code}
+so that \MP\ gets the correct contents to pass to \TeX. 
 
 The only trouble with this is that it makes \MP\ open a file,
-write to it, close it, and then read it in again for each label one at a time; this
-means that it's very slow.
+write to it, close it, and then read it in again for each label one at a time; and this
+means that it can be very slow.
 The example on the right shows how to speed things up, by using the same file for
 all the labels and only writing it once.
-The "write" command is a \MP\ primitive, and "EOF" is defined in "plain.mp".%
-\vadjust{\moveright5.5in\vbox to 0pt{\vss\hsize4in\noindent
+
+\moveright5.5in\vbox to 0pt{\vss\hsize4in\noindent
 \mpexternal[linerange=7-16]{trad-dynamic-labels.mp}
 $$
 \includegraphics{trad-dynamic-labels}
 $$
+\small
 Note that you can't use \mpl{decimal} on a \<pair> variable, but you can save the pair
 as a "z"-variable and then use the "x" and "y" syntax.  The scaling trick used here
 only works because "c" is centred on the origin.  If "c" were drawn elsewhere, you
@@ -3336,8 +3391,10 @@ would have to write:
                  scaled 1.15
                  shifted center c ...
 \end{code}
+The \mpl{write} command is a \MP\ primitive, and \mpl{EOF} is defined in
+"plain.mp".
 \vskip -12pt
-}}
+}
 
 \newpage
 \subsubsection{Matching fonts}\label{sec:fonts}
@@ -3448,7 +3505,7 @@ so that it no longer uses temporary files, and is therefore very much faster; an
 is easier to integrate your drawings into \LaTeX\ because you no longer need to muck
 about with \mpl{verbatimtex} blocks.
 So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-160pt
-\begin{texcode}
+\begin{texcode}[xleftmargin=0pt]
 \documentclass[border=5mm]{standalone}
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Pagella} % <-- note chosen font
@@ -3459,7 +3516,7 @@ So the example code shown on the right,\vadjust{\moveright5.5in\vbox to 0pt{\hsi
 \vskip-\baselineskip
 \smallmpexternal[linerange=7-25]{neo-labels.mp}
 \vskip-\baselineskip
-\begin{texcode}
+\begin{texcode}[xleftmargin=0pt]
 \end{mplibcode}
 \end{document}
 \end{texcode}\vss}}
@@ -3488,7 +3545,7 @@ to the preamble:
 \end{texcode}
 If you add this line to the example from the previous
 page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-78pt
-\begin{texcode}
+\begin{texcode}[xleftmargin=0pt]
 \documentclass[border=5mm]{standalone}
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Pagella}
@@ -3500,15 +3557,15 @@ page,\vadjust{\moveright5.5in\vbox to 0pt{\hsize4in\vskip-78pt
 \vskip-\baselineskip
 \smallmpexternal[linerange=8-26]{neo-labels-tte.mp}
 \vskip-\baselineskip
-\begin{texcode}
+\begin{texcode}[xleftmargin=0pt]
 \end{mplibcode}
 \end{document}
 \end{texcode}
 
 \vskip 58pt
-\centerline{\red{$\star$ All the examples in the rest of this section $\star$}}
-\centerline{\red{assume that you have set \texttt{\textbackslash
-mplibtextextlabel}}}
+\centerline{\red{$\star\quad\vcenter{\halign{\hss #\hss\cr
+All the examples in the rest of this section\cr 
+assume that you have set \texttt{\textbackslash mplibtextextlabel}\cr}}\quad\star$}}
 \vss}}
 you get this output:
 $$\includegraphics{neo-labels-tte.pdf}$$
@@ -3647,6 +3704,13 @@ circle can be simplified without sacrificing speed:\mpic{-80pt}{neo-simple-circl
 \smallskip\noindent\nb Note that you can't do this string concatenation with \mpl{btex ... etex};
 although these operators might appear to be special quotation marks, they produce
 \<picture> values, and in this context \mpl{&} only works with \<string> values.
+
+\newpage
+\subsection{Exchanging values between \TeX\ and \MP}
+
+\begin{mplibcode}
+    fill fullcircle scaled 42 withcolor mplibcolor "orange";
+\end{mplibcode}
 
 
 \newpage
@@ -4707,20 +4771,20 @@ and that the squared off ends of the lines with the other settings may not be
 exactly orthogonal to the direction of the path at each end.
 
 \newpage
-\section{Number lines and sequence digrams}\label{timelines}
+\section{Number lines and sequence diagrams}\label{timelines}
 
 \textsc{Number lines} have a variety of uses in teaching or just for presenting a
 sequence of events in a process.  The key to drawing them effectively in \MP\ is to
-use a consistent unit size.  Here is a simple line showing numbers upto 10.
-$$
-\begin{mplibcode}
-numeric u; u = 24; path axis; axis = origin -- 11u * right;
-    drawarrow axis; for i = 0 upto 10: draw (2 up -- 2 down) shifted (i*u,0);
-    label.top(decimal i, (i*u, 2));
-    endfor
-
-\end{mplibcode}
-$$
+use a consistent unit size.  Here is a simple line showing numbers from $-4$ upto
+$6$.
+$$\includegraphics{seq-simple-line}$$
+which was produced like this:
+\mpexternal[linerange=7-13]{seq-simple-line.mp}
+The unit $u$ is used to scale the axis to the right size and then to position each
+of the labels.  {\small But notice that even with this very simple starting point some care
+is needed.  You might like to experiment with removing the "\strut" from the labels,
+and you might like to think of a way to get the negative numbers to line up better
+with the marks.}
 
 \newpage
 \section{Plotting functions}\label{func}
@@ -4755,7 +4819,7 @@ scale.\mpic{-16pt}{func-numbered-axes}
 \textsc{For simple} linear graphs, you just need to define two points and draw a
 line between them; it is tempting to try to make some generalized macro to do this,
 but it is hard to make something completely general, so for most graphs it is easier
-just to specify two points and use \mpl{draw}; often it is handy to making your line
+just to specify two points and use \mpl{draw}; often it is handy to make your line
 longer than you need, then trim it using \mpl{cutbefore} and/or \mpl{cutafter} so
 that it fits neatly.
 \vadjust{\moveright 384pt\vbox to 0pt{\hsize 4in\vskip -100pt
@@ -4770,7 +4834,7 @@ In this second example of a drawing with linear functions, the emphasis of the d
 the angles at the $x$-axis made by the two lines, so the lines were defined using
 \mpl{rotated}, \mpl{shifted}, and \mpl{cutbefore} instead.
 $$\includegraphics[width=\textwidth]{func-angles-lines}$$
-The lines are both trimmed to a convenient path (\id{boundary}) when they are drawn.
+The lines are drawn trimmed to a suitable \<path> (called \id{invisible\_boundary}).
 \smallmpexternal[linerange=6-12]{func-angles-lines.mp}
 \vskip-12pt\continued
 \moveright 384pt\vbox to 0pt{\hsize 4in\vss
@@ -5770,8 +5834,9 @@ involved.  Consider for example the greatest common divisor algorithm presented 
 \smallmpexternal[linerange=1-1]{rec-gcd-comparison.mp}
 \noindent
 The reason this works is that we know (mathematically) that $0 \le a \bmod b < b$,
-and therefore that the arguments to the recursive call must get smaller each time
-and eventually we must get to $b=0$ when the answer will be $a$.  This is the basic
+and therefore that the second argument to the recursive call must always be smaller
+than the first and eventually it must get to $0$ when the answer will be the first
+argument.  This is the basic
 recursive approach: ensure at least one argument gets smaller each time and stop
 when you get to a given limit.
 The examples in this chapter use one of two simple approaches:

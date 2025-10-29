@@ -6,9 +6,9 @@
 vardef pi_quarters(expr n) = 
   save s, f, q; string s, f; numeric q; 
   s = if n < 0: "-" else: "" fi; q = abs(n);
-  if q mod 4 = 0: f = if q > 4: decimal 1/4 q else: "" fi;
+  if     q mod 4 = 0: f = if q > 4: decimal 1/4 q else: "" fi;
   elseif q mod 2 = 0: f = "\frac{" & decimal 1/2 q & "}{2}";
-  else: f = "\frac{" & decimal q & "}{4}";
+  else:               f = "\frac{" & decimal q & "}{4}";
   fi TEX("$\scriptstyle" & s & f & "\pi$")
 enddef;
 

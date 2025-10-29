@@ -24,7 +24,7 @@ beginfig(1);
   L = point 0 of ell;
   T = point 0 of tee;
 
-  % now we can get with the drawing
+  % now we can get on with the drawing
   draw arc withcolor 1/2 red;
   draw P--N dashed withdots scaled 1/2;
   draw Q--M dashed withdots scaled 1/2;
@@ -37,7 +37,7 @@ beginfig(1);
     label("$\theta$", 20 right rotated 1/2 theta shifted L);
   drawoptions();
 
-  % draw the lines trimmed neatly
+  % draw the lines, neatly trimmed
   path invisible_boundary;
   z1 = point .95 of xx;
   z2 = point .95 of yy;

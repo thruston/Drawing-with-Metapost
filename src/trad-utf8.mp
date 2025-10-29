@@ -7,12 +7,12 @@ vardef decode(expr given) =
   save a,b,i,s,out; string s, out; numeric a, b, i;
   out = ""; i=0;
   forever:
-    i := i+1; s := substring(i-1,i) of given; a := ASCII s;
+    s := substring(i, incr i) of given; a := ASCII s;
     if a < 128: 
     elseif a = 194: 
-      i := i+1; s := substring (i-1,i) of given;
+      s := substring (i, incr i) of given;
     elseif a = 195: 
-      i := i+1; s := char (64 + ASCII substring (i-1,i) of given);
+      s := char (64 + ASCII substring (i, incr i) of given);
     else: 
       s := "?";
     fi
@@ -21,6 +21,7 @@ vardef decode(expr given) =
   endfor
   out
 enddef;
+
 beginfig(2);
 draw "café noir £2.50" infont "ptmr8r";
 draw decode("café noir £2.50") infont "ptmr8r" shifted 12 down;

@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{dwmpcode}[2024/11/05 v0.02 Code setting in DwMP]
+\ProvidesPackage{dwmpcode}[2025/10/29 v0.03 Code setting in DwMP]
 %
 % Some consistent colours
 %
@@ -41,6 +41,7 @@ keywordstyle=\color{textblue},
 keywordstyle=[5]\color{squash},
 keywordstyle=[6]\color{carrot},
 keywordstyle=[7]\color{purple},
+keywordstyle=[8]\color{purple},
 commentstyle=\color{textred},
 stringstyle=\color{textgreen},
 columns=fullflexible,
@@ -116,10 +117,13 @@ keywords=[6]{base_name, base_version, beveled, black,%
 % keywords[7] = Types
 keywords=[7]{boolean, cmykcolor, color, numeric, pair, path, pen,%
   picture, rgbcolor, string, transform},%
+% keywords[8] = mplib and other specials
+keywords=[8]{mplibtexcolor,mplibrgbtexcolor,mplibdimen,mplibcolor,
+  mplibgraphictext},
 sensitive=true,%
 alsoother={0123456789$@},%
-morestring=[s]{verbatimtex}{etex},%
-morestring=[s]{btex}{etex}%
+morestring=[s]{verbatimtex\ }{\ etex},% note the explicit spaces... 
+morestring=[s]{btex\ }{\ etex}%
 }}
 \lstnewenvironment{smallcode}[1][]{\mpstyle\lstset{basicstyle=\small\ttfamily,#1}}{}
 \lstnewenvironment{code}[1][]{\mpstyle\lstset{#1}}{}
