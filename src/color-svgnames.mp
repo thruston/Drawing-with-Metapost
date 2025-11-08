@@ -1,7 +1,6 @@
 \documentclass{standalone}
 \usepackage{luamplib}
 \usepackage{dwmpcode}
-\usepackage[x11names]{xcolor}
 \begin{document}
 \mplibtextextlabel{enable}
 \begin{mplibcode}
@@ -23,91 +22,107 @@ enddef;
 
 beginfig(1);
 
-  n = 79; a = 360/n; t = a;
+  n = 96; a = 360/n; t = a;
   forsuffixes c =
+    Black,
+    DimGrey,
+    Grey,
+    Silver,
+    Gainsboro,
+    WhiteSmoke,
+    White,
     Snow,
+    GhostWhite,
+    Lavender,
+    LavenderBlush,
     MistyRose,
+    Seashell,
+    OldLace,
+    Cornsilk,
+    FloralWhite,
+    Ivory,
+    Honeydew,
+    MintCream,
+    Azure,
+    AliceBlue,
     RosyBrown,
     IndianRed,
     Brown,
-    Firebrick,
+    FireBrick,
+    Maroon,
     Red,
-    OrangeRed,
-    Tomato,
-    Coral,
     Salmon,
-    LightSalmon,
+    Tomato,
+    OrangeRed,
+    Coral,
     Sienna,
+    SaddleBrown,
     Chocolate,
-    Tan,
-    DarkOrange,
-    Orange,
+    SandyBrown,
     PeachPuff,
+    Peru,
+    Linen,
     Bisque,
-    Seashell,
     AntiqueWhite,
-    Burlywood,
+    BurlyWood,
+    Tan,
+    BlanchedAlmond,
     NavajoWhite,
-    Wheat,
-    Cornsilk,
-    DarkGoldenrod,
+    PapayaWhip,
+    Moccasin,
+    Orange,
     Goldenrod,
-    LightGoldenrod,
+    Wheat,
     Gold,
-    LemonChiffon,
     Khaki,
-    Ivory,
-    LightYellow,
+    LemonChiffon,
+    Beige,
+    Olive,
     Yellow,
     OliveDrab,
-    DarkOliveGreen,
-    Honeydew,
+    YellowGreen,
+    GreenYellow,
     Chartreuse,
-    PaleGreen,
+    LawnGreen,
+    LimeGreen,
+    ForestGreen,
     Green,
+    Lime,
     SeaGreen,
-    DarkSeaGreen,
     SpringGreen,
     Aquamarine,
-    Azure,
-    LightCyan,
-    Cyan,
-    PaleTurquoise,
     Turquoise,
+    Teal,
+    Cyan,
     CadetBlue,
-    LightSkyBlue,
-    SkyBlue,
+    PowderBlue,
     DeepSkyBlue,
-    LightSteelBlue,
+    SkyBlue,
     SteelBlue,
     DodgerBlue,
-    SlateBlue,
-    SlateGray,
-    DarkSlateGray,
+    SlateGrey,
+    CornflowerBlue,
     RoyalBlue,
-    LightBlue,
+    MidnightBlue,
+    Navy,
     Blue,
-    MediumPurple,
-    Purple,
-    DarkOrchid,
-    MediumOrchid,
-    Orchid,
+    SlateBlue,
+    BlueViolet,
+    Indigo,
     Thistle,
     Plum,
+    Violet,
+    Purple,
     Magenta,
-    Maroon,
+    Orchid,
+    VioletRed,
     DeepPink,
     HotPink,
-    VioletRed,
-    PaleVioletRed,
-    Pink,
-    LightPink,
-    LavenderBlush:
+    Crimson,
+    Pink:
 
-      for i = 1 upto 4:
-        draw (124 - 9i + i*i*i/24) * dir t withpen pencircle scaled (8 - 3/4 i) withcolor c[i];
-      
-      endfor
+    fill (2.5 down -- 20 dir -9 -- 20 dir 9 -- 2.5 up -- cycle) shifted 100 right rotated t 
+        withcolor c;
       picture name; name = fancyname(str c);
       if (t > 90) and (t < 270):
         draw thelabel.lft(name, 120 left) rotated (t-180);
@@ -116,16 +131,9 @@ beginfig(1);
       fi
       t := t + a;
     endfor
-    for i = 1 upto 4:
-      label(TEX("\small\texttt{" & decimal i & "}") scaled (1.2-(i/8)), (124 - 9i + i*i*i/24) * right);
-    endfor
 
-    label("The X11 names available with", 36 up);
+    label("The SVG names available with", 36 up);
     label("\mpl{input mpcolornames}", 20 up);
-    label("Each colour has four suffixes: 1–4", 4 up);
-    label("\textcolor{Coral4}{\texttt{Coral4}} is darker than \textcolor{Coral1}{\texttt{Coral1}}", 12 down);
-    label("\textcolor{Gold4}{\texttt{Gold4}} is darker than \textcolor{Gold1}{\texttt{Gold1}}", 28 down);
-    label("and so on\dots", 44 down);
 
     numeric w; w = xpart (urcorner currentpicture - llcorner currentpicture);
     currentpicture := currentpicture scaled (5.4in / w);

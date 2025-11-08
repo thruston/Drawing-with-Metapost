@@ -25,7 +25,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – March 2025}
+\date{March 2017 – November 2025}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -343,7 +343,7 @@ point.
 \subsection{Open paths and closed paths}
 
 In \MP\ there are two sorts of paths: open and closed.
-\mpic{-12pt}{paths-triangles}
+\mpic{12pt}{paths-triangles}
 A closed path is also called a cycle, and is created with the \mpl{cycle} primitive like this:
 \begin{code}
 path t; t = origin -- (55,0) -- (55,34) -- cycle;
@@ -358,7 +358,7 @@ path u; u = origin {right} .. (55,0) .. (55,34) .. {-2,-1} origin;
 \end{code}
 then $u$ would be an open path even though the last point is the same as the
 first.  Any path that does not have \mpl{cycle} at the end is an open
-path.\mpic{-12pt}{paths-open-triangle}
+path.\mpic{24pt}{paths-open-triangle}
 
 \medskip
 
@@ -385,7 +385,7 @@ whether a given path $p$ is closed:
 \subsection{Predefined closed paths}
 
 There are several closed paths defined for you in plain \MP.
-\mpic{-36pt}{paths-standards}
+\mpic{-12pt}{paths-standards}
 \begin{itemize}
     \item "unitsquare" is defined as the path
         \mpl{(0,0)--(1,0)--(1,1)--(0,1)--cycle}.  It runs counter-clockwise from the
@@ -1365,8 +1365,8 @@ or, slightly more idiomatically:
 As you can see, you can apply implicit multiplication to a \mpl{color}, so after
 the declaration above "2 brg" would be a valid colour, although you have to think
 a bit to know what that means in terms of colour in your drawings.
-\vadjust{\moveright 396pt\vbox to 0pt{\kern-144pt\noindent
-To use RGB hex strings, you'll need to write a function:
+\vadjust{\moveright 396pt\vbox to 0pt{\kern-216pt\noindent
+To use RGB hex strings, you'd need to write a function:
 \begin{code}
 vardef hexrgb(expr Spec) =
   save r, g, b;
@@ -1380,26 +1380,36 @@ brg = hexrgb("#014225");
 pbr = hexrgb("#df3439");
 \end{code}
 \noindent\hey The \mpl{hex} function is a built-in primitive operation.
+
+\vskip 42pt\noindent
+It is easy to define a few more common colours in RGB using the plain constants.
+\begin{code}
+color yellow, orange, violet;
+yellow = red + green;
+orange = red + 1/2 green;
+violet = 1/2 red + blue;
+\end{code}
+
 \vss}}%
 
-Plain \MP\ defines five basic colour constants: \mpl{red}, \mpl{green},
-\mpl{blue}, \mpl{white}, \mpl{black}.  These are quite useful with leading
+Plain \MP\ defines just five colour constants: \mpl{red}, \mpl{green},
+\mpl{blue}, \mpl{white}, and \mpl{black}.  These are quite useful with leading
 fractions: \mpl{2/3 red} gives a nice dark red, that is good for drawing lines you
 want to emphasize; \mpl{1/2 white} gives you a shade of grey; and so on.  But since
 \mpl{black} is defined as \mpl{(0,0,0)}, \mpl{1/2 black} just gives you \mpl{black}.
 
 You can also add up \mpl{colors}.  So \mpl{red + 1/2 green} gives you a shade of
 orange;  this is more long-winded than writing \mpl{(1, 0.5, 0)} but maybe slightly
-easier to read.  Much more usefully, you can use the mediation notation to get a
+easier to read.  Much more usefully, you can use the mediation syntax to get a
 colour that is part way between two others.  So \mpl{1/2[red, white]} gives you a
 shade of pink, and \mpl{2/3[blue, white]} a sort of sky blue.  You can also use this
 idea to vary colour with data, as in \mpl{(r)[red, blue]} where \mpl{r} is some
 calculated value.  \vadjust{\moveright 396pt\vbox to 0pt{\kern-64pt
-\mpexternal[linerange=6-18]{color-blend-toy.mp}
+\mpexternal[linerange=6-14]{color-blend-toy.mp}
 \vss}}
 Here's a toy example:
 
-\vbox to 0pt{\centerline{\includegraphics[scale=0.8]{color-blend-toy}}\vss}
+\vbox to 0pt{\centerline{\includegraphics{color-blend-toy}}\vss}
 
 \newpage
 \subsection{CMYK colours}
@@ -1500,12 +1510,15 @@ repeating the \<picture> variables alternately in a grid, you get an effective
 texture.
 
 \newpage
-\subsection{Extended ranges of colour names}
+\subsection{Extended ranges of colour names}\label{sec:more-colours}
 
 If you want to use a wider range of colour names you can load the "mpcolornames" 
-package, which defines the three usual sets of names used for DVIPS, SVG, and X11. The
-figure\mpic{-36pt}{color-svgnames} at the right shows the charmingly
-idiosyncratic X11 
+package, which defines three sets of colours using the traditional names for DVIPS, SVG, and X11.
+The package defines 68 \<cmykcolor> variables for DVIPS, 151 \<color> variables for
+SVG, and over 300 \<color> variables for X11.
+The
+figure\mpic{-30pt}{color-dvips-names} at the right shows the charmingly
+idiosyncratic DVIPS 
 names. Notice that they all start with a capital letter, and each one needs a
 suffix.  You can read the package documentation for full details.
 
@@ -1519,20 +1532,20 @@ creating a document with integrated \MP\ drawings (described in §\ref{sec:lua-i
 Not only do you get access to the standard names, such as those shown here\rlap{\
 $\rightarrow$}
 but you also have access to names that you have defined
-for the document.
+in the document.
 
 \parshape 4 0pt 4.4in 0pt 4.4in 0pt 4.4in 0pt 4.4in
 For example, the style file used with this current document defines two extra colours for 
 syntax highlighting called \mpl{carrot} and \mpl{squash}, which could be used like
 this:
 \begin{code}
-  fill fullcircle scaled 20 withcolor mplibtexcolor "squash";
-  fill fullcircle scaled 12 withcolor mplibtexcolor "carrot";
+  fill fullcircle scaled 20 withcolor mplibcolor "squash";
+  fill fullcircle scaled 12 withcolor mplibcolor "carrot";
 \end{code}
 to produce a roundel like this: $\vcenter{
 \begin{mplibcode}
-  fill fullcircle scaled 20 withcolor mplibtexcolor "squash";
-  fill fullcircle scaled 12 withcolor mplibtexcolor "carrot";
+  fill fullcircle scaled 20 withcolor mplibcolor "squash";
+  fill fullcircle scaled 12 withcolor mplibcolor "carrot";
 \end{mplibcode}}$
 
 \bigskip
@@ -1540,19 +1553,22 @@ Moreover, you can use any notation provided by the package you are\\
 using  at the \LaTeX\ level; for example the "xcolor" blending notation, so\\
 that you can write
 \begin{code}
-  fill fullcircle scaled 20 withcolor mplibtexcolor "green!70";
-  fill fullcircle scaled 12 withcolor mplibtexcolor "blue!42!red";
+  fill fullcircle scaled 20 withcolor mplibcolor "green!70";
+  fill fullcircle scaled 12 withcolor mplibcolor "blue!42!red";
 \end{code}
 to produce a different roundel: $\vcenter{
 \begin{mplibcode}
-  fill fullcircle scaled 20 withcolor mplibtexcolor "green!70";
-  fill fullcircle scaled 12 withcolor mplibtexcolor "blue!42!red";
+  fill fullcircle scaled 20 withcolor mplibcolor "green!70";
+  fill fullcircle scaled 12 withcolor mplibcolor "blue!42!red";
 \end{mplibcode}}$
 
 \medskip
 \noindent
-Note that at the \MP\ level, the name is just a \<string>; the \mpl{mplibtexcolor}
-operator turns it into a \<color> or a \<cmykcolor> as appropriate.
+\hey {\small The \mpl{mplibcolor} macro is implemented using the \mpl{withprescript}
+mechanism, so it only works after \mpl{withcolor} as shown above. Note also that the 
+colours are \<string> values here, not \<color> values.  Read the
+"luamplib" documentation for details, or see below §\ref{sec:neo-access-to-tex}}.
+
 
 
 \newpage
@@ -2533,6 +2549,7 @@ routines given above; \mpl{tangent_times} from section \ref{sec:tangent-times}, 
 \vskip -72pt
 }}
 
+\clearpage
 \subsection{Axis of similitude}\label{sec:axosim}
 
 \vbox to 0pt{\vskip-\baselineskip\noindent\hbox to
@@ -2556,8 +2573,7 @@ then:
 E12 = (r1/(r1 - r2)[C1, C2]; I12 = (r1/(r1 + r2)[C1, C2];
 \end{smallcode}
 which is a bit quicker than working out all the tangent points.
-My version is in the file "geometry-axis-of-similitude.mp"
-}
+My version is in the file "geometry-axis-of-similitude.mp"}
 
 \newpage
 \subsection{Inversion, pole, and polar}\label{sec:inversion}
@@ -2821,11 +2837,16 @@ of finite length, of positive thickness, and rough edged.\\[2pt]
 \newpage
 \section{The missing trigonometry functions}\label{trig}
 
+\bigskip
+
+\noindent
 \MP\ provides only two basic trigonometry functions, "sind" and "cosd".  This lack
 appears to be a deliberate design;  in general it's much easier to use the "rotated"
 and "angle" functions than to work out all the sine, cosines and arc-tangents
 involved in rotating parts of your picture.  But if you really want the `missing'
 functions they are not hard to implement.
+
+\vfill
 
 First you might want versions that accept arguments in radians instead of degrees.
 For this you need to know the value of $\pi$, but this is not built into plain \MP.
@@ -2843,11 +2864,13 @@ multiple of $1\over65536$ (which turns out to be $3.14159$). The same applies to
 an error if you supply more digits that the default precision.  So in general
 it's best to use no more than 32 digits.  It's also possible, but not really worth
 the trouble, to define a routine to calculate $\pi$ to the current
-precision.\rlap{\raise1ex\hbox{\ $\smash{\nearrow}$}}
+precision.\rlap{\quad$\longrightarrow$}
 
 However you define it, once you are armed with a value for $\pi$ you can
 then define functions to convert between degrees and radians, and some more `normal'
 versions of sine and cosine.
+
+\vfill
 
 There's no built-in $\arccos$ or $\arcsin$ function but each is very easy to
 implement using a combination of the "angle" function and the Pythagorean difference
@@ -3208,7 +3231,7 @@ several implications: on the positive side you have easy access to italics and b
 letters, mathematical formulae, symbols like "$\alpha$", and anything else you can
 normally put in an "\hbox{}"; but there are some restrictions especially if you want
 to do anything more than produce a simple single-line label in the default Computer
-Modern type face.  The next few sections deal with some of the things you might want
+Modern type face.  The next few sections deal with some of the thing you might want
 to do.
 
 \subsubsection{Producing display maths}
@@ -3239,6 +3262,7 @@ then they will all have the same vertical size and will all line up
 neatly:\quad\mpl{label(btex \\strut a etex, origin);}
 
 
+\newpage
 \subsubsection{Multi-line text labels}
 
 Another consequence of the "\hbox" feature is that there is no automatic text
@@ -3338,9 +3362,9 @@ The red braces are a more complex variation on this theme $\longrightarrow$
 \newpage
 \subsubsection{Dynamic labels}\label{sec:old-and-dynamic}
 
-If you are a maven of programming language syntax you may have noticed that
-\mpl{btex ... etex} fits into the type system that \MP\ inherits from \MF\ as a
-\<picture> and not as a \<string>.  Effectively, \mpl{btex ... etex} act as a
+\textsc{If you are a maven of programming language syntax} you may have noticed that
+\mpl{btex .. etex} fits into the type system that \MP\ inherits from \MF\ as a
+\<picture> and not as a \<string>.  Effectively, \mpl{btex .. etex} act as a
 special pair of quotation marks that create a \<picture>; however the contained text
 is used
 verbatim, so that the whole construction is a syntactical atom.  This means that you
@@ -3393,7 +3417,7 @@ would have to write:
 \end{code}
 The \mpl{write} command is a \MP\ primitive, and \mpl{EOF} is defined in
 "plain.mp".
-\vskip -12pt
+\vskip -48pt
 }
 
 \newpage
@@ -3593,6 +3617,7 @@ completely ignored, you can't leave it out; you have to give at least an empty
 string: \mpl{draw "my text" infont ""}.  However if you find yourself writing this,
 you probably should try \mpl{draw TEX("my text")} instead.
 
+\newpage
 \subsection{Using Unicode and matching style with OTF fonts}\label{sec:neo-otf}
 
 If you read "texdoc luamplib" carefully, you will see that you \textit{can} use all
@@ -3707,11 +3732,51 @@ although these operators might appear to be special quotation marks, they produc
 
 \newpage
 \subsection{Exchanging values between \TeX\ and \MP}
+\label{sec:neo-access-to-tex}
 
-\begin{mplibcode}
-    fill fullcircle scaled 42 withcolor mplibcolor "orange";
-\end{mplibcode}
+Recent (2025) versions of "luamplib" provide operators and macros that 
+give you access to colours and variables defined at the \LaTeX\ level.  
 
+\subsubsection{Access to \LaTeX\ colours}
+
+The \mpl{mplibcolor} macro mentioned in §\ref{sec:more-colours} is implemented using
+the \mpl{withprescript} mechanism that allows you to insert PostScript code
+and other specials into parts of a drawing; so it only works if you use it
+immediately after \mpl{withcolor}.  If you want to do anything else with a \LaTeX\
+colour, you need to use one of these:
+\begin{itemize}
+    \item \mpl{mplibtexcolor} takes a \<string> and returns a value that may be \<numeric>, 
+        \<color>, or \<cmykcolor>, depending on how the colour is defined in \TeX.
+
+    \item \mpl{mplibrgbtexcolor} takes a \<string> and returns a \<color>, 
+        converting the \LaTeX\ colour to RGB if needed.
+\end{itemize}
+In both cases the \<string> argument should be a valid \LaTeX\ colour expression.
+
+\subsubsection{Access to \LaTeX\ variables}
+
+You are limited to reading \<dimen> values, but this is usually
+what is useful, for example you might use "\textwidth", or even
+"\marginparwidth" to make an adaptable drawing.  The operator is:
+\begin{itemize}
+    \item \mpl{mplibdimen} takes a \<string> and returns a \<numeric>.
+\end{itemize}
+The \<string> must be a valid \LaTeX\ control sequence name that refers to a
+\<dimen> value.  The name should include the leading backslash.  The result is
+returned as a numeric value, converted to PostScript points.  So if your text height
+is set to 6 inches, \mpl{mplibdimen} “"\textheight"”
+should return 432 (approximately).
+
+\smallskip
+\noindent
+Writing back to \TeX\ is more general, and uses the \mpl{VerbatimTeX} macro provided
+by "luamplib".  You can use it like this:
+\begin{code}
+    numeric r; r = 42; % more likely r is a measured length...
+    VerbatimTeX("\gdef\mpr{" & decimal r & "}");
+\end{code}
+After "luamplib" has processed this, the control sequence "\mpr" would expand to
+\texttt{"42"}.
 
 \newpage
 \subsection{Drawing on an external image}\label{sec:extimage}
@@ -3807,7 +3872,7 @@ of the variable is a pattern of pixels for a font, in \MP\ the contents are vect
 graphics commands.  This section reviews some of the things you can do with a
 \<picture> variable — including putting one in a frame (see §\ref{sec:pictureframe})
 like so\rlap{\ $\longrightarrow$}
-\mpic{-96pt}{pics-youth}
+\mpic{-80pt}{pics-youth}
 
 \bigskip\noindent
 Plain \MP\ provides two built-in \<picture> variables: \mpl{nullpicture}, which is

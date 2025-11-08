@@ -6,15 +6,11 @@ beginfig(1);
 color brg, pbr; 
 brg = 1/256 (1, 66, 37);  % British Racing Green
 pbr = 1/256 (223, 52, 57);  % Pillar Box Red
-N = 5; n = 0;
-for y=1 upto N:
-  for x=1 upto N:
-    fill fullcircle scaled 16 shifted 20(x,y)
-      withpen pencircle scaled 2
-      withcolor (n/N/N)[pbr, brg];
-    label(decimal incr n infont "phvr8r", 20(x,y)) 
-      withcolor white;
-  endfor
+path p; p = fullcircle scaled 18 yscaled 1.4 rotated -12;
+for n = 0 upto 16:
+  pair w; w = 20n * right;
+  fill p shifted w withcolor (n/16)[pbr, brg];
+  label(decimal n, w) withcolor white;
 endfor
 endfig;
 \end{mplibcode}
