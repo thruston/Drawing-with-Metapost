@@ -1544,8 +1544,13 @@ this:
 \end{code}
 to produce a roundel like this: $\vcenter{
 \begin{mplibcode}
+if scantokens(mpversion) > 2.02:
   fill fullcircle scaled 20 withcolor mplibcolor "squash";
   fill fullcircle scaled 12 withcolor mplibcolor "carrot";
+else:
+  fill fullcircle scaled 20 withcolor (0.793, 0.359, 0.05);
+  fill fullcircle scaled 12 withcolor (0.934, 0.445, 0.082);
+fi
 \end{mplibcode}}$
 
 \bigskip
@@ -1558,8 +1563,13 @@ that you can write
 \end{code}
 to produce a different roundel: $\vcenter{
 \begin{mplibcode}
+if scantokens(mpversion) > 2.02:
   fill fullcircle scaled 20 withcolor mplibcolor "green!70";
   fill fullcircle scaled 12 withcolor mplibcolor "blue!42!red";
+else:
+  fill fullcircle scaled 20 withcolor 1/4[green,white];
+  fill fullcircle scaled 12 withcolor 0.42[red,blue];
+fi
 \end{mplibcode}}$
 
 \medskip
@@ -4843,13 +4853,19 @@ sequence of events in a process.  The key to drawing them effectively in \MP\ is
 use a consistent unit size.  Here is a simple line showing numbers from $-4$ upto
 $6$.
 $$\includegraphics{seq-simple-line}$$
-which was produced like this:
-\mpexternal[linerange=7-13]{seq-simple-line.mp}
-The unit $u$ is used to scale the axis to the right size and then to position each
-of the labels.  {\small But notice that even with this very simple starting point some care
+which was produced with a unit $u$ to scale the axis and to position each label.
+\mpexternal{seq-simple-line-common.mp}
+\noindent
+{\small\hey But notice that even with this very simple starting point some care
 is needed.  You might like to experiment with removing the "\strut" from the labels,
 and you might like to think of a way to get the negative numbers to line up better
 with the marks.}
+
+\smallskip\noindent
+You can use this as the starting point for more ambitious number lines:
+$$\includegraphics{seq-simple-line-with-jumps}$$
+\mpexternal[linerange=8-16]{seq-simple-line-with-jumps.mp} 
+
 
 \newpage
 \section{Plotting functions}\label{func}
