@@ -12,7 +12,7 @@ vardef make_image(expr P, n, u, v, s, arrows) =
     for j = -n upto n:
       draw P shifted (i * u + j * v);
     endfor
-  endfor;
+  endfor
   if arrows:
     interim ahangle := 20;
     drawarrow origin--u dashed evenly scaled 1/2 withpen pencircle scaled 1/4 withcolor Reds 8 8;

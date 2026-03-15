@@ -87,6 +87,7 @@ let’s you write a \MP\ program, compile it, and include the results in your
 some of the excellent tutorials, including "mpintro.pdf".  If you have already done
 this, please read on.
 
+\smallskip\noindent
 These notes are partly based on the examples I have developed as answers
 to questions about technical drawing on the \TeX\ Stack Exchange site.  In
 accordance with their terms and conditions, I’ve only included material here that
@@ -156,8 +157,8 @@ or later (the latest version is presently available at
         \<picture>, \<boolean>
 
 
-        If you don’t declare a variable, it’s assumed that it’s a \<numeric>.
-        When you do declare a variable --- \<numeric> or otherwise — any value that it
+        If you don’t declare a variable, \MP\ assumes that it’s a \<numeric>.
+        When you \textit{do} declare a variable --- \<numeric> or otherwise --- any value that it
        already had in the current scope is removed.
 
     \item \textbf{Implicit multiplication}: \MP\ inherits a rich set of rules about numerical
@@ -191,7 +192,7 @@ inefficient; if so please drop me a line and suggest an improvement.
 
 The common features of each of these workflows are: Mac~OS, the MacVim editor to
 edit \MP\ source code, and
-Skim.app to view PostScript and PDF files.  I have the complete MacTeX distribution
+Skim.app to view PDF files.  I have the complete MacTeX distribution
 installed; any commands mentioned below are supplied by MacTeX.
 
 \subsection{Stand alone graphics with plain \MP}\label{sec:plain-flow}
@@ -301,7 +302,7 @@ to get this:
 \[\begin{mplibcode}
 draw 5 up .. 30 dir 40 .. 60 dir -10 .. 90 right;    
 \end{mplibcode}\]
-It is more useful, and perhaps more idiomatic, to produce the same result with:
+it is more useful, and perhaps more idiomatic, to produce the same result with:
 \begin{code}
     path t; t = 5 up .. 30 dir 40 .. 60 dir -10 .. 90 right; 
     draw t;
@@ -3755,7 +3756,7 @@ In both cases the \<string> argument should be a valid \LaTeX\ colour expression
 
 \subsubsection{Access to \LaTeX\ variables}
 
-You are limited to reading \<dimen> values, but this is usually
+Reading from \TeX\ variables is limited to \<dimen> values, but this is usually
 what is useful, for example you might use "\textwidth", or even
 "\marginparwidth" to make an adaptable drawing.  The operator is:
 \begin{itemize}
@@ -3764,7 +3765,7 @@ what is useful, for example you might use "\textwidth", or even
 The \<string> must be a valid \LaTeX\ control sequence name that refers to a
 \<dimen> value.  The name should include the leading backslash.  The result is
 returned as a numeric value, converted to PostScript points.  So if your text height
-is set to 6 inches, \mpl{mplibdimen} “"\textheight"”
+is set to 6 inches, \mpl{mplibdimen "\\textheight"}
 should return 432 (approximately).
 
 \smallskip
@@ -6205,6 +6206,15 @@ $$
 This has the effect of
 connecting the centres of adjacent shapes in the tiling, which reveals that each
 tiling is the dual of the other.
+
+\newpage
+\subsection{Tiling with other shapes on regular grids}
+
+\textsc{In some drawings} you may want a grid that illustrates an arrangements of cells or other
+discrete objects, while these are not strictly tilings in the mathematical sense,
+you can use the techniques introduced on the previous page to make a grid of shapes
+that do not quite touch.
+
 
 \newpage
 \subsection{Separating filling and drawing}

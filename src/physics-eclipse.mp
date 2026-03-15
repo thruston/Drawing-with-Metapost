@@ -1,7 +1,7 @@
 \documentclass[border=5mm]{standalone}
-\usepackage{fontspec}
-\setmainfont{Lato Light}
-\usepackage{lete-sans-math}
+\usepackage{unicode-math}
+\setmainfont{Noto Sans Light}
+% \setmathfont{Noto Sans Math}
 \usepackage{luamplib}
 \mplibtextextlabel{enable}
 \begin{document}
