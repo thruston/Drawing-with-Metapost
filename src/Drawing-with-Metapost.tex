@@ -1,4 +1,4 @@
-% Copyright (c) 2025 by Toby Thurston. This material may be distributed only
+% Copyright (c) 2026 by Toby Thurston. This material may be distributed only
 % subject to the terms and conditions set forth in the Open Publication License,
 % v1.0 or later (the latest version is presently available at
 % http://www.opencontent.org/openpub/).
@@ -25,7 +25,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – November 2025}
+\date{March 2017 – March 2026}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -4861,10 +4861,21 @@ is needed.  You might like to experiment with removing the "\strut" from the lab
 and you might like to think of a way to get the negative numbers to line up better
 with the marks.}
 
-\smallskip\noindent
+\moveright5.5in\vbox to 0pt{\vskip -3.4in\hsize 4.2in
+$$\includegraphics{seq-fractions}$$
+\noindent 
+Each of the fraction lines above was created with this macro:
+\smallmpexternal[linerange=8-20]{seq-fractions.mp}
+and with the "gcd" macro from §\ref{sec:gcd}. Notice that this time, 
+the tick marks are placed at fractions of the desired width, instead of multiples
+of a unit.
+\vss}
+
+\noindent
 You can use this as the starting point for more ambitious number lines:
 $$\includegraphics{seq-simple-line-with-jumps}$$
 \mpexternal[linerange=8-16]{seq-simple-line-with-jumps.mp} 
+
 
 
 \newpage
