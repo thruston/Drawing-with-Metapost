@@ -1,0 +1,83 @@
+#! /usr/bin/env python3
+'''Toby Thurston -- 07 Aug 2024
+Compile MP source to PDF (or multiple PDFs if necessary).
+'''
+
+import argparse
+import pathlib
+import re
+import subprocess
+import sys
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("mpfile")
+    parser.add_argument("-numbersystem", default="scaled")
+    args = parser.parse_args()
+
+    # Check the source file exists
+    mpfile = pathlib.Path(args.mpfile)
+    if not mpfile.exists():
+        print(f"{mpfile} appears not to exist.")
+        sys.exit(1)
+
+    # Check we are working in the local directory
+    if mpfile.parent.resolve() != pathlib.Path.cwd():
+        print("This will only work with files in the current directory")
+        sys.exit(1)
+
+    # Run mpost
+    cmd = ['mpost', '-recorder', '-numbersystem', args.numbersystem]
+    cmd.append(mpfile)
+    rc = subprocess.run(cmd)
+
+    # stop on error
+    if rc.returncode != 0:
+        sys.exit(rc.returncode)
+
+    flsfile = mpfile.with_suffix('.fls')
+    logfile = mpfile.with_suffix('.log')
+
+    # find the list of PS files created from the file list in .fls
+    psfiles = list()
+    with open(flsfile) as files:
+        for line in files:
+            t, file_name = line.strip().split(None, 1)
+
+            if t != 'OUTPUT':
+                continue
+
+            if file_name == logfile.name:
+                continue
+
+            # we are assuming that they are all PS files...
+            psfiles.append(pathlib.Path(file_name))
+
+    # now try to convert them to PDF
+    for ps in psfiles:
+        with open(ps, 'r') as p:
+            first_line = list(p)[0]
+
+        # check this actually looks likes PS (ie not SVG...)
+        if not first_line.startswith('%!PS'):
+            print("{} does not look like PostScript.  Skipped".format(ps))
+            continue
+
+        # work out the name, allowing for different outputtemplate patterns
+        if ps.suffix == '.eps':
+            pdf = ps.with_suffix('.pdf')
+        elif ps.suffix == '.mps':
+            pdf = ps.with_suffix('.pdf')
+        elif re.match(r'\.\d\Z', ps.suffix):
+            pdf = ps.with_name(ps.stem + ps.suffix[::-1] + 'pdf')
+
+        # call epstopdf
+        rc = subprocess.run(['epstopdf', ps, pdf])
+        if rc.returncode == 0:
+            ps.unlink()
+            print('created {}'.format(pdf))
+        else:
+            print('epstopdf rc {} on {}'.format(rc.returncode, ps))
+
+    # we no longer need the fls file
+    flsfile.unlink()

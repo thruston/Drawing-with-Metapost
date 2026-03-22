@@ -16,8 +16,6 @@ drawoptions();
 begingroup; interim ahangle := 180; interim ahlength := 3;
 drawdblarrow (z1--z2) shifted (12 up rotated angle (z2-z1)) withcolor 2/3 blue;
 endgroup;
-
-
 endfig;
 \end{mplibcode}
 \end{document}
