@@ -1,6 +1,6 @@
 # Drawing-with-Metapost
 
-Toby Thurston -- 28 Jan 2025
+Toby Thurston -- 7 Apr 2026
 
 This project provides a document that discusses how to draw technical diagrams
 with John Hobby's Metapost language. It includes over 200 illustrations created
@@ -32,7 +32,7 @@ directory contains a few drawings that are not included in the main document.
 If you find any errors, or have any suggestions for improvement, please raise an
 issue or submit a pull request on Github.
 
-Copyright (c) 2025 by Toby Thurston. This material may be distributed only
+Copyright (c) 2026 by Toby Thurston. This material may be distributed only
 subject to the terms and conditions set forth in the Open Publication License,
 v1.0 or later.  The latest version is presently available at
 https://opencontent.org/openpub/
