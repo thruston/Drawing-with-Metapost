@@ -1,3 +1,35 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="center">
+        <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=en">English</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=zh-CN">简体中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=zh-TW">繁體中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=ja">日本語</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=ko">한국어</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=hi">हिन्दी</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=th">ไทย</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=fr">Français</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=de">Deutsch</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=es">Español</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=it">Italiano</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=ru">Русский</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=pt">Português</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=nl">Nederlands</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=pl">Polski</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=ar">العربية</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=fa">فارسی</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=tr">Türkçe</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=vi">Tiếng Việt</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=id">Bahasa Indonesia</a>
+        | <a href="https://openaitx.github.io/view.html?user=thruston&project=Drawing-with-Metapost&lang=as">অসমীয়া</
+      </div>
+    </div>
+  </details>
+</div>
+
 # Drawing-with-Metapost
 
 Toby Thurston -- 7 Apr 2026
