@@ -4924,6 +4924,43 @@ required.
 \mpexternal[linerange=7-40]{seq-covid-in-wales.mp}
 
 \newpage
+\subsection{Time lines with calendar dates}
+
+\textsc{If you are illustrating} a time line of real events, you may find
+it easier to work with calendar dates and use a macro to reduce them 
+to a scalar number.  The \mpl{base} macro shown in §\ref{sec:basedate} does this 
+for you.\mpic{-63pt}{seq-covid-in-wales}  This macro takes three
+whole number \<numeric> arguments ("year", "month", "day") and returns 
+a \<numeric> serial number.  The macro is designed to work with the default scaled number system, 
+so the serial number is returned as a real number, scaled so that one day equals
+exactly $1/1024$. So \mpl{base(1,1,1)} returns 0, and \mpl{base(2001,1,1)} returns
+$713.36426$.
+
+For the diagram on the right, it was convenient to turn each date 
+into a \<pair> scaled to move down the vertical axis:
+\smallmpexternal[linerange=11-14]{seq-covid-in-wales.mp} 
+Subtracting the start date means that the scale starts at zero, and
+scaling by $-512$ means that each year takes about 6.45\unit{cm}
+so the two-and-a-half year time span fits neatly on the page.
+This "date" macro was used in another macro to mark events:
+\smallmpexternal[linerange=20-26]{seq-covid-in-wales.mp} 
+and so the first events were created like this:
+\smallmpexternal[linerange=55-56]{seq-covid-in-wales.mp} 
+Notice that the text for the label is passed as a string, and processed
+by the "TEX()" macro.  And also that it is convenient to pass an offset 
+so that you can separate consecutive labels when the dates are close togther.
+A similar macro was used to mark the periods with braces. See the source code for 
+details.
+
+\vfill
+
+{\small\noindent\hey This diagram was adapted from one originally created by the
+BBC.
+You might like to think about 
+why the vertical format works, and how you could re-design it if you needed
+a horizontal scale.}
+
+\newpage
 \section{Plotting functions}\label{func}
 
 \textsc{A selection} of graphs of mathematical functions is presented in this
@@ -5823,7 +5860,7 @@ the technique discussed in §\ref{textsize}.  And that you have to shift the dat
 \smallmpexternal[linerange=10-44,xleftmargin=0pt,xrightmargin=-30pt]{tufte-budget.mp}
 
 \newpage
-\subsection{Time series with more complex dates}
+\subsection{Time series with more complex dates}\label{sec:basedate}
 
 If the dates in your time series are more granular, then you need a
 better way to deal with them.  This chart below shows the £/€ exchange rate by month.
