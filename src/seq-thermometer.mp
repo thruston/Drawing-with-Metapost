@@ -36,20 +36,19 @@ label.top("°C", (+18, 43dc));
 
 numeric x; x = 38;
 dotlabeldiam := 3/2;
-dotlabel.rt("\textit{\tiny UK record high}", (x, 40.2dc));
-dotlabel.rt("\textit{\tiny Heat emergency}", (x, 37dc));
-dotlabel.rt("\textit{\tiny Heatwave}", (x, 32dc));
-dotlabel.rt("\textit{\tiny Hot}", (x, 27dc));
-dotlabel.rt("\textit{\tiny Warm}", (x, 22dc));
-dotlabel.rt("\textit{\tiny Pleasant}",      (x, 17dc));
-dotlabel.rt("\textit{\tiny Mild / Cool}",   (x, 11dc));
-dotlabel.rt("\textit{\tiny Cold}",          (x, 7dc));
-dotlabel.rt("\textit{\tiny Very cold}",     (x, 3dc));
-dotlabel.rt("\textit{\tiny Freezing}",      (x, 0dc));
-dotlabel.rt("\textit{\tiny Severe frost}",  (x, -5dc));
-dotlabel.rt("\textit{\tiny Bitterly cold}", (x, -10dc));
-dotlabel.rt("\textit{\tiny UK record low}", (x, -27.2dc));
-
+dotlabel.rt("\textit{\tiny UK record high}", (x,  40.3dc));
+dotlabel.rt("\textit{\tiny Heat emergency}", (x,  37dc));
+dotlabel.rt("\textit{\tiny Heatwave}",       (x,  32dc));
+dotlabel.rt("\textit{\tiny Hot}",            (x,  27dc));
+dotlabel.rt("\textit{\tiny Warm}",           (x,  22dc));
+dotlabel.rt("\textit{\tiny Pleasant}",       (x,  17dc));
+dotlabel.rt("\textit{\tiny Mild / Cool}",    (x,  11dc));
+dotlabel.rt("\textit{\tiny Cold}",           (x,   7dc));
+dotlabel.rt("\textit{\tiny Very cold}",      (x,   3dc));
+dotlabel.rt("\textit{\tiny Freezing}",       (x,   0dc));
+dotlabel.rt("\textit{\tiny Severe frost}",   (x,  -5dc));
+dotlabel.rt("\textit{\tiny Bitterly cold}",  (x, -10dc));
+dotlabel.rt("\textit{\tiny UK record low}",  (x, -27.2dc));
         
 endfig;
 \end{mplibcode}
