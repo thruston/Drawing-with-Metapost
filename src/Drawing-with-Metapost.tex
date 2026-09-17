@@ -25,7 +25,7 @@
 \usepackage{dwmpcode}
 \title{Drawing with Metapost}
 \author{Toby Thurston}
-\date{March 2017 – March 2026}
+\date{March 2017 – April 2026}
 \overfullrule=2pt
 \def\kw#1{\begingroup\def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
 \ifmmode\mathop{\textbf{#1}}\else\textbf{#1}\fi\endgroup}
@@ -4283,7 +4283,7 @@ Here is the implementation of "ruler.mp":
 The inner loop draws successively shorter lines at each of the
 minor units, and numbers at the major units.
 
-Note that this macro  designed to be used a temporary input added at the
+Note that this macro is designed to be used a temporary input added at the
 bottom of a drawing to see how big it is.  You would not usually leave it in place
 in a final drawing. This is why none of the variable names is protected.
 To make the macros more robust you could enclose them with \mpl{begingroup} and
@@ -4885,32 +4885,43 @@ $$\includegraphics{seq-simple-line-with-jumps}$$
 \newpage
 \subsection{Time lines}
 
-\textsc{The same techniques} that work for number lines also work for sequence
-diagrams to show events instead of just numbers; by setting a unit you can keep
+\textsc{The same techniques} that work for number lines also work for 
+diagrams that show events in time instead of just numbers; by setting a unit you can keep
 control of the relative spacing of events.  But you may need finer control
 over your labels.
 \vadjust{\moveright5.5in\vbox to 0pt{\vskip 44pt\hsize4.5in\noindent 
-There are two extra macros required for this drawing.
+There are two extra macros used in this drawing for the labels.
 
 \smallskip\noindent
 The first makes a brace \<path>, given a start, a middle, and an end point.  
 \mpexternal[linerange=18-23]{seq-timeline.mp}
 This macro is not very general because it assumes that $a$ and $b$ are horizontal,
-but it works well for the up and down braces needed here.
+but it works well for the up and down braces needed here (see also
+§\ref{sec:braces} for a different approach).
+It is tempting to make a macro to combine the pin and/or the brace with the label to
+avoid repetition, but keeping them separate allows more flexible colouring as the
+last annotation with the long red label shows.
 
 \bigskip\noindent
-The second it a bit trickier; it shows how to use a \mpl{text} parameter to allow
+The second macro is a bit trickier; it shows how to use a \mpl{text} parameter to allow
 for a flexible number of arguments, and how to use \mpl{scantokens} to turn a string
 into a number, even when it includes a variable name.
 \mpexternal[linerange=9-16]{seq-timeline.mp}
-It is tempting to make a macro to combine the pin and/or the brace with the label to
-avoid repetition, but keeping them separate allows more flexible colouring as the
-last annotation with the long red label shows.\par\vss}}
+\vss}}
 $$\includegraphics[width=\textwidth]{seq-timeline}$$
 In this diagram, the unit size was one month, with a variable period (of about three
-weeks) shown as $x$.  There are two series of labels: normal unit markings spaced as
-required, plus annotations with pins and braces.
-\mpexternal[linerange=25-42,xrightmargin=-36pt]{seq-timeline.mp} 
+weeks) shown as $x$.  There are two series of labels: 
+annotations with pins and braces; 
+plus regular unit markings spaced as
+required.
+\mpexternal[linerange=25-43,xrightmargin=-36pt]{seq-timeline.mp} 
+
+\newpage
+\subsection{Vertical time lines}
+
+\vpic{-24pt}{seq-covid-in-wales}
+
+\mpexternal[linerange=7-40]{seq-covid-in-wales.mp}
 
 \newpage
 \section{Plotting functions}\label{func}

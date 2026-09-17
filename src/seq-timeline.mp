@@ -24,9 +24,6 @@ enddef;
 
 beginfig(1);
   numeric u, x; u = 30; x = -23/31;
-  make_marks("x-6", "x-1", "x", "0", "+1", "+6");
-  drawarrow (8 left -- 7 right) scaled u withpen pencircle scaled 1;
-  label.bot("\strut Months", (7u, -3));
   % Annotations
   label.bot("Pre-issue period", ((x-3.5)*u, -36));
   draw brace(((x-6)*u, -20), ((x-3.5)*u, -36), ((x-1)*u, -20));
@@ -39,6 +36,10 @@ beginfig(1);
   something on the second line
   \end{tabular} etex, (3u, 24)) withcolor 1/2 red;
   draw brace((0, 10), (3u, 24), (6u, 10)) withcolor 2/3 blue;
+  % base arrow with scale
+  drawarrow (8 left -- 7 right) scaled u withpen pencircle scaled 1;
+  label.bot("\strut Months", (7u, -3));
+  make_marks("x-6", "x-1", "x", "0", "+1", "+6");
 endfig;
 \end{mplibcode}
 \end{document}

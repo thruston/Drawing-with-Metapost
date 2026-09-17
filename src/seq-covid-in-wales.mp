@@ -21,6 +21,14 @@ vardef mark_event(expr y, m, d, t, offset) =
     undraw w withpen pencircle scaled 2;
 enddef;
 
+vardef mark_day(expr y, m, d, t, offset) = 
+    save w; pair w; w = cjd(y, m, d);
+    label.rt(decimal d & " " & M[m] & " – " & t, w + offset);
+    draw w -- w + offset withcolor 2/3 blue;
+    draw w withpen pencircle scaled 3;
+    undraw w withpen pencircle scaled 2;
+enddef;
+
 vardef mark_period(expr ya, ma, da, yb, mb, db, t) = 
     save a, b, m; pair a, b, m; 
     a = cjd(ya, ma, da) shifted 4 right; 
@@ -45,8 +53,8 @@ beginfig(1);
       endfor
    endfor
 
-    mark_event(2020,2,28,"28 Feb – First case in Wales", 12 right);
-    mark_event(2020,3,23,"23 Mar – UK lockdown", 12 right);
+    mark_day(2020,2,28,"First case in Wales", 12 right);
+    mark_day(2020,3,23,"UK lockdown announced", 12 right);
     mark_period(2020,6,1,2020,8,31, "Gradual easing of lockdown");
     mark_period(2020,9,1,2020,9,30, "Local lockdowns");
     mark_event(2020,10,23,"23 Oct – 17 day firebreak lockdown", 12 right);
