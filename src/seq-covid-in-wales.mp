@@ -25,14 +25,6 @@ vardef mark_event(expr y, m, d, t, offset) =
   undraw w withpen pencircle scaled 2;
 enddef;
 
-vardef mark_day(expr y, m, d, t, offset) = 
-    save w; pair w; w = cjd(y, m, d);
-    label.rt(decimal d & " " & M[m] & " – " & t, w + offset);
-    draw w -- w + offset withcolor 2/3 blue;
-    draw w withpen pencircle scaled 3;
-    undraw w withpen pencircle scaled 2;
-enddef;
-
 vardef mark_period(expr ya, ma, da, yb, mb, db, t) = 
   save a, b, m; pair a, b, m; 
   a = date(ya, ma, da) shifted 4 right; 
@@ -40,13 +32,10 @@ vardef mark_period(expr ya, ma, da, yb, mb, db, t) =
   label.rt(TEX(t), do_coloured_brace(a, b, 5, 1/2, 2/3 blue));
 enddef;
 
-
 beginfig(1);
-  % 30 months * 14 pt = 30*14/72 \simeq 5.83333 in
-  % 365/12*30 = 30*14/912.5 \simeq 0.460274 so 1/2pt per day  
 
   drawarrow origin -- date(2022,6,30);
-  for y = 2020,2021,2022:
+  for y = 2020, 2021, 2022:
     for m = 1 upto 12:
       pair w; w = date(y,m,1);
       if (y < 2022) or (m < 7):

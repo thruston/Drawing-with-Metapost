@@ -4917,13 +4917,6 @@ required.
 \mpexternal[linerange=25-43,xrightmargin=-36pt]{seq-timeline.mp} 
 
 \newpage
-\subsection{Vertical time lines}
-
-\vpic{-24pt}{seq-covid-in-wales}
-
-\mpexternal[linerange=7-40]{seq-covid-in-wales.mp}
-
-\newpage
 \subsection{Time lines with calendar dates}
 
 \textsc{If you are illustrating} a time line of real events, you may find
@@ -4933,7 +4926,7 @@ for you.\mpic{-63pt}{seq-covid-in-wales}  This macro takes three
 whole number \<numeric> arguments ("year", "month", "day") and returns 
 a \<numeric> serial number.  The macro is designed to work with the default scaled number system, 
 so the serial number is returned as a real number, scaled so that one day equals
-exactly $1/1024$. So \mpl{base(1,1,1)} returns 0, and \mpl{base(2001,1,1)} returns
+exactly $1/1024$. You will find that \mpl{base(1,1,1)} returns 0, and \mpl{base(2001,1,1)} returns
 $713.36426$.
 
 For the diagram on the right, it was convenient to turn each date 
@@ -4945,20 +4938,20 @@ so the two-and-a-half year time span fits neatly on the page.
 This "date" macro was used in another macro to mark events:
 \smallmpexternal[linerange=20-26]{seq-covid-in-wales.mp} 
 and so the first events were created like this:
-\smallmpexternal[linerange=55-56]{seq-covid-in-wales.mp} 
+\smallmpexternal[linerange=52-53]{seq-covid-in-wales.mp} 
 Notice that the text for the label is passed as a string, and processed
 by the "TEX()" macro.  And also that it is convenient to pass an offset 
 so that you can separate consecutive labels when the dates are close togther.
-A similar macro was used to mark the periods with braces. See the source code for 
-details.
+A similar macro was used to mark the periods with braces (see the source code for 
+details).
 
 \vfill
 
-{\small\noindent\hey This diagram was adapted from one originally created by the
-BBC.
+\vbox to 12pt{\small\noindent\hey 
 You might like to think about 
 why the vertical format works, and how you could re-design it if you needed
-a horizontal scale.}
+a horizontal scale.\\[6pt]
+\rightline{— \textit{The diagram was adapted from one originally created by the BBC}.}\par\vss}
 
 \newpage
 \section{Plotting functions}\label{func}

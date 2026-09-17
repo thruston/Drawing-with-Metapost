@@ -1,7 +1,7 @@
 \documentclass[border=5mm]{standalone}
 \usepackage{unicode-math}
-\setmainfont{TeX Gyre Pagella}
-\setmathfont{TeX Gyre Pagella Math}
+% \setmainfont{TeX Gyre Pagella}
+% \setmathfont{TeX Gyre Pagella Math}
 \usepackage{luamplib}
 \begin{document}
 \mplibtextextlabel{enable}
@@ -53,10 +53,10 @@ label("electron", (x, -30.0405v));  % log(9.109*10**-31)
 
 x := 350; 
 label("\strut\textbf{Time intervals} — s", (x, 34v));
-%label("age of Universe", (x, 17.6358v)); % log(13.7*10**9*365.2425*24*3600) \simeq 17.6358 
-label("age of Earth", (x, 17.1563v)); % log(4.542*10**9*365.2425*24*3600) \simeq 17.1563 
+label("age of Universe", (x, 17.639v)); % log(13.8*10**9*365.2425*24*3600,10) \simeq 17.639 
+%label("age of Earth", (x, 17.1563v)); % log(4.542*10**9*365.2425*24*3600,10) \simeq 17.1563 
 % label("Cambrian explosion", (x, 16.2305v));          % log(538.8*10**6*365.2425*24*3600) \simeq 16.2305 
-% label("first humans", (x, 13.8v));          % log(2*10**6*365.2425*24*3600) \simeq 13.8001  
+label("first humans", (x, 13.8v));          % log(2*10**6*365.2425*24*3600) \simeq 13.8001  
 label("human life expectancy", (x, 9.40219v)); % log(80*365.2425*24*3600) \simeq 9.40219 
 label("year", (x, 7.4991v)); % log(365.2425*24*3600) \simeq 7.4991
 label("day", (x, 4.93651v)); % log(24*3600) \simeq 4.93651 
